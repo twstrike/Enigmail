@@ -1,5 +1,5 @@
 Name:      mozilla-enigmime
-Version:   0.65.3
+Version:   0.65.4
 Release:   1
 Requires:  mozilla = 1.1, mozilla-mail = 1.1, mozilla-psm = 1.1
 Summary:   MIME and Inter-Process Communication for Enigmail/Mozilla
