@@ -2113,7 +2113,12 @@ function (parent, prompter, uiFlags, sendFlags, outputLen, pipeTransport,
     }
   }
   if ((this.agentVersion >= "1.3") && (this.isDosLike)) {
-    if ((exitCode == 2) && (!((statusFlagsObj.value & nsIEnigmail.BAD_PASSPHRASE)))) {
+    if ((exitCode == 2) && (!(statusFlagsObj.value & (nsIEnigmail.BAD_PASSPHRASE |
+              nsIEnigmail.NO_SECKEY |
+              nsIEnigmail.NO_PUBKEY |
+              nsIEnigmail.REVOKED_KEY |
+              nsIEnigmail.MISSING_PASSPHRASE |
+              nsIEnigmail.NODATA)))) {
       WARNING_LOG("enigmail.js: Enigmail.execCmd: Using gpg version "+this.agentVersion+", activating countermeasures for file renaming bug.\n");
       exitCode = 0;
     }
@@ -2818,7 +2823,14 @@ function (uiFlags, outputLen, pipeTransport, verifyOnly, noOutput,
     }
   }
   if ((this.agentVersion >= "1.3") && (this.isDosLike)) {
-    if ((exitCode == 2) && (!((statusFlagsObj.value & nsIEnigmail.BAD_PASSPHRASE)))) {
+    if ((exitCode == 2) && (!(statusFlagsObj.value & (nsIEnigmail.BAD_PASSPHRASE |
+                              nsIEnigmail.UNVERIFIED_SIGNATURE |
+                              nsIEnigmail.MISSING_PASSPHRASE |
+                              nsIEnigmail.BAD_ARMOR |
+                              nsIEnigmail.DECRYPTION_INCOMPLETE |
+                              nsIEnigmail.DECRYPTION_FAILED |
+                              nsIEnigmail.NO_PUBKEY |
+                              nsIEnigmail.NO_SECKEY)))) {
       WARNING_LOG("enigmail.js: Enigmail.execCmd: Using gpg version "+this.agentVersion+", activating countermeasures for file renaming bug.\n");
       exitCode = 0;
     }
