@@ -34,28 +34,34 @@
 # Makefile for package directory
 
 # Specify these as parameters to the make command
-XPI_MODULE      = enigmail
-XPI_MODULE_VERS = 0.49.3
+ENIGMAIL_VERS = 0.49.4
 
 DEPTH=..\..\..
 
-MODULE          = enigmail
-include <$(DEPTH)\config\rules.mak>
+MODULE=enigmail
+
+MAKE_OBJ_TYPE=DLL
+DLLNAME=$(MODULE)
+DLL=.\$(OBJDIR)\$(DLLNAME).dll
 
 XPIDLSRCS=  .\nsIEnigmail.idl     \
+            .\nsIPGPModule.idl    \
+            .\nsIPGPMsgHeader.idl \
+            .\nsIPGPMsgBody.idl   \
             $(NULL)
 
-XPIFILE = $(XPI_MODULE)-$(XPI_MODULE_VERS).xpi
+XPIFILE = enigmail-$(ENIGMAIL_VERS).xpi
+
+include <$(DEPTH)\config\rules.mak>
 
 libs::
 	$(MAKE_INSTALL) enigmail.js $(DIST)\bin\components
 
 xpi::
-	zip -r $(DIST)\bin\$(XPIFILE) install.js $(XPI_MODULE).spec
+	zip -r $(DIST)\bin\$(XPIFILE) install.js enigmail.spec
 	cd $(DIST)\bin
         zip -g $(XPIFILE) \
-               components\$(MODULE).dll \
-               components\$(XPI_MODULE).xpt \
-               components\$(XPI_MODULE).js \
-               chrome\$(XPI_MODULE).jar
+               chrome\enigmail.jar \
+               components\enigmail.xpt \
+               components\enigmail.js
 	echo Created $(DIST)\bin\$(XPIFILE)

@@ -1,8 +1,8 @@
 // enigmailCommon.js: shared JS functions for Enigmail
 
-// This Enigmail version and compatible Enigmime version
-var gEnigmailVersion = "0.49.3.0";
-var gEnigmimeVersion = "0.99.9.0";
+// This Enigmail version and compatible IPC version
+var gEnigmailVersion = "0.49.4.0";
+var gIPCVersion      = "0.99.9.0";
 
 // Maximum size of message directly processed by Enigmail
 const MESSAGE_BUFFER_SIZE = 32000;
@@ -52,8 +52,8 @@ var gEnigmailPrefDefaults = {"configuredVersion":"",
                              "userIdSource":USER_ID_DEFAULT,
                              "userIdValue":"",
                              "noPassphrase":false,
-                             "defaultEncryptionOption":1,
                              "defaultSignMsg":false,
+                             "defaultEncryptSignMsg":false,
                              "defaultSignNewsMsg":false,
                              "alwaysTrustSend":true,
                              "encryptToSelf":true,
@@ -179,29 +179,20 @@ function GetEnigmailSvc() {
 function EnigUpdate_0_50() {
   DEBUG_LOG("enigmailCommon.js: EnigUpdate_0_50: \n");
 
-  var savePrefs = false;
-
   try {
     var defaultEncryptMsg = gPrefEnigmail.getBoolPref("defaultEncryptMsg");
 
-    gPrefEnigmail.deleteBranch("defaultEncryptMsg");
-    savePrefs = true;
-  } catch (ex) {}
+    try {
+      var defaultEncryptSignMsg = gPrefEnigmail.getBoolPref("defaultEncryptSignMsg");
 
-  try {
-    var defaultEncryptSignMsg = gPrefEnigmail.getBoolPref("defaultEncryptSignMsg");
-    gPrefEnigmail.deleteBranch("defaultEncryptSignMsg");
-    savePrefs = true;
-
-    if (defaultEncryptSignMsg)
-        gPrefEnigmail.setIntPref("defaultEncryptionOption", 2);
+    } catch (ex) {
+      DEBUG_LOG("enigmailCommon.js: EnigUpdate_0_50: deleting defaultEncryptMsg\n");
+      gPrefEnigmail.setBoolPref("defaultEncryptSignMsg", defaultEncryptMsg);
+      gPrefEnigmail.deleteBranch("defaultEncryptMsg");
+      EnigSavePrefs();
+    }
 
   } catch (ex) {}
-
-  if (savePrefs) {
-    DEBUG_LOG("enigmailCommon.js: EnigUpdate_0_50: Updating prefs\n");
-    EnigSavePrefs();
-  }
 }
 
 function EnigConfigure() {
@@ -420,27 +411,6 @@ function EnigError(mesg) {
   return gPromptService.alert(window, "Enigmail Error", mesg);
 }
 
-
-function EnigOverrideAttribute(elementIdList, attrName, prefix, suffix) {
-  for (var index = 0; index < elementIdList.length; index++) {
-    var elementId = elementIdList[index];
-    var element = document.getElementById(elementId);
-    if (element) {
-      try {
-        var oldValue = element.getAttribute(attrName);
-        var newValue = prefix+elementId+suffix;
-
-        //DEBUG_LOG("enigmailCommon.js: *** overriding id="+ elementId+" "+attrName+"="+oldValue+" with "+newValue+"\n");
-
-        element.setAttribute(attrName, newValue);
-      } catch (ex) {}
-    } else {
-      DEBUG_LOG("enigmailCommon.js: *** UNABLE to override id="+ elementId+"\n");
-    }
-  }
-}
-
-
 function EnigPrefWindow() {
   goPreferences("securityItem",
                 "chrome://enigmail/content/pref-enigmail.xul",
@@ -463,7 +433,7 @@ function EnigHelpWindow(source) {
 }
 
 function EnigUpgrade() {
-  window.openDialog("http://enigmail.mozdev.org/update.html?upgrade=yes&enigmail="+gEnigmailVersion+"&ipc="+gEnigmimeVersion, "dialog");
+  window.openDialog("http://enigmail.mozdev.org/update.html?upgrade=yes&enigmail="+gEnigmailVersion+"&ipc="+gIPCVersion, "dialog");
 }
 
 function EnigSetDefaultPrefs() {
@@ -728,18 +698,12 @@ function EnigClearPassphrase() {
   enigmailSvc.clearCachedPassphrase();
 }
 
-function EnigViewAbout() {
-  DEBUG_LOG("enigmailCommon.js: EnigViewAbout\n");
-
-  toOpenWindowByType("enigmail:about",
-                     "chrome://enigmail/content/enigmailAbout.xul");
-}
-
 function EnigViewConsole() {
   DEBUG_LOG("enigmailCommon.js: EnigViewConsole\n");
+  window.open('enigmail:console', 'Enigmail Console');
 
-  toOpenWindowByType("enigmail:console",
-                     "chrome://enigmail/content/enigmailConsole.xul");
+  //var navWindow = LoadURLInNavigatorWindow("enigmail:console", true);
+  //if (navWindow) navWindow.focus();
 }
 
 function EnigViewDebugLog() {
@@ -810,7 +774,7 @@ function LoadURLInNavigatorWindow(url, aOpenFlag)
 
   } else if (aOpenFlag) {
     // if no browser window available and it's ok to open a new one, do so
-    navWindow = window.open(url, "Enigmail");
+    navWindow = window.open(url, "EnigmailConsole");
   }
 
   DEBUG_LOG("enigmailCommon.js: LoadURLInNavigatorWindow: navWindow="+navWindow+"\n");
