@@ -1,8 +1,8 @@
 // enigmailCommon.js: shared JS functions for Enigmail
 
 // This Enigmail version and compatible Enigmime version
-var gEnigmailVersion = "0.65.0.0";
-var gEnigmimeVersion = "0.65.0.0";
+var gEnigmailVersion = "0.65.1.0";
+var gEnigmimeVersion = "0.65.1.0";
 
 // Maximum size of message directly processed by Enigmail
 const ENIG_MSG_BUFFER_SIZE = 32000;
@@ -102,6 +102,19 @@ try {
 
 } catch (ex) {
   ERROR_LOG("enigmailCommon.js: Error in instantiating PrefService\n");
+}
+
+function EnigGetFrame(win, frameName) {
+  DEBUG_LOG("enigmailCommon.js: EnigGetFrame: name="+frameName+"\n");
+  dump("direct="+win.frames[frameName]+"\n");
+  for (var j=0; j<win.frames.length; j++) {
+    dump(win.frames[j].name+"\n");
+    if (win.frames[j].name == frameName) {
+      return win.frames[j];
+    }
+  }
+
+  return null;
 }
 
 var gPromptService;

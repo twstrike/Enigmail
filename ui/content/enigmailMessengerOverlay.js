@@ -446,7 +446,7 @@ function enigMessageDecrypt(event) {
       DEBUG_LOG("enigmailMessengerOverlay.js: loading enigmail:dummy ...\n");
       gEnigNoShowReload = true;
 
-      var msgFrame = window.frames["messagepane"];
+      var msgFrame = EnigGetFrame(window, "messagepane");
       msgFrame.location = "enigmail:dummy";
 
       return;
@@ -481,7 +481,7 @@ function enigMessageDecrypt(event) {
 
 function enigMessageParse(interactive, importOnly, contentEncoding) {
   DEBUG_LOG("enigmailMessengerOverlay.js: enigMessageParse: "+interactive+"\n");
-  var msgFrame = window.frames["messagepane"];
+  var msgFrame = EnigGetFrame(window, "messagepane");
   DEBUG_LOG("enigmailMessengerOverlay.js: msgFrame="+msgFrame+"\n");
 
   ///EnigDumpHTML(msgFrame.document.documentElement);
@@ -623,7 +623,7 @@ function enigMessageParseCallback(msgText, contentEncoding, charset, interactive
                            charset:charset,
                            plainText:plainText};
 
-  var msgFrame = window.frames["messagepane"];
+  var msgFrame = EnigGetFrame(window, "messagepane");
   var bodyElement = msgFrame.document.getElementsByTagName("body")[0];
 
   try {
