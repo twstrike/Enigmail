@@ -1,7 +1,6 @@
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
 // Initialize enigmailCommon
-EnigInitCommon("enigmailMsgHdrViewOverlay");
 
 window.addEventListener("load", enigHdrViewLoad, false);
 
@@ -222,34 +221,21 @@ addEventListener('messagepane-loaded', enigMsgHdrViewLoad, true);
 
 // THE FOLLOWING OVERRIDES CODE IN msgHdrViewOverlay.js
 
-var fEnigOpenAttachmentFunc = function (msg)
-  {
-    DEBUG_LOG("enigmailMsgHdrViewOverlay.js: openAttachment: "+msg.contentType+"\n");
-
-    if (msg.contentType.search(/^message\/rfc822/i) == 0) {
-      // Reset mail.show_headers pref to "original" value
-      EnigShowHeadersAll(false);
-    }
-
-    fEnigOpenAttachment(msg);
-  }
-
 var fEnigOpenAttachment;
-try {
-  // Mozilla <= 1.5
-  if (openAttachment) {
-    fEnigOpenAttachment = openAttachment;
-    openAttachment = fEnigOpenAttachmentFunc;
-  }
-} catch (ex) {
-  // Mozilla >= 1.6a
-  if (createNewAttachmentInfo.prototype.openAttachment) {
-    fEnigOpenAttachment = createNewAttachmentInfo.prototype.openAttachment;
-    createNewAttachmentInfo.prototype.openAttachment = fEnigOpenAttachmentFunc;
+if (openAttachment) {
+  fEnigOpenAttachment = openAttachment;
+  openAttachment = function (msg)
+    {
+      DEBUG_LOG("enigmailMsgHdrViewOverlay.js: openAttachment: "+msg.contentType+"\n");
 
-  }
+      if (msg.contentType.search(/^message\/rfc822/i) == 0) {
+        // Reset mail.show_headers pref to "original" value
+        EnigShowHeadersAll(false);
+      }
+
+      fEnigOpenAttachment(msg);
+    }
 }
-fEnigOpenAttachmentFunc=null;
 
 if (messageHeaderSink) {
     // Modify the methods onStartHeaders, getSecurityinfo, setSecurityInfo
@@ -266,7 +252,7 @@ if (messageHeaderSink) {
       // clear out any pending collected address timers...
       if (gCollectAddressTimer)
       {
-        gCollectAddess = "";
+        gCollectAddess = "";        
         clearTimeout(gCollectAddressTimer);
         gCollectAddressTimer = null;
       }
