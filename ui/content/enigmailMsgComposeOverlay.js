@@ -57,10 +57,8 @@ function enigMsgComposeStartup() {
 
   if (smimeButton) {
     smimeButton.setAttribute("label", "S/MIME");
-/*  Doesn't make sense with Thunderbird
     if (EnigGetPref("disableSMIMEui"))
         smimeButton.setAttribute("collapsed", "true");
-*/
   }
 
   enigSetImmediateSendMenu();
@@ -122,7 +120,7 @@ function enigMsgComposeReset() {
 }
 
 function enigDisplaySendButton() {
-/* doesn't work with Thunderbird...
+
   if (EnigGetPref("defaultEncryptionOption")) {
      gEnigSendButton.removeAttribute("collapsed");
      gEnigOrigSendButton.setAttribute("collapsed", "true");
@@ -130,7 +128,7 @@ function enigDisplaySendButton() {
   } else {
      gEnigOrigSendButton.removeAttribute("collapsed");
      gEnigSendButton.setAttribute("collapsed", "true");
-  }*/
+  }
 }
 
 function enigInitRadioMenu(prefName, optionIds) {
@@ -588,13 +586,15 @@ function enigSend(sendFlags, elementId) {
 
               window.openDialog("chrome://enigmail/content/enigmailUserSelection.xul","", "dialog,modal,centerscreen", inputObj, resultObj);
               try {
-                toAddr = resultObj.userList.join(", ");
-                testCipher="ok";
-                testExitCodeObj.value = 0;
                 if (! resultObj.encrypt) {
                   // encryption explicitely turned off
                   sendFlags &= ~ENIG_ENCRYPT;
                 }
+                else {
+                  toAddr = resultObj.userList.join(", ");
+                }
+                testCipher="ok";
+                testExitCodeObj.value = 0;
               } catch (ex) {
                 // cancel pressed -> don't send mail
                 return;
@@ -1227,9 +1227,9 @@ function enigEncryptAttachments(bucketList, newAttachments, window, uiFlags,
                                 errorMsgObj);
     } catch (ex) {}
 
-    if (exitCodeObj.value != 0 || statusFlagsObj.value != 0) {
-      return -1;
-    }
+    if (exitCodeObj.value != 0)
+       return exitCodeObj.value;
+
 
     var fileInfo = new Object();
     fileInfo.origFile  = origFile;
