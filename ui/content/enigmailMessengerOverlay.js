@@ -39,8 +39,8 @@ function enigMessengerStartup() {
 
   // Override print command
   var printElementIds = ["cmd_print", "cmd_printpreview", "key_print", "button-print",
-                         "threadPaneContext-print",
-                         "messagePaneContext-print"];
+                         "threadPaneContext-print", "threadPaneContext-printpreview",
+                         "messagePaneContext-print", "messagePaneContext-printpreview"];
 
   EnigOverrideAttribute( printElementIds, "oncommand",
                          "enigMsgPrint('", "');");
@@ -900,11 +900,44 @@ function enigGetDecryptedMessage(contentType, includeHeaders) {
     // message/rfc822
 
     if (includeHeaders) {
-      for (headerName in headerList) {
-        headerValue = headerList[headerName];
+      try {
+        var uriSpec = enigGetCurrentMsgUriSpec();
 
-        if (headerValue)
+        if (uriSpec) {
+          var msgService = messenger.messageServiceFromURI(uriSpec);
+
+          var urlObj = new Object();
+          msgService.GetUrlForUri(uriSpec, urlObj, msgWindow);
+          var msgData, msgHdr
+          if(urlObj.value.scheme=="news") {
+            msgData = urlObj.value.QueryInterface(Components.interfaces.nsINntpUrl);
+            msgHdr = { "From":    msgData.messageHeader.author,
+                        "Subject": msgData.messageHeader.subject,
+                        "Cc":      msgData.messageHeader.ccList,
+                        "To":      msgData.messageHeader.recipients,
+                        "Date":    headerList.date,
+                        "Newsgroups": msgData.messageHeader.folder.name };
+          }
+          else {
+            msgData = urlObj.value.QueryInterface(Components.interfaces.nsIMailboxUrl);
+            msgHdr = { "From":    msgData.messageHeader.author,
+                        "Subject": msgData.messageHeader.subject,
+                        "Cc":      msgData.messageHeader.ccList,
+                        "To":      msgData.messageHeader.recipients,
+                        "Date":    headerList.date };
+          }
+          for (headerName in msgHdr) {
+            if (msgHdr[headerName])
+              contentData += headerName + ": " + msgHdr[headerName] + "\r\n";
+          }
+        }
+      } catch (ex) {
+        // the above seems to fail every now and then
+        // so, here is the fallback
+        for (headerName in headerList) {
+          headerValue = headerList[headerName];
           contentData += headerName + ": " + headerValue + "\r\n";
+        }
       }
     }
 
@@ -973,16 +1006,13 @@ function enigGetDecryptedMessage(contentType, includeHeaders) {
   return contentData;
 }
 
-function enigMsgDefaultPrint(contextMenu, elementId) {
-  DEBUG_LOG("enigmailMessengerOverlay.js: enigMsgDefaultPrint: "+contextMenu+"\n");
+function enigMsgDefaultPrint(elementId) {
+  DEBUG_LOG("enigmailMessengerOverlay.js: enigMsgDefaultPrint: "+elementId+"\n");
 
   // Reset mail.show_headers pref to "original" value
   EnigShowHeadersAll(false);
 
-  if (contextMenu)
-    PrintEnginePrint();
-  else
-    goDoCommand(elementId == "cmd_printpreview" ? cmd_printpreview : "cmd_print");
+  goDoCommand(elementId.indexOf("printpreview")>=0 ? "cmd_printpreview" : "cmd_print");
 }
 
 function enigMsgForward(elementId, event) {
@@ -1009,21 +1039,21 @@ function enigMsgPrint(elementId) {
   var contextMenu = (elementId.search("Context") > -1);
 
   if (!gEnigDecryptedMessage)
-    enigMsgDefaultPrint(contextMenu, elementId);
+    enigMsgDefaultPrint(elementId);
 
   var mailNewsUrl = enigGetCurrentMsgUrl();
 
   if (!mailNewsUrl)
-    enigMsgDefaultPrint(contextMenu, elementId);
+    enigMsgDefaultPrint(elementId);
 
   if (gEnigDecryptedMessage.url != mailNewsUrl.spec) {
     gEnigDecryptedMessage = null;
-    enigMsgDefaultPrint(contextMenu);
+    enigMsgDefaultPrint(elementId);
   }
 
   var enigmailSvc = GetEnigmailSvc();
   if (!enigmailSvc)
-    enigMsgDefaultPrint(contextMenu, elementId);
+    enigMsgDefaultPrint(elementId);
 
   // Note: Trying to print text/html content does not seem to work with
   //       non-ASCII chars
@@ -1046,7 +1076,7 @@ function enigMsgPrint(elementId) {
     gPrintSettings = GetPrintSettings();
   }
 
-  var printPreview = (elementId == "cmd_printpreview");
+  var printPreview = (elementId.indexOf("printpreview")>=0);
   var printEngineWindow = window.openDialog("chrome://messenger/content/msgPrintEngine.xul",
                                         "",
                                         "chrome,dialog=no,all",
@@ -1089,6 +1119,8 @@ function enigMessageSave() {
 
   var textContent = enigGetDecryptedMessage("text/plain", true);
 
+  EnigAlert(textContent);
+  
   if (!EnigWriteFileContents(saveFile.path, textContent, null)) {
     EnigAlert("Error in saving to file "+saveFile.path);
     return;
