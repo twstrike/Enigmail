@@ -1,8 +1,8 @@
 // enigmailCommon.js: shared JS functions for Enigmail
 
 // This Enigmail version and compatible Enigmime version
-var gEnigmailVersion = "0.80.0.0";
-var gEnigmimeVersion = "0.80.0.0";
+var gEnigmailVersion = "0.76.4.0";
+var gEnigmimeVersion = "0.76.4.0";
 
 // Maximum size of message directly processed by Enigmail
 const ENIG_MSG_BUFFER_SIZE = 96000;
@@ -92,19 +92,19 @@ var gEnigmailPrefDefaults = {"configuredVersion":"",
                              "noPassphrase":false,
                              "usePGPMimeOption":PGP_MIME_POSSIBLE,
                              "mimeHashAlgorithm":1,
-                             "defaultEncryptionOption":0,
+                             "defaultEncryptionOption":1,
                              "defaultSignMsg":false,
                              "defaultSignNewsMsg":false,
                              "alwaysTrustSend":true,
                              "encryptToSelf":true,
                              "confirmBeforeSend":false,
-                             "doubleDashSeparator":true,
+                             "doubleDashSeparator":false,
                              "maxIdleMinutes":5,
                              "keyserver":"wwwkeys.pgp.net",
                              "autoDecrypt":true,
                              "captureWebMail":false,
                              "useMimeExperimental":false,
-                             "disableSMIMEui":false,
+                             "disableSMIMEui":true,
                              "parseAllHeaders":true,
                              "show_headers":1,
                              "hushMailSupport":false,
@@ -113,6 +113,7 @@ var gEnigmailPrefDefaults = {"configuredVersion":"",
                              "inlineAttachExt":".pgp",
                              "handleDoubleClick":false,
                              "sendImmediately":true,
+                             "wrapHtmlBeforeSend":true,
                              "recipientsSelectionOption":1
                             };
 
@@ -569,8 +570,9 @@ function EnigOverrideAttribute(elementIdList, attrName, prefix, suffix) {
 
 
 function EnigPrefWindow() {
-  window.openDialog("chrome://enigmail/content/pref-enigmail.xul",
-                    "_blank", "chrome,resizable=yes");
+  goPreferences("securityItem",
+                "chrome://enigmail/content/pref-enigmail.xul",
+                "enigmail");
 }
 
 function EnigAdvPrefWindow() {
@@ -1116,62 +1118,4 @@ function EnigGetTempDir() {
     }
   }
   return tmpDir;
-}
-
-
-function EnigDisplayPrefs(showDefault, showPrefs, setPrefs) {
-   DEBUG_LOG("enigmailCommon.js: EnigDisplayPrefs\n");
-
-   for (var prefName in gEnigmailPrefDefaults) {
-      var prefElement = document.getElementById("enigmail_"+prefName);
-
-      if (prefElement) {
-         var defaultValue = gEnigmailPrefDefaults[prefName];
-         var prefValue = showDefault ? defaultValue : EnigGetPref(prefName);
-
-         DEBUG_LOG("enigmailCommon.js: EnigDisplayPrefs: "+prefName+"="+prefValue+"\n");
-
-         switch (typeof defaultValue) {
-         case "boolean":
-            if (showPrefs) {
-               if (prefValue) {
-                  prefElement.setAttribute("checked", "true");
-               } else {
-                  prefElement.removeAttribute("checked");
-               }
-            }
-
-            if (setPrefs) {
-               if (prefElement.checked) {
-                  EnigSetPref(prefName, true);
-               } else {
-                  EnigSetPref(prefName, false);
-               }
-            }
-
-         break;
-
-         case "number":
-            if (showPrefs)
-              prefElement.value = prefValue;
-
-            if (setPrefs) {
-               try {
-                 EnigSetPref(prefName, 0+prefElement.value);
-               } catch (ex) {
-               }
-            }
-         break;
-
-         case "string":
-            if (showPrefs)
-              prefElement.value = prefValue;
-            if (setPrefs)
-              EnigSetPref(prefName, prefElement.value);
-            break;
-
-         default:
-         }
-      }
-   }
 }
