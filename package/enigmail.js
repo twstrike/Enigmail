@@ -736,11 +736,6 @@ function (aSpec, originCharset, aBaseURI)
 {
   DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.newURI: aSpec='"+aSpec+"'\n");
 
-  if (aBaseURI) {
-    ERROR_LOG("enigmail.js: Enigmail: Error - BaseURI for enigmail: protocol!");
-    throw Components.results.NS_ERROR_FAILURE;
-  }
-    
   var uri = Components.classes[NS_SIMPLEURI_CONTRACTID].createInstance(Components.interfaces.nsIURI);
   uri.spec = aSpec;
     
@@ -1125,7 +1120,7 @@ function (passphrase) {
     var delayMillisec = maxIdleMinutes*60*1000;
 
     gCacheTimer.init(this, delayMillisec,
-                     nsIScriptableTimer.PRIORITY_NORMAL,
+                     false,
                      nsIScriptableTimer.TYPE_REPEATING_SLACK);
 
   }
@@ -1217,7 +1212,9 @@ function (domWindow, version, prefBranch) {
                           NS_ENIGMSGCOMPOSE_CID);
   } catch (ex) {}
 
-  var httpHandler = Components.classesByID[NS_HTTPPROTOCOLHANDLER_CID_STR].createInstance();
+  var ioServ = Components.classes[NS_IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
+
+  var httpHandler = ioServ.getProtocolHandler("http");
   httpHandler = httpHandler.QueryInterface(nsIHttpProtocolHandler);
 
   this.oscpu = httpHandler.oscpu;
