@@ -778,6 +778,18 @@ function enigSend(sendFlags, elementId) {
 
        var encoderFlags = EnigOutputFormatted | EnigOutputLFLineBreak;
 
+       if (gMsgCompose.composeHTML && !(sendFlags & ENIG_ENCRYPT)
+           && EnigGetPref("wrapHtmlBeforeSend")) {
+          // enforce line wrapping here
+          // otherwise the message isn't signed correctly
+          try {
+             var wrapWidth = gEnigPrefRoot.getIntPref("editor.htmlWrapColumn");
+             var editor = gMsgCompose.editor.QueryInterface(nsIPlaintextEditorMail);
+             editor.wrapWidth=wrapWidth;
+             editor.rewrap(false);
+          } catch (ex) {}
+       }
+
        // Get plain text
        // (Do we need to set the nsIDocumentEncoder::* flags?)
        var origText = EnigEditorGetContentsAs("text/plain",
@@ -811,16 +823,6 @@ function enigSend(sendFlags, elementId) {
 
        // Replace plain text and get it again (to avoid linewrapping problems)
        enigReplaceEditorText(escText);
-
-       if (gMsgCompose.composeHTML && !(sendFlags & ENIG_ENCRYPT)
-           && EnigGetPref("wrapHtmlBeforeSend")) {
-          // enforce line wrapping here
-          // otherwise the message isn't signed correctly
-          var wrapWidth = gEnigPrefRoot.getIntPref("editor.htmlWrapColumn");
-          var editor = gMsgCompose.editor.QueryInterface(nsIPlaintextEditorMail);
-          editor.wrapWidth=wrapWidth;
-          editor.rewrap(true);
-       }
 
        escText = EnigEditorGetContentsAs("text/plain", encoderFlags);
 
