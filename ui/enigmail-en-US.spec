@@ -1,7 +1,7 @@
 Name:      mozilla-enigmail-en-US
-Version:   0.65.2
+Version:   0.65.3
 Release:   1
-Requires:  mozilla-enigmail = 0.65.2
+Requires:  mozilla-enigmail = 0.65.3
 Summary:   Language pack for Enigmail (en-US)
 Copyright: Mozilla Public License 1.1/GPL
 Group:     Applications/Internet
