@@ -45,9 +45,9 @@ const USER_ID = 9;
 var gUserList;
 var gArguments=arguments;
 var gResult;
-var gImg0="chrome://enigmail/skin/check0.png";
-var gImg1="chrome://enigmail/skin/check1.png";
-var gImg2="chrome://enigmail/skin/check2.png";
+var gImg0="chrome://enigmail/skin/check0.bmp";
+var gImg1="chrome://enigmail/skin/check1.bmp";
+var gImg2="chrome://enigmail/skin/check2.bmp";
 
 // set the "active" flag and the corresponding image
 function enigSetActive(element, status) {
@@ -72,6 +72,7 @@ function enigSetActive(element, status) {
 function enigmailUserSelLoad() {
    DEBUG_LOG("enigmailUserSelection.js: Load\n");
 
+   window.arguments[1].cancelled=true;
    var sortUsers = function (a,b) {
 
      if (a.userId<b.userId) { return -1;} else {return 1; }
@@ -226,6 +227,7 @@ function enigmailUserSelAccept() {
   
   var encrypt = document.getElementById("enigmailUserSelPlainText");
   resultObj.encrypt = !(encrypt && encrypt.checked==true);
+  resultObj.cancelled=false;
   
 }
 

@@ -586,7 +586,10 @@ function enigSend(sendFlags, elementId) {
 
               window.openDialog("chrome://enigmail/content/enigmailUserSelection.xul","", "dialog,modal,centerscreen", inputObj, resultObj);
               try {
-                if (! resultObj.encrypt) {
+                if (resultObj.cancelled){
+                   return;
+                }
+                if (! resultObj.encrypt){
                   // encryption explicitely turned off
                   sendFlags &= ~ENIG_ENCRYPT;
                 }
