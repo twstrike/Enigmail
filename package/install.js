@@ -1,11 +1,10 @@
 // Install script for Enigmail
 
 var err;
-const APP_VERSION="0.80.0";
 
-err = initInstall("Enigmail v"+APP_VERSION,  // name for install UI
+err = initInstall("Enigmail v0.76.8",  // name for install UI
                   "/enigmail",         // registered name
-                  APP_VERSION+".0");         // package version
+                  "0.76.8.0");         // package version
 
 logComment("initInstall: " + err);
 
@@ -53,7 +52,6 @@ if (!verifyDiskSpace(fProgram, srDest)) {
 
     } else {
       performInstall();
-      alert("Enigmail v"+APP_VERSION+" has been successfully installed. Restart after EingMime has been installed as well.");
     }
   }
 }

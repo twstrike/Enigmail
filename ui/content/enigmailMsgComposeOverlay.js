@@ -317,7 +317,7 @@ function enigGetUserList(window, sendFlags, exitCodeObj, statusFlagsObj, errorMs
   var aUserList = new Array();
   try {
     var enigmailSvc = GetEnigmailSvc();
-    var listText = enigmailSvc.getUserIdList(window, sendFlags,
+    var userText = enigmailSvc.getUserIdList(window, sendFlags,
                                             exitCodeObj,
                                             statusFlagsObj,
                                             errorMsgObj);
@@ -326,22 +326,21 @@ function enigGetUserList(window, sendFlags, exitCodeObj, statusFlagsObj, errorMs
       return null;
     }
 
-    listText.replace(/\r\n/g, "\n");
-    listText.replace(/\r/g, "\n");
-    var startIndex=listText.indexOf("----\n")+5;
-    var nextIndex=listText.indexOf("\n",startIndex+1);
+    userText.replace(/\r\n/g, "\n");
+    userText.replace(/\r/g, "\n");
+    var removeIndex=userText.indexOf("----\n");
+    userText = userText.substring(removeIndex + 5);
 
-    while (startIndex < listText.length && startIndex>=0) {
-        var theLine=listText.substring(startIndex+1,nextIndex);
+    while (userText.length >0) {
+        var theLine=userText.substring(0,userText.indexOf("\n"));
+        theLine.replace(/\n/, "");
         if (theLine.length>0) {
           aUserList.push(theLine.split(/\:/)); ///
         }
-        startIndex=nextIndex;
-        nextIndex=listText.indexOf("\n",startIndex+1);
+        userText=userText.substring(theLine.length+1);
     }
-
   } catch (ex) {}
-
+   
   return aUserList;
 }
 
@@ -1352,8 +1351,8 @@ function enigDecryptQuote(interactive) {
     tail     =     tail.replace(indentRegexp, "");
 
     // Handle blank indented lines
-    pgpBlock = pgpBlock.replace(/^[ \t]*>[ \t]*$/g, "");
-    tail     =     tail.replace(/^[ \t]*>[ \t]*$/g, "");
+    pgpBlock = pgpBlock.replace(/^[ \t]*>[ \t]*)$/g, "");
+    tail     =     tail.replace(/^[ \t]*>[ \t]*)$/g, "");
 
     // Trim leading space in tail
     tail = tail.replace(/^\s*\n/, "\n");
