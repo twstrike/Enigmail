@@ -34,8 +34,8 @@ GPL.
 // enigmailCommon.js: shared JS functions for Enigmail
 
 // This Enigmail version and compatible Enigmime version
-var gEnigmailVersion = "0.89.5.0";
-var gEnigmimeVersion = "0.89.5.0";
+var gEnigmailVersion = "0.89.6.0";
+var gEnigmimeVersion = "0.89.6.0";
 
 // Maximum size of message directly processed by Enigmail
 const ENIG_MSG_BUFFER_SIZE = 96000;
@@ -491,6 +491,11 @@ function CONSOLE_LOG(str) {
 
 function EnigAlert(mesg) {
   gEnigPromptSvc.alert(window, EnigGetString("enigAlert"), mesg);
+}
+
+function EnigLongAlert(mesg) {
+  window.openDialog("chrome://enigmail/content/enigmailAlertDlg.xul",
+            "", "chrome,modal,centerscreen", {msgtext: mesg});
 }
 
 function EnigAlertCount(countPrefName, mesg) {
@@ -1088,7 +1093,7 @@ function EnigGetWindowOptions() {
 }
 function EnigViewAbout() {
   DEBUG_LOG("enigmailCommon.js: EnigViewAbout\n");
-
+  
   EnigOpenWin ("about:enigmail",
                "chrome://enigmail/content/enigmailAbout.xul",
                "resizable,centerscreen");
