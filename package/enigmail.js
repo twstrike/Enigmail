@@ -1470,7 +1470,7 @@ function () {
 
   try {
     var  gpgVersion = this.agentVersion.match(/^\d+\.\d+/);
-    if (gpgVersion && gpgVersion[0] >= 1.2) {
+    if (gpgVersion && gpgVersion[0] >= "1.2") {
       if (! this.prefBranch.getBoolPref("useGpgAgent")) {
         command = " --no-use-agent ";
       }
