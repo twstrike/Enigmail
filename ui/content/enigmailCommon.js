@@ -34,8 +34,8 @@ GPL.
 // enigmailCommon.js: shared JS functions for Enigmail
 
 // This Enigmail version and compatible Enigmime version
-var gEnigmailVersion = "0.92.0.0";
-var gEnigmimeVersion = "0.92.0.0";
+var gEnigmailVersion = "0.92.1.0";
+var gEnigmimeVersion = "0.92.1.0";
 
 // Maximum size of message directly processed by Enigmail
 const ENIG_MSG_BUFFER_SIZE = 96000;
@@ -62,7 +62,6 @@ const ENIG_CLIPBOARD_HELPER_CONTRACTID = "@mozilla.org/widget/clipboardhelper;1"
 const ENIG_TRANSFERABLE_CONTRACTID = "@mozilla.org/widget/transferable;1"
 const ENIG_LOCALE_SVC_CONTRACTID = "@mozilla.org/intl/nslocaleservice;1";
 const ENIG_DATE_FORMAT_CONTRACTID = "@mozilla.org/intl/scriptabledateformat;1"
-const ENIG_ACCOUNT_MANAGER_CONTRACTID = "@mozilla.org/messenger/account-manager;1";
 
 const ENIG_LOCALFILEOUTPUTSTREAM_CONTRACTID =
                               "@mozilla.org/network/file-output-stream;1";
@@ -254,7 +253,7 @@ function GetEnigmailSvc() {
 }
 
 
-function EnigUpdatePre0_8() {
+function EnigUpdate_0_80() {
   try {
     var oldVer=EnigGetPref("configuredVersion");
 
@@ -262,8 +261,7 @@ function EnigUpdatePre0_8() {
       if ((oldVer.substring(0,4)<"0.89") && (navigator.vendor=="Thunderbird")) {
         // uninstall globally installed enigmime on Thunderbird
         var ioService = enigGetService("@mozilla.org/network/io-service;1", "nsIIOService");
-        var dirService = enigGetService("@mozilla.org/file/directory_service;1", "nsIProperties");
-        var sysCompDir = dirService.get("ComsD", ENIG_C.interfaces.nsIFile);
+        var sysCompDir = this.gDirService.get("ComsD", ENIG_C.interfaces.nsIFile);
         
         for (var f in [ "enigmime.xpt", "libenigmime.so", "enigmail.dll", "libenigmime.dylib" ]) {
           var compFile = sysCompDir.clone();
@@ -286,7 +284,8 @@ function EnigUpdatePre0_8() {
         }
       }
       if (oldVer.substring(0,4)<"0.81") {
-        EnigOpenSetupWizard();
+        window.open("chrome://enigmail/content/enigmailUpgrade.xul",
+            "", "chrome,modal,centerscreen");
       }
     }
   }
@@ -296,15 +295,52 @@ function EnigUpdatePre0_8() {
 function EnigConfigure() {
   try {
     // Updates for specific versions (to be cleaned-up periodically)
-    EnigUpdatePre0_8();
+    EnigUpdate_0_80();
   } catch (ex) {}
 
-  var oldVer=EnigGetPref("configuredVersion");
-  if (oldVer == "") {
-    EnigOpenSetupWizard();
+  var msg = EnigGetString("configNow",gEnigmailVersion);
+
+  var checkValueObj = new Object();
+  checkValueObj.value = false;
+
+  var buttonPressed = gEnigPromptSvc.confirmEx(window,
+                                           EnigGetString("configEnigmail"),
+                                            msg,
+                                            ENIG_THREE_BUTTON_STRINGS,
+                                            EnigGetString("dlgYes"),
+                                            EnigGetString("dlgNo"),
+                                            EnigGetString("dlgNever"),
+                                            "",
+                                            checkValueObj);
+
+  DEBUG_LOG("enigmailCommon.js: EnigConfigure: "+buttonPressed+" \n");
+
+  if (buttonPressed == 1)  // Configure later
+    return;
+
+  var obj = new Object;
+  var prefList = gPrefEnigmail.getChildList("",obj);
+
+  for (var prefItem in prefList) {
+    var prefName=prefList[prefItem];
+    if (prefName.search(/AlertCount$/) >= 0) {
+       // Reset alert count to default value
+      try {
+        gPrefEnigmail.clearUserPref(prefName);
+      } catch(ex) {
+      }
+    }
   }
-  EnigSetPref("configuredVersion", gEnigmailVersion);
-  EnigSavePrefs();
+
+  if (buttonPressed == 0) {
+    // Configure now
+    EnigPrefWindow(true,(navigator.vendor=="Thunderbird" ? "thunderbird" : "seamonkey"));
+                             
+  } else {
+    // "Do not ask me again" => "already configured"
+    EnigSetPref("configuredVersion", gEnigmailVersion);
+    EnigSavePrefs();
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -821,10 +857,8 @@ EnigRequestObserver.prototype = {
 function EnigConvertFromUnicode(text, charset) {
   DEBUG_LOG("enigmailCommon.js: EnigConvertFromUnicode: "+charset+"\n");
 
-  if (!text)
-    return "";
-
-  if (! charset) charset="utf-8";
+  if (!text || !charset /*|| (charset.toLowerCase() == "iso-8859-1")*/)
+    return text;
 
   // Encode plaintext
   try {
@@ -1489,9 +1523,6 @@ function EnigLoadKeyList(refresh, keyListObj) {
         keyObj.fpr=listRow[USER_ID];
         break;
       case "uid":
-        if (listRow[USER_ID].length == 0) {
-          listRow[USER_ID] = "-";
-        }
         if (typeof(keyObj.userId) != "string") {
           keyObj.userId=EnigConvertGpgToUnicode(listRow[USER_ID].replace(/\\e3A/g, ":"));
           keyListObj.keySortList.push({userId: keyObj.userId, keyId: keyObj.keyId});
@@ -1700,9 +1731,4 @@ function enigGetService (aURL, aInterface)
   }
   
   return null;
-}
-
-function EnigOpenSetupWizard() {
-  window.open("chrome://enigmail/content/enigmailSetupWizard.xul",
-            "", "chrome,modal,centerscreen");
 }

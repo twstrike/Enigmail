@@ -5,7 +5,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>{847b3a00-7ab1-11d4-8f02-006008948af5}</em:id>
-    <em:version>0.92.0</em:version>
+    <em:version>0.92.1</em:version>
     
     <!-- Target Applications this extension can install into, 
          with minimum and maximum supported versions. --> 
@@ -14,7 +14,7 @@
         <!-- Thunderbird -->
         <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
         <em:minVersion>1.0</em:minVersion>
-        <em:maxVersion>1.1</em:maxVersion>
+        <em:maxVersion>1.0</em:maxVersion>
       </Description>
       <Description>
         <!-- Mozilla Suite -->
@@ -42,7 +42,6 @@
         <em:package>content/enigmail/</em:package>
         <em:locale>locale/en-US/enigmail/</em:locale>
       </Description>
-      <!-- Thunderbird (platform-dependent) Theme JAR File -->
       <Description about="urn:mozilla:extension:file:enigmail-skin-tbird.jar">
         <em:skin>skin/classic/enigmail/</em:skin>
       </Description>
