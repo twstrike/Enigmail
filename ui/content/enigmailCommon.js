@@ -34,8 +34,8 @@ GPL.
 // enigmailCommon.js: shared JS functions for Enigmail
 
 // This Enigmail version and compatible Enigmime version
-var gEnigmailVersion = "0.94.1.2.0";
-var gEnigmimeVersion = "0.94.1.2.0";
+var gEnigmailVersion = "0.94.2.0";
+var gEnigmimeVersion = "0.94.2.0";
 
 // Maximum size of message directly processed by Enigmail
 const ENIG_MSG_BUFFER_SIZE = 96000;
@@ -108,11 +108,13 @@ const ENIG_TEMPDIR_PROP = "TmpD";
 var gUsePGPMimeOptionList = ["usePGPMimeNever", "usePGPMimePossible",
                              "usePGPMimeAlways"];
 
-var gEnigRecipientsSelection = ["perRecipientRules",
-                                "perRecipientRulesAndEmail",
-                                "perEmailAddress",
-                                "askRecipientsAlways",
-                                "neverAsk"];
+var gEnigRecipientsSelectionOptions = ["askRecipientsNever",
+                                       "askRecipientsClever",
+                                       "askRecipientsAlways"];
+
+var gEnigPerRecipientRules = ["perRecipientRulesNo",
+                              "perRecipientRulesManual",
+                              "perRecipientRulesAlways"];
 
 const ENIG_BUTTON_POS_0           = 1;
 const ENIG_BUTTON_POS_1           = 1 << 8;
@@ -464,16 +466,6 @@ function CONSOLE_LOG(str) {
     gEnigmailSvc.console.write(str);
 }
 
-// write exception information
-function EnigWriteException(referenceInfo, ex) {
-  ERROR_LOG(referenceInfo+": caught exception: "
-            +ex.name+"\n"
-            +"Message: '"+ex.message+"'\n"
-            +"File:    "+ex.fileName+"\n"
-            +"Line:    "+ex.lineNumber+"\n"
-            +"Stack:   "+ex.stack+"\n");
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 
 function EnigAlert(mesg) {
@@ -601,22 +593,13 @@ function EnigOverrideAttribute(elementIdList, attrName, prefix, suffix) {
 
 function EnigPrefWindow(showBasic, clientType, selectTab) {
   DEBUG_LOG("enigmailCommon.js: EnigPrefWindow\n");
-
-  if (showBasic && clientType == "seamonkey" && selectTab==null) {
-    // Open the seamonkey pref window
-    goPreferences("securityItem",
-                  "chrome://enigmail/content/pref-enigmail.xul",
-                  "enigmail");
-  }
-  else {
-    // open the normal pref window
-    window.openDialog("chrome://enigmail/content/pref-enigmail.xul",
-                      "_blank", "chrome,resizable=yes",
-                      {'showBasic': showBasic,
-                      'clientType': clientType,
-                      'selectTab': selectTab});
-  }
+  window.openDialog("chrome://enigmail/content/pref-enigmail.xul",
+                    "_blank", "chrome,resizable=yes",
+                    {'showBasic': showBasic,
+                     'clientType': clientType,
+                     'selectTab': selectTab});
 }
+
 
 function EnigAdvPrefWindow() {
   EnigAlert("This function doesn't exist anymore!");
@@ -882,23 +865,46 @@ function EnigConvertToUnicode(text, charset) {
   }
 }
 
+
 function EnigConvertGpgToUnicode(text) {
   if (typeof(text)=="string") {
-    text = text.replace(/\\x3a/ig, "\\e3A");
-    a=text.search(/\\x[0-9a-fA-F]{2}/);
-    while (a>=0) {
-        ch=unescape('%'+text.substr(a+2,2));
-        r= new RegExp("\\"+text.substr(a,4));
-        text=text.replace(r, ch);
+    var a=text.search(/[\x80-\xFF]{2}/);
+    var b=0;
 
-        a=text.search(/\\x[0-9a-fA-F]{2}/);
+    while (a>=0) {
+      var ch=text.substr(a,2).toSource().substr(13,8).replace(/\\x/g, "\\u00");
+      var newCh=EnigConvertToUnicode(EnigConvertToUnicode(ch, "x-u-escaped"), "utf-8");
+      if (newCh != ch) {
+        var r=new RegExp(text.substr(a, 2), "g");
+        text=text.replace(r, newCh);
+      }
+      b=a+2;
+      a=text.substr(b+2).search(/[\x80-\xFF]{2}/);
+      if (a>=0) {
+        a += b+2;
+      }
     }
 
-    text = EnigConvertToUnicode(text, "utf-8");
+    a=text.search(/\\x3a/i);
+    if (a>0) {
+      text = text.replace(/\\x3a/ig, "\\e3A");
+    }
+
+    a=text.search(/\\x/);
+    while (a>=0) {
+      ch=text.substr(a,4).replace(/\\x/g, "\\u00");
+      newCh=EnigConvertToUnicode(ch, "x-u-escaped");
+      if (newCh != ch) {
+        r=new RegExp("\\"+text.substr(a, 4), "g");
+        text=text.replace(r, newCh);
+      }
+      a=text.search(/\\x/);
+    }
   }
 
   return text;
 }
+
 
 function EnigFormatFpr(fingerprint) {
   // format key fingerprint
@@ -1293,10 +1299,6 @@ function EnigDisplayPrefs(showDefault, showPrefs, setPrefs) {
       switch (prefType) {
       case gPrefEnigmail.PREF_BOOL:
         if (showPrefs) {
-          if (prefElement.getAttribute("invert") == "true") {
-            prefValue = ! prefValue;
-          }
-
           if (prefValue) {
             prefElement.setAttribute("checked", "true");
           } else {
@@ -1305,20 +1307,10 @@ function EnigDisplayPrefs(showDefault, showPrefs, setPrefs) {
         }
 
         if (setPrefs) {
-
-          if (prefElement.getAttribute("invert") == "true") {
-            if (prefElement.checked) {
-              EnigSetPref(prefName, false);
-            } else {
-              EnigSetPref(prefName, true);
-            }
-          }
-          else {
-            if (prefElement.checked) {
-              EnigSetPref(prefName, true);
-            } else {
-              EnigSetPref(prefName, false);
-            }
+          if (prefElement.checked) {
+            EnigSetPref(prefName, true);
+          } else {
+            EnigSetPref(prefName, false);
           }
         }
 
@@ -1547,12 +1539,12 @@ function EnigLoadKeyList(refresh, keyListObj) {
           listRow[USER_ID] = "-";
         }
         if (typeof(keyObj.userId) != "string") {
-          keyObj.userId=EnigConvertGpgToUnicode(listRow[USER_ID]).replace(/\\e3A/g, ":");
+          keyObj.userId=EnigConvertGpgToUnicode(listRow[USER_ID].replace(/\\e3A/g, ":"));
           keyListObj.keySortList.push({userId: keyObj.userId, keyId: keyObj.keyId});
         }
         else {
           var subUserId = {
-            userId: EnigConvertGpgToUnicode(listRow[USER_ID]).replace(/\\e3A/g, ":"),
+            userId: EnigConvertGpgToUnicode(listRow[USER_ID].replace(/\\e3A/g, ":")),
             keyTrust: listRow[KEY_TRUST],
             type: "uid"
           }
@@ -1759,23 +1751,4 @@ function enigGetService (aURL, aInterface)
   }
 
   return null;
-}
-
-function EnigCollapseAdvanced(obj, attribute, dummy) {
-  DEBUG_LOG("enigmailCommon.js: EnigCollapseAdvanced: test\n");
-
-  var advancedUser = EnigGetPref("advancedUser");
-
-  var obj = obj.firstChild;
-  while (obj) {
-    if (obj.getAttribute("advanced")) {
-      if (advancedUser) {
-        obj.removeAttribute(attribute);
-      }
-      else {
-        obj.setAttribute(attribute, "true");
-      }
-    }
-    obj = obj.nextSibling;
-  }
 }

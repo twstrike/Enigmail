@@ -1,22 +1,11 @@
 // Install script for Enigmail
 
 var err;
-const APP_VERSION="0.94.1.2";
-
-
-const ABI_PLATFORM_LINUX="Linux_x86-gcc3";
-const ABI_PLATFORM_WIN="WINNT_x86-msvc";
-const ABI_PLATFORM_DARWIN_PPC="Darwin_ppc-gcc3";
-const ABI_PLATFORM_DARWIN_X86="Darwin_x86-gcc3";
-
-const APP_PLATFORM_LINUX="linux";
-const APP_PLATFORM_WIN="win";
-const APP_PLATFORM_MAC="mac";
-const APP_PLATFORM_OTHER="other";
+const APP_VERSION="0.94.2";
 
 err = initInstall("Enigmail v"+APP_VERSION,  // name for install UI
                   "/enigmail",               // registered name
-                  APP_VERSION);              // package version
+                  APP_VERSION+".0");         // package version
 
 logComment("initInstall: " + err);
 
@@ -35,7 +24,7 @@ if (!verifyDiskSpace(fProgram, srDest)) {
   var fDefaults   = getFolder("Program", "defaults/pref");
 
   // workaround for Mozilla 1.8a3 and newer, failing to register enigmime correctly
-
+  
   var delComps = [ "compreg.dat" ]; // Components registry
 
   for (var j=0; j<delComps.length; j++) {
@@ -44,34 +33,10 @@ if (!verifyDiskSpace(fProgram, srDest)) {
         File.remove(delFile);
   }
 
-  switch (getPlatform()) {
-  case APP_PLATFORM_LINUX:
-    addDirectory("", "platform/"+ABI_PLATFORM_LINUX+"/components",    fComponents, "");
-    break;
-  case APP_PLATFORM_WIN:
-    addDirectory("", "platform/"+ABI_PLATFORM_WIN+"/components",    fComponents, "");
-    break;
-  case APP_PLATFORM_MAC:
-    addDirectory("", "platform/"+ABI_PLATFORM_DARWIN_PPC+"/components",    fComponents, "");
-    addDirectory("", "platform/"+ABI_PLATFORM_DARWIN_X86+"/components",    fComponents, "");
-    break;
-  }
-
-  err = getLastError();
-  if (err == DOES_NOT_EXIST) {
-    // error code: file does not exist
-    logComment("platform dependent directory does not exist: " + err);
-    resetError();
-  }
-  else if (err != SUCCESS) {
-    cancelInstall(err);
-  }
-
   // addDirectory: blank, archive_dir, install_dir, install_subdir
   addDirectory("", "components",    fComponents, "");
   addDirectory("", "chrome",        fChrome,     "");
   addDirectory("", "defaults/pref", fDefaults,   "");
-
 
   err = getLastError();
   if (err == ACCESS_DENIED) {
@@ -86,6 +51,15 @@ if (!verifyDiskSpace(fProgram, srDest)) {
     // Register chrome
 
     var isTbird = false;
+    var execFile = 'thunderbird' + (getPlatform() == "win" ? '.exe' : '-bin');
+    if (File.exists(getFolder(getFolder('Program'), execFile))) {
+      isTbird = confirm("Detected installation on Thunderbird. Is this correct?");
+    }
+    else {
+      isTbird = false;
+    }
+//  old way:
+//  var isTbird = !confirm("Which Theme do you want to install for Enigmail? Click:\n[ OK ] for Mozilla\n[ Cancel ] for Thunderbird");
 
     registerChrome(PACKAGE | DELAYED_CHROME, getFolder("Chrome","enigmail.jar"), "content/enigmail/");
 
@@ -135,19 +109,31 @@ function verifyDiskSpace(dirPath, spaceRequired) {
 // which platform?
 function getPlatform() {
   var platformStr;
-  var platformNode = "";
+  var platformNode;
 
   if('platform' in Install) {
     platformStr = new String(Install.platform);
 
     if (!platformStr.search(/^Macintosh/))
-      platformNode = APP_PLATFORM_MAC;
+      platformNode = 'mac';
     else if (!platformStr.search(/^Win/))
-      platformNode = APP_PLATFORM_WIN;
-    else if (platformStr.search(/Linux/))
-      platformNode = APP_PLATFORM_LINUX;
+      platformNode = 'win';
     else
-      platformNode = APP_PLATFORM_OTHER;
+      platformNode = 'unix';
+  }
+  else {
+    var fOSMac  = getFolder("Mac System");
+    var fOSWin  = getFolder("Win System");
+
+    logComment("fOSMac: "  + fOSMac);
+    logComment("fOSWin: "  + fOSWin);
+
+    if(fOSMac != null)
+      platformNode = 'mac';
+    else if(fOSWin != null)
+      platformNode = 'win';
+    else
+      platformNode = 'unix';
   }
 
   return platformNode;
