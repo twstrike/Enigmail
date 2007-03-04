@@ -83,6 +83,7 @@ const ENIG_C = Components;
 // Key algorithms
 const ENIG_KEYTYPE_DSA = 1;
 const ENIG_KEYTYPE_RSA = 2;
+const ENIG_MULTIPLE_PARTS = 0x20000000;
 
 // Interfaces
 const nsIEnigmail               = ENIG_C.interfaces.nsIEnigmail;

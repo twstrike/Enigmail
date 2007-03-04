@@ -127,6 +127,8 @@ var gXULOwner = null;         // Global XUL owner
 var gEnvList = [];            // Global environment list
 var gEnigStrBundle;           // Global string bundle
 
+const ENIG_MULTIPLE_PARTS = 0x20000000;
+
 // GPG status flags mapping (see doc/DETAILS file in the GnuPG distribution)
 var gStatusFlags = {GOODSIG:         nsIEnigmail.GOOD_SIGNATURE,
                     BADSIG:          nsIEnigmail.BAD_SIGNATURE,
@@ -144,6 +146,7 @@ var gStatusFlags = {GOODSIG:         nsIEnigmail.GOOD_SIGNATURE,
                     BAD_PASSPHRASE:  nsIEnigmail.BAD_PASSPHRASE,
                     BADARMOR:        nsIEnigmail.BAD_ARMOR,
                     NODATA:          nsIEnigmail.NODATA,
+                    ERROR:           nsIEnigmail.BAD_SIGNATURE | nsIEnigmail.DECRYPTION_FAILED,
                     DECRYPTION_FAILED: nsIEnigmail.DECRYPTION_FAILED,
                     DECRYPTION_OKAY: nsIEnigmail.DECRYPTION_OKAY,
                     TRUST_UNDEFINED: nsIEnigmail.UNTRUSTED_IDENTITY,
@@ -1987,6 +1990,29 @@ function (errOutput, statusFlagsObj, statusMsgObj) {
     }
   }
 
+  var plaintextCount=0;
+  var withinCryptoMsg = false;
+  var cryptoStartPat = /^BEGIN_DECRYPTION/;
+  var cryptoEndPat = /^END_DECRYPTION/;
+  var plaintextPat = /^PLAINTEXT /;
+
+  for (j=0; j<statusArray.length; j++) {
+    if (statusArray[j].search(cryptoStartPat) == 0) {
+      withinCryptoMsg = true;
+    }
+    else if (withinCryptoMsg && statusArray[j].search(cryptoEndPat) == 0) {
+      withinCryptoMsg = false;
+    }
+    else if (statusArray[j].search(plaintextPat) == 0) {
+      ++plaintextCount;
+      if (plaintextCount > 1) {
+        statusFlags |=  ENIG_MULTIPLE_PARTS;
+      }
+    }
+  }
+
+  if (plaintextCount > 1) statusFlags |= (nsIEnigmail.PARTIALLY_PGP | nsIEnigmail.DECRYPTION_FAILED | nsIEnigmail.BAD_SIGNATURE);
+
   statusFlagsObj.value = statusFlags;
   statusMsgObj.value   = statusArray.join("\n");
   var errorMsg         = errArray.join("\n");
@@ -2784,6 +2810,11 @@ function (parent, uiFlags, cipherText, signatureObj, exitCodeObj,
     statusFlagsObj.value |= nsIEnigmail.PARTIALLY_PGP;
   }
 
+  if (statusFlagsObj.value & ENIG_MULTIPLE_PARTS) {
+    plainText = EnigGetString("notePartEncrypted") + "\n\n" + plainText.substr(0, Number(sigDetailsObj.value));
+    sigDetailsObj.value = "";
+  }
+
 
   if (exitCodeObj.value == 0) {
     // Normal return
@@ -2981,6 +3012,7 @@ function (uiFlags, outputLen, pipeTransport, verifyOnly, noOutput,
         keyExpPat   = /EXPKEYSIG (\w{16}) (.*)$/i
         revKeyPat   = /REVKEYSIG (\w{16}) (.*)$/i;
         validSigPat =  /VALIDSIG (\w+) (.*) (\d+) (.*)/i;
+        plainTextPat = /PLAINTEXT_LENGTH (\w+)/i;
 
     } else {
         errLines = cmdErrorMsgObj.value.split(/\r?\n/);
@@ -2990,6 +3022,7 @@ function (uiFlags, outputLen, pipeTransport, verifyOnly, noOutput,
         keyExpPat   = /This key has expired/i;
         revKeyPat   = /This key has been revoked/i;
         validSigPat = /dummy-not-used/i;
+        plainTextPat = /dummy-not-used/i;
     }
 
     errorMsgObj.value = "";
@@ -3002,6 +3035,7 @@ function (uiFlags, outputLen, pipeTransport, verifyOnly, noOutput,
     var userId = "";
     var keyId = "";
     var sigDetails = "";
+    var plainTextLength = -1;
 
     for (j=0; j<errLines.length; j++) {
       matches = errLines[j].match(badSignPat);
@@ -3044,6 +3078,15 @@ function (uiFlags, outputLen, pipeTransport, verifyOnly, noOutput,
 
         break;
       }
+
+      if (statusFlagsObj.value & ENIG_MULTIPLE_PARTS) {
+        matches = errLines[j].match(plainTextPat);
+
+        if (matches && (matches.length >= 2)) {
+          plainTextLength = matches[1];
+          break;
+        }
+      }
     }
 
     if (goodSignature) {
@@ -3074,6 +3117,11 @@ function (uiFlags, outputLen, pipeTransport, verifyOnly, noOutput,
     userIdObj.value = userId;
     keyIdObj.value = keyId;
     sigDetailsObj.value = sigDetails;
+
+    if (plainTextLength > 0) {
+      sigDetailsObj.value = plainTextLength.toString();
+    }
+
 
     if (signed) {
       var trustPrefix = "";

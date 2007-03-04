@@ -155,6 +155,10 @@ function enigViewSecurityInfo(event, displaySmimeMsg) {
 
         enigHandleUnknownKey();
 
+    } else if (gEnigSecurityInfo.statusFlags & ENIG_MULTIPLE_PARTS) {
+
+      enigDisplayMimeMessage();
+
     } else if ( (gEnigSecurityInfo.statusFlags & nsIEnigmail.NODATA) &&
          (gEnigSecurityInfo.statusFlags &
            (nsIEnigmail.PGP_MIME_SIGNED | nsIEnigmail.PGP_MIME_ENCRYPTED)) ) {
@@ -180,6 +184,58 @@ function enigViewSecurityInfo(event, displaySmimeMsg) {
       EnigAlert(EnigGetString("noPgpMessage"));
     }
   }
+}
+
+function enigDisplayMimeMessage() {
+  DEBUG_LOG("enigmailMessengerOverlay.js: enigDisplayMimeMessage\n");
+
+  var charset = msgWindow ? msgWindow.mailCharacterSet : "";
+  var contentEncoding = "";
+
+  if ("content-transfer-encoding" in gEnigSavedHeaders) {
+    contentEncoding = gEnigSavedHeaders["content-transfer-encoding"];
+  }
+
+  enigMsgDirect(true, false, contentEncoding, charset, "", 0, "", "", enigDisplayMimeCallback)
+}
+
+function enigDisplayMimeCallback(msgText) {
+  DEBUG_LOG("enigmailMessengerOverlay.js: enigDisplayMimeCallback\n");
+
+  if (!msgText)
+    return;
+
+  var enigmailSvc = GetEnigmailSvc();
+  if (!enigmailSvc)
+    return;
+
+  var plainText;
+  var exitCode;
+  var statusFlags = 0;
+
+  var errorMsgObj    = new Object();
+  var keyIdObj       = new Object();
+  var exitCodeObj    = new Object();
+  var statusFlagsObj = new Object();
+  var userIdObj      = new Object();
+  var sigDetailsObj  = new Object();
+  var blockSeparationObj = new Object();
+  var signatureObj = new Object();
+  var uiFlags = nsIEnigmail.UI_INTERACTIVE;
+
+  plainText = enigmailSvc.decryptMessage(window, uiFlags, msgText,
+                                signatureObj, exitCodeObj, statusFlagsObj,
+                                keyIdObj, userIdObj, sigDetailsObj, errorMsgObj);
+
+  if (!plainText) {
+     if (interactive && gEnigSecurityInfo && gEnigSecurityInfo.statusInfo)
+       EnigLongAlert(gEnigSecurityInfo.statusInfo);
+     return;
+  }
+
+  // hard-coded to avoid localization for security patch
+  plainText = "Warning: multiple OpenPGP message blocks detected" + "\n\n" + plainText + "\n\n" + "End of first OpenPGP block";
+  EnigLongAlert(EnigGetString("securityInfo")+gEnigSecurityInfo.statusInfo+"\n---------------------------------\n"+plainText);
 }
 
 function enigInitViewHeadersMenu() {
@@ -802,7 +858,7 @@ function enigMessageParseCallback(msgText, contentEncoding, charset, interactive
     if (retry) {
       // Try to verify signature by accessing raw message text directly
       // (avoid recursion by setting retry parameter to false on callback)
-      enigMsgDirect(interactive, importOnly, contentEncoding, charset, newSignature, 0, head, tail);
+      enigMsgDirect(interactive, importOnly, contentEncoding, charset, newSignature, 0, head, tail, enigMessageParseCallback);
       return;
     }
   }
@@ -1075,27 +1131,40 @@ function enigGetDecryptedMessage(contentType, includeHeaders) {
           var urlObj = new Object();
           msgService.GetUrlForUri(uriSpec, urlObj, msgWindow);
           var msgData, msgHdr
-
-          var msgDbHdr = messenger.msgHdrFromURI(uriSpec);
-          msgHdr = { "From": msgDbHdr.author,
-                     "Subject": msgDbHdr.subject,
-                     "To": msgDbHdr.recipients,
-                     "Cc": msgDbHdr.ccList,
-                     "Date": EnigGetDateTime(msgDbHdr.dateInSeconds, true, true) };
-
-
           if(urlObj.value.scheme=="news") {
             msgData = urlObj.value.QueryInterface(Components.interfaces.nsINntpUrl);
-            if (typeof (currentHeaderData.newsgroups)) {
-              msgHdr.Newsgroups = currentHeaderData.newsgroups.headerValue;
-            }
+            msgHdr = { "From":    msgData.messageHeader.author,
+                        "Subject": msgData.messageHeader.subject,
+                        "Cc":      msgData.messageHeader.ccList,
+                        "To":      msgData.messageHeader.recipients,
+                        "Date":    headerList.date,
+                        "Newsgroups": msgData.messageHeader.folder.name };
           }
-
+          else if(urlObj.value.scheme=="imap") {
+            var msgKey=new Object();
+            msgData = urlObj.value.QueryInterface(Components.interfaces.nsIImapUrl);
+            // this only succeeds if exactly one message was selected, which is
+            // at this moment the case
+            msgData.createListOfMessageIdsString(msgKey);
+            var imapMsgHeader = msgData.imapMessageSink.GetMessageHeader(msgKey.value);
+            msgHdr = { "From":    imapMsgHeader.author,
+                        "Subject": imapMsgHeader.subject,
+                        "Cc":      imapMsgHeader.ccList,
+                        "To":      imapMsgHeader.recipients,
+                        "Date":    headerList.date };
+          }
+          else {
+            msgData = urlObj.value.QueryInterface(Components.interfaces.nsIMailboxUrl);
+            msgHdr = { "From":    msgData.messageHeader.author,
+                        "Subject": msgData.messageHeader.subject,
+                        "Cc":      msgData.messageHeader.ccList,
+                        "To":      msgData.messageHeader.recipients,
+                        "Date":    headerList.date };
+          }
           for (headerName in msgHdr) {
-            if (msgHdr[headerName] && msgHdr[headerName].length>0)
+            if (msgHdr[headerName])
               contentData += headerName + ": " + msgHdr[headerName] + "\r\n";
           }
-
         }
       } catch (ex) {
         // the above seems to fail every now and then
@@ -1296,7 +1365,7 @@ function enigMessageSave() {
   return;
 }
 
-function enigMsgDirect(interactive, importOnly, contentEncoding, charset, signature, bufferSize, head, tail) {
+function enigMsgDirect(interactive, importOnly, contentEncoding, charset, signature, bufferSize, head, tail, callbackFunction) {
   WRITE_LOG("enigmailMessengerOverlay.js: enigMsgDirect: contentEncoding="+contentEncoding+", signature="+signature+"\n");
   var mailNewsUrl = enigGetCurrentMsgUrl();
   if (!mailNewsUrl)
@@ -1320,7 +1389,8 @@ function enigMsgDirect(interactive, importOnly, contentEncoding, charset, signat
                       ipcBuffer:ipcBuffer,
                       expectedBufferSize: bufferSize,
                       head:head,
-                      tail:tail };
+                      tail:tail,
+                      callbackFunction: callbackFunction };
 
   var requestObserver = new EnigRequestObserver(enigMsgDirectCallback,
                                                 callbackArg);
@@ -1388,12 +1458,13 @@ function enigMsgDirectCallback(callbackArg, ctxt) {
                   callbackArg.signature,
                   newBufferSize,
                   callbackArg.head,
-                  callbackArg.tail);
+                  callbackArg.tail,
+                  callbackArg.callbackFunction);
 
   }
   DEBUG_LOG("enigmailMessengerOverlay.js: enigMsgDirectCallback: msgText='"+msgText+"'\n");
 
-  enigMessageParseCallback(msgText, callbackArg.contentEncoding,
+  callbackArg.callbackFunction(msgText, callbackArg.contentEncoding,
                            callbackArg.charset,
                            callbackArg.interactive,
                            callbackArg.importOnly,
