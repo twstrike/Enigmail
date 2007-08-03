@@ -1459,8 +1459,13 @@ function () {
     if (!agentPath && this.isDosLike) {
       // DOS-like systems: search for GPG in c:\gnupg, c:\gnupg\bin, d:\gnupg, d:\gnupg\bin
       var gpgPath = "c:\\gnupg;c:\\gnupg\\bin;d:\\gnupg;d:\\gnupg\\bin";
-
       agentPath = ResolvePath(agentName, gpgPath, this.isDosLike);
+    }
+
+    if (!agentPath && !this.isDosLike) {
+      // Unix-like systems: check /usr/bin and /usr/local/bin
+      gpgPath = "/usr/bin:/usr/local/bin";
+      agentPath = ResolvePath(agentName, gpgPath, this.isDosLike)
     }
 
     if ((! agentPath) && this.isWin32) {
@@ -1489,11 +1494,9 @@ function () {
   this.agentType = agentType;
   this.agentPath = agentPath;
 
-  var command = this.getAgentPath();
+  var command = agentPath;
   if (agentType == "gpg") {
-     command += " --batch --no-tty --version";
-  } else {
-     command += " +batchmode -h";
+     command += " --version --version --batch --no-tty --charset utf8";
   }
 
   // This particular command execution seems to be essential on win32
@@ -1514,6 +1517,18 @@ function () {
     outStr += errStrObj.value;
 
   CONSOLE_LOG(outStr+"\n");
+
+  // detection for Gpg4Win wrapper
+  if (outStr.search(/^gpgwrap.*;/) == 0) {
+    var outLines = outStr.split(/[\n\r]+/);
+    var firstLine = outLines[0];
+    outLines.splice(0,1);
+    outStr = outLines.join("\n");
+    agentPath = firstLine.replace(/^.*;/, "")
+
+    CONSOLE_LOG("gpg4win-gpgwrapper detected; EnigmailAgentPath="+agentPath+"\n\n");
+    this.agentPath = agentPath.replace(/\\/g, "\\\\");
+  }
 
   var versionParts = outStr.replace(/[\r\n].*/g,"").split(/ /);
   var gpgVersion = versionParts[versionParts.length-1]
