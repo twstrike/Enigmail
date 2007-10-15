@@ -1688,7 +1688,7 @@ function () {
 Enigmail.prototype.passwdCommand =
 function () {
 
-  var command;
+  var command="";
 
   try {
     var  gpgVersion = this.agentVersion.match(/^\d+\.\d+/);
@@ -1696,9 +1696,11 @@ function () {
        command = " --use-agent "
     }
     else {
-      command = " --passphrase-fd 0";
-      if (gpgVersion && gpgVersion[0] >= "1.1") {
-        command += " --no-use-agent ";
+      if (! gEnigmailSvc.prefBranch.getBoolPref("noPassphrase")) {
+        command = " --passphrase-fd 0";
+        if (gpgVersion && gpgVersion[0] >= "1.1") {
+          command += " --no-use-agent ";
+        }
       }
     }
   } catch (ex) {}
