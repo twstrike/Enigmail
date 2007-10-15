@@ -68,7 +68,7 @@ var gClearButton = null;
 var gFilterBox = null;
 var gSearchTimer = null;
 var gSearchInput = null;
-var gShowAllKeysElement = null;
+
 
 function enigmailKeyManagerLoad() {
   DEBUG_LOG("enigmailKeyManager.js: enigmailKeyManagerLoad\n");
@@ -76,31 +76,24 @@ function enigmailKeyManagerLoad() {
   gFilterBox = document.getElementById("filterKey");
   gClearButton = document.getElementById("clearFilter");
   gSearchInput = document.getElementById("filterKey");
-  gShowAllKeysElement = document.getElementById("showAllKeys");
-  if (EnigGetPref("keyManShowAllKeys")) {
-    gShowAllKeysElement.setAttribute("checked", "true");
-  }
+  gUserList.addEventListener('click', enigmailOnClick, true);
 
   window.enigIpcRequest = null;
 
   document.getElementById("statusText").value = EnigGetString("keyMan.loadingKeys");
   document.getElementById("progressBar").removeAttribute("collapsed");
   window.setTimeout(loadkeyList, 100);
-  gSearchInput.focus();
 }
 
-function displayFullList() {
-  return (gShowAllKeysElement.getAttribute("checked") == "true");
-}
 
 function loadkeyList() {
   DEBUG_LOG("enigmailKeyManager.js: loadkeyList\n");
 
   enigmailBuildList(false);
-  showOrHideAllKeys();
   document.getElementById("statusText").value=" ";
   document.getElementById("progressBar").setAttribute("collapsed", "true");
 }
+
 
 function enigmailRefreshKeys() {
   DEBUG_LOG("enigmailKeyManager.js: enigmailRefreshKeys\n");
@@ -159,7 +152,7 @@ function enigmailBuildList(refresh) {
       gUserList.view.selection.rangedSelect(selectedItems[i], selectedItems[i], true)
     }
   }
-  // gUserList.focus();
+  gUserList.focus();
 }
 
 
@@ -375,10 +368,14 @@ function enigmailKeyMenu() {
   }
 }
 
-function enigmailDblClick(event) {
-  if (event) {
-    if (event.button != 0) return;
+function enigmailOnClick(event) {
+  if (event.detail != 2) {
+    return;
   }
+
+  // do not propagate double clicks
+  event.stopPropagation();
+
   var keyList = enigmailGetSelectedKeys();
   var keyType="";
   var uatNum="";
@@ -410,15 +407,10 @@ function enigmailKeyDetails() {
 
   var inputObj = {
     keyId:  keyList[0],
-    keyListArr: gKeyList,
     secKey: gKeyList[ keyList[0]].secretAvailable
   };
-  var resultObj = { refresh: false };
   window.openDialog("chrome://enigmail/content/enigmailKeyDetailsDlg.xul",
-        "", "dialog,modal,centerscreen", inputObj, resultObj);
-  if (resultObj.refresh) {
-    enigmailRefreshKeys();
-  }
+        "", "dialog,modal,centerscreen", inputObj);
 }
 
 
@@ -546,13 +538,24 @@ function enigCreateKeyMsg() {
 
   var msgCompSvc = Components.classes["@mozilla.org/messengercompose;1"].getService(Components.interfaces.nsIMsgComposeService);
 
-  var msgCompParam = Components.classes["@mozilla.org/messengercompose/composeparams;1"].createInstance(Components.interfaces.nsIMsgComposeParams);
-  msgCompParam.composeFields = msgCompFields;
-  msgCompParam.identity = acctManager.defaultAccount.defaultIdentity;
-  msgCompParam.type = Components.interfaces.nsIMsgCompType.New;
-  msgCompParam.format = Components.interfaces.nsIMsgCompFormat.Default;
-  msgCompParam.originalMsgURI = "";
-  msgCompSvc.OpenComposeWindowWithParams("", msgCompParam);
+  if (typeof(msgCompSvc.OpenComposeWindowWithCompFields) != "function") {
+    // TB 1.5
+    var msgCompParam = Components.classes["@mozilla.org/messengercompose/composeparams;1"].createInstance(Components.interfaces.nsIMsgComposeParams);
+    msgCompParam.composeFields = msgCompFields;
+    msgCompParam.identity = acctManager.defaultAccount.defaultIdentity;
+    msgCompParam.type = Components.interfaces.nsIMsgCompType.New;
+    msgCompParam.format = Components.interfaces.nsIMsgCompFormat.Default;
+    msgCompParam.originalMsgURI = "";
+    msgCompSvc.OpenComposeWindowWithParams("", msgCompParam);
+  }
+  else {
+    // TB 1.0
+    msgCompSvc.OpenComposeWindowWithCompFields ("",
+            Components.interfaces.nsIMsgCompType.New,
+            Components.interfaces.nsIMsgCompFormat.Default,
+            msgCompFields,
+            acctManager.defaultAccount.defaultIdentity);
+  }
 }
 
 
@@ -568,9 +571,8 @@ function enigEditKeyTrust() {
     userIdList.push(gKeyList[keyList[i]].userId);
   }
 
-  if (EnigEditKeyTrust(userIdList, keyList)) {
-    enigmailRefreshKeys();
-  }
+  EnigEditKeyTrust(userIdList, keyList);
+  enigmailRefreshKeys();
 }
 
 
@@ -580,16 +582,50 @@ function enigSignKey() {
     EnigAlert(EnigGetString("noKeySelected"));
     return;
   }
-  if (EnigSignKey(gKeyList[keyList[0]].userId, keyList[0], null)) {
-    enigmailRefreshKeys();
-  }
+  EnigSignKey(gKeyList[keyList[0]].userId, keyList[0], null);
+  enigmailRefreshKeys();
 }
 
 function enigmailRevokeKey() {
   var keyList = enigmailGetSelectedKeys();
-  if (EnigRevokeKey(keyList[0], gKeyList[keyList[0]].userId)) {
-    enigmailRefreshKeys();
+
+  var enigmailSvc = GetEnigmailSvc();
+  if (!enigmailSvc)
+    return;
+
+  var userId="0x"+keyList[0].substr(-8,8)+" - "+gKeyList[keyList[0]].userId;
+  if (!EnigConfirm(EnigGetString("revokeKeyAsk", userId))) return;
+
+  var tmpDir=EnigGetTempDir();
+
+  try {
+    var revFile = Components.classes[ENIG_LOCAL_FILE_CONTRACTID].createInstance(Components.interfaces.nsILocalFile);
+    revFile.initWithPath(tmpDir);
+    if (!(revFile.isDirectory() && revFile.isWritable())) {
+      EnigAlert(EnigGetString("noTempDir"));
+      return;
+    }
   }
+  catch (ex) {}
+  revFile.append("revkey.asc");
+  revFile.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
+
+  var errorMsgObj = {};
+  var r=enigmailSvc.genRevokeCert(window, "0x"+keyList[0], revFile.path, "0", "", errorMsgObj);
+  if (r != 0) {
+    revFile.remove(false);
+    EnigAlert(EnigGetString("revokeKeyFailed")+"\n\n"+errorMsgObj.value);
+    return;
+  }
+  r = enigmailSvc.importKeyFromFile(window, revFile.path, errorMsgObj);
+  revFile.remove(false);
+  if (r != 0) {
+    EnigAlert(EnigGetString("revokeKeyFailed")+"\n\n"+EnigConvertGpgToUnicode(errorMsgObj.value).replace(/\\e3A/g, ":"));
+  }
+  else {
+    EnigAlert(EnigGetString("revokeKeyOk"));
+  }
+  enigmailRefreshKeys();
 }
 
 function enigCreateRevokeCert() {
@@ -715,17 +751,38 @@ function enigmailManageUids() {
     keyId: keyList[0],
     ownKey: gKeyList[keyList[0]].secretAvailable
   };
-  var resultObj = { refresh: false };
+
   window.openDialog("chrome://enigmail/content/enigmailManageUidDlg.xul",
-        "", "dialog,modal,centerscreen,resizable=yes", inputObj, resultObj);
-  if (resultObj.refresh) {
-    enigmailRefreshKeys();
-  }
+        "", "dialog,modal,centerscreen,resizable=yes", inputObj);
+  enigmailRefreshKeys();
 }
 
 function enigmailChangePwd() {
   var keyList = enigmailGetSelectedKeys();
-  EnigChangeKeyPwd(keyList[0], gKeyList[keyList[0]].userId);
+  var inputObj = {
+    keyId: keyList[0],
+    userId: gKeyList[keyList[0]].userId
+  };
+
+  var enigmailSvc = GetEnigmailSvc();
+  if (!enigmailSvc)
+    return;
+
+  if (! enigmailSvc.useGpgAgent()) {
+    window.openDialog("chrome://enigmail/content/enigmailChangePasswd.xul",
+        "", "dialog,modal,centerscreen", inputObj);
+  }
+  else {
+    // gpg-agent will handle everything
+    var errorMsgObj = new Object();
+    var r = enigmailSvc.simpleChangePassphrase(window, keyList[0], errorMsgObj);
+
+    if (r != 0) {
+      EnigAlert(EnigGetString("changePassFailed")+"\n\n"+errorMsgObj.value);
+
+    }
+  }
+
 }
 
 
@@ -870,7 +927,7 @@ function onSearchInput(returnKeyHit)
     onEnterInSearchBar();
   }
   else {
-    gSearchTimer = setTimeout("onEnterInSearchBar();", 600);
+    gSearchTimer = setTimeout("onEnterInSearchBar();", 800);
   }
 }
 
@@ -899,47 +956,17 @@ function getFirstNode() {
 
 function onResetFilter() {
   gFilterBox.value="";
-  showOrHideAllKeys();
-  /*
-  if (! displayFullList()) {
-    showOrHideAllKeys();
-  }
-  else {
-    var node=getFirstNode();
-    while (node) {
-      node.hidden=false;
-      node = node.nextSibling;
-    }
-  } */
-  gClearButton.setAttribute("disabled", true);
-}
-
-function enigmailToggleShowAll() {
-  // gShowAllKeysElement.checked = (! gShowAllKeysElement.checked);
-  EnigSetPref("keyManShowAllKeys", displayFullList());
-
-  if (!gSearchInput.value || gSearchInput.value.length==0) {
-    showOrHideAllKeys();
-  }
-}
-
-
-function showOrHideAllKeys() {
-  var hideNode = ! displayFullList();
   var node=getFirstNode();
   while (node) {
-    node.hidden= hideNode;
+    node.hidden=false;
     node = node.nextSibling;
   }
+  gClearButton.setAttribute("disabled", true);
 }
 
 function enigApplyFilter() {
   var searchTxt=gSearchInput.value;
-  if (!searchTxt || searchTxt.length==0) {
-    showOrHideAllKeys();
-    return;
-  }
-
+  if (!searchTxt || searchTxt.length==0) return;
   searchTxt = searchTxt.toLowerCase();
   var node=getFirstNode();
   while (node) {
