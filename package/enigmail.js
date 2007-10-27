@@ -1955,8 +1955,8 @@ function (command, needPassphrase, domWindow, prompter, listener,
       try {
         if (passphrase) {
            pipetrans.writeSync(passphrase, passphrase.length);
+           pipetrans.writeSync("\n", 1);
         }
-        pipetrans.writeSync("\n", 1);
       } catch (ex) {}
     }
 
@@ -4443,9 +4443,8 @@ function (parent, outFileName, displayName, inputBuffer,
     if (! useAgentObj.value) {
       if (passphrase.length > 0) {
         pipeTrans.writeSync(passphrase, passphrase.length);
+        pipeTrans.writeSync("\n", 1);
       }
-
-      pipeTrans.writeSync("\n", 1);
     }
     pipeTrans.writeSync(byteData, dataLength.value);
 
@@ -4677,10 +4676,6 @@ KeyEditor.prototype = {
   _pipeTrans: null,
   _txt: null,
   _req: null,
-
-  nextLine: function() {
-    return this._txt;
-  },
 
   writeLine: function (inputData) {
     this._pipeTrans.writeSync(inputData+"\n", inputData.length+1);
