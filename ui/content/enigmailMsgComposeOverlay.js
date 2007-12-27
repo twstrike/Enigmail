@@ -1222,14 +1222,23 @@ function enigEncryptMsg(msgSendType) {
        return false;
      }
 
-     if (usingPGPMime &&
-         ((sendFlags & ENIG_ENCRYPT_OR_SIGN))) {
-      // temporarily enable quoted-printable for PGP/MIME messages
+
+     var warnIso2022jp="Your message is encoded with the Japanese character set ISO-2022-JP. Unfortunately, due to technical reasons comaptibility to the OpenPGP standards cannot be ensured with this character set. Do you want to convert the message to UTF-8 instead?";
+
+
+     if (usingPGPMime && ((sendFlags & ENIG_ENCRYPT_OR_SIGN))) {
+       // temporarily enable quoted-printable for PGP/MIME messages
        try {
           // make sure plaintext is not changed to 7bit
           if (typeof(msgCompFields.forceMsgEncoding) == "boolean") {
             msgCompFields.forceMsgEncoding = true;
             DEBUG_LOG("enigmailMsgComposeOverlay.js: enigEncryptMsg: enabled forceMsgEncoding\n");
+          }
+
+          if (msgCompFields.characterSet == "ISO-2022-JP") {
+            if (EnigConfirmPref(warnIso2022jp, "warnIso2022jp")) {
+              gMsgCompose.SetDocumentCharset("UTF-8");
+            }
           }
        }
        catch (ex) {}
@@ -1239,6 +1248,12 @@ function enigEncryptMsg(msgSendType) {
         // force keeping the charset (i.e. don't convert to us-ascii)
         msgCompFields.forceMsgEncoding = true;
         DEBUG_LOG("enigmailMsgComposeOverlay.js: enigEncryptMsg: enabled forceMsgEncoding\n");
+
+        if (msgCompFields.characterSet == "ISO-2022-JP") {
+          if (EnigConfirmPref(warnIso2022jp, "warnIso2022jp")) {
+            gMsgCompose.SetDocumentCharset("UTF-8");
+          }
+        }
       }
     }
 
@@ -1503,7 +1518,7 @@ function enigModifyCompFields(msgCompFields) {
     }
   }
   catch (ex) {
-    EnigWriteException("enigmailMsgComposeOverlay.js: enigModifyCompFields", ex)
+    EnigWriteException("enigmailMsgComposeOverlay.js: enigModifyCompFields", ex);
   }
 
   DEBUG_LOG("enigmailMsgComposeOverlay.js: enigModifyCompFields: otherRandomHeaders = "+

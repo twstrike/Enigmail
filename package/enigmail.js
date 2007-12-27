@@ -186,7 +186,7 @@ const ENC_TYPE_MSG = 0;
 const ENC_TYPE_ATTACH_BINARY = 1;
 const ENC_TYPE_ATTACH_ASCII = 2;
 
-var gMimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha512"];
+var gMimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha512", "sha224"];
 
 function CreateFileStream(filePath, permissions) {
 
@@ -2340,8 +2340,6 @@ function (parent, prompter, uiFlags, sendFlags, outputLen, pipeTransport,
   return exitCode;
 }
 
-var gPGPHashNum = {md5:1, sha1:2, ripemd160:3, sha256:4, sha384:5, sha512:6};
-
 Enigmail.prototype.getEncryptCommand =
 function (fromMailAddr, toMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj) {
   try {
@@ -2527,6 +2525,8 @@ function (prompter, uiFlags, fromMailAddr, hashAlgoObj) {
       }
     }
   }
+
+  DEBUG_LOG("enigmail.js: Enigmail.determineHashAlgorithm: no known hashAlgorithm found\n");
 
   return 2;
 }

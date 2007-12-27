@@ -92,10 +92,6 @@ pref("extensions.enigmail.logDirectory","");
 // enable encryption for replies to encrypted mails
 pref("extensions.enigmail.keepSettingsForReply",true);
 
-// display all or no keys by default in the key manager
-pref("extensions.enigmail.keyManShowAllKeys",false);
-
-
 // list of keyservers to use
 pref("extensions.enigmail.keyserver","pool.sks-keyservers.net, subkeys.pgp.net, pgp.mit.edu, ldap://certserver.pgp.com");
 
@@ -158,6 +154,9 @@ pref("extensions.enigmail.warnOnRulesConflict",0);
 // display a warning when the passphrase is cleared
 pref("extensions.enigmail.warnClearPassphrase",true);
 
+// display a warning if ISO-2022-JP is used
+pref("extensions.enigmail.warnIso2022jp", 1)
+
 // display a warning when all keys are to be refreshed
 pref("extensions.enigmail.warnRefreshAll",true);
 
@@ -178,7 +177,6 @@ pref("mail.identity.default.defaultEncryptionPolicy", 0);
 pref("mail.identity.default.openPgpHeaderMode", 0);
 pref("mail.identity.default.openPgpUrlName", "");
 pref("mail.identity.default.pgpMimeMode", false);
-pref("mail.identity.default.attachPgpKey", false);
 
 /*
    Other settings (change Mozilla behaviour)

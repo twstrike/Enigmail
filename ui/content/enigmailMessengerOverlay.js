@@ -689,6 +689,16 @@ function enigMessageParse(interactive, importOnly, contentEncoding) {
   // Encode ciphertext to charset from unicode
   msgText = EnigConvertFromUnicode(msgText, charset);
 
+  var mozPlainText = bodyElement.innerHTML.search(/class=\"moz-text-plain\"/);
+  if ((mozPlainText >= 0) && (mozPlainText < 40)) {
+    // workaround for too much expanded emoticons in plaintext msg
+    var r = new RegExp(/( )(;-\)|:-\)|;\)|:\)|:-\(|:\(|:-\\|:-P|:-D|:-\[|:-\*|\>:o|8-\)|:-\$|:-X|\=-O|:-\!|O:-\)|:\'\()( )/g);
+    if (msgText.search(r) >= 0) {
+      DEBUG_LOG("enigmailMessengerOverlay.js: enigMessageParse: performing emoticons fixing\n");
+      msgText = msgText.replace(r, "$2");
+    }
+  }
+
   // extract text preceeding and/or following armored block
   var head="";
   var tail="";
@@ -833,13 +843,14 @@ function enigMessageParseCallback(msgText, contentEncoding, charset, interactive
     else if (retry == 2) {
       // Try to verify signature by accessing raw message text directly
       // (avoid recursion by setting retry parameter to false on callback)
+      newSignature  = "";
       enigMsgDirect(interactive, importOnly, contentEncoding, charset, newSignature, 0, head, tail, enigMessageParseCallback);
       return;
     }
     else if (retry == 3) {
       msgText = EnigConvertToUnicode(msgText, "UTF-8");
       enigMessageParseCallback(msgText, contentEncoding, charset, interactive,
-                               importOnly, messageUrl, signature, retry + 1,
+                               importOnly, messageUrl, null, retry + 1,
                                head, tail)
     }
   }
