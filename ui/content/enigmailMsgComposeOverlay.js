@@ -2381,6 +2381,8 @@ EnigComposeStateListener.prototype = {
 
   },
 
+  NotifyComposeBodyReady: function() {},
+
   SaveInFolderDone: function(folderURI) {
   }
 };

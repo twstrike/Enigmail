@@ -116,7 +116,7 @@ function getPlatform() {
       platformNode = APP_PLATFORM_MAC;
     else if (!platformStr.search(/^Win/))
       platformNode = APP_PLATFORM_WIN;
-    else if (!platformStr.search(/Linux/))
+    else if (platformStr.search(/Linux/) >= 0)
       platformNode = APP_PLATFORM_LINUX;
     else if (!platformStr.search(/^OS\/2/))
       platformNode = APP_PLATFORM_OS2;
