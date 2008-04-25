@@ -155,7 +155,7 @@ pref("extensions.enigmail.warnOnRulesConflict",0);
 pref("extensions.enigmail.warnClearPassphrase",true);
 
 // display a warning if ISO-2022-JP is used
-pref("extensions.enigmail.warnIso2022jp", 1)
+pref("extensions.enigmail.warnIso2022jp", 1);
 
 // display a warning when all keys are to be refreshed
 pref("extensions.enigmail.warnRefreshAll",true);
