@@ -67,6 +67,8 @@ const NS_ENIGMSGCOMPOSEFACTORY_CID =
 const NS_ENIGCLINE_SERVICE_CID =
   Components.ID("{847b3ab1-7ab1-11d4-8f02-006008948af5}");
 
+const ENIGMAIL_EXTENSION_ID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
+
 // Contract IDs and CIDs used by this module
 const NS_IPCSERVICE_CONTRACTID  = "@mozilla.org/process/ipc-service;1";
 const NS_IPCBUFFER_CONTRACTID   = "@mozilla.org/process/ipc-buffer;1";
@@ -92,6 +94,7 @@ const NS_DOMPARSER_CONTRACTID = "@mozilla.org/xmlextras/domparser;1";
 const NS_DOMSERIALIZER_CONTRACTID = "@mozilla.org/xmlextras/xmlserializer;1";
 const NS_CATMAN_CONTRACTID = "@mozilla.org/categorymanager;1";
 const NS_CLINE_SERVICE_CONTRACTID = "@mozilla.org/enigmail/cline-handler;1";
+const NS_EXTENSION_MANAGER_CONTRACTID = "@mozilla.org/extensions/manager;1"
 
 // Interfaces
 const nsISupports            = Components.interfaces.nsISupports;
@@ -919,6 +922,7 @@ Enigmail.prototype.logFileStream = null;
 
 Enigmail.prototype.isUnix    = false;
 Enigmail.prototype.isWin32   = false;
+Enigmail.prototype.isMacOs   = false;
 Enigmail.prototype.isOs2     = false;
 Enigmail.prototype.isDosLike = false;
 
@@ -1229,6 +1233,7 @@ function (domWindow, version, prefBranch) {
   this.isUnix  = (this.platform.search(/X11/i) == 0);
   this.isWin32 = (this.platform.search(/Win/i) == 0);
   this.isOs2   = (this.platform.search(/OS\/2/i) == 0);
+  this.isMacOs = (this.platform.search(/Mac/i) == 0);
 
   if (this.isOs2) {
     this.quoteSign="\\\"";
@@ -1331,7 +1336,7 @@ function (domWindow, version, prefBranch) {
 
   this.detectGpgAgent(domWindow);
 
-  if (this.useGpgAgent()) {
+  if (this.useGpgAgent() & (! this.isDosLike)) {
     gEnvList.push("GPG_AGENT_INFO="+this.gpgAgentInfo.envStr);
   }
 
@@ -1355,7 +1360,13 @@ function() {
   var useAgent = false;
 
   try {
-    useAgent= (this.gpgAgentInfo.envStr.length>0 || this.prefBranch.getBoolPref("useGpgAgent"));
+    if (this.isDosLike && this.agentVersion < "2.0") {
+      // gpg-agent is not allowed for gpg v1.x on Dos-like systems
+      useAgent = false;
+    }
+    else {
+      useAgent= (this.gpgAgentInfo.envStr.length>0 || this.prefBranch.getBoolPref("useGpgAgent"));
+    }
   }
   catch (ex) {}
   return useAgent;
@@ -1499,6 +1510,20 @@ function () {
      command += " --version --version --batch --no-tty --charset utf8";
   }
 
+  if (this.isMacOs) {
+    try {
+      var installLoc = Components.classes[NS_EXTENSION_MANAGER_CONTRACTID]
+                   .getService(Components.interfaces.nsIExtensionManager)
+                   .getInstallLocation(ENIGMAIL_EXTENSION_ID);
+      var extensionLoc = installLoc.getItemFile(ENIGMAIL_EXTENSION_ID, "components");
+      extensionLoc.append("gpg-wrapper.sh");
+      command = extensionLoc.path + " " + command;
+    }
+    catch (ex) {
+      ERROR_LOG("enigmail.js: Enigmail.initialize: cannot get extension location\n");
+    }
+  }
+
   // This particular command execution seems to be essential on win32
   // (In particular, this should be the first command executed and
   //  *should* use the shell, i.e., command.com)
@@ -1530,7 +1555,7 @@ function () {
     this.agentPath = agentPath.replace(/\\/g, "\\\\");
   }
 
-  var versionParts = outStr.replace(/[\r\n].*/g,"").split(/ /);
+  var versionParts = outStr.replace(/[\r\n].*/g,"").replace(/ *\(gpg4win.*\)/i, "").split(/ /);
   var gpgVersion = versionParts[versionParts.length-1]
 
   this.agentVersion = gpgVersion;
@@ -1597,7 +1622,7 @@ function (domWindow) {
     DEBUG_LOG("enigmail.js: detectGpgAgent: no GPG_AGENT_INFO variable set\n");
     this.gpgAgentInfo.preStarted = false;
 
-    if ((this.agentVersion >= "1.9.92") && (! this.isDosLike)) {
+    if (this.agentVersion >= "2.0") {
       var command = null;
       var gpgConnectAgent = resolveAgentPath("gpg-connect-agent");
 
@@ -1616,7 +1641,7 @@ function (domWindow) {
       envFile.initWithPath(this.determineGpgHomeDir());
       envFile.append(".gpg-agent-info");
 
-      if (envFile.exists() && gpgConnectAgent &&
+      if (envFile.exists() && (!this.isDosLike) && gpgConnectAgent &&
           gpgConnectAgent.isExecutable()) {
         // try to connect to a running gpg-agent
 
@@ -1650,25 +1675,49 @@ function (domWindow) {
         throw Components.results.NS_ERROR_FAILURE;
       }
 
-      command += " --sh --daemon --write-env-file '"+envFile.path+"'";
-      command += " --default-cache-ttl " + (this.getMaxIdleMinutes()*60);
-      command += " --max-cache-ttl 999999";  // ca. 11 days
 
-      var exitCode = this.ipcService.execPipe(command, false, "", "", 0,
-                                    envList, envList.length,
-                                    outStrObj, outLenObj, errStrObj, errLenObj);
+      if (! this.isDosLike) {
+        command += " --sh --write-env-file '"+envFile.path+"'";
+        command += " --daemon";
+        command += " --default-cache-ttl " + (this.getMaxIdleMinutes()*60);
+        command += " --max-cache-ttl 999999";  // ca. 11 days
 
-      CONSOLE_LOG("enigmail> "+command.replace(/\\\\/g, "\\")+"\n");
+        CONSOLE_LOG("enigmail> "+command.replace(/\\\\/g, "\\")+"\n");
 
-      if (exitCode == 0) {
-        var outStr = outStrObj.value;
-        this.gpgAgentInfo.envStr = extractAgentInfo(outStrObj.value);
+        var exitCode = this.ipcService.execPipe(command, false, "", "", 0,
+                                      envList, envList.length,
+                                      outStrObj, outLenObj, errStrObj, errLenObj);
+
+        if (exitCode == 0) {
+          var outStr = outStrObj.value;
+          this.gpgAgentInfo.envStr = extractAgentInfo(outStrObj.value);
+        }
+        else {
+          ERROR_LOG("enigmail.js: detectGpgAgent: gpg-agent output: "+errStrObj.value+"\n");
+          this.alertMsg(domWindow, EnigGetString("gpgAgentNotStarted", this.agentVersion));
+          throw Components.results.NS_ERROR_FAILURE;
+        }
       }
       else {
-        ERROR_LOG("enigmail.js: detectGpgAgent: gpg-agent output: "+errStrObj.value+"\n");
-        this.alertMsg(domWindow, EnigGetString("gpgAgentNotStarted", this.agentVersion));
-        throw Components.results.NS_ERROR_FAILURE;
+        this.gpgAgentInfo.envStr = "dummy";
+        envFile.initWithPath(this.determineGpgHomeDir());
+        envFile.append("gpg-agent.conf");
+
+        var data="default-cache-ttl " + (this.getMaxIdleMinutes()*60)+"\n";
+        data += "max-cache-ttl 999999";
+        if (! envFile.exists()) {
+          try {
+            var flags = 0x02 | 0x08 | 0x20;
+            var fileOutStream = Components.classes[NS_LOCALFILEOUTPUTSTREAM_CONTRACTID].createInstance(Components.interfaces.nsIFileOutputStream);
+            fileOutStream.init(envFile, flags, 0600, 0);
+            fileOutStream.write(data, data.length);
+            fileOutStream.flush();
+            fileOutStream.close();
+          }
+          catch (ex) {}
+        }
       }
+
     }
   }
   DEBUG_LOG("enigmail.js: detectGpgAgent: GPG_AGENT_INFO='"+this.gpgAgentInfo.envStr+"'\n");

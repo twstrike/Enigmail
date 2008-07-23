@@ -171,6 +171,8 @@ if (!verifyDiskSpace(fProgram, srDest)) {
   case APP_PLATFORM_OS2:
     addDirectory("", "platform/"+ABI_PLATFORM_OS2+"/components",    fComponents, "");
     break;
+  default:
+    addDirectory("", "platform/${platform}/components",    fComponents, "");
   }
 
   err = getLastError();
@@ -267,6 +269,20 @@ cat <<EOT >> ${targetDir}/install.js
 }
 EOT
 
+cat << EOT > ${targetDir}/components/gpg-wrapper.sh
+#!/bin/sh
+
+GPG="\$1"
+shift
+
+\$GPG "\$@"
+exitCode=\$?
+
+sleep 2
+exit $exitCode
+EOT
+
+chmod 755 ${targetDir}/components/gpg-wrapper.sh
 cd ${srcDir}/package
 
 enigmimeDll=${libPrefix}enigmime${dllSuffix}
