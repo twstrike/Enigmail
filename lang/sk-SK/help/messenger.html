@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="sk"><head><title>Pomocn&#237;k Enigmailu: &#268;&#237;tanie
+spr&#225;v</title></head>
+<body><h1>Pomocn&#237;k OpenPGP</h1>
+<h3>Pou&#382;&#237;vanie OpenPGP pri &#269;&#237;tan&#237; spr&#225;v</h3>
+<ul> <li><b>Tla&#269;idlo de&#353;ifrova&#357; v hlavnom
+okne&nbsp;</b><br>Toto
+tla&#269;idlo m&#225; nieko&#318;ko funkci&#237;: de&#353;ifrovanie, overovanie, alebo import
+verejn&#253;ch k&#318;&#250;&#269;ov. Be&#382;ne prebieha
+de&#353;ifrovanie/overovanie&nbsp;automaticky,
+ale t&#225;to funkcia m&#244;&#382;e by&#357; zak&#225;zan&#225; v Nastaveniach. Ak nastane chyba,
+zobraz&#237; sa kr&#225;tka spr&#225;va v stavovom riadku spr&#225;vy. Ak kliknete na
+ikonu De&#353;ifrova&#357;, zobraz&#237; sa detailn&#253; v&#253;pis ch&#253;b vr&#225;tane&nbsp;GnuPG
+pr&#237;kazov. </li> <li><b>Ikony pera a k&#318;&#250;&#269;a v hlavi&#269;ke
+spr&#225;vy</b><br>
+Ikony pera a k&#318;&#250;&#269;a v hlavi&#269;ke spr&#225;vy indikuj&#250;, &#269;i spr&#225;va, ktor&#250; &#269;&#237;tate
+je podp&#237;san&#225; a (alebo) &#353;ifrovan&#225; a &#269;i je podpis platn&#253; tj.&nbsp;&#382;e
+spr&#225;va
+nebola zmenen&#225;. Ak bola spr&#225;va zmenen&#225;, ikona pera sa zmen&#237; na ikonu
+zlomen&#233;ho pera, ktor&#225; indikuje neplatn&#253; podpis.<em></em><em></em>
+Ak kliknete prav&#253;m tla&#269;idlom na ikonu pera alebo k&#318;&#250;&#269;a zobraz&#237; sa
+ponuka s nasleduj&#250;cimi mo&#382;nos&#357;ami: <ul> <li><em>OpenPGP
+Bezpe&#269;nostn&#233; inform&#225;cie</em>: umo&#382;n&#237; zobrazi&#357;
+v&#253;stup&nbsp;GnuPG pre t&#250;to spr&#225;vu.</li> <li><em>Kop&#237;rova&#357;
+OpenPGP bezpe&#269;nostn&#233; inform&#225;cie</em>: kop&#237;ruje v&#253;stup z GnuPG do
+schr&#225;nky; umo&#382;n&#237; napr&#237;klad vlo&#382;enie do odpovedi na spr&#225;vu.</li> <li><em>Zobraz&nbsp;OpenPGP
+foto ID</em>: umo&#382;n&#237; zobrazi&#357;&nbsp;<em>Foto ID</em>
+osoby, ktor&#225; zaslala dan&#250; spr&#225;vu, ak ho verejn&#253; k&#318;&#250;&#269; obsahuje. (<em>T&#225;to
+mo&#382;nos&#357; je dostupn&#225; len ak je fotografia vo verejnom k&#318;&#250;&#269;i ulo&#382;en&#225;.)</em></li>
+<li><em>S/MIME Bezpe&#269;nostn&#233; inform&#225;cie</em>: umo&#382;n&#237;
+zobrazi&#357;&nbsp;S/MIME Bezpe&#269;nostn&#233; inform&#225;cie spr&#225;vy.</li> </ul>
+<p>Ak nem&#225;te nastaven&#233; <em>keyserver-options
+auto-key-retrieve</em> v s&#250;bore <tt>gpg.conf</tt> a
+&#269;&#237;tate spr&#225;vy, ktor&#233; s&#250; podp&#237;san&#233; alebo &#353;ifrovan&#233;, uvid&#237;te v paneli
+spr&#225;vy ikonku <em>Pera</em>, na ktorom bude e&#353;te <em>Ot&#225;znik</em>
+a v hornej &#269;asti sa zobraz&#237;: <em>&#268;as&#357; spr&#225;vy bola podp&#237;san&#225;;
+kliknite na ikonku pera pre viac inform&#225;ci&#237;</em> a potom sa v&#225;m na
+paneli zobrazia v&#353;etky&nbsp;OpenPGP &#250;daje o podp&#237;sanej spr&#225;ve.</p>
+<p>Toto sa m&#244;&#382;e sta&#357; aj v pr&#237;pade, &#382;e m&#225;te mo&#382;nos&#357; <em>keyserver-options
+auto-key-retrieve</em> nastaven&#250; v s&#250;bore <tt>gpg.conf</tt>
+ale&nbsp;OpenPGP k&#318;&#250;&#269; nie je dostupn&#253; na prednastavenom&nbsp;keyservere.</p>
+<p>Kliknut&#237;m na ikonku&nbsp;<em>Pera a Ot&#225;zniku</em>
+sa v&#225;m zobraz&#237; hl&#225;senie &#382;e k&#318;&#250;&#269;, ktor&#253;m bola spr&#225;va podp&#237;san&#225; nem&#225;te
+dostupn&#253;. Kliknut&#237;m na tla&#269;idlo OK sa dostanete k &#271;al&#353;iemu oknu, kde si
+m&#244;&#382;ete zo zoznamu keyserverov odkia&#318; je mo&#382;n&#233; stiahnu&#357; odosie&#318;ate&#318;ov verejn&#253;
+k&#318;&#250;&#269;.</p> <p>Pre nastavenia, ktor&#253; z keyserverov chcete
+pou&#382;&#237;va&#357; pou&#382;ite ponuku&nbsp;<b>OpenPGP -&gt; Nastavenia
+-&gt; Z&#225;kladn&#233;</b> a nap&#237;&#353;te adresy&nbsp;do riadku<em>
+Keyserver(y) k&#318;&#250;&#269;ov:</em> viac adries&nbsp;oddelte &#269;iarkou.&nbsp;<em>Prv&#253;
+keyserver bude pou&#382;it&#253; ako predvolen&#253;.</em></p> </li> <li><b>Otv&#225;ranie
+&#353;ifrovan&#253;ch pr&#237;loh / import prilo&#382;en&#253;ch&nbsp;OpenPGP k&#318;&#250;&#269;ov</b><br>Pr&#237;lohy
+nazvan&#233; *.pgp, *,asc a *.gpg je OpenPGP schopn&#233; rozpozna&#357; a pou&#382;i&#357;.
+Prav&#253;m kliknut&#237;m na t&#250;to pr&#237;lohu m&#225;te k dispoz&#237;ci&#237; dve &#353;pecifick&#233; polo&#382;ky v
+kontextovej ponuke: <span style="font-style: italic;">De&#353;ifrova&#357;
+a Otvori&#357;</span> a <span style="font-style: italic;">De&#353;ifrova&#357;
+a ulo&#382;i&#357;</span>. M&#244;&#382;ete pou&#382;i&#357;&nbsp;prv&#250; mo&#382;nos&#357;, ak
+chcete pr&#237;lohu najsk&#244;r otvori&#357; alebo druh&#250;, ak
+chcete&nbsp;k&#318;&#250;&#269;&nbsp;ulo&#382;i&#357;. Ak je pr&#237;loha spr&#225;vy
+rozpoznan&#225; ako s&#250;bor obsahuj&#250;ci OpenPGP k&#318;&#250;&#269;, budete vyzvan&#237; &#269;i
+chcete k&#318;&#250;&#269; importova&#357; do v&#225;&#353;ho zoznamu k&#318;&#250;&#269;ov. </li>
+</ul><hr><p>&#270;al&#353;ia pomoc je dostupn&#225; na
+st&#225;nkach&nbsp;<a href="http://enigmail.mozdev.org/help.html" target="_blank">Enigmail Help (anglicky)</a> 
+</p></body></html>
+
