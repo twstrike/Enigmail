@@ -209,14 +209,10 @@ if (!verifyDiskSpace(fProgram, srDest)) {
 
     registerChrome(PACKAGE | DELAYED_CHROME, getFolder("Chrome","enigmail.jar"), "content/enigmail/");
 
-    if (! isTbird) {
-      registerChrome(   SKIN | DELAYED_CHROME, getFolder("Chrome","enigmail-skin.jar"), "skin/modern/enigmail/");
+    registerChrome(   SKIN | DELAYED_CHROME, getFolder("Chrome","enigmail-skin-seamonkey.jar"), "skin/modern/enigmail/");
 
-      registerChrome(   SKIN | DELAYED_CHROME, getFolder("Chrome","enigmail-skin.jar"), "skin/classic/enigmail/");
-    }
-    else {
-      registerChrome(   SKIN | DELAYED_CHROME, getFolder("Chrome","enigmail-skin-tbird.jar"), "skin/classic/enigmail/");
-    }
+    registerChrome(   SKIN | DELAYED_CHROME, getFolder("Chrome","enigmail-skin-seamonkey.jar"), "skin/classic/enigmail/");
+
     registerChrome( LOCALE | DELAYED_CHROME, getFolder("Chrome","enigmail.jar"), "locale/en-US/enigmail/");
 EOT
 
@@ -309,7 +305,7 @@ zip ${xpiFile} \
     defaults/pref/enigmail.js \
     chrome/${xpiModule}.jar \
     chrome/${xpiModule}-skin.jar \
-    chrome/${xpiModule}-skin-tbird.jar \
+    chrome/${xpiModule}-skin-seamonkey.jar \
     wrappers/gpg-wrapper.sh \
     ${localeJar} \
     components/ipc.xpt \

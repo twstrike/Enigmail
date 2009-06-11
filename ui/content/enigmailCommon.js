@@ -34,8 +34,8 @@ GPL.
 // enigmailCommon.js: shared JS functions for Enigmail
 
 // This Enigmail version and compatible Enigmime version
-var gEnigmailVersion = "0.96a";
-var gEnigmimeVersion = "0.96a";
+var gEnigmailVersion = "0.96b";
+var gEnigmimeVersion = "0.96b";
 
 // Maximum size of message directly processed by Enigmail
 const ENIG_MSG_BUFFER_SIZE = 96000;
@@ -1451,9 +1451,20 @@ function EnigGetTempDir() {
 // get the OS platform
 function EnigGetOS () {
 
-  var xulAppinfo = ENIG_C.classes[ENIG_XPCOM_APPINFO].getService(ENIG_C.interfaces.nsIXULRuntime);
-  return xulAppinfo.OS;
+  try {
+    var xulAppinfo = ENIG_C.classes[ENIG_XPCOM_APPINFO].getService(ENIG_C.interfaces.nsIXULRuntime);
+    return xulAppinfo.OS;
+  }
+  catch (ex) {
+    // Seamonkey 1.x
+    var httpHandler = Components.classes[ENIG_IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService).getProtocolHandler("http");
+    httpHandler = httpHandler.QueryInterface(Components.interfaces.nsIHttpProtocolHandler);
 
+    if (httpHandler.platform.search(/Win/i) == 0) return "WINNT";
+    if (httpHandler.platform.search(/X11/i) == 0) return "Linux";
+    if (httpHandler.platform.search(/Mac/i) == 0) return "Darwin";
+    if (httpHandler.platform.search(/OS\/2/i) == 0) return "OS2";
+  }
 }
 
 function EnigDisplayPrefs(showDefault, showPrefs, setPrefs) {

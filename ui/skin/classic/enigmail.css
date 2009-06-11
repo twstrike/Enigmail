@@ -8,21 +8,18 @@
 /* styles of other platforms (Windows, Linux/Unix) */
 
 
-#button-enigmail-decrypt,
-[typeid="button-enigmail-decrypt"]
+#button-enigmail-decrypt
   {
     list-style-image : url("chrome://enigmail/skin/enigmail-toolbar.png");
     -moz-image-region: rect(0px 24px 24px 0px);
   }
 
-#button-enigmail-decrypt:hover,
-[typeid="button-enigmail-decrypt"]
+#button-enigmail-decrypt:hover
   {
     -moz-image-region: rect(24px 24px 48px 0px);
   }
 
-#button-enigmail-decrypt[disabled],
-[typeid="button-enigmail-decrypt"]
+#button-enigmail-decrypt[disabled]
   {
     -moz-image-region: rect(48px 24px 72px 0px);
   }
@@ -43,16 +40,18 @@ toolbar[iconsize="small"] #button-enigmail-decrypt[disabled]
     -moz-image-region: rect(32px 16px 48px 0px);
   }
 
-#button-enigmail-send,
-#button-enigmail-send:hover {
-  -moz-image-region: rect(0px 22px 22px 0px);
+#button-enigmail-send {
+   -moz-image-region: rect(0px 24px 24px 0px);
    list-style-image      : url("chrome://enigmail/skin/enigmail-settings.png");
 }
 
-#button-enigmail-send[disabled] {
-  -moz-image-region: rect(22px 22px 44px 0px);
+#button-enigmail-send:hover {
+  -moz-image-region: rect(24px 24px 48px 0px);
 }
 
+#button-enigmail-send[disabled] {
+  -moz-image-region: rect(48px 24px 72px 0px);
+}
 
 toolbar[iconsize="small"] #button-enigmail-send {
   -moz-image-region: rect(0px 16px 16px 0px);
@@ -75,17 +74,24 @@ toolbar[iconsize="small"] #button-enigmail-send[disabled] {
 }
 
 .enigmailHeaderName {
-  color: #888a85; /* lower contrast, TB3 */
+  color: black;
+  font-weight: bold;
   text-align: right;
   background-color: transparent;
-  -moz-margin-end: 2px;
+  margin: 0 .5em 5px 0
+}
+
+.enigmailHeaderNameBox {
+  width: 7.7em;
+  background-color: transparent;
+  color: black;
 }
 
 .enigmailHeaderValue {
+  margin: 0 0 .25em 0;
   min-width: 50px;
   white-space: normal;
   color: WindowText;
-  line-height: 1.4em;
 
   -moz-appearance: none !important;
   -moz-appearance: none;
@@ -97,8 +103,30 @@ toolbar[iconsize="small"] #button-enigmail-send[disabled] {
   background-color: transparent;
 }
 
-.enigmailHeaderSpacer {
-  width: 2px;
+.enigMsgHdrView-flat-button {
+  min-width: 1px !important;
+  -moz-appearance: none;
+  color: black;
+  background-color: transparent;
+  border: 2px solid transparent;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding: 0 2px;
+  -moz-border-radius: 2px;
+  -moz-border-top-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  min-height: 1ex;
+}
+
+.enigMsgHdrView-flat-button:hover {
+  color: -moz-buttonhovertext;
+  background-color: -moz-buttonhoverface;
+  -moz-border-top-colors: transparent threedhighlight threedlightshadow;
+  -moz-border-right-colors: transparent threeddarkshadow threedshadow;
+  -moz-border-bottom-colors: transparent threeddarkshadow threedshadow;
+  -moz-border-left-colors: transparent threedhighlight threedlightshadow;
 }
 
 .enigmailHeaderBoxLabelNoSignature {
@@ -141,33 +169,6 @@ toolbar[iconsize="small"] #button-enigmail-send[disabled] {
   color: gray;
   font-style: italic;
 }
-
-.enigMsgHdrView-flat-button {
-  min-width: 1px !important;
-  -moz-appearance: none;
-  color: black;
-  background-color: transparent;
-  border: 2px solid transparent;
-  margin-top: 0px;
-  margin-bottom: 0px;
-  padding: 0 2px;
-  -moz-border-radius: 2px;
-  -moz-border-top-colors: none;
-  -moz-border-right-colors: none;
-  -moz-border-bottom-colors: none;
-  -moz-border-left-colors: none;
-  min-height: 1ex;
-}
-
-.enigMsgHdrView-flat-button:hover {
-  color: -moz-buttonhovertext;
-  background-color: -moz-buttonhoverface;
-  -moz-border-top-colors: transparent threedhighlight threedlightshadow;
-  -moz-border-right-colors: transparent threeddarkshadow threedshadow;
-  -moz-border-bottom-colors: transparent threeddarkshadow threedshadow;
-  -moz-border-left-colors: transparent threedhighlight threedlightshadow;
-}
-
 
 #enigmail-status-bar #enigmail-signed-status {
   list-style-image: none;
@@ -254,4 +255,72 @@ treechildren::-moz-tree-cell(STYLE) {}
 treechildren::-moz-tree-cell-text(STYLE) {}
 */
 
+
+/********* special styles for Mac OS *********/
+
+/* Note: see above for standard styles. The styles here are not
+   needed if you want to create a theme for Enigmail, this is just
+   a workaround to enable the Mac theme and the Windows/Linux theme in
+   one single XPI */
+
+toolbar[platform="macos"] #button-enigmail-decrypt {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-decrypt.png");
+  -moz-image-region: rect(0px 32px 32px 0px)
+}
+
+toolbar[platform="macos"] #button-enigmail-decrypt:hover {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-decrypt.png");
+  -moz-image-region: rect(0px 32px 32px 0px)
+}
+
+toolbar[platform="macos"] #button-enigmail-decrypt[disabled] {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-decrypt-inactive.png");
+  -moz-image-region: rect(0px 32px 32px 0px)
+}
+
+toolbar[platform="macos"][iconsize="small"]  #button-enigmail-decrypt {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-decrypt-small.png");
+  -moz-image-region: rect(0px 24px 24px 0px)
+}
+
+toolbar[platform="macos"][iconsize="small"]  #button-enigmail-decrypt:hover {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-decrypt-small.png");
+  -moz-image-region: rect(0px 24px 24px 0px)
+}
+toolbar[platform="macos"][iconsize="small"] #button-enigmail-decrypt[disabled] {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-decrypt-small-inactive.png");
+  -moz-image-region: rect(0px 24px 24px 0px)
+}
+
+
+toolbar[platform="macos"] #button-enigmail-send {
+   list-style-image : url("chrome://enigmail/skin/mac/enigmail-options.png");
+    -moz-image-region: rect(0px 32px 32px 0px)
+}
+
+toolbar[platform="macos"] #button-enigmail-send:hover {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-options.png");
+    -moz-image-region: rect(0px 32px 32px 0px)
+}
+
+toolbar[platform="macos"] #button-enigmail-send[disabled] {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-options-inactive.png");
+    -moz-image-region: rect(0px 32px 32px 0px)
+}
+
+
+toolbar[platform="macos"][iconsize="small"] #button-enigmail-send {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-options-small.png");
+  -moz-image-region: rect(0px 24px 24px 0px)
+}
+
+toolbar[platform="macos"][iconsize="small"] #button-enigmail-send:hover {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-options-small.png");
+  -moz-image-region: rect(0px 24px 24px 0px)
+}
+
+toolbar[platform="macos"][iconsize="small"] #button-enigmail-send[disabled] {
+  list-style-image : url("chrome://enigmail/skin/mac/enigmail-options-small-inactive.png");
+  -moz-image-region: rect(0px 24px 24px 0px)
+}
 

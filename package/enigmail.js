@@ -425,9 +425,21 @@ function getFilePath (nsFileObj) {
 // return the OS string from XUL runtime
 function detectOS () {
 
-  var xulAppinfo = Components.classes[NS_XPCOM_APPINFO].getService(Components.interfaces.nsIXULRuntime);
-  return xulAppinfo.OS;
+  try {
+    var xulAppinfo = Components.classes[NS_XPCOM_APPINFO].getService(Components.interfaces.nsIXULRuntime);
+    return xulAppinfo.OS;
+  }
+  catch (ex) {
+    // Seamonkey 1.x
+    var httpHandler = Components.classes[NS_IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService).getProtocolHandler("http");
+    httpHandler = httpHandler.QueryInterface(Components.interfaces.nsIHttpProtocolHandler);
 
+    if (httpHandler.platform.search(/Win/i) == 0) {
+      return "WINNT";
+    }
+    else
+      return "other";
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
