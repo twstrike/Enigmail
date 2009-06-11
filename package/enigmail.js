@@ -5477,7 +5477,7 @@ function (parent, needPassphrase, userId, keyId, editCmd, inputData, callbackFun
                                  true, statusFlags);
   if (! pipeTrans) return -1;
 
-  if (this.requirePassword()) {
+  if (needPassphrase && this.requirePassword()) {
     try {
       pipeTrans.writeSync(passphrase, passphrase.length);
       pipeTrans.writeSync("\n", 1);
