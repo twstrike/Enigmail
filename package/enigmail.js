@@ -4569,13 +4569,19 @@ Enigmail.prototype.getKeyDetails = function (keyId, uidOnly) {
 
   if (uidOnly) {
     var userList="";
+    var hideInvalidUid=true;
     var keyArr=listText.split(/\n/);
     for (var i=0; i<keyArr.length; i++) {
       switch (keyArr[i].substr(0,4)) {
+      case "pub:":
+        if ("idre".indexOf(keyArr[i].split(/:/)[1]) >= 0) {
+          // pub key not valid (anymore)-> display all UID's
+          hideInvalidUid = false;
+        }
       case "uid:":
         var theLine=keyArr[i].split(/:/);
-        if ("idre".indexOf(theLine[1]) < 0) {
-          // UID valid
+        if (("idre".indexOf(theLine[1]) < 0) || (! hideInvalidUid)) {
+          // UID valid or key not valid
           userList += theLine[9] + "\n";
         }
       }
