@@ -4572,8 +4572,12 @@ Enigmail.prototype.getKeyDetails = function (keyId, uidOnly) {
     var keyArr=listText.split(/\n/);
     for (var i=0; i<keyArr.length; i++) {
       switch (keyArr[i].substr(0,4)) {
-      case "uid:" :
-        userList += keyArr[i].split(/:/)[9] + "\n";
+      case "uid:":
+        var theLine=keyArr[i].split(/:/);
+        if ("idre".indexOf(theLine[1]) < 0) {
+          // UID valid
+          userList += theLine[9] + "\n";
+        }
       }
     }
     return userList;
