@@ -147,6 +147,7 @@ function enigMatchUidToSender(userId) {
   }
   catch(ex) {}
 
+  userId = userId.replace(/\n+/, "").replace(/\n+$/, "").replace(/\n\n+/, "\n");
   var userIdList=userId.split(/\n/);
   try {
     for (var i=0; i<userIdList.length; i++) {
