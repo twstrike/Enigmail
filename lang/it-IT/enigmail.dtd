@@ -30,7 +30,9 @@
 <!ENTITY enigmail.userNoPassphrase.label  "Non chiedere mai nessuna passphrase">
 <!ENTITY enigmail.userNoPassphrase.tooltip "Da selezionare nel caso in cui la tua chiave OpenPGP non sia protetta da una passphrase.">
 <!ENTITY enigmail.expertUser.label         "Mostra le impostazioni per esperti">
-<!ENTITY enigmail.expertUser.tooltip       "Da selezionare nel caso in cui si vogliano vedere le voci di menu e le opzioni riservate ad utenti esperti.">
+<!ENTITY enigmail.expertUser.tooltip       "Premi qui per vedere le voci di menu e le opzioni riservate ad utenti esperti.">
+<!ENTITY enigmail.basicUser.label          "Nascondi le impostazioni per esperti">
+<!ENTITY enigmail.basicUser.tooltip        "Premi qui per nascondere le voci di menu e le opzioni riservate ad utenti esperti.">
 
 <!ENTITY enigmail.defaultEncryptionOption.label "Impostazioni predefinite per la cifratura">
 <!ENTITY enigmail.usePGPMimeOption.label  "Impostazioni PGP/MIME">
@@ -117,7 +119,7 @@
 <!ENTITY enigmail.prefs.label            "Impostazioni">
 <!ENTITY enigmail.advprefs.label         "Impostazioni avanzate">
 
-<!ENTITY enigmail.debugMenu.label        "Debug di OpenPGP">
+<!ENTITY enigmail.debugMenu.label        "Opzioni di Debug">
 <!ENTITY enigmail.viewconsole.label      "Mostra la console">
 <!ENTITY enigmail.viewdebuglog.label     "Mostra il file di log">
 
@@ -130,6 +132,7 @@
 <!ENTITY enigmail.browse.label             "Sfoglia...">
 <!ENTITY enigmail.sendersKeyMenu.label     "Chiave del mittente">
 <!ENTITY enigmail.adminSmartCard.label     "Gestisci SmartCard...">
+<!ENTITY enigmail.setupWiz.label           "Procedura guidata di configurazione">
 
 <!ENTITY enigmail.decryptverify.accesskey   "D">
 <!ENTITY enigmail.importpublickey.accesskey "I">
@@ -146,6 +149,7 @@
 <!ENTITY enigmail.prefs.accesskey           "p">
 <!ENTITY enigmail.viewconsole.accesskey     "o">
 <!ENTITY enigmail.viewdebuglog.accesskey    "t">
+<!ENTITY enigmail.setupWiz.accesskey        "u">
 
 <!ENTITY enigmail.generatekey.accesskey     "c">
 <!ENTITY enigmail.upgrade.accesskey         "r">
@@ -204,19 +208,17 @@
 <!ENTITY enigmail.perRecipientRules.label         "Solo in base alle regole pre-impostate">
 <!ENTITY enigmail.perRecipientRules.tooltip       "Le chiavi saranno scelte in base alle regole; nel caso di destinatari senza regole pre-impostate, sarà chiesto di crearne appositamente di nuove.">
 <!ENTITY enigmail.perRecipientRulesAndEmail.label "In base alle regole e agli indirizzi email">
-<!ENTITY enigmail.perRecipientRulesAndEmail.tooltip "Le chiavi dovranno essere scelte manualmente se OpenPGP non sarà in grado di decidere una dopo aver applicato le regole e controllato gli indirizzi email.">
+<!ENTITY enigmail.perRecipientRulesAndEmail.tooltip "Le chiavi dovranno essere scelte manualmente se GnuPG non sarà in grado di deciderne una dopo aver applicato le regole e controllato gli indirizzi email.">
 <!ENTITY enigmail.perEmailAddress.label           "In base agli indirizzi email">
-<!ENTITY enigmail.perEmailAddress.tooltip         "Le chiavi dovranno essere scelte manualmente se OpenPGP non sarà in grado di decidere dopo aver controllato gli indirizzi email (le regole non saranno applicate).">
+<!ENTITY enigmail.perEmailAddress.tooltip         "Le chiavi dovranno essere scelte manualmente se GnuPG non sarà in grado di decidere dopo aver controllato gli indirizzi email (le regole non saranno applicate).">
 <!ENTITY enigmail.askRecipientsAlways.label       "Manualmente">
-<!ENTITY enigmail.askRecipientsAlways.tooltip     "OpenPGP non deciderà mai automaticamente quali chiavi usare. La scelta dipenderà sempre e solo da te.">
+<!ENTITY enigmail.askRecipientsAlways.tooltip     "GnuPG non deciderà mai automaticamente quali chiavi usare. La scelta dipenderà sempre e solo da te.">
 <!ENTITY enigmail.neverAsk.label                  "Nessuna scelta manuale delle chiavi">
 <!ENTITY enigmail.neverAsk.tooltip                "Se non si riescono a trovare chiavi valide per tutti i destinatari, il messaggio sarà inviato automaticamente in chiaro.">
 <!ENTITY enigmail.defineRules.label               "Modifica le regole...">
 <!ENTITY enigmail.defineRules.tooltip             "Seleziona per visualizzare, aggiungere, rimuovere o modificare le regole per la scelta delle chiavi.">
 
-<!ENTITY enigmail.usePGPMimeAlways.label          "Usa sempre PGP/MIME">
-<!ENTITY enigmail.usePGPMimePossible.label        "Consenti l'uso di PGP/MIME">
-<!ENTITY enigmail.usePGPMimeNever.label           "Non usare mai PGP/MIME">
+<!ENTITY enigmail.usePGPMimeAlways.label          "Usa PGP/MIME di default">
 
 <!ENTITY enigmail.keepSettingsForReply.label      "Cifra la risposta a un messaggio cifrato">
 <!ENTITY enigmail.confirmBeforeSend.label         "Chiedi sempre conferma prima dell'invio">
@@ -264,7 +266,6 @@
 <!ENTITY enigmail.importMissingKeys.label           "Scarica le chiavi mancanti">
 <!ENTITY enigmail.importMissingKeys.accesskey       "a">
 <!ENTITY enigmail.importMissingKeys.tooltip         "Prova a importare da un keyserver le chiavi mancanti">
-<!ENTITY enigmail.importMissingKeys.accesskey       "c">
 <!ENTITY enigmail.refreshKeys.label                 "Ricarica la lista delle chiavi">
 <!ENTITY enigmail.refreshKeys.accesskey             "R">
 <!ENTITY enigmail.perRecipientsOption.label         "Crea una regola/e per i singoli destinatari">
@@ -273,7 +274,7 @@
 
 <!ENTITY enigmail.enigmailAttachDesc.label          "Questo messaggio contiene allegati. Come vuoi cifrali/firmarli?">
 <!ENTITY enigmail.enigEncryptAttachNone.label       "Cifra/firma solo il testo del messaggio, ma non gli allegati">
-<!ENTITY enigmail.enigEncryptAttachInline.label     "Cifra ogni allegato separatamente e spedisci il messaggio in formato 'inline PGP'">
+<!ENTITY enigmail.enigEncryptAttachInline.label     "Cifra/firma ogni allegato separatamente e spedisci il messaggio in formato 'inline PGP'">
 <!ENTITY enigmail.enigEncryptAttachPgpMime.label    "Cifra/firma il messaggio tutto insieme e spediscilo in formato PGP/MIME">
 <!ENTITY enigmail.encryptAttachSkipDlg.label        "Usa il metodo selezionato per tutti gli allegati futuri">
 
@@ -284,6 +285,7 @@
 <!ENTITY enigmail.ctxDecryptSave.accesskey          "S">
 <!ENTITY enigmail.ctxImportKey.accesskey            "I">
 
+<!ENTITY enigmail.detailsHdrButton.label            "Dettagli">
 <!ENTITY enigmail.amPrefTitle.label                 "Impostazioni OpenPGP (Enigmail)">
 <!ENTITY enigmail.amPrefDesc.label                  "Il supporto per la cifratura e la firma dei messaggi in formato OpenPGP è fornito da Enigmail. È necessario che tu abbia installato GnuPG (gpg) per poter usare questa funzione.">
 <!ENTITY enigmail.amPrefEnablePgp.label             "Abilita il supporto OpenPGP (Enigmail) per questa identità">
@@ -386,7 +388,6 @@
 <!ENTITY enigmail.sKeyDlg.casualCheck.label        "Ho controllato superficialmente">
 <!ENTITY enigmail.sKeyDlg.carefulCheck.label       "Ho controllato con grande accuratezza">
 <!ENTITY enigmail.sKeyDlg.createLocal.label        "Firma localmente (non può essere esportata)">
-<!ENTITY enigmail.sKeyDlg.alreadySigned.label      "Nota: alcune chiavi già firmate con la chiave scelta per la firma!">
 
 <!ENTITY enigmail.addUidDlg.title                  "OpenPGP - Aggiungi ID utente">
 <!ENTITY enigmail.addUidDlg.name.label             "Nome">
@@ -449,13 +450,18 @@
 <!ENTITY enigmail.keyMan.viewSig.label             "Firme">
 <!ENTITY enigmail.keyMan.ctxViewSig.label          "Mostra firme">
 <!ENTITY enigmail.keyMan.keyType.label             "Tipo">
+<!ENTITY enigmail.keyMan.showAllKeys.label         "Mostra tutte le chiavi come impostazione predefinita">
 <!ENTITY enigmail.keyMan.calcTrust.label           "Validità della chiave">
 <!ENTITY enigmail.keyMan.ownerTrust.label          "Fiducia personale">
 <!ENTITY enigmail.keyMan.stopTransfer.label        "Interrompi il trasferimento">
 <!ENTITY enigmail.keyMan.fingerprint.label         "Fingerprint">
+<!ENTITY enigmail.keyMan.userId.label              "Nome">
 <!ENTITY enigmail.keyMan.selectAll.label           "Seleziona tutte le chiavi">
+<!ENTITY enigmail.keyMan.emptyTree.tooltip         "Inserisci nella casella qui sopra i termini da cercare">
+<!ENTITY enigmail.keyMan.nothingFound.tooltip      "Nessuna chiave corrisponde ai termini impostati per la ricerca">
+<!ENTITY enigmail.keyMan.pleaseWait.tooltip        "Attendi mentre le chiavi vengono caricate ...">
 
-<!ENTITY enigmail.keyMan.filter.label              "Filtra in base a ID utente o ID chiave contenenti:">
+<!ENTITY enigmail.keyMan.filter.label              "Cerca:">
 <!ENTITY enigmail.keyMan.clearFilter.label         "Elimina">
 <!ENTITY enigmail.keyMan.clearFilter.accesskey     "E">
 
@@ -488,6 +494,7 @@
 <!ENTITY enigmail.keyMan.refreshAllKeys.accesskey    "t">
 <!ENTITY enigmail.keyMan.selectAll.accesskey         "z">
 <!ENTITY enigmail.keyMan.sendKeys.accesskey          "E">
+<!ENTITY enigmail.keyMan.showAllKeys.accesskey       "o">
 
 <!ENTITY enigmail.keyMan.closeWin.key                "u">
 <!ENTITY enigmail.keyMan.selectAll.key               "t">
@@ -508,6 +515,7 @@
 <!ENTITY enigmail.keyDetails.userId.label            "ID utente primario">
 <!ENTITY enigmail.keyDetails.keyId.label             "ID chiave">
 <!ENTITY enigmail.keyDetails.ID.label                "ID">
+<!ENTITY enigmail.keyDetails.additionalUid.label     "ID aggiuntivo">
 <!ENTITY enigmail.keyDetails.keyType.label           "Tipo">
 <!ENTITY enigmail.keyDetails.subType.label           "Sottochiave">
 <!ENTITY enigmail.keyDetails.algorithm.label         "Algoritmi">
@@ -598,13 +606,13 @@
 <!ENTITY enigmail.setupWiz.pgWelcome.startNow        "Vuoi avviare la procedura guidata adesso?">
 <!ENTITY enigmail.setupWiz.pgWelcome.yes             "Sì, vorrei che la procedura guidata mi aiutasse a iniziare">
 <!ENTITY enigmail.setupWiz.pgWelcome.no              "No, grazie. Preferisco configurare tutto manualmente">
-<!ENTITY enigmail.setupWiz.pgSelectId.title          "Scegli l'identità">
-<!ENTITY enigmail.setupWiz.pgSelectId.subtitle       "Scegli l'account o l'identità con cui vuoi che funzioni OpenPGP">
+<!ENTITY enigmail.setupWiz.pgSelectId.title          "Scegli le identità">
+<!ENTITY enigmail.setupWiz.pgSelectId.subtitle       "Scegli gli account o le identità con cui vuoi che funzioni OpenPGP">
 <!ENTITY enigmail.setupWiz.pgSelectId.desc           "Le impostazioni OpenPGP sono specifiche per ogni account e identità.
                                                       OpenPGP sarà configurato per funzionare con tutti i tuoi account e le tue
                                                       identità. Se questo non è ciò che vuoi, seleziona qui sotto in maniera specifica
                                                       l'account o l'identità con cui vuoi che funzioni OpenPGP.">
-<!ENTITY enigmail.setupWiz.pgSelectId.allIds         "Vorrei che OpenPGP funzionasse per tutte le identità">
+<!ENTITY enigmail.setupWiz.pgSelectId.allIds         "Vuoi che OpenPGP funzioni per tutte le identità">
 <!ENTITY enigmail.setupWiz.pgSelectId.selectIds      "Vorrei che OpenPGP funzionasse solo per le identità seguenti:">
 <!ENTITY enigmail.setupWiz.pgSelectId.note           "<a class='enigmailStrong'>Nota:</a> OpenPGP verificherà comunque le firme
                                                       sulle email di tutti gli account o identità, indipendentemente dal fatto che sia abilitato o no">
@@ -689,4 +697,7 @@
 <!ENTITY enigmail.setupWiz.pgNoStart.title           "Cancella la procedura guidata">
 <!ENTITY enigmail.setupWiz.pgNoStart.desc            "Hai scelto di non usare la procedura guidata per configurare OpenPGP.
                                                       <html:br/><html:br/>Grazie per aver scelto Enigmail.">
+
+<!ENTITY enigmail.advancedIdentityDlg.title          "Impostazioni avanzate delle identità OpenPGP">
+<!ENTITY enigmail.amPrefPgp.sendKeyWithMsg.label     "Allega la mia chiave pubblica ai messaggi">
 
