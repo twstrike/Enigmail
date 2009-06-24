@@ -21,6 +21,7 @@ my @files = ("contents.rdf",
   "help/rulesEditor.html",
   "help/compose.html",
   "help/messenger.html",
+  "help/initError.html",
   "help/editRcptRule.html");
 
 while ($_ = <INFILE>) {
