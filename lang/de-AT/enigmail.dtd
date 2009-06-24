@@ -161,7 +161,7 @@
 <!ENTITY enigmail.sendersKeyMenu.accesskey "d">
 
 <!ENTITY enigmail.securitybutton.label "OpenPGP">
-<!ENTITY enigmail.securitybutton.tip "OpenPGP Sicherheits-Einstellungen">
+<!ENTITY enigmail.securitybutton.tip "OpenPGP-Sendeoptionen bearbeiten">
 
 <!ENTITY enigmail.signedsend.label "Nachricht unterschreiben">
 <!ENTITY enigmail.encryptedsend.label "Nachricht verschlüsseln">
@@ -276,7 +276,7 @@
 <!ENTITY enigmail.experimental.label "Experimentelles Inline-Unterschreiben/Verschlüsseln für PGP/MIME verwenden">
 
 <!ENTITY enigmail.enigmailAttachDesc.label "Diese Nachricht enthält Anhänge. Wie sollen diese verschlüsselt/unterschrieben werden?">
-<!ENTITY enigmail.enigEncryptAttachNone.label "Nur den Haupttext verschlüsseln, den Anhang unverändert lassen">
+<!ENTITY enigmail.enigEncryptAttachNone.label "Nur den Nachrichteninhalt verschlüsseln, den Anhang unverändert lassen">
 <!ENTITY enigmail.enigEncryptAttachInline.label "Jeden Anhang einzeln verschlüsseln/unterschreiben und als Inline-PGP-Nachricht senden">
 <!ENTITY enigmail.enigEncryptAttachPgpMime.label "Nachricht als Ganzes verschlüsseln/unterschreiben und als PGP/MIME-Nachricht senden">
 <!ENTITY enigmail.encryptAttachSkipDlg.label "Die gewählte Methode für alle zukünftigen Anhänge verwenden">
@@ -296,7 +296,7 @@
 <!ENTITY enigmail.amPrefUseKeyId.label "Spezielle OpenPGP-Schlüssel-ID verwenden (0x1234ABCD):">
 <!ENTITY enigmail.amPrefSelectKey.label "Schlüssel auswählen…">
 <!ENTITY enigmail.amPrefDefaultEncrypt.label "Nachrichten Verfassen Standard-Einstellungen">
-<!ENTITY enigmail.encryptionDlg.label "OpenPGP-Einstellungen zu Verschlüsselung &amp; Unterschrift">
+<!ENTITY enigmail.encryptionDlg.label "OpenPGP-Sendeoptionen">
 <!ENTITY enigmail.encDlgEncrypt.label "Nachricht verschlüsseln">
 <!ENTITY enigmail.encDlgEncrypt.accesskey "V">
 <!ENTITY enigmail.encDlgSign.label "Nachricht unterschreiben">
@@ -719,7 +719,7 @@
 <!ENTITY enigmail.setupWiz.details.imapOnDemand "Deaktiviere das Laden von IMAP-Teilen bei Bedarf">
 <!ENTITY enigmail.setupWiz.details.changingPrefs "Folgende Einstellungen werden von diesem Assistenten verändert:">
 <!ENTITY enigmail.setupWiz.details.noFlowedMsg "Deaktiviere das Erlauben von Fließtext (RFC 2646)">
-<!ENTITY enigmail.setupWiz.details.viewAsPlain "Nachrichtentext als Reintext anzeigen">
+<!ENTITY enigmail.setupWiz.details.viewAsPlain "Nachrichteninhalt als Reintext anzeigen">
 <!ENTITY enigmail.setupWiz.details.8bitEncoding "8 Bit Zeichenkodierung beim Senden verwenden">
 <!ENTITY enigmail.setupWiz.details.noComposeHTML "Deaktiviere das Verfassen von HTML-Nachrichten">
 <!ENTITY enigmail.setupWiz.pgNoStart.title "OpenPGP-Assistent beenden">
