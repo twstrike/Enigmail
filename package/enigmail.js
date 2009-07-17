@@ -1718,7 +1718,7 @@ function (domWindow) {
       envFile.append(".gpg-agent-info");
 
       if ((envFile.exists() || this.isDosLike) && gpgConnectAgent &&
-          gpgConnectAgent.isExecutable()) {
+          gpgConnectAgent.exists()) {
         // try to connect to a running gpg-agent
 
         if (! this.isDosLike) {
@@ -1761,7 +1761,7 @@ function (domWindow) {
         commandFile = resolveAgentPath("gpg-agent2");
       }
       
-      if (commandFile  && commandFile.isExecutable()) {
+      if (commandFile  && commandFile.exists()) {
         command = commandFile.QueryInterface(Components.interfaces.nsIFile);
       }
 
