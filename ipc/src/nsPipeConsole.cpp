@@ -128,7 +128,14 @@ nsPipeConsole::~nsPipeConsole()
          this, myThread.get()));
 #endif
 
-  Finalize(PR_TRUE);
+  if (mPipeThread) {
+    DEBUG_LOG(("nsPipeConsole::destructor: terminating mPipeTread\n"));
+    mPipeThread->Shutdown(); // ignore result, we need to shutdown anyway
+    DEBUG_LOG(("nsPipeConsole::destructor: done\n"));
+    mPipeThread = nsnull;
+ }
+
+  Finalize(PR_TRUE);  
 
   if (mLock)
     PR_DestroyLock(mLock);
@@ -163,7 +170,6 @@ nsPipeConsole::Finalize(PRBool destructor)
   }
 
   // Release owning refs
-  mPipeThread = nsnull;
   mObserver = nsnull;
   mObserverContext = nsnull;
 
@@ -191,9 +197,11 @@ nsPipeConsole::Init()
   }
 
   // add shutdown observer
+
   nsCOMPtr<nsIObserverService> observ(do_GetService("@mozilla.org/observer-service;1"));
   if (observ)
-    observ->AddObserver(this, "xpcom-shutdown", PR_FALSE);
+    observ->AddObserver((nsIObserver*)(this),
+                        NS_XPCOM_SHUTDOWN_OBSERVER_ID, PR_FALSE);
 
   return NS_OK;
 }
@@ -230,6 +238,7 @@ nsPipeConsole::Open(PRInt32 maxRows, PRInt32 maxCols, PRBool joinable)
 
   // Spin up a new thread to handle STDOUT polling
   rv = NS_NewThread(getter_AddRefs(mPipeThread), this);
+  DEBUG_LOG(("nsPipeConsole::Open: created new thread: %d", rv));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -357,8 +366,11 @@ nsPipeConsole::Join()
     mThreadJoined = PR_TRUE;
   }
 
+  DEBUG_LOG(("nsPipeConsole::terminating thread\n"));
   rv = mPipeThread->Shutdown();
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (rv == NS_OK) mPipeThread=nsnull;
 
   return NS_OK;
 }
@@ -369,8 +381,16 @@ nsPipeConsole::Shutdown()
 {
   nsAutoLock lock(mLock);
   DEBUG_LOG(("nsPipeConsole::Shutdown:\n"));
-
+  
   Finalize(PR_FALSE);
+
+  nsCOMPtr<nsIObserverService> observerSvc =
+           do_GetService("@mozilla.org/observer-service;1");
+
+  if (observerSvc) {
+    observerSvc->RemoveObserver((nsIObserver*)(this),
+                                NS_XPCOM_SHUTDOWN_OBSERVER_ID);
+  }
 
   return NS_OK;
 }
@@ -662,11 +682,12 @@ nsPipeConsole::Run()
 //-----------------------------------------------------------------------------
 
 NS_IMETHODIMP
-nsPipeConsole::Observe(nsISupports *subject, const char *topic, const PRUnichar *data)
+nsPipeConsole::Observe(nsISupports *subject, const char *aTopic, const PRUnichar *data)
 {
-    DEBUG_LOG(("nsPipeConsole::Observe: topic=%s\n", topic));
+    DEBUG_LOG(("nsPipeConsole::Observe: topic=%s\n", aTopic));
 
-    if (strcmp(topic, "xpcom-shutdown") == 0)
-        Shutdown();
+    if (!PL_strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID)) {
+      Shutdown();
+    }
     return NS_OK;
 }
