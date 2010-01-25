@@ -604,7 +604,7 @@
                                                       <a class='enigmailLink'><html:a
                                                       href='mailto:enigmail@mozdev.org'>emailing us</html:a></a>.
                                                       <html:br/><html:br/>
-                                                      This wizard is automatically invoked when you first install Enigmail. You can launch it
+                                                      This wizard is automatically invoked when you first install Enigmail. If you want to use the wizard again, you can launch it again from the OpenPGP menu.
                                                       <html:br/><html:br/>
                                                       Thank you for choosing Enigmail OpenPGP!">
 <!ENTITY enigmail.setupWiz.pgWelcome.startNow        "Would you like to use the wizard now?">
