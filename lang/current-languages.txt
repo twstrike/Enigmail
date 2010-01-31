@@ -12,6 +12,7 @@ hu-HU
 it-IT
 ja-JP
 ko-KR
+nl-NL
 nb-NO
 pl-PL
 pt-BR
