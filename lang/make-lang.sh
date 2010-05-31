@@ -126,13 +126,13 @@ cat > ${ENIGLANG}/install.rdf <<EOT
       <Description>
         <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
         <em:minVersion>3.0</em:minVersion>
-        <em:maxVersion>3.0.*</em:maxVersion>
+        <em:maxVersion>3.1.*</em:maxVersion>
       </Description>
       <Description>
         <!-- Seamonkey -->
         <em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
         <em:minVersion>2.0a1</em:minVersion>
-        <em:maxVersion>2.0.*</em:maxVersion>
+        <em:maxVersion>2.1.*</em:maxVersion>
       </Description>
     </em:targetApplication>
 

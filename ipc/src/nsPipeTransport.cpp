@@ -357,8 +357,16 @@ NS_IMETHODIMP nsPipeTransport::Open(const char **args,
   argList[0] = (char *) mExecutable.get();
 
   for (j=0; j < argCount; j++) {
+#ifdef XP_OS2
+    nsCAutoString tmpArg ( args[j] );
+    if (tmpArg.FindChar(' ', 0) >= 0) {
+      tmpArg.Insert("\"", 0);
+      tmpArg.Append("\"");
+      args[j] = tmpArg.get();
+    }
+#endif
     argList[j+1] = (char *)args[j];
-    DEBUG_LOG(("nsPipeTransport::Open: arg[%d] = %s\n", j+1, args[j]));
+    DEBUG_LOG(("nsPipeTransport::Open: arg[%d] = %s\n", j+1, argList[j+1]));
   }
 
   argList[argCount+1] = NULL;
