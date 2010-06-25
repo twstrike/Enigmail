@@ -279,7 +279,7 @@
 <!ENTITY enigmail.maybe.label "Sim, se selecionado durante a Composição de Mensagem">
 <!ENTITY enigmail.singleRcptSettings.desc "(Nota: em caso de conflitos, 'Nunca' tem preferência sobre 'Sempre')">
 <!ENTITY enigmail.ruleEmail.label "Definir Regras OpenPGP para">
-<!ENTITY enigmail.ruleEmail.tooltip "Apenas preencher endereços de email, NÃO inclua os nomes dos destinatários\nPor ex: 'Fulano Silva <fulano.silva@endereco.net>' é inválido">
+<!ENTITY enigmail.ruleEmail.tooltip "Apenas preencher endereços de email, NÃO inclua os nomes dos destinatários\nPor ex: 'Fulano Silva &lt;fulano.silva@endereco.net&gt;' é inválido">
 <!ENTITY enigmail.sepratationDesc.label "(Separe os endereços com espaços)">
 <!ENTITY enigmail.matchDescStart.label "Aplicar regra se o destinatário for">
 <!ENTITY enigmail.matchDescEnd.label "um dos endereços acima">
