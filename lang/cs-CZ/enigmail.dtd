@@ -84,7 +84,7 @@
 <!ENTITY enigmail.test.label "Test">
 <!ENTITY enigmail.decryptbutton.label "Dešifrovat">
 <!ENTITY enigmail.decryptbutton.tip "Dešifrovat nebo ověřit zprávu pomocí OpenPGP (Enigmail)">
-<!ENTITY enigmail.messengermenu.accesskey "n">
+<!ENTITY enigmail.messengermenu.accesskey "e">
 <!ENTITY enigmail.decryptverify.label "Dešifrovat/Ověřit">
 <!ENTITY enigmail.importpublickey.label "Importovat veřejný klíč">
 <!ENTITY enigmail.savedecrypted.label "Uložit dešifrovanou zprávu">
