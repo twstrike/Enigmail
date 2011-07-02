@@ -72,6 +72,7 @@ Enigmail.hdrView = {
       this.statusBar.removeAttribute("signed");
       this.statusBar.removeAttribute("encrypted");
       this.enigmailBox.setAttribute("collapsed", "true")
+      Enigmail.msg.setAttachmentReveal(null);
     }
     catch (ex) {}
   },
@@ -826,27 +827,12 @@ function CanDetachAttachments()
   return canDetach && Enigmail.hdrView.enigCanDetachAttachments();
 }
 
-// Distinction between createNewAttachmentInfo and AttachmentInfo
-// due to renamed function in MsgHdrView.js in TB trunk code.
-// Can be removed in later versions of Enigmail.
-
-try
-{
-     createNewAttachmentInfo.prototype.origOpenAttachment = createNewAttachmentInfo.prototype.openAttachment;
-     createNewAttachmentInfo.prototype.openAttachment = function ()
-     {
-       this.origOpenAttachment();
-     }
+if (createNewAttachmentInfo.prototype.openAttachment) {
+  createNewAttachmentInfo.prototype.origOpenAttachment = createNewAttachmentInfo.prototype.openAttachment;
+  createNewAttachmentInfo.prototype.openAttachment = function () {
+    this.origOpenAttachment();
+  }
 }
-catch (ex)
-{
-    AttachmentInfo.prototype.origOpenAttachment = AttachmentInfo.prototype.openAttachment;
-    AttachmentInfo.prototype.openAttachment = function ()
-    {
-      this.origOpenAttachment();
-    }
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // THE FOLLOWING EXTENDS CODE IN msgHdrViewOverlay.js
