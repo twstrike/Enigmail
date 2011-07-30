@@ -9,7 +9,6 @@ es-ES
 fi-FI
 fr-FR
 gl-ES
-hu-HU
 it-IT
 ja-JP
 ko-KR
@@ -19,8 +18,10 @@ pl-PL
 pt-BR
 pt-PT
 ru-RU
+sk-SK
 sl-SI
 sv-SE
 tr-TR
 vi-VN
 zh-CN
+zh-TW
