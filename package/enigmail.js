@@ -2117,13 +2117,13 @@ Enigmail.prototype = {
         //  sub:f:2048:1:70E7A471DABE08B0:1316221524:1546189300:::::s:
         var lineTokens = lineArr[i].split(/:/);
         switch (lineTokens[0]) {
-          case "pub:":
+          case "pub":
             if (EnigmailFuncs.isInvalid(lineTokens[1])) {
               // pub key not valid (anymore)-> display all UID's
               hideInvalidUid = false;
             }
             break;
-          case "uid:":
+          case "uid":
             if (uidOnly && hideInvalidUid) {
               var thisTrust = TRUSTLEVELS_SORTED.indexOf(lineTokens[1]);
               if (thisTrust > maxTrustLevel) {
@@ -2140,7 +2140,7 @@ Enigmail.prototype = {
               userList += lineTokens[9] + "\n";
             }
             break;
-          case "uat:":
+          case "uat":
             if (withUserAttributes) {
               if (!EnigmailFuncs.isInvalid(lineTokens[1]) || !hideInvalidUid) {
                 // IF  UID valid  OR  key not valid and invalid keys allowed
