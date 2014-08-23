@@ -162,7 +162,7 @@ var EnigmailCommon = {
   MIME_CONTRACTID: "@mozilla.org/mime;1",
   SIMPLEURI_CONTRACTID: "@mozilla.org/network/simple-uri;1",
 
-  // possible values for 
+  // possible values for
   // - encryptByRule, signByRules, pgpmimeByRules
   // - encryptForced, signForced, pgpmimeForced (except CONFLICT)
   // NOTE:
@@ -1084,8 +1084,7 @@ var EnigmailCommon = {
 
   parseErrorOutput: function (errOutput, retStatusObj)
   {
-
-    this.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: status message: "+errOutput+"\n");
+    this.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+errOutput+"\n");
 
     var errLines = errOutput.split(/\r?\n/);
 
@@ -1096,6 +1095,7 @@ var EnigmailCommon = {
 
     var errArray    = new Array();
     var statusArray = new Array();
+    var encryptToArray = new Array();  // collect ENC_TO lines here
     var lineSplit = null;
     var errCode = 0;
     var detectedCard = null;
@@ -1158,6 +1158,12 @@ var EnigmailCommon = {
           // if known flag, story it in our status
           if (flag) {
             statusFlags |= flag;
+          }
+          else {
+            var words = statusLine.split(" ")
+            if (words.length >= 2 && words[0] == "ENC_TO") {
+              encryptToArray.push("0x"+words[1]);
+            }
           }
         }
       }
@@ -1237,6 +1243,34 @@ var EnigmailCommon = {
     }
 
     this.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+this.bytesToHex(this.pack(statusFlags,4))+"\n");
+
+    // add used keys (and their user IDs if known) to the details error message
+    // Status Messages are something like (here the German version):
+    //    [GNUPG:] ENC_TO AAAAAAAAAAAAAAAA 1 0
+    //    [GNUPG:] ENC_TO 5B820D2D4553884F 16 0
+    //    [GNUPG:] ENC_TO 37904DF2E631552F 1 0
+    //    [GNUPG:] ENC_TO BBBBBBBBBBBBBBBB 1 0
+    //    gpg: verschlüsselt mit 3072-Bit RSA Schlüssel, ID BBBBBBBB, erzeugt 2009-11-28
+    //          "Joe Doo <joe.doo@domain.de>"
+    //    [GNUPG:] NO_SECKEY E71712DF47BBCC40
+    //    gpg: verschlüsselt mit RSA Schlüssel, ID AAAAAAAA
+    //    [GNUPG:] NO_SECKEY AAAAAAAAAAAAAAAA
+    if (encryptToArray.length > 0) {
+      // for each private key also show an associated user ID if known:
+      for (var encIdx=0; encIdx<encryptToArray.length; ++encIdx) {
+        var keyId = encryptToArray[encIdx];
+        // except for ID 00000000, which signals hidden keys
+        if (keyId != "0x0000000000000000") {
+          var userId = this.enigmailSvc.getFirstUserIdOfKey(keyId);
+          if (userId) {
+            userId = this.convertToUnicode(userId, "UTF-8");
+            encryptToArray[encIdx] += " (" + userId + ")";
+          }
+        }
+      }
+      var gpgKeys = "\n  " + encryptToArray.join(",\n  ") + "\n";
+      errorMsg += "\n\n" + EnigmailCommon.getString("encryptKeysNote", [ gpgKeys ]);
+    }
 
     return errorMsg;
   },
@@ -1660,6 +1694,46 @@ var EnigmailCommon = {
 
     return chan;
   },
+
+  /**
+    * return an array containing the aliases and the email addresses
+    * of groups defined in gpg.conf
+    *
+    * @return: array of objects with the following properties:
+    *  - alias: group name as used by GnuPG
+    *  - keylist: list of keys (any form that GnuPG accepts), separated by ";"
+    *
+    * (see docu for gnupg parameter --group)
+    */
+  getGpgGroups: function() {
+    if (!this.enigmailSvc) return [];
+
+    let exitCodeObj = {};
+    let errorMsgObj = {};
+
+    let cfgStr = this.enigmailSvc.getGnupgConfig(exitCodeObj, errorMsgObj);
+
+    if (exitCodeObj.value != 0) {
+      this.aelrt(errorMsgObj.value);
+      return null;
+    }
+
+    let groups = [];
+    let cfg = cfgStr.split(/\n/);
+
+    for (let i=0; i < cfg.length;i++) {
+      if (cfg[i].indexOf("cfg:group") == 0) {
+        let groupArr = cfg[i].split(/:/);
+        groups.push({
+          alias: groupArr[2],
+          keylist: groupArr[3]
+        });
+      }
+    }
+
+    return groups;
+  },
+
 
   getHttpProxy: function (hostName) {
 
@@ -2358,10 +2432,12 @@ var EnigmailCommon = {
   },
 
 
-  decryptMessageEnd: function (stderrStr, exitCode, outputLen, verifyOnly, noOutput, uiFlags, retStatusObj) {
+  decryptMessageEnd: function (stderrStr, exitCode, outputLen, verifyOnly, noOutput, uiFlags, retStatusObj)
+  {
     this.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: uiFlags="+uiFlags+", verifyOnly="+verifyOnly+", noOutput="+noOutput+"\n");
 
-    this.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: stderrStr="+stderrStr+"\n");
+    stderrStr = stderrStr.replace(/\r\n/g,"\n");
+    this.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: stderrStr=\n"+stderrStr+"\n");
     var interactive = uiFlags & nsIEnigmail.UI_INTERACTIVE;
     var pgpMime     = uiFlags & nsIEnigmail.UI_PGP_MIME;
     var allowImport = uiFlags & nsIEnigmail.UI_ALLOW_KEY_IMPORT;
@@ -2485,7 +2561,7 @@ var EnigmailCommon = {
       if (uids) {
         userId = uids;
       }
-      if (uids.indexOf("uat:jpegPhoto:") >= 0) {
+      if (uids && uids.indexOf("uat:jpegPhoto:") >= 0) {
         retStatusObj.statusFlags |= nsIEnigmail.PHOTO_AVAILABLE;
       }
     }

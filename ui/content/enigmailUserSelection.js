@@ -34,6 +34,8 @@
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
+Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+
 // Initialize enigmailCommon
 EnigInitCommon("enigmailUserSelection");
 
@@ -114,17 +116,10 @@ function enigGetUserList(secretOnly, refresh) {
     }
 
     if (! secretOnly) {
-      var configString = enigmailSvc.getGnupgConfig(exitCodeObj, errorMsgObj);
-      if (exitCodeObj.value != 0) {
-        EnigAlert(errorMsgObj.value);
-        return null;
-      }
-      var configList = configString.split(/\n/);
-      for (var i=0; i<configList.length;i++) {
-        if (configList[i].indexOf("cfg:group") == 0) {
-          var groupArr=configList[i].split(/:/);
-          userList += "grp:"+groupArr[2]+":"+groupArr[3]+"\n";
-        }
+      let groups = EnigmailCommon.getGpgGroups();
+
+      for (var i=0; i < groups.length; i++) {
+        userList += "grp:"+groups[i].alias+":"+groups[i].keylist+"\n";
       }
     }
     else {
@@ -177,12 +172,19 @@ function enigmailBuildList(refresh) {
      else if (a.uidMatchInvalid != b.uidMatchInvalid) {
        r = (a.uidMatchInvalid == 1 ? -1 : 1);
      }
-     // 3rd: sort not activateable keys to the end
+     // 3rd: sort non-activateable keys to the end
      else if ((a.activeState != b.activeState) && (a.activeState == 2 || b.activeState == 2)) {
        r = (a.activeState == 0 ? -1 : 1);
      }
      // 4th: sort according to user IDs
-     else if (a.userId.toLowerCase()<b.userId.toLowerCase()) {
+     else if (a.userId.toLowerCase() < b.userId.toLowerCase()) {
+       r = -1;
+     }
+     else if (a.userId.toLowerCase() > b.userId.toLowerCase()) {
+       r = 1;
+     }
+     // 5th: sort according to trust level (higher index value in front)
+     else if (TRUSTLEVELS_SORTED.indexOf(a.keyTrust) > TRUSTLEVELS_SORTED.indexOf(b.keyTrust)) {
        r = -1;
      }
      else {
@@ -499,7 +501,7 @@ function enigmailBuildList(refresh) {
       }
    }
 
-   // sort items according to sorting criterion 
+   // sort items according to sorting criterion
    aUserList.sort(sortUsersCallback);
 
    // Build up key treeView
