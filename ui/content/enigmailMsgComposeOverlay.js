@@ -2604,6 +2604,7 @@ Enigmail.msg = {
     newSecurityInfo.senderEmailAddr = fromAddr;
     newSecurityInfo.recipients = fromAddr;
     newSecurityInfo.bccRecipients = "";
+    this.dirty = true;
 
     return true;
   },
