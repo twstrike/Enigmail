@@ -1417,6 +1417,10 @@ Enigmail.msg = {
     EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.updateStatusBar()\n");
     this.statusEncryptedInStatusBar = this.statusEncrypted; // to double check broken promise for encryption
 
+    if (! this.identity) {
+      this.identity = getCurrentIdentity();
+    }
+
     var toolbarTxt = document.getElementById("enigmail-toolbar-text");
     var encBroadcaster = document.getElementById("enigmail-bc-encrypt");
     var signBroadcaster = document.getElementById("enigmail-bc-sign");
@@ -1641,6 +1645,10 @@ Enigmail.msg = {
   {
     EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.focusChange: Enigmail.msg.determineSendFlags\n");
     this.statusEncryptedInStatusBar = null; // to double check broken promise for encryption
+
+    if (! this.identity) {
+      this.identity = getCurrentIdentity();
+    }
 
     if (this.getAccDefault("enabled")) {
       var compFields = Components.classes["@mozilla.org/messengercompose/composefields;1"].createInstance(Components.interfaces.nsIMsgCompFields);
@@ -3503,6 +3511,10 @@ Enigmail.msg = {
     const HEADERMODE_URL   = 0x10;
 
     try {
+
+      if (! this.identity) {
+        this.identity = getCurrentIdentity();
+      }
 
       if (this.identity.getBoolAttribute("enablePgp")) {
         if (EnigmailCommon.getPref("addHeaders")) {
