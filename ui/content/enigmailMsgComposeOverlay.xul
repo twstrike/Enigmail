@@ -95,6 +95,7 @@
                 accesskey="&enigmail.encryptedsend.accesskey;"
                 label="&enigmail.encryption.label;"
                 key="key_enigEncrypt"
+                savedraftslbl="&enigmail.autoEncryptDrafts.label;"
                 oncommand="Enigmail.msg.doPgpButton('toggle-final-encrypt');"/>
 
           <!-- signing state / toggle menu -->
@@ -252,6 +253,5 @@
             context="toolbar-context-menu">
     </toolbar>
   </toolbox>
-
 
 </overlay>
