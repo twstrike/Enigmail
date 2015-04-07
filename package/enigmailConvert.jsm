@@ -551,6 +551,7 @@ isPgpMime = function(mime) {
   try {
     var ct = mime.contentType;
     if (!ct || ct == undefined) return false;
+    if (! ('content-type' in mime.headers)) return false;
 
     var pt = getProtocol(mime.headers['content-type'].join(" "));
     if (!pt || pt == undefined) return false;
@@ -572,6 +573,7 @@ isSMime = function(mime) {
   try {
     var ct = mime.contentType;
     if (!ct || ct == undefined) return false;
+    if (! ('content-type' in mime.headers)) return false;
 
     var pt = getSMimeProtocol(mime.headers['content-type'].join(" "));
     if (!pt || pt == undefined) return false;
