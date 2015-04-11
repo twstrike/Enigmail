@@ -1161,7 +1161,7 @@ Enigmail.prototype = {
 
 
   execCmd: function (command, args, passphrase, input, exitCodeObj, statusFlagsObj,
-            statusMsgObj, errorMsgObj)
+            statusMsgObj, errorMsgObj, retStatusObj)
   {
     EC.WRITE_LOG("enigmail.js: Enigmail.execCmd: subprocess = '"+command.path+"'\n");
 
@@ -1227,12 +1227,15 @@ Enigmail.prototype = {
     EC.DEBUG_LOG("enigmail.js: Enigmail.execCmd: exitCode = "+exitCodeObj.value+"\n");
     EC.DEBUG_LOG("enigmail.js: Enigmail.execCmd: errOutput = "+errOutput+"\n");
 
-    var retObj = {};
 
-    errorMsgObj.value = Ec.parseErrorOutput(errOutput, retObj);
-    statusFlagsObj.value = retObj.statusFlags;
-    statusMsgObj.value = retObj.statusMsg;
-    var blockSeparation = retObj.blockSeparation;
+    if (! retStatusObj) {
+      retStatusObj = {};
+    }
+
+    errorMsgObj.value = Ec.parseErrorOutput(errOutput, retStatusObj);
+    statusFlagsObj.value = retStatusObj.statusFlags;
+    statusMsgObj.value = retStatusObj.statusMsg;
+    var blockSeparation = retStatusObj.blockSeparation;
 
     exitCodeObj.value = Ec.fixExitCode(proc.exitCode, statusFlagsObj.value);
 
@@ -2082,6 +2085,11 @@ Enigmail.prototype = {
       var listText = this.execCmd(this.agentPath, args, null, "",
                         exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
+      if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
+        // ignore exit code as recommended by GnuPG authors
+        exitCodeObj.value = 0;
+      }
+
       if (exitCodeObj.value != 0) {
         errorMsgObj.value = EC.getString("badCommand");
         if (cmdErrorMsgObj.value) {
@@ -2133,6 +2141,11 @@ Enigmail.prototype = {
     var listText = this.execCmd(this.agentPath, args, null, "",
                       exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
+    if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
+      // ignore exit code as recommended by GnuPG authors
+      exitCodeObj.value = 0;
+    }
+
     if (exitCodeObj.value != 0) {
       errorMsgObj.value = EC.getString("badCommand");
       if (cmdErrorMsgObj.value) {
@@ -2172,6 +2185,12 @@ Enigmail.prototype = {
 
     var listText = this.execCmd(this.agentPath, args, null, "",
                                 exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+
+    if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
+      // ignore exit code as recommended by GnuPG authors
+      exitCodeObj.value = 0;
+    }
+
     if (exitCodeObj.value != 0) {
       return "";
     }
@@ -2609,7 +2628,7 @@ Enigmail.prototype = {
 
     var outputTxt = this.simpleExecCmd(this.agentPath, args, exitCodeObj, photoDataObj);
 
-    if ((exitCodeObj.value == 0) && !outputTxt) {
+    if (!outputTxt) {
       exitCodeObj.value = -1;
       return "";
     }
