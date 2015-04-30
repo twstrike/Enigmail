@@ -3,6 +3,4 @@ sudo: required
 compiler:
   - gcc
 script:
-  ./provision.sh
-  ./build.sh
-  ./test.sh
+  ./provision.sh && ./build.sh && ./test.sh
