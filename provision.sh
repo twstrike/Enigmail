@@ -1,9 +1,9 @@
 #!/usr/bin/env bash 
 
 echo "Provisioning ..."
-apt-get update
-apt-get install -y zip thunderbird xvfb
-apt-get upgrade -y
+sudo apt-get update
+sudo apt-get install -y zip thunderbird xvfb
+sudo apt-get upgrade -y
 wget -O /tmp/jsunit-0.1.xpi https://www.enigmail.net/jsunit/jsunit-0.1.xpi
 rm -rf /usr/lib/thunderbird-addons/extensions/jsunit@enigmail.net
 unzip /tmp/jsunit-0.1.xpi -d /usr/lib/thunderbird-addons/extensions/jsunit@enigmail.net
