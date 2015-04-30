@@ -2,12 +2,12 @@
 
 Xvfb :99 >/dev/null 2>&1 &
 export DISPLAY=:99
+export PL_PATH=`which perl`
 
-for f in `find . -type d -name 'tests'`; do
-    pushd . > /dev/null
-    cd $f
-    make
-    popd > /dev/null
-done
+util/run-tests.py
+
+RESULT=$?
 
 killall Xvfb
+
+exit $RESULT
