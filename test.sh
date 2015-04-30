@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-display=$(ps aux | grep "[Xvfb] :" | awk '{print $12}')
+Xvfb :99 >/dev/null 2>&1 &
+export DISPLAY=:99
 
-export DISPLAY=$display
-for f in `find . -type d -name 'tests'`; do 
+for f in `find . -type d -name 'tests'`; do
     pushd . > /dev/null
     cd $f
     make
     popd > /dev/null
 done
+
+killall Xvfb
