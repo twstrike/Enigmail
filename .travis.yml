@@ -2,5 +2,8 @@ language: c
 sudo: required
 compiler:
   - gcc
+install:
+  ./provision.sh
 script:
-  ./provision.sh && ./build.sh && ./test.sh
+  - ./build.sh
+  - ./test.sh
