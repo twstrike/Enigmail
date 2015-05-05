@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-TBPATH=${TBPATH:-`which thunderbird`}
-./configure --with-tb-path=$TBPATH
+export TB_PATH=${TB_PATH:-`which thunderbird`}
+./configure --with-tb-path=$TB_PATH
 make

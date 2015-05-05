@@ -15,7 +15,8 @@ class TestRunner:
                 if file.endswith("-test.js"):
                     yield os.path.join(root, file)
 
-    def __init__(self, tests):
+    def __init__(self, tbpath, tests):
+        self.tbpath = tbpath
         self.tests = tests
 
     def run(self):
@@ -102,7 +103,7 @@ class TestRunner:
         try:
             with open(tmp_file, 'w') as f:
                 f.write("do_subtest(\"" + test_name + "\");\n")
-            tsk = subprocess.Popen(['/usr/bin/thunderbird', '-jsunit', os.path.basename(tmp_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=dir_name)
+            tsk = subprocess.Popen([self.tbpath, '-jsunit', os.path.basename(tmp_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=dir_name)
             ret = self.polling(tsk, self.reporting(), self.ignoring())
             self.add_stats()
             return ret
@@ -111,11 +112,12 @@ class TestRunner:
 
 
 if __name__ == '__main__':
+    tbpath = os.environ.get('TB_PATH', '/usr/bin/thunderbird')
     if len(sys.argv) < 2:
         tests = sorted([f for f in TestRunner.all_tests()])
     else:
         tests = sys.argv[1:]
-    (ran, suc, fail) = TestRunner(tests).run()
+    (ran, suc, fail) = TestRunner(tbpath, tests).run()
     print "Ran " + str(ran) + " tests"
     if fail > 0:
         print "  Had " + str(fail) + " failures"
