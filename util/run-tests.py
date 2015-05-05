@@ -8,6 +8,8 @@ import select
 import re
 
 class TestRunner:
+    TEST_OUTPUT_FILE = 'test_output.log'
+
     @staticmethod
     def all_tests():
         for root, dirs, files in os.walk("."):
@@ -20,12 +22,14 @@ class TestRunner:
         self.tests = tests
 
     def run(self):
-        self.total_executed = 0
-        self.total_succeeded = 0
-        self.total_failed = 0
-        for t in tests:
-            self.run_test(t)
-        return (self.total_executed, self.total_succeeded, self.total_failed)
+        with open(TestRunner.TEST_OUTPUT_FILE, 'w') as test_output:
+            self.test_output = test_output
+            self.total_executed = 0
+            self.total_succeeded = 0
+            self.total_failed = 0
+            for t in tests:
+                self.run_test(t)
+            return (self.total_executed, self.total_succeeded, self.total_failed)
 
     def polling(self, tsk, on_stdout, on_stderr):
         poll = select.poll()
@@ -52,11 +56,6 @@ class TestRunner:
                     events = poll.poll()
         return tsk.wait()
 
-    def ignoring(self):
-        def ret(str):
-            pass
-        return ret
-
     def is_jsunit(self, str):
         return str.startswith("TestResult: ") or "resource://jsunit/jsunit-main.jsm" in str
 
@@ -75,6 +74,18 @@ class TestRunner:
             pass
         else:
             print str
+
+    def write_to_log(self):
+        def ret(str):
+            if self.test_output:
+                self.test_output.write(str + "\n")
+        return ret
+
+    def combine(self, left, right):
+        def ret(str):
+            left(str)
+            right(str)
+        return ret
 
     def reporting(self):
         def ret(str):
@@ -104,12 +115,11 @@ class TestRunner:
             with open(tmp_file, 'w') as f:
                 f.write("do_subtest(\"" + test_name + "\");\n")
             tsk = subprocess.Popen([self.tbpath, '-jsunit', os.path.basename(tmp_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=dir_name)
-            ret = self.polling(tsk, self.reporting(), self.ignoring())
+            ret = self.polling(tsk, self.combine(self.write_to_log(), self.reporting()), self.write_to_log())
             self.add_stats()
             return ret
         finally:
             os.remove(tmp_file)
-
 
 if __name__ == '__main__':
     tbpath = os.environ.get('TB_PATH', '/usr/bin/thunderbird')
