@@ -14,14 +14,19 @@ function run_test() {
 }
 
 function shouldNotUseGpgAgent_test() {
-    var enigmail = new Enigmail();
+    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     var isuseGpgAgent = enigmail.useGpgAgent();
     Assert.equal(false, isuseGpgAgent);
 }
 
-function shouldUseGpgAgent_test() {
-    Ec.enigmailSvc = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
+function initalizeService(enigmail) {
     window = JSUnit.createStubWindow();
-    Ec.enigmailSvc.initialize(window, "", EnigmailCore.prefBranch);
-    Assert.equal(true, Ec.enigmailSvc.useGpgAgent());
+    enigmail.initialize(window, "", EnigmailCore.prefBranch);
+    return enigmail;
+}
+
+function shouldUseGpgAgent_test() {
+    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
+    enigmail = initalizeService(enigmail);
+    Assert.equal(true, enigmail.useGpgAgent());
 }
