@@ -11,49 +11,69 @@ class TestRunner:
     TEST_OUTPUT_FILE = 'test_output.log'
 
     @staticmethod
+    def is_test_file(file):
+        return file.endswith("-test.js")
+
+    @staticmethod
     def all_tests():
         for root, dirs, files in os.walk("."):
             for file in files:
-                if file.endswith("-test.js"):
+                if TestRunner.is_test_file(file):
                     yield os.path.join(root, file)
 
     def __init__(self, tbpath, tests):
         self.tbpath = tbpath
         self.tests = tests
 
+    def reset_total(self):
+        self.total_executed = 0
+        self.total_succeeded = 0
+        self.total_failed = 0
+
+    def reset_stats(self):
+        self.executed = 0
+        self.succeeded = 0
+        self.failed = 0
+
     def run(self):
         with open(TestRunner.TEST_OUTPUT_FILE, 'w') as test_output:
             self.test_output = test_output
-            self.total_executed = 0
-            self.total_succeeded = 0
-            self.total_failed = 0
-            for t in tests:
+            self.reset_total()
+            for t in self.tests:
                 self.run_test(t)
             return (self.total_executed, self.total_succeeded, self.total_failed)
 
-    def polling(self, tsk, on_stdout, on_stderr):
+    def start_poll(self, tsk):
         poll = select.poll()
         poll.register(tsk.stdout,select.POLLIN | select.POLLHUP)
         poll.register(tsk.stderr,select.POLLIN | select.POLLHUP)
+        return poll
+
+    def check_output(self, rfd, std, on):
+        if rfd == std.fileno():
+            line = std.readline()
+            if len(line) > 0:
+                on(line[:-1])
+
+    def poll(self, pollc, events, poll, tsk, on_stdout, on_stderr):
+        for event in events:
+            (rfd,event) = event
+            if event & select.POLLIN:
+                self.check_output(rfd, tsk.stdout, on_stdout)
+                self.check_output(rfd, tsk.stderr, on_stderr)
+            if event & select.POLLHUP:
+                poll.unregister(rfd)
+                pollc = pollc - 1
+            if pollc > 0:
+                events = poll.poll()
+        return (pollc, events)
+
+    def polling(self, tsk, on_stdout, on_stderr):
         pollc = 2
+        poll = self.start_poll(tsk)
         events = poll.poll()
         while pollc > 0 and len(events) > 0:
-            for event in events:
-                (rfd,event) = event
-                if event & select.POLLIN:
-                    if rfd == tsk.stdout.fileno():
-                        line = tsk.stdout.readline()
-                        if len(line) > 0:
-                            on_stdout(line[:-1])
-                    if rfd == tsk.stderr.fileno():
-                        line = tsk.stderr.readline()
-                        if len(line) > 0:
-                            on_stderr(line[:-1])
-                if event & select.POLLHUP:
-                    poll.unregister(rfd)
-                    pollc = pollc - 1
-                if pollc > 0:
-                    events = poll.poll()
+            (pollc, events) = self.poll(pollc, events, poll, tsk, on_stdout, on_stderr)
         return tsk.wait()
 
     def is_jsunit(self, str):
@@ -63,13 +83,12 @@ class TestRunner:
         return int(re.search('\d+', str).group(0))
 
     def analyze_output(self, str):
-        if str.startswith("TestResult: "):
-            if   str.startswith("TestResult: executed :"):
-                self.executed = self.extract_number(str)
-            elif str.startswith("TestResult: succeeded:"):
-                self.succeeded = self.extract_number(str)
-            elif str.startswith("TestResult: failed   :"):
-                self.failed = self.extract_number(str)
+        if str.startswith("TestResult: executed :"):
+            self.executed = self.extract_number(str)
+        elif str.startswith("TestResult: succeeded:"):
+            self.succeeded = self.extract_number(str)
+        elif str.startswith("TestResult: failed   :"):
+            self.failed = self.extract_number(str)
         elif str.startswith("Succeed: "):
             pass
         else:
@@ -93,15 +112,17 @@ class TestRunner:
                 self.analyze_output(str)
         return ret
 
-    def reset_stats(self):
-        self.executed = 0
-        self.succeeded = 0
-        self.failed = 0
 
     def add_stats(self):
         self.total_executed = self.total_executed + self.executed
         self.total_succeeded = self.total_succeeded + self.succeeded
         self.total_failed = self.total_failed + self.failed
+
+    def spin_test(self, dir_name, tmp_file):
+        tsk = subprocess.Popen([self.tbpath, '-jsunit', os.path.basename(tmp_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=dir_name)
+        ret = self.polling(tsk, self.combine(self.write_to_log(), self.reporting()), self.write_to_log())
+        self.add_stats()
+        return ret
 
     def run_test(self, t):
         test_name = os.path.basename(t)
@@ -114,10 +135,7 @@ class TestRunner:
         try:
             with open(tmp_file, 'w') as f:
                 f.write("do_subtest(\"" + test_name + "\");\n")
-            tsk = subprocess.Popen([self.tbpath, '-jsunit', os.path.basename(tmp_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=dir_name)
-            ret = self.polling(tsk, self.combine(self.write_to_log(), self.reporting()), self.write_to_log())
-            self.add_stats()
-            return ret
+            return self.spin_test(dir_name, tmp_file)
         finally:
             os.remove(tmp_file)
 
