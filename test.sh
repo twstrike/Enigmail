@@ -5,7 +5,11 @@ export DISPLAY=:99
 export PL_PATH=`which perl`
 export TB_PATH=${TB_PATH:-`which thunderbird`}
 
-util/run-tests.py
+if [ "$#" -eq 0 ]; then
+  util/run-tests.py
+else
+  util/run-tests.py $@
+fi
 
 RESULT=$?
 
