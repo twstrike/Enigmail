@@ -8,6 +8,7 @@ import select
 import re
 
 class TestRunner:
+    IGNORED_TESTS = ['./ipc/tests']
     TEST_OUTPUT_FILE = 'test_output.log'
 
     @staticmethod
@@ -15,10 +16,17 @@ class TestRunner:
         return file.endswith("-test.js")
 
     @staticmethod
+    def is_ignored(root, file):
+        for ign in TestRunner.IGNORED_TESTS:
+            if os.path.join(root, file).startswith(ign):
+                return True
+        return False
+
+    @staticmethod
     def all_tests():
         for root, dirs, files in os.walk("."):
             for file in files:
-                if TestRunner.is_test_file(file):
+                if TestRunner.is_test_file(file) and not TestRunner.is_ignored(root, file):
                     yield os.path.join(root, file)
 
     def __init__(self, tbpath, tests):
