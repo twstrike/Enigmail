@@ -12,7 +12,8 @@ function run_test() {
     shouldNotUseGpgAgent_test();
     shouldUseGpgAgent_test();
     shouldLocateArmoredBlock_test();
-    shouldExtractSignaturePart_test()
+    shouldExtractSignaturePart_test();
+    shouldGetKeyDetails_test();
 }
 
 function shouldNotUseGpgAgent_test() {
@@ -101,4 +102,23 @@ function shouldExtractSignaturePart_test() {
     Assert.equal(signature.text, signature_text);
     Assert.equal(signature.header, signature_headers);
     Assert.equal(signature.armor.replace(/\s*/g, ""), signature_armor);
+}
+
+function shouldGetKeyDetails_test() {
+    do_print("testing should get key details ");
+    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
+    enigmail = initalizeService(enigmail);
+    EC.setLogLevel(5);
+    var publicKey = do_get_file("resources/dev-strike.pk.asc", false);
+    var errorMsgObj = {};
+    var importedKeysObj = {};
+    var importResult = enigmail.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
+    Assert.equal(importResult, 0, errorMsgObj);
+    var keyDetails = enigmail.getKeyDetails("0xD535623BB60E9E71", false, true);
+    assertContains(keyDetails, "strike.devtest@gmail.com");
+}
+
+function assertContains(actual, expected, message) {
+    var msg = message || "Searching for <".concat(expected).concat("> to be contained within actual string.");
+    Assert.equal(actual.search(expected) > 1, true, msg);
 }
