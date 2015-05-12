@@ -115,10 +115,10 @@ function shouldGetKeyDetails_test() {
     var importResult = enigmail.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
     Assert.equal(importResult, 0, errorMsgObj);
     var keyDetails = enigmail.getKeyDetails("0xD535623BB60E9E71", false, true);
-    assertContains(keyDetails, "strike.devtest@gmail.com");
+    Assert.assertContains(keyDetails, "strike.devtest@gmail.com");
 }
 
-function assertContains(actual, expected, message) {
+Assert.assertContains =  function(actual, expected, message) {
     var msg = message || "Searching for <".concat(expected).concat("> to be contained within actual string.");
-    Assert.equal(actual.search(expected) > 1, true, msg);
-}
+    Assert.equal(actual.search(expected) > -1, true, msg);
+};
