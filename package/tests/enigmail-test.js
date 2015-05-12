@@ -109,7 +109,7 @@ function shouldGetKeyDetails_test() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initalizeService(enigmail);
     EC.setLogLevel(5);
-    var publicKey = do_get_file("resources/dev-strike.pk.asc", false);
+    var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
     var importResult = enigmail.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
