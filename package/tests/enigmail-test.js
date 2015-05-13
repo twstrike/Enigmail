@@ -14,6 +14,7 @@ function run_test() {
     shouldLocateArmoredBlock_test();
     shouldExtractSignaturePart_test();
     shouldGetKeyDetails_test();
+    shouldSignMessageTest();
 }
 
 function shouldNotUseGpgAgent_test() {
@@ -105,10 +106,8 @@ function shouldExtractSignaturePart_test() {
 }
 
 function shouldGetKeyDetails_test() {
-    do_print("testing should get key details ");
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initalizeService(enigmail);
-    EC.setLogLevel(5);
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
@@ -118,7 +117,35 @@ function shouldGetKeyDetails_test() {
     Assert.assertContains(keyDetails, "strike.devtest@gmail.com");
 }
 
-Assert.assertContains =  function(actual, expected, message) {
+function shouldSignMessageTest() {
+    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
+    enigmail = initalizeService(enigmail);
+    var publicKey = do_get_file("resources/dev-strike.asc", false);
+    var errorMsgObj = {};
+    var importedKeysObj = {};
+    enigmail.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
+    var parentWindow = JSUnit.createStubWindow();
+    var plainText = "Hello there!";
+    var strikeAccount = "strike.devtest@gmail.com";
+    var encryptResult = enigmail.encryptMessage(parentWindow,
+        nsIEnigmail.UI_TEST,
+        plainText,
+        strikeAccount,
+        strikeAccount,
+        "",
+        nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_SIGNED,
+        exitCodeObj = {},
+        statusFlagObj = {},
+        errorMsgObj = {}
+    );
+    Assert.equal(0, exitCodeObj.value);
+    Assert.equal(0, errorMsgObj.value);
+    Assert.equal(true, (statusFlagObj.value & nsIEnigmail.SIG_CREATED) > 0);
+    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
+    Assert.equal("SIGNED MESSAGE", blockType);
+}
+
+Assert.assertContains = function (actual, expected, message) {
     var msg = message || "Searching for <".concat(expected).concat("> to be contained within actual string.");
     Assert.equal(actual.search(expected) > -1, true, msg);
 };

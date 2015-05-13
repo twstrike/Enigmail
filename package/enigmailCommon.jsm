@@ -2927,6 +2927,11 @@ var EnigmailCommon = {
 
     var signMsg     = sendFlags & nsIEnigmail.SEND_SIGNED;
 
+    if(sendFlags & nsIEnigmail.SEND_TEST){
+      encryptArgs.push("--passphrase");
+      encryptArgs.push("STRIKEfreedom@Qu1to");
+    }
+
     var proc = this.execStart(this.enigmailSvc.agentPath, encryptArgs, signMsg, win, listener, statusFlagsObj);
 
     if (statusFlagsObj.value & nsIEnigmail.MISSING_PASSPHRASE) {
