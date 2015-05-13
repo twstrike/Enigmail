@@ -1,8 +1,19 @@
-function run_test() {
-    var md = do_get_cwd().parent;
+function run_test() { var md = do_get_cwd().parent;
     md.append("enigmailCommon.jsm");
     do_load_module("file://" + md.path);
+    shouldHandleNoDataErrors();
     shouldHandleErrorOutput_test();
+}
+
+function shouldHandleNoDataErrors() {
+  var errorOutput = "gpg: no valid OpenPGP data found.\n" +
+    "[GNUPG:] NODATA 1\n" +
+    "[GNUPG:] NODATA 2\n" + 
+    "gpg: decrypt_message failed: Unknown system error\n"; 
+
+  var result = EnigmailCommon.parseErrorOutput(errorOutput, response = {});
+
+  Assert.assertContains(result, "no valid OpenPGP data found");
 }
 
 function shouldHandleErrorOutput_test() {
@@ -21,6 +32,8 @@ function shouldHandleErrorOutput_test() {
 }
 
 Assert.assertContains = function(actual, expected, message) {
-    var msg = message || "Searching for <".concat(expected).concat("> to be contained within actual string.");
+    var msg = message || "Searching for <".concat(expected)
+      .concat("> to be contained within ")
+      .concat("<").concat(actual).concat(">");
     Assert.equal(actual.search(expected) > -1, true, msg);
 };
