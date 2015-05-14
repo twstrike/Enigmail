@@ -1224,7 +1224,7 @@ Enigmail.prototype = {
 
 
   encryptMessage: function (parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags,
-                            exitCodeObj, statusFlagsObj, errorMsgObj)
+                            exitCodeObj, statusFlagsObj, errorMsgObj, passphrase)
   {
     EC.DEBUG_LOG("enigmail.js: Enigmail.encryptMessage: "+plainText.length+" bytes from "+fromMailAddr+" to "+toMailAddr+" ("+sendFlags+")\n");
 
@@ -1276,7 +1276,7 @@ Enigmail.prototype = {
     var proc = Ec.encryptMessageStart(parent, uiFlags,
                                       fromMailAddr, toMailAddr, bccMailAddr,
                                       null, sendFlags,
-                                      listener, statusFlagsObj, errorMsgObj);
+                                      listener, statusFlagsObj, errorMsgObj, passphrase);
     if (! proc) {
       exitCodeObj.value = -1;
       EnigmailCommon.DEBUG_LOG("  <=== encryptMessage()\n");

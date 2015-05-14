@@ -136,7 +136,8 @@ function shouldSignMessageTest() {
         nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_SIGNED,
         exitCodeObj = {},
         statusFlagObj = {},
-        errorMsgObj = {}
+        errorMsgObj = {},
+        passphrase = "STRIKEfreedom@Qu1to"
     );
     Assert.equal(0, exitCodeObj.value);
     Assert.equal(0, errorMsgObj.value);

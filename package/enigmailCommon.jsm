@@ -2890,7 +2890,7 @@ var EnigmailCommon = {
 
   // returns subprocess object
   encryptMessageStart: function (win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
-            hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj) {
+            hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj, passphrase) {
     this.DEBUG_LOG("enigmailCommon.jsm: encryptMessageStart: uiFlags="+uiFlags+", from "+fromMailAddr+" to "+toMailAddr+", hashAlgorithm="+hashAlgorithm+" ("+this.bytesToHex(this.pack(sendFlags,4))+")\n");
 
     var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
@@ -2927,9 +2927,9 @@ var EnigmailCommon = {
 
     var signMsg     = sendFlags & nsIEnigmail.SEND_SIGNED;
 
-    if(sendFlags & nsIEnigmail.SEND_TEST){
+    if(passphrase){
       encryptArgs.push("--passphrase");
-      encryptArgs.push("STRIKEfreedom@Qu1to");
+      encryptArgs.push(passphrase);
     }
 
     var proc = this.execStart(this.enigmailSvc.agentPath, encryptArgs, signMsg, win, listener, statusFlagsObj);
