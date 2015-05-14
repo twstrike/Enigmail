@@ -15,6 +15,7 @@ function run_test() {
     shouldExtractSignaturePart_test();
     shouldGetKeyDetails_test();
     shouldSignMessageTest();
+    shouldEncryptMessageTest();
 }
 
 function shouldNotUseGpgAgent_test() {
@@ -141,9 +142,39 @@ function shouldSignMessageTest() {
     );
     Assert.equal(0, exitCodeObj.value);
     Assert.equal(0, errorMsgObj.value);
-    Assert.equal(true, (statusFlagObj.value & nsIEnigmail.SIG_CREATED) > 0);
+    Assert.equal(true, (statusFlagObj.value == nsIEnigmail.SIG_CREATED));
     var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
     Assert.equal("SIGNED MESSAGE", blockType);
+}
+
+function shouldEncryptMessageTest() {
+    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
+    enigmail = initalizeService(enigmail);
+    var publicKey = do_get_file("resources/dev-strike.asc", false);
+    var errorMsgObj = {};
+    var importedKeysObj = {};
+    enigmail.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
+    var parentWindow = JSUnit.createStubWindow();
+    var plainText = "Hello there!";
+    var strikeAccount = "strike.devtest@gmail.com";
+    var encryptResult = enigmail.encryptMessage(parentWindow,
+        nsIEnigmail.UI_TEST,
+        plainText,
+        strikeAccount,
+        strikeAccount,
+        "",
+        nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_ENCRYPTED,
+        exitCodeObj = {},
+        statusFlagObj = {},
+        errorMsgObj = {},
+        passphrase = "STRIKEfreedom@Qu1to"
+    );
+    Assert.equal(0, exitCodeObj.value);
+    Assert.equal(0, errorMsgObj.value);
+    Assert.equal(true, (statusFlagObj.value == nsIEnigmail.END_ENCRYPTION));
+    do_print(encryptResult);
+    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
+    Assert.equal("MESSAGE", blockType);
 }
 
 Assert.assertContains = function (actual, expected, message) {
