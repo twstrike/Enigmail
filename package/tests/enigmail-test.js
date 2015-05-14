@@ -15,6 +15,8 @@ function run_test() {
     shouldExtractSignaturePart_test();
     shouldGetKeyDetails_test();
     shouldSignMessageTest();
+    shouldEncryptMessageTest();
+    shouldDecryptMessageTest();
 }
 
 function shouldNotUseGpgAgent_test() {
@@ -141,9 +143,87 @@ function shouldSignMessageTest() {
     );
     Assert.equal(0, exitCodeObj.value);
     Assert.equal(0, errorMsgObj.value);
-    Assert.equal(true, (statusFlagObj.value & nsIEnigmail.SIG_CREATED) > 0);
+    Assert.equal(true, (statusFlagObj.value == nsIEnigmail.SIG_CREATED));
     var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
     Assert.equal("SIGNED MESSAGE", blockType);
+}
+
+function shouldEncryptMessageTest() {
+    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
+    enigmail = initalizeService(enigmail);
+    var publicKey = do_get_file("resources/dev-strike.asc", false);
+    var errorMsgObj = {};
+    var importedKeysObj = {};
+    enigmail.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
+    var parentWindow = JSUnit.createStubWindow();
+    var plainText = "Hello there!";
+    var strikeAccount = "strike.devtest@gmail.com";
+    var encryptResult = enigmail.encryptMessage(parentWindow,
+        nsIEnigmail.UI_TEST,
+        plainText,
+        strikeAccount,
+        strikeAccount,
+        "",
+        nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_ENCRYPTED,
+        exitCodeObj = {},
+        statusFlagObj = {},
+        errorMsgObj = {},
+        passphrase = "STRIKEfreedom@Qu1to"
+    );
+    Assert.equal(0, exitCodeObj.value);
+    Assert.equal(0, errorMsgObj.value);
+    Assert.equal(true, (statusFlagObj.value == nsIEnigmail.END_ENCRYPTION));
+    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
+    Assert.equal("MESSAGE", blockType);
+}
+
+function shouldDecryptMessageTest() {
+    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
+    enigmail = initalizeService(enigmail);
+    var publicKey = do_get_file("resources/dev-strike.asc", false);
+    var errorMsgObj = {};
+    var importedKeysObj = {};
+    enigmail.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
+    encryptResult = "-----BEGIN PGP MESSAGE-----\n"+
+        "Version: GnuPG v2.0.22 (GNU/Linux)\n"+
+        "\n"+
+        "hQIMA9U1Yju2Dp5xAQ//eeoS38nAWPdJslfVaEuUhthZk4WxAua97+JNGX9vDiae\n"+
+        "jKJbjmQ5T2Sl2wvSqwjEIKzzjRAzr6SYuL9xaRkt3/BbMpSm/aSjc/cWNgcKtbHt\n"+
+        "u8u9Ha016XZke3/EpjLqMcXmK1eT9oa+UqR8u+B3ggOjz5BrjW+FMR+zfyiWv1cb\n"+
+        "6U4KO0YHuOq7G0lO4i3ro0ckhzZqCBLfCiQSfnF8R7p/KfQdUFBIdB41OALP0q4x\n"+
+        "UD+CNWhbIjyhfE0VX5KUn/5S5Se31VjKjfeo+5fN8HRUVQYu8uj2F+gPvALF5KKW\n"+
+        "an63O3IcUvZo6yOSoMjkMVJBHZRY6An2if+GXm330yQD3CDaonuihR+e+k6sd0kj\n"+
+        "hpwQs+4/uE96slRMqQMx573krc/p/WUWwG5qexOvwxzcqEdE5LYPEMKdH1fUX3tC\n"+
+        "kktNpSU8gJqluTk6cvtjCfMSwcEyKFmM13/RoitAw22DVOdLlcTHxbaNsIoxeRk/\n"+
+        "rxpsraIEs2H4uyF19K1nLioGkyubeUKPnBTB6qAwp0ZhZ1RleMwHRTFQU+jpbi51\n"+
+        "t87E+JI0UuLd14pDb7YJUKenHvAqa1jHAZKEfa2XFMfT/1MZzohlwjNpcPhYFWeB\n"+
+        "zq3cg/m/J5sb+FpdD42nfYnLsSYu7CwcTX8MU2vrSwHyHnmux6SjDXGrAaddWsrS\n"+
+        "RwGvjZsiFW/E82l2eMj5Zpm6HXY8kZx9TBSbWLSgU44nBhDvX1MrIGdd+rmYT2xt\n"+
+        "j4KAKpyV51VzmJUOqHrb7bPv70ncMx0w\n"+
+        "=uadZ\n"+
+        "-----END PGP MESSAGE-----\n\n";
+
+    var parentWindow = JSUnit.createStubWindow();
+    var decryptResult = enigmail.decryptMessage(parentWindow,
+        nsIEnigmail.UI_TEST,
+        encryptResult,
+        signatureObj = {},
+        exitCodeObj = {},
+        statusFlagObj = {},
+        keyIdObj = {},
+        userIdObj = {},
+        sigDetailsObj = {},
+        errorMsgObj = {},
+        blockSeparationObj = {},
+        encToDetailsObj = {},
+        passphrase = "STRIKEfreedom@Qu1to"
+    );
+    Assert.equal(0, exitCodeObj.value);
+    Assert.equal(0, errorMsgObj.value);
+    Assert.equal("Hello there!", decryptResult);
+    Assert.equal(true, (statusFlagObj.value == (nsIEnigmail.DISPLAY_MESSAGE | nsIEnigmail.DECRYPTION_OKAY)));
+    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
+    Assert.equal("MESSAGE", blockType);
 }
 
 Assert.assertContains = function (actual, expected, message) {

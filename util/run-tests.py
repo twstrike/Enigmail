@@ -85,7 +85,7 @@ class TestRunner:
         return tsk.wait()
 
     def is_jsunit(self, str):
-        return str.startswith("TestResult: ") or str.startswith("AssertionError: ")
+        return str.startswith("TestResult: ") or str.startswith("AssertionError: ") or str.startswith("RuntimeError: ")
 
     def extract_number(self, str):
         return int(re.search('\d+', str).group(0))

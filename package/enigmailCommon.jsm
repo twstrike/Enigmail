@@ -2327,7 +2327,7 @@ var EnigmailCommon = {
 
   decryptMessageStart: function (win, verifyOnly, noOutput, listener,
                                  statusFlagsObj, errorMsgObj, mimeSignatureFile,
-                                 maxOutputLength) {
+                                 maxOutputLength, passphrase) {
     this.DEBUG_LOG("enigmailCommon.jsm: decryptMessageStart: verifyOnly="+verifyOnly+"\n");
 
     this.getService(win);
@@ -2372,6 +2372,11 @@ var EnigmailCommon = {
       }
 
       args.push("--decrypt");
+    }
+
+    if(passphrase){
+      args.push("--passphrase");
+      args.push(passphrase);
     }
 
     var proc = this.execStart(this.enigmailSvc.agentPath, args, !verifyOnly, win,
