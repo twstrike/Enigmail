@@ -164,7 +164,7 @@ function shouldEncryptMessageTest() {
         strikeAccount,
         strikeAccount,
         "",
-        nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_ENCRYPTED,
+        nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_ENCRYPTED | nsIEnigmail.SEND_ALWAYS_TRUST,
         exitCodeObj = {},
         statusFlagObj = {},
         errorMsgObj = {},
