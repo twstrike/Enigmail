@@ -1549,7 +1549,7 @@ Enigmail.prototype = {
   decryptMessage: function (parent, uiFlags, cipherText,
                             signatureObj, exitCodeObj,
                             statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
-                            blockSeparationObj, encToDetailsObj) {
+                            blockSeparationObj, encToDetailsObj, passphrase) {
     EC.DEBUG_LOG("enigmail.js: Enigmail.decryptMessage: "+cipherText.length+" bytes, "+uiFlags+"\n");
 
     if (! cipherText)
@@ -1657,7 +1657,7 @@ Enigmail.prototype = {
                                             // to avoid DoS attack
     var proc = Ec.decryptMessageStart(parent, verifyOnly, noOutput, listener,
                                       statusFlagsObj, startErrorMsgObj,
-                                      null, maxOutput);
+                                      null, maxOutput, passphrase);
 
     if (!proc) {
       errorMsgObj.value = startErrorMsgObj.value;
