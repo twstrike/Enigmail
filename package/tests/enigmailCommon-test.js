@@ -20,6 +20,7 @@
  * Contributor(s):
  *  Fan Jiang <fanjiang@thoughtworks.com>
  *  Iván Pazmiño <iapamino@thoughtworks.com>
+ *  Ola Bini <obini@thoughtworks.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -37,11 +38,12 @@
 function run_test() { var md = do_get_cwd().parent;
     md.append("enigmailCommon.jsm");
     do_load_module("file://" + md.path);
-    shouldHandleNoDataErrors();
+    shouldHandleNoDataErrors_test();
     shouldHandleErrorOutput_test();
+    shouldHandleFailedEncryption_test();
 }
 
-function shouldHandleNoDataErrors() {
+function shouldHandleNoDataErrors_test() {
   var errorOutput = "gpg: no valid OpenPGP data found.\n" +
     "[GNUPG:] NODATA 1\n" +
     "[GNUPG:] NODATA 2\n" +
@@ -65,6 +67,24 @@ function shouldHandleErrorOutput_test() {
     EnigmailCommon.parseErrorOutput(errorOutput, retStatusObj = {});
     Assert.assertContains(retStatusObj.statusMsg,"Missing Passphrase");
     Assert.equal(retStatusObj.extendedStatus, "");
+}
+
+function shouldHandleFailedEncryption_test() {
+     var errorOutput = "gpg: encrypted with 4096-bit RSA key, ID B60E9E71, created 2015-05-04\n" +
+           "\"anonymous strike <strike.devtest@gmail.com>\"\n" +
+           "[GNUPG:] BEGIN_DECRYPTION\n" +
+           "[GNUPG:] DECRYPTION_INFO 2 9\n" +
+           "[GNUPG:] PLAINTEXT 62 1431644287 text.txt\n" +
+           "[GNUPG:] PLAINTEXT_LENGTH 15\n" +
+           "File `textd.txt' exists. Overwrite? (y/N) y\n" +
+           "gpg: mdc_packet with invalid encoding\n" +
+           "[GNUPG:] DECRYPTION_FAILED\n" +
+           "gpg: decryption failed: Invalid packet\n" +
+           "[GNUPG:] END_DECRYPTION";
+
+     var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
+
+     Assert.assertContains(result, "decryption failed: Invalid packet");
 }
 
 Assert.assertContains = function(actual, expected, message) {
