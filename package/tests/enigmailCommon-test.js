@@ -41,6 +41,7 @@ function run_test() { var md = do_get_cwd().parent;
     shouldHandleNoDataErrors_test();
     shouldHandleErrorOutput_test();
     shouldHandleFailedEncryption_test();
+    shouldHandleSuccessfulImport_test();
 }
 
 function shouldHandleNoDataErrors_test() {
@@ -85,6 +86,34 @@ function shouldHandleFailedEncryption_test() {
      var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
 
      Assert.assertContains(result, "decryption failed: Invalid packet");
+}
+
+function shouldHandleSuccessfulImport_test() {
+     var errorOutput = "gpg: key 9CE311C4: public key \"anonymous strike <strike.devtest@gmail.com>\" imported\n" +
+        "[GNUPG:] IMPORTED 781617319CE311C4 anonymous strike <strike.devtest@gmail.com>\n" +
+        "[GNUPG:] IMPORT_OK 1 65537E212DC19025AD38EDB2781617319CE311C4\n" +
+        "gpg: key 9CE311C4: secret key imported\n" +
+        "[GNUPG:] IMPORT_OK 17 65537E212DC19025AD38EDB2781617319CE311C4\n" +
+        "[GNUPG:] IMPORT_OK 0 65537E212DC19025AD38EDB2781617319CE311C4\n" +
+        "gpg: key 9CE311C4: \"anonymous strike <strike.devtest@gmail.com>\" not changed\n" +
+        "gpg: Total number processed: 2\n" +
+        "gpg:               imported: 1  (RSA: 1)\n" +
+        "gpg:              unchanged: 1\n" +
+        "gpg:       secret keys read: 1\n" +
+        "gpg:   secret keys imported: 1\n" +
+        "[GNUPG:] IMPORT_RES 2 0 1 1 1 0 0 0 0 1 1 0 0 0";
+
+     EnigmailCommon.enigmailSvc = initializeEnigmail();
+     var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
+
+     Assert.assertContains(result, "secret key imported");
+}
+
+function initializeEnigmail() {
+    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
+    window = JSUnit.createStubWindow();
+    enigmail.initialize(window, "", EnigmailCore.prefBranch);
+    return enigmail;
 }
 
 Assert.assertContains = function(actual, expected, message) {
