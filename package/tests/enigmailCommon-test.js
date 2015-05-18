@@ -42,6 +42,7 @@ function run_test() { var md = do_get_cwd().parent;
     shouldHandleErrorOutput_test();
     shouldHandleFailedEncryption_test();
     shouldHandleSuccessfulImport_test();
+    shouldHandleUnverifiedSignature_test();
 }
 
 function shouldHandleNoDataErrors_test() {
@@ -107,6 +108,26 @@ function shouldHandleSuccessfulImport_test() {
      var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
 
      Assert.assertContains(result, "secret key imported");
+}
+
+function shouldHandleUnverifiedSignature_test() {
+    var errorOutput = "gpg: B60E9E71: There is no assurance this key belongs to the named user\n" +
+    "\n" +
+    "pub  4096R/B60E9E71 2015-05-04 anonymous strike <strike.devtest@gmail.com>\n" +
+    " Primary key fingerprint: 6553 7E21 2DC1 9025 AD38  EDB2 7816 1731 9CE3 11C4\n" +
+    "      Subkey fingerprint: D093 CD82 3BE1 3BD3 81EE  FF7A D535 623B B60E 9E71\n" +
+    "\n" +
+    "It is NOT certain that the key belongs to the person named\n" +
+    "in the user ID.  If you *really* know what you are doing,\n" +
+    "you may answer the next question with yes.\n" +
+    "\n" +
+    "[GNUPG:] USERID_HINT D535623BB60E9E71 anonymous strike <strike.devtest@gmail.com>\n" +
+    "Use this key anyway? (y/N) y";
+
+     EnigmailCommon.enigmailSvc = initializeEnigmail();
+     var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
+
+     Assert.assertContains(result, "Use this key anyway");
 }
 
 function initializeEnigmail() {
