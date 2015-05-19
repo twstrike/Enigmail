@@ -35,9 +35,14 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-function run_test() { var md = do_get_cwd().parent;
-    md.append("enigmailCommon.jsm");
-    do_load_module("file://" + md.path);
+function withModule(name) {
+  var md = do_get_cwd().parent;
+  md.append(name);
+  do_load_module("file://" + md.path);
+}
+
+function run_test() {
+  withModule("enigmailCommon.jsm");
     shouldHandleNoDataErrors_test();
     shouldHandleErrorOutput_test();
     shouldHandleFailedEncryption_test();
@@ -65,8 +70,8 @@ function shouldHandleErrorOutput_test() {
         "gpg: skipped \"<strike.devtest@gmail.com>\": Operation cancelled\n" +
         "[GNUPG:] INV_SGNR 0 <strike.devtest@gmail.com>\n" +
         "gpg: [stdin]: clearsign failed: Operation cancelled\n";
-
-    EnigmailCommon.parseErrorOutput(errorOutput, retStatusObj = {});
+  var retStatusObj = {};
+    EnigmailCommon.parseErrorOutput(errorOutput, retStatusObj);
     Assert.assertContains(retStatusObj.statusMsg,"Missing Passphrase");
     Assert.equal(retStatusObj.extendedStatus, "");
 }
@@ -84,7 +89,7 @@ function shouldHandleFailedEncryption_test() {
            "gpg: decryption failed: Invalid packet\n" +
            "[GNUPG:] END_DECRYPTION";
 
-     var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
+     var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "decryption failed: Invalid packet");
 }
@@ -105,7 +110,7 @@ function shouldHandleSuccessfulImport_test() {
         "[GNUPG:] IMPORT_RES 2 0 1 1 1 0 0 0 0 1 1 0 0 0";
 
      EnigmailCommon.enigmailSvc = initializeEnigmail();
-     var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
+     var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "secret key imported");
 }

@@ -11,8 +11,8 @@ function run_test() {
     md.append("enigmailCore.jsm");
     do_load_module("file://" + md.path);
     shouldReadProperty_test();
-    shouldSetGetPreference_test()
-    shouldCreateLogFile_test()
+    shouldSetGetPreference_test();
+    shouldCreateLogFile_test();
 }
 
 function shouldReadProperty_test() {
@@ -37,6 +37,6 @@ function shouldCreateLogFile_test() {
 
     Assert.equal(localFile.exists(), true);
     if (localFile.exists()) {
-        localFile.remove(false)
+        localFile.remove(false);
     }
 }
