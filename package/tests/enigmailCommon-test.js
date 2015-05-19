@@ -125,7 +125,6 @@ function shouldHandleUnverifiedSignature_test() {
     "[GNUPG:] USERID_HINT D535623BB60E9E71 anonymous strike <strike.devtest@gmail.com>\n" +
     "Use this key anyway? (y/N) y";
 
-     EnigmailCommon.enigmailSvc = initializeEnigmail();
      var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
 
      Assert.assertContains(result, "Use this key anyway");
@@ -141,7 +140,7 @@ function shouldHandleEncryptionFailedNoPublicKey_test() {
      Assert.assertContains(result, "No public key");
 }
 
-function initializeEnigmail() {
+var initializeEnigmail = function() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     window = JSUnit.createStubWindow();
     enigmail.initialize(window, "", EnigmailCore.prefBranch);
