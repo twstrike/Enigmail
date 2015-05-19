@@ -43,6 +43,7 @@ function run_test() { var md = do_get_cwd().parent;
     shouldHandleFailedEncryption_test();
     shouldHandleSuccessfulImport_test();
     shouldHandleUnverifiedSignature_test();
+    shouldHandleEncryptionFailedNoPublicKey_test();
 }
 
 function shouldHandleNoDataErrors_test() {
@@ -128,6 +129,16 @@ function shouldHandleUnverifiedSignature_test() {
      var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
 
      Assert.assertContains(result, "Use this key anyway");
+}
+
+function shouldHandleEncryptionFailedNoPublicKey_test() {
+     var errorOutput = "gpg: iapazmino@thoughtworks.com: skipped: No public key\n" +
+         "[GNUPG:] INV_RECP 0 iapazmino@thoughtworks.com\n" +
+         "gpg: salida3.xtxt: encryption failed: No public key";
+
+     var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
+
+     Assert.assertContains(result, "No public key");
 }
 
 function initializeEnigmail() {
