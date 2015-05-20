@@ -49,6 +49,7 @@ function run_test() {
     shouldHandleSuccessfulImport_test();
     shouldHandleUnverifiedSignature_test();
     shouldHandleEncryptionFailedNoPublicKey_test();
+    shouldHandleErrors_test();
 }
 
 function shouldHandleNoDataErrors_test() {
@@ -143,6 +144,20 @@ function shouldHandleEncryptionFailedNoPublicKey_test() {
      var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
 
      Assert.assertContains(result, "No public key");
+}
+
+function shouldHandleErrors_test() {
+     var errorOutput = "gpg: problem with the agent: Invalid IPC response \n" +
+         "gpg: /dev/fd/5:0: key generation canceled\n" +
+        "\n" +
+        "Status text: [GNUPG:] NEED_PASSPHRASE_SYM 3 3 2 \n" +
+        "[GNUPG:] ERROR get_passphrase 260 \n" +
+        "[GNUPG:] MISSING_PASSPHRASE \n" +
+        "[GNUPG:] KEY_NOT_CREATED";
+
+     var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
+
+     Assert.assertContains(result, "Invalid IPC response");
 }
 
 var initializeEnigmail = function() {
