@@ -50,6 +50,7 @@ function run_test() {
     shouldHandleUnverifiedSignature_test();
     shouldHandleEncryptionFailedNoPublicKey_test();
     shouldHandleErrors_test();
+    shouldGetSecretKeys_test();
 }
 
 function shouldHandleNoDataErrors_test() {
@@ -160,12 +161,27 @@ function shouldHandleErrors_test() {
      Assert.assertContains(result, "Invalid IPC response");
 }
 
+function shouldGetSecretKeys_test() {
+    EnigmailCommon.enigmailSvc = initializeEnigmail();
+    var publicKey = do_get_file("resources/dev-strike.asc", false);
+    var errorMsgObj = {};
+    var importedKeysObj = {};
+    var importResult = EnigmailCommon.enigmailSvc.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
+    var expectedKey = [{"name": "anonymous strike <strike.devtest@gmail.com>", "id": "781617319CE311C4", "created": "05/04/2015"}];
+    var result = EnigmailCommon.getSecretKeys(window);
+
+    Assert.equal(result.length, 1);
+    Assert.equal(result[0].name, expectedKey[0].name);
+    Assert.equal(result[0].id, expectedKey[0].id);
+    Assert.equal(result[0].created, expectedKey[0].created);
+}
+
 var initializeEnigmail = function() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     window = JSUnit.createStubWindow();
     enigmail.initialize(window, "", EnigmailCore.prefBranch);
     return enigmail;
-}
+};
 
 Assert.assertContains = function(actual, expected, message) {
     var msg = message || "Searching for <".concat(expected)

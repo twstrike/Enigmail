@@ -1759,7 +1759,7 @@ var EnigmailCommon = {
       }
     }
 
-    keyList = enigmailSvc.getKeyDetails(secretKeyList.join(" "), false);
+    keyList = enigmailSvc.getKeyDetails(secretKeyList.join(" "), false, false);
     userList=keyList.split(/\n/);
 
     for (i=0; i < userList.length; i++) {
