@@ -37,217 +37,252 @@ var EXPORTED_SYMBOLS = [ "EnigmailErrorHandling" ];
 
 const Ci = Components.interfaces;
 
-var EnigmailErrorHandling = {
-  handleError: function(statusLine, retStatusObj) {
-    var lineSplit = statusLine.split(/ +/);
-    if (lineSplit.length > 0 &&
-        lineSplit[1] === "check_hijacking") {
-      // TODO: we might display some warning to the user
-      retStatusObj.extendedStatus += "invalid_gpg_agent ";
-      return true;
-    } else {
-      return false;
-    }
-  },
+const STATUS_INV_SGNR  = 0x100000000;
+const STATUS_IMPORT_OK = 0x200000000;
 
-  newContext: function(ecom, statusFlagLookup, errOutput, retStatusObj) {
-    retStatusObj.statusMsg = "";
-    retStatusObj.extendedStatus = "";
-    retStatusObj.blockSeparation = "";
+function handleError(c) {
+  var lineSplit = c.statusLine.split(/ +/);
+  if (lineSplit.length > 0 &&
+      lineSplit[1] === "check_hijacking") {
+    // TODO: we might display some warning to the user
+    c.retStatusObj.extendedStatus += "invalid_gpg_agent ";
+    return true;
+  } else {
+    return false;
+  }
+}
 
-    return {
-      ec: ecom,
-      statusFlagLookup: statusFlagLookup,
-      errOutput: errOutput,
-      retStatusObj: retStatusObj,
-      errArray: new Array(),
-      statusArray: new Array(),
-      lineSplit: null,
-      errCode: 0,
-      detectedCard: null,
-      requestedCard: null,
-      errorMsg: "",
-      statusPat: /^\[GNUPG:\] /,
-      statusFlags: 0,
-      plaintextCount: 0,
-      withinCryptoMsg: false,
-      cryptoStartPat: /^BEGIN_DECRYPTION/,
-      cryptoEndPat: /^END_DECRYPTION/,
-      plaintextPat: /^PLAINTEXT /,
-      plaintextLengthPat: /^PLAINTEXT_LENGTH /
-    };
-  },
+function missingPassphrase(c) {
+  c.statusFlags |= Ci.nsIEnigmail.MISSING_PASSPHRASE;
+  c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
+  c.flag = 0;
+  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: missing passphrase"+"\n");
+  c.retStatusObj.statusMsg += "Missing Passphrase\n";
+}
 
-  parseErrorOutputWith: function(c, statusFlagLookup) {
-    c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+c.errOutput+"\n");
+function invalidSignature(c) {
+  var lineSplit = c.statusLine.split(/ +/);
+  c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
+  c.flag = 0;
+  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: detected invalid sender: "+lineSplit[2]+" / code: "+lineSplit[1]+"\n");
+  c.retStatusObj.statusMsg += c.ec.getString("gnupg.invalidKey.desc", [ lineSplit[2] ]);
+}
 
-    c.errLines = c.errOutput.split(/\r?\n/);
+function importOk(c) {
+  var lineSplit = c.statusLine.split(/ +/);
+  if (lineSplit.length > 1) {
+    c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: key imported: "+ lineSplit[2]+ "\n");
+  }
+  else {
+    c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: key without FPR imported\n");
+  }
 
-    // Discard last null string, if any
-    if ((c.errLines.length > 1) && !c.errLines[c.errLines.length-1]) {
-        c.errLines.pop();
-    }
+  let importFlag = Number(lineSplit[1]);
+  if (importFlag & (1 | 2 | 8)) {
+    c.ec.enigmailSvc.invalidateUserIdList();
+  }
+}
 
-    // parse all error lines
-    c.inDecryptionFailed = false;  // to save details of encryption failed messages
-    for (var j=0; j<c.errLines.length; j++) {
-      if (c.errLines[j].search(c.statusPat) == 0) {
-        // status line
-        c.statusLine = c.errLines[j].replace(c.statusPat,"");
-        if (c.inDecryptionFailed) {
-          c.inDecryptionFailed = false;
+function unverifiedSignature(c) {
+  var lineSplit = c.statusLine.split(/ +/);
+  if (lineSplit.length > 7 && lineSplit[7] == "4") {
+    c.flag = Ci.nsIEnigmail.UNKNOWN_ALGO;
+  }
+}
+
+function noData(c) {
+  // Recognize only "NODATA 1"
+  if (c.statusLine.search(/NODATA 1\b/) < 0) {
+    c.flag = 0;
+  }
+}
+
+function decryptionFailed(c) {
+  c.inDecryptionFailed = true;
+}
+
+function cardControl(c) {
+  var lineSplit = c.statusLine.split(/ +/);
+  if (lineSplit[1] == "3") {
+    c.detectedCard=lineSplit[2];
+  }
+  else {
+    c.errCode = Number(lineSplit[1]);
+    if (c.errCode == 1) c.requestedCard = lineSplit[2];
+  }
+}
+
+function setupFailureLookup() {
+  var result = {};
+  result[Ci.nsIEnigmail.DECRYPTION_FAILED]    = decryptionFailed;
+  result[Ci.nsIEnigmail.NODATA]               = noData;
+  result[Ci.nsIEnigmail.CARDCTRL]             = cardControl;
+  result[Ci.nsIEnigmail.UNVERIFIED_SIGNATURE] = unverifiedSignature;
+  result[Ci.nsIEnigmail.MISSING_PASSPHRASE]   = missingPassphrase;
+  result[STATUS_INV_SGNR]                     = invalidSignature;
+  result[STATUS_IMPORT_OK]                    = importOk;
+  return result;
+}
+
+function ignore() {};
+
+const failureLookup = setupFailureLookup();
+
+function handleFailure(c) {
+  c.flag = c.statusFlagLookup[c.matches[1]];  // yields known flag or undefined
+
+  (failureLookup[c.flag] || ignore)(c);
+
+  // if known flag, story it in our status
+  if (c.flag) {
+    c.statusFlags |= c.flag;
+  }
+};
+
+function newContext(ecom, statusFlagLookup, errOutput, retStatusObj) {
+  retStatusObj.statusMsg = "";
+  retStatusObj.extendedStatus = "";
+  retStatusObj.blockSeparation = "";
+
+  return {
+    ec: ecom,
+    statusFlagLookup: statusFlagLookup,
+    errOutput: errOutput,
+    retStatusObj: retStatusObj,
+    errArray: new Array(),
+    statusArray: new Array(),
+    errCode: 0,
+    detectedCard: null,
+    requestedCard: null,
+    errorMsg: "",
+    statusPat: /^\[GNUPG:\] /,
+    statusFlags: 0,
+    plaintextCount: 0,
+    withinCryptoMsg: false,
+    cryptoStartPat: /^BEGIN_DECRYPTION/,
+    cryptoEndPat: /^END_DECRYPTION/,
+    plaintextPat: /^PLAINTEXT /,
+    plaintextLengthPat: /^PLAINTEXT_LENGTH /
+  };
+}
+
+function splitErrorOutput(errOutput) {
+  var errLines = errOutput.split(/\r?\n/);
+
+  // Discard last null string, if any
+  if ((errLines.length > 1) && !errLines[errLines.length-1]) {
+    errLines.pop();
+  }
+
+  return errLines;
+}
+
+function parseErrorOutputWith(c) {
+  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+c.errOutput+"\n");
+
+  c.errLines = splitErrorOutput(c.errOutput);
+
+  // parse all error lines
+  c.inDecryptionFailed = false;  // to save details of encryption failed messages
+  for (var j=0; j<c.errLines.length; j++) {
+    if (c.errLines[j].search(c.statusPat) == 0) {
+      // status line
+      c.statusLine = c.errLines[j].replace(c.statusPat,"");
+      if (c.inDecryptionFailed) {
+        c.inDecryptionFailed = false;
+      }
+      c.statusArray.push(c.statusLine);
+
+      // extract first word as flag
+      c.matches = c.statusLine.match(/^((\w+)\b)/);
+
+      if (c.matches && (c.matches.length > 1)) {
+
+        if (c.matches[1] == "ERROR") {
+          // special treatment for some ERROR messages (currently only check_hijacking)
+          if (handleError(c)) {
+            continue;
+          }
         }
-        c.statusArray.push(c.statusLine);
+        handleFailure(c);
+      }
+    }
+    else {
+      // non-status line (details of previous status command)
+      c.errArray.push(c.errLines[j]);
+      // save details of DECRYPTION_FAILED message ass error message
+      if (c.inDecryptionFailed) {
+        c.errorMsg += c.errLines[j];
+      }
+    }
+  }
 
-        // extract first word as flag
-        c.matches = c.statusLine.match(/^((\w+)\b)/);
+  // detect forged message insets
 
-        if (c.matches && (c.matches.length > 1)) {
-
-          if (c.matches[1] == "ERROR") {
-            // special treatment for some ERROR messages (currently only check_hijacking)
-            if (EnigmailErrorHandling.handleError(c.statusLine, c.retStatusObj)) {
-              continue;
-            }
-          }
-
-          c.flag = c.statusFlagLookup[c.matches[1]];  // yields known flag or undefined
-
-          if (c.flag == Ci.nsIEnigmail.DECRYPTION_FAILED) {
-            c.inDecryptionFailed = true;
-          }
-          else if (c.flag == Ci.nsIEnigmail.NODATA) {
-            // Recognize only "NODATA 1"
-            if (c.statusLine.search(/NODATA 1\b/) < 0)
-              c.flag = 0;
-          }
-          else if (c.flag == Ci.nsIEnigmail.CARDCTRL) {
-            c.lineSplit = c.statusLine.split(/ +/);
-            if (c.lineSplit[1] == "3") {
-              c.detectedCard=c.lineSplit[2];
-            }
-            else {
-              c.errCode = Number(c.lineSplit[1]);
-              if (c.errCode == 1) c.requestedCard = c.lineSplit[2];
-            }
-          }
-          else if (c.flag == Ci.nsIEnigmail.UNVERIFIED_SIGNATURE) {
-            c.lineSplit = c.statusLine.split(/ +/);
-            if (c.lineSplit.length > 7 && c.lineSplit[7] == "4") {
-              c.flag = Ci.nsIEnigmail.UNKNOWN_ALGO;
-            }
-          }
-          else if (c.flag == c.statusFlagLookup["IMPORT_OK"]) {
-            c.lineSplit = c.statusLine.split(/ +/);
-            if (c.lineSplit.length > 1) {
-              c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: key imported: "+ c.lineSplit[2]+ "\n");
-            }
-            else {
-              c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: key without FPR imported\n");
-            }
-
-            let importFlag = Number(c.lineSplit[1]);
-            if (importFlag & (1 | 2 | 8)) {
-              c.ec.enigmailSvc.invalidateUserIdList();
-            }
-          }
-          else if (c.flag == c.statusFlagLookup["MISSING_PASSPHRASE"]){
-            c.lineSplit = c.statusLine.split(/ +/);
-            c.statusFlags |= Ci.nsIEnigmail.MISSING_PASSPHRASE;
-            c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
-            c.flag = 0;
-            c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: missing passphrase"+"\n");
-            c.retStatusObj.statusMsg += "Missing Passphrase\n";
-          }
-          else if (c.flag == c.statusFlagLookup["INV_SGNR"]) {
-            c.lineSplit = c.statusLine.split(/ +/);
-            c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
-            c.flag = 0;
-            c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: detected invalid sender: "+c.lineSplit[2]+" / code: "+c.lineSplit[1]+"\n");
-            c.retStatusObj.statusMsg += c.ec.getString("gnupg.invalidKey.desc", [ c.lineSplit[2] ]);
-          }
-
-          // if known flag, story it in our status
-          if (c.flag) {
-            c.statusFlags |= c.flag;
-          }
+  for (j=0; j<c.statusArray.length; j++) {
+    if (c.statusArray[j].search(c.cryptoStartPat) == 0) {
+      c.withinCryptoMsg = true;
+    }
+    else if (c.withinCryptoMsg && c.statusArray[j].search(c.cryptoEndPat) == 0) {
+      c.withinCryptoMsg = false;
+    }
+    else if (c.statusArray[j].search(c.plaintextPat) == 0) {
+      ++c.plaintextCount;
+      if ((c.statusArray.length > j+1) && (c.statusArray[j+1].search(c.plaintextLengthPat) == 0)) {
+        c.matches = c.statusArray[j+1].match(/(\w+) (\d+)/);
+        if (c.matches.length>=3) {
+          c.retStatusObj.blockSeparation += (c.withinCryptoMsg ? "1" : "0") + ":"+c.matches[2]+" ";
         }
       }
       else {
-        // non-status line (details of previous status command)
-        c.errArray.push(c.errLines[j]);
-        // save details of DECRYPTION_FAILED message ass error message
-        if (c.inDecryptionFailed) {
-          c.errorMsg += c.errLines[j];
-        }
+        // strange: we got PLAINTEXT XX, but not PLAINTEXT_LENGTH XX
+        c.retStatusObj.blockSeparation += (c.withinCryptoMsg ? "1" : "0") + ":0 ";
       }
     }
+  }
 
-    // detect forged message insets
+  if (c.plaintextCount > 1) {
+    c.statusFlags |= (Ci.nsIEnigmail.PARTIALLY_PGP | Ci.nsIEnigmail.DECRYPTION_FAILED | Ci.nsIEnigmail.BAD_SIGNATURE);
+  }
 
-    for (j=0; j<c.statusArray.length; j++) {
-      if (c.statusArray[j].search(c.cryptoStartPat) == 0) {
-        c.withinCryptoMsg = true;
+  c.retStatusObj.blockSeparation = c.retStatusObj.blockSeparation.replace(/ $/, "");
+  c.retStatusObj.statusFlags = c.statusFlags;
+  if (c.retStatusObj.statusMsg.length == 0) c.retStatusObj.statusMsg = c.statusArray.join("\n");
+  if (c.errorMsg.length == 0) {
+    c.errorMsg = c.errArray.map(c.ec.convertGpgToUnicode, c.ec).join("\n");
+  }
+
+  if ((c.statusFlags & Ci.nsIEnigmail.CARDCTRL) && c.errCode >0) {
+    switch (c.errCode) {
+    case 1:
+      if (c.detectedCard) {
+        c.errorMsg = c.ec.getString("sc.wrongCardAvailable", [ c.detectedCard, c.requestedCard ]);
       }
-      else if (c.withinCryptoMsg && c.statusArray[j].search(c.cryptoEndPat) == 0) {
-        c.withinCryptoMsg = false;
+      else {
+        c.errorMsg = c.ec.getString("sc.insertCard", [ c.requestedCard ]);
       }
-      else if (c.statusArray[j].search(c.plaintextPat) == 0) {
-        ++c.plaintextCount;
-        if ((c.statusArray.length > j+1) && (c.statusArray[j+1].search(c.plaintextLengthPat) == 0)) {
-          c.matches = c.statusArray[j+1].match(/(\w+) (\d+)/);
-          if (c.matches.length>=3) {
-            c.retStatusObj.blockSeparation += (c.withinCryptoMsg ? "1" : "0") + ":"+c.matches[2]+" ";
-          }
-        }
-        else {
-          // strange: we got PLAINTEXT XX, but not PLAINTEXT_LENGTH XX
-          c.retStatusObj.blockSeparation += (c.withinCryptoMsg ? "1" : "0") + ":0 ";
-        }
-      }
+      break;
+    case 2:
+      c.errorMsg = c.ec.getString("sc.removeCard");
+    case 4:
+      c.errorMsg = c.ec.getString("sc.noCardAvailable");
+      break;
+    case 5:
+      c.errorMsg = c.ec.getString("sc.noReaderAvailable");
+      break;
     }
+    c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
+  }
 
-    if (c.plaintextCount > 1) {
-      c.statusFlags |= (Ci.nsIEnigmail.PARTIALLY_PGP | Ci.nsIEnigmail.DECRYPTION_FAILED | Ci.nsIEnigmail.BAD_SIGNATURE);
-    }
+  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+c.ec.bytesToHex(c.ec.pack(c.statusFlags,4))+"\n");
 
-    c.retStatusObj.blockSeparation = c.retStatusObj.blockSeparation.replace(/ $/, "");
-    c.retStatusObj.statusFlags = c.statusFlags;
-    if (c.retStatusObj.statusMsg.length == 0) c.retStatusObj.statusMsg = c.statusArray.join("\n");
-    if (c.errorMsg.length == 0) {
-      c.errorMsg = c.errArray.map(c.ec.convertGpgToUnicode, c.ec).join("\n");
-    }
+  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput(): return with c.errorMsg = "+c.errorMsg+"\n");
+  return c.errorMsg;
+};
 
-    if ((c.statusFlags & Ci.nsIEnigmail.CARDCTRL) && c.errCode >0) {
-      switch (c.errCode) {
-      case 1:
-        if (c.detectedCard) {
-          c.errorMsg = c.ec.getString("sc.wrongCardAvailable", [ c.detectedCard, c.requestedCard ]);
-        }
-        else {
-          c.errorMsg = c.ec.getString("sc.insertCard", [ c.requestedCard ]);
-        }
-        break;
-      case 2:
-        c.errorMsg = c.ec.getString("sc.removeCard");
-      case 4:
-        c.errorMsg = c.ec.getString("sc.noCardAvailable");
-        break;
-      case 5:
-        c.errorMsg = c.ec.getString("sc.noReaderAvailable");
-        break;
-      }
-      c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
-    }
-
-    c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+c.ec.bytesToHex(c.ec.pack(c.statusFlags,4))+"\n");
-
-    c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput(): return with c.errorMsg = "+c.errorMsg+"\n");
-    return c.errorMsg;
-  },
-
+var EnigmailErrorHandling = {
   parseErrorOutput: function(ecom, statusFlagLookup, errOutput, retStatusObj) {
-    var context = this.newContext(ecom, statusFlagLookup, errOutput, retStatusObj);
-    return this.parseErrorOutputWith(context);
+    var context = newContext(ecom, statusFlagLookup, errOutput, retStatusObj);
+    return parseErrorOutputWith(context);
   }
 };
