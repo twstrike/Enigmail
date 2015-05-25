@@ -7,7 +7,7 @@ DEPTH		= ..
 
 include $(DEPTH)/config/autoconf.mk
 
-TST = 
+TST =
 
 ifeq ($(TESTS),yes)
   TST = tst
@@ -32,6 +32,7 @@ MODFILES = \
            enigmailCore.jsm \
            enigmailCommon.jsm \
            enigmailConvert.jsm \
+           enigmailErrorHandling.jsm \
            passwordCheck.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \
