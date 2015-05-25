@@ -1,17 +1,8 @@
 FROM ubuntu
 
-RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get install -y zip
-RUN apt-get install -y wget
-RUN apt-get install -y xvfb
-RUN apt-get install -y thunderbird
-RUN apt-get install -y gnupg2
-RUN apt-get install -y make
-RUN apt-get install -y python
-RUN apt-get install -y gcc
-RUN apt-get install -y psmisc
-RUN apt-get install -y gnupg2
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y zip wget xvfb thunderbird gnupg2 make python gcc psmisc gnupg2
 RUN wget -O /tmp/jsunit-0.1.xpi https://www.enigmail.net/jsunit/jsunit-0.1.xpi
 RUN rm -rf /usr/lib/thunderbird-addons/extensions/jsunit@enigmail.net
 RUN unzip /tmp/jsunit-0.1.xpi -d /usr/lib/thunderbird-addons/extensions/jsunit@enigmail.net
