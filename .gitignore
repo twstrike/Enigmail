@@ -11,6 +11,8 @@
 /public/_xpidlgen
 ipc/src/libsubprocess-*.dylib
 ipc/src/libsubprocess-*.so
+/test_output.log
+/ipc/tests/ipc-data.txt
 
 # vi tmp files:
 *.swp
@@ -21,4 +23,3 @@ ipc/src/libsubprocess-*.so
 
 # backup files:
 *~
-
