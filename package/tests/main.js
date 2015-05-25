@@ -7,4 +7,5 @@
 do_subtest("mimeDecrypt-test.js");
 do_subtest("enigmailCommon-test.js");
 do_subtest("enigmailCore-test.js");
+do_subtest("enigmailErrorHandling-test.js");
 do_subtest("enigmail-test.js");
