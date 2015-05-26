@@ -204,21 +204,8 @@ function parseErrorLine(errLine, c) {
   }
 }
 
-function parseErrorOutputWith(c) {
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+c.errOutput+"\n");
-
-  c.errLines = splitErrorOutput(c.errOutput);
-
-  // parse all error lines
-  c.inDecryptionFailed = false;  // to save details of encryption failed messages
-  for (var j=0; j<c.errLines.length; j++) {
-    var errLine = c.errLines[j];
-    parseErrorLine(errLine, c);
-  }
-
-  // detect forged message insets
-
-  for (var j=0; j<c.statusArray.length; j++) {
+function extractBlockSeparation(c) {
+  for (var j = 0; j < c.statusArray.length; j++) {
     if (c.statusArray[j].search(c.cryptoStartPat) == 0) {
       c.withinCryptoMsg = true;
     }
@@ -239,7 +226,22 @@ function parseErrorOutputWith(c) {
       }
     }
   }
+}
 
+function parseErrorOutputWith(c) {
+  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+c.errOutput+"\n");
+
+  c.errLines = splitErrorOutput(c.errOutput);
+
+  // parse all error lines
+  c.inDecryptionFailed = false;  // to save details of encryption failed messages
+  for (var j=0; j<c.errLines.length; j++) {
+    var errLine = c.errLines[j];
+    parseErrorLine(errLine, c);
+  }
+
+  // detect forged message insets
+  extractBlockSeparation(c);
   if (c.plaintextCount > 1) {
     c.statusFlags |= (Ci.nsIEnigmail.PARTIALLY_PGP | Ci.nsIEnigmail.DECRYPTION_FAILED | Ci.nsIEnigmail.BAD_SIGNATURE);
   }

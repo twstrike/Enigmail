@@ -44,10 +44,63 @@ function withModule(name) {
 function run_test() {
   withModule("enigmailErrorHandling.jsm");
   decryptionFailedWillSetDecryptionFailedFlag();
+    shouldExtractSingleBlockSeparation_test();
+    shouldExtractMutipleBlockSeparation_test();
 }
-
 function decryptionFailedWillSetDecryptionFailedFlag() {
   var context = {};
   decryptionFailed(context);
   Assert.equal(context.inDecryptionFailed, true, "expected decryption failing to set the correct flag in the context");
+}
+
+function shouldExtractSingleBlockSeparation_test() {
+    var testStatusArray = [
+        "BEGIN_DECRYPTION" ,
+        "DECRYPTION_INFO 2 9" ,
+        "PLAINTEXT 62 1431644287 text.txt" ,
+        "PLAINTEXT_LENGTH 15" ,
+        "DECRYPTION_FAILED" ,
+        "END_DECRYPTION"
+    ];
+
+    var context = newContext({},{},{},{});
+    context.statusArray=testStatusArray;
+    extractBlockSeparation(context);
+    Assert.equal(context.retStatusObj.blockSeparation, "1:15 ");
+}
+
+function shouldExtractMutipleBlockSeparation_test() {
+    var testStatusArray = [
+        "FILE_START 3 file1.gpg",
+        "ENC_TO D535623BB60E9E71 1 0",
+        "USERID_HINT D535623BB60E9E71 anonymous strike <strike.devtest@gmail.com>",
+        "NEED_PASSPHRASE D535623BB60E9E71 781617319CE311C4 1 0",
+        "GOOD_PASSPHRASE",
+        "BEGIN_DECRYPTION",
+        "DECRYPTION_INFO 2 9",
+        "PLAINTEXT 62 1432677982 test",
+        "PLAINTEXT_LENGTH 14",
+        "DECRYPTION_OKAY",
+        "GOODMDC",
+        "END_DECRYPTION",
+        "FILE_DONE",
+        "FILE_START 3 file0.gpg",
+        "ENC_TO D535623BB60E9E71 1 0",
+        "GOOD_PASSPHRASE",
+        "BEGIN_DECRYPTION",
+        "DECRYPTION_INFO 2 9",
+        "PLAINTEXT 62 1432677982 test",
+        "PLAINTEXT_LENGTH 14",
+        "DECRYPTION_OKAY",
+        "GOODMDC",
+        "END_DECRYPTION",
+        "FILE_DONE",
+        "PLAINTEXT 62 1432677982 test",
+        "PLAINTEXT_LENGTH 15"
+    ];
+
+    var context = newContext({},{},{},{});
+    context.statusArray=testStatusArray;
+    extractBlockSeparation(context);
+    Assert.equal(context.retStatusObj.blockSeparation, "1:14 1:14 0:15 ");
 }
