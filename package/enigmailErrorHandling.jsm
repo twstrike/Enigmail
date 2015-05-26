@@ -43,6 +43,7 @@ const STATUS_INV_SGNR  = 0x100000000;
 const STATUS_IMPORT_OK = 0x200000000;
 
 function handleError(c) {
+  // special treatment for some ERROR messages (currently only check_hijacking)
   var lineSplit = c.statusLine.split(/ +/);
   if (lineSplit.length > 0 &&
       lineSplit[1] === "check_hijacking") {
@@ -130,8 +131,8 @@ function ignore() {};
 
 const failureLookup = setupFailureLookup();
 
-function handleFailure(c) {
-  c.flag = c.statusFlagLookup[c.matches[1]];  // yields known flag or undefined
+function handleFailure(c, errorFlag) {
+  c.flag = c.statusFlagLookup[errorFlag];  // yields known flag or undefined
 
   (failureLookup[c.flag] || ignore)(c);
 
@@ -179,6 +180,30 @@ function splitErrorOutput(errOutput) {
   return errLines;
 }
 
+function parseErrorLine(errLine, c) {
+  if (errLine.search(c.statusPat) == 0) {
+    // status line
+    c.statusLine = errLine.replace(c.statusPat, "");
+    c.statusArray.push(c.statusLine);
+
+    // extract first word as flag
+    var matches = c.statusLine.match(/^((\w+)\b)/);
+
+    if (matches && (matches.length > 1)) {
+      var isError = (matches[1] == "ERROR");
+      (isError ? handleError : handleFailure)(c, matches[1]);
+    }
+  }
+  else {
+    // non-status line (details of previous status command)
+    c.errArray.push(errLine);
+    // save details of DECRYPTION_FAILED message ass error message
+    if (c.inDecryptionFailed) {
+      c.errorMsg += errLine;
+    }
+  }
+}
+
 function parseErrorOutputWith(c) {
   c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+c.errOutput+"\n");
 
@@ -187,41 +212,13 @@ function parseErrorOutputWith(c) {
   // parse all error lines
   c.inDecryptionFailed = false;  // to save details of encryption failed messages
   for (var j=0; j<c.errLines.length; j++) {
-    if (c.errLines[j].search(c.statusPat) == 0) {
-      // status line
-      c.statusLine = c.errLines[j].replace(c.statusPat,"");
-      if (c.inDecryptionFailed) {
-        c.inDecryptionFailed = false;
-      }
-      c.statusArray.push(c.statusLine);
-
-      // extract first word as flag
-      c.matches = c.statusLine.match(/^((\w+)\b)/);
-
-      if (c.matches && (c.matches.length > 1)) {
-
-        if (c.matches[1] == "ERROR") {
-          // special treatment for some ERROR messages (currently only check_hijacking)
-          if (handleError(c)) {
-            continue;
-          }
-        }
-        handleFailure(c);
-      }
-    }
-    else {
-      // non-status line (details of previous status command)
-      c.errArray.push(c.errLines[j]);
-      // save details of DECRYPTION_FAILED message ass error message
-      if (c.inDecryptionFailed) {
-        c.errorMsg += c.errLines[j];
-      }
-    }
+    var errLine = c.errLines[j];
+    parseErrorLine(errLine, c);
   }
 
   // detect forged message insets
 
-  for (j=0; j<c.statusArray.length; j++) {
+  for (var j=0; j<c.statusArray.length; j++) {
     if (c.statusArray[j].search(c.cryptoStartPat) == 0) {
       c.withinCryptoMsg = true;
     }
@@ -231,9 +228,9 @@ function parseErrorOutputWith(c) {
     else if (c.statusArray[j].search(c.plaintextPat) == 0) {
       ++c.plaintextCount;
       if ((c.statusArray.length > j+1) && (c.statusArray[j+1].search(c.plaintextLengthPat) == 0)) {
-        c.matches = c.statusArray[j+1].match(/(\w+) (\d+)/);
-        if (c.matches.length>=3) {
-          c.retStatusObj.blockSeparation += (c.withinCryptoMsg ? "1" : "0") + ":"+c.matches[2]+" ";
+        var matches = c.statusArray[j+1].match(/(\w+) (\d+)/);
+        if (matches.length>=3) {
+          c.retStatusObj.blockSeparation += (c.withinCryptoMsg ? "1" : "0") + ":"+matches[2]+" ";
         }
       }
       else {
