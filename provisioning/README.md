@@ -14,3 +14,19 @@ Once docker is installed...
 3. `./provisioning/docker-init.sh`
 4. `./provisioning/docker-build.sh`
 5. `./provisioning/docker-test.sh`
+
+## Quick Setup With Vagrant
+Please follow your OS specific instructions to install the following tool dependencies on your system:
+* [Vagrant](https://www.vagrantup.com)
+* Vagrant compatible virtualization software (i.e. virtualbox, vmware...)
+
+Note: Virtualbox has default support on vagrant so if you use VMWare, AWS, etc. you must first install their respective vagrant plugins.
+
+Once the vagrant tools are installed...
+
+1. `cd provisioning`
+2. `vagrant up` - Call vagrant to grab an instance of Ubuntu and provision it
+3. `vagrant ssh` - ssh into the Ubuntu machine
+4. `cd /enigmail-src` - This will be the same directory as the main project folder.
+5. `./build.sh `
+6. `./test.sh `

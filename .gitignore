@@ -23,3 +23,6 @@ ipc/src/libsubprocess-*.so
 
 # backup files:
 *~
+
+# vagrant files:
+provisioning/.vagrant
