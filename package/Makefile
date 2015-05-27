@@ -30,6 +30,7 @@ MODFILES = \
            keyManagement.jsm \
            pipeConsole.jsm \
            encryption.jsm \
+           decryption.jsm \
            enigmailCore.jsm \
            enigmailCommon.jsm \
            enigmailConvert.jsm \
