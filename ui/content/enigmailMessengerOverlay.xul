@@ -100,6 +100,12 @@
            accesskey="&enigmail.setupWiz.accesskey;"
            oncommand="EnigmailFuncs.openSetupWizard(window, true);" />
 
+      <menuitem id="enigmail_import_wizard_basic"
+           label="Key Import Wizard"
+           advanced="reverse"
+           accesskey="K"
+           oncommand="EnigmailFuncs.openKeyImportWizard(window, true);" />
+
       <menuitem id="enigmail_decryptverify"
            label="&enigmail.decryptverify.label;"
            accesskey="&enigmail.decryptverify.accesskey;"

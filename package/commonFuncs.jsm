@@ -290,6 +290,25 @@ var EnigmailFuncs = {
   },
 
   /**
+   * Display the OpenPGP setup wizard window
+   *
+   * win      : nsIWindow - the parent window
+   * skipIntro: Boolean   - optional, if true, skip the introduction page
+   *
+   * no return value
+   */
+
+  openKeyImportWizard: function (win, skipIntro)
+  {
+    let param = "";
+    if (skipIntro) {
+      param = "?skipIntro=true";
+    }
+    win.open("chrome://enigmail/content/enigmailKeyImportWizard.xul"+param,
+                "", "chrome,centerscreen,resizable");
+  },
+
+  /**
    * Display the key help window
    *
    * @source - |string| containing the name of the file to display
