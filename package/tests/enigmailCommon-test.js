@@ -35,20 +35,21 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-function run_test() {
-    Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-    Components.utils.import("resource://enigmail/enigmailCore.jsm");
-    shouldHandleNoDataErrors_test();
-    shouldHandleErrorOutput_test();
-    shouldHandleFailedEncryption_test();
-    shouldHandleSuccessfulImport_test();
-    shouldHandleUnverifiedSignature_test();
-    shouldHandleEncryptionFailedNoPublicKey_test();
-    shouldHandleErrors_test();
-    shouldGetSecretKeys_test();
-}
+do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
-function shouldHandleNoDataErrors_test() {
+testing("enigmailCommon.jsm");
+component("enigmail/enigmailCore.jsm");
+
+test(shouldHandleNoDataErrors);
+test(shouldHandleErrorOutput);
+test(shouldHandleFailedEncryption);
+test(shouldHandleSuccessfulImport);
+test(shouldHandleUnverifiedSignature);
+test(shouldHandleEncryptionFailedNoPublicKey);
+test(shouldHandleErrors);
+test(shouldGetSecretKeys);
+
+function shouldHandleNoDataErrors() {
   var errorOutput = "gpg: no valid OpenPGP data found.\n" +
     "[GNUPG:] NODATA 1\n" +
     "[GNUPG:] NODATA 2\n" +
@@ -59,7 +60,7 @@ function shouldHandleNoDataErrors_test() {
   Assert.assertContains(result, "no valid OpenPGP data found");
 }
 
-function shouldHandleErrorOutput_test() {
+function shouldHandleErrorOutput() {
     var errorOutput = "[GNUPG:] USERID_HINT 781617319CE311C4 anonymous strike <strike.devtest@gmail.com>\n" +
         "[GNUPG:] NEED_PASSPHRASE 781617319CE311C4 781617319CE311C4 1 0\n" +
         "gpg-agent[14654]: command get_passphrase failed: Operation cancelled\n" +
@@ -74,7 +75,7 @@ function shouldHandleErrorOutput_test() {
     Assert.equal(retStatusObj.extendedStatus, "");
 }
 
-function shouldHandleFailedEncryption_test() {
+function shouldHandleFailedEncryption() {
      var errorOutput = "gpg: encrypted with 4096-bit RSA key, ID B60E9E71, created 2015-05-04\n" +
            "\"anonymous strike <strike.devtest@gmail.com>\"\n" +
            "[GNUPG:] BEGIN_DECRYPTION\n" +
@@ -92,7 +93,7 @@ function shouldHandleFailedEncryption_test() {
      Assert.assertContains(result, "decryption failed: Invalid packet");
 }
 
-function shouldHandleSuccessfulImport_test() {
+function shouldHandleSuccessfulImport() {
      var errorOutput = "gpg: key 9CE311C4: public key \"anonymous strike <strike.devtest@gmail.com>\" imported\n" +
         "[GNUPG:] IMPORTED 781617319CE311C4 anonymous strike <strike.devtest@gmail.com>\n" +
         "[GNUPG:] IMPORT_OK 1 65537E212DC19025AD38EDB2781617319CE311C4\n" +
@@ -113,7 +114,7 @@ function shouldHandleSuccessfulImport_test() {
      Assert.assertContains(result, "secret key imported");
 }
 
-function shouldHandleUnverifiedSignature_test() {
+function shouldHandleUnverifiedSignature() {
     var errorOutput = "gpg: B60E9E71: There is no assurance this key belongs to the named user\n" +
     "\n" +
     "pub  4096R/B60E9E71 2015-05-04 anonymous strike <strike.devtest@gmail.com>\n" +
@@ -132,7 +133,7 @@ function shouldHandleUnverifiedSignature_test() {
      Assert.assertContains(result, "Use this key anyway");
 }
 
-function shouldHandleEncryptionFailedNoPublicKey_test() {
+function shouldHandleEncryptionFailedNoPublicKey() {
      var errorOutput = "gpg: iapazmino@thoughtworks.com: skipped: No public key\n" +
          "[GNUPG:] INV_RECP 0 iapazmino@thoughtworks.com\n" +
          "gpg: salida3.xtxt: encryption failed: No public key";
@@ -142,7 +143,7 @@ function shouldHandleEncryptionFailedNoPublicKey_test() {
      Assert.assertContains(result, "No public key");
 }
 
-function shouldHandleErrors_test() {
+function shouldHandleErrors() {
      var errorOutput = "gpg: problem with the agent: Invalid IPC response \n" +
          "gpg: /dev/fd/5:0: key generation canceled\n" +
         "\n" +
@@ -156,7 +157,7 @@ function shouldHandleErrors_test() {
      Assert.assertContains(result, "Invalid IPC response");
 }
 
-function shouldGetSecretKeys_test() {
+function shouldGetSecretKeys() {
     Components.utils.import("resource://enigmail/keyManagement.jsm");
     EnigmailCommon.enigmailSvc = initializeEnigmail();
     var publicKey = do_get_file("resources/dev-strike.asc", false);

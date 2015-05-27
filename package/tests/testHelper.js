@@ -35,36 +35,39 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
+var TestHelper = {
+    loadDirectly: function(name) {
+        var md = do_get_cwd().parent;
+        md.append(name);
+        do_load_module("file://" + md.path);
+    },
 
-testing("enigmailCore.jsm");
+    loadModule: function(name) {
+        Components.utils.import("resource://" + name);
+    },
 
-test(shouldReadProperty);
-test(shouldSetGetPreference);
-test(shouldCreateLogFile);
+    testing: function(name) {
+        TestHelper.currentlyTesting = name;
+    },
 
-function shouldReadProperty() {
-    var importBtnProp = "enigHeader";
-    var importBtnValue = EnigmailCore.getString(importBtnProp);
-    Assert.equal("Enigmail:", importBtnValue);
-}
+    registerTest: function(fn) {
+        TestHelper.allTests = TestHelper.allTests || [];
+        TestHelper.allTests.push(fn);
+    },
 
-function shouldSetGetPreference() {
-    var prefName = "mypref";
-    EnigmailCore.setPref(prefName, "yourpref");
-    Assert.equal("yourpref", EnigmailCore.getPref(prefName));
-}
-
-function shouldCreateLogFile() {
-    EnigmailCore.setLogDirectory(do_get_cwd().path);
-    EnigmailCore.setLogLevel(5);
-    EnigmailCore.createLogFiles();
-    var filePath = EnigmailCore._logDirectory + "enigdbug.txt";
-    var localFile = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-    initPath(localFile, filePath);
-
-    Assert.equal(localFile.exists(), true);
-    if (localFile.exists()) {
-        localFile.remove(false);
+    runTests: function() {
+        if(TestHelper.currentlyTesting) {
+            TestHelper.loadDirectly(TestHelper.currentlyTesting);
+        }
+        if(TestHelper.allTests) {
+            for(var i=0; i < TestHelper.allTests.length; i++) {
+                TestHelper.allTests[i]();
+            }
+        }
     }
-}
+};
+
+var testing = TestHelper.testing;
+var component = TestHelper.loadModule;
+var run_test = TestHelper.runTests;
+var test = TestHelper.registerTest;

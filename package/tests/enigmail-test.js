@@ -35,21 +35,20 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-function run_test() {
-    var md = do_get_cwd().parent;
-    md.append("enigmail.js");
-    do_load_module("file://" + md.path);
-    shouldNotUseGpgAgent_test();
-    shouldUseGpgAgent_test();
-    shouldLocateArmoredBlock_test();
-    shouldExtractSignaturePart_test();
-    shouldGetKeyDetails_test();
-    shouldSignMessageTest();
-    shouldEncryptMessageTest();
-    shouldDecryptMessageTest();
-}
+do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
-function shouldNotUseGpgAgent_test() {
+testing("enigmail.js");
+
+test(shouldNotUseGpgAgent);
+test(shouldUseGpgAgent);
+test(shouldLocateArmoredBlock);
+test(shouldExtractSignaturePart);
+test(shouldGetKeyDetails);
+test(shouldSignMessage);
+test(shouldEncryptMessage);
+test(shouldDecryptMessage);
+
+function shouldNotUseGpgAgent() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     var isuseGpgAgent = enigmail.useGpgAgent();
     Assert.equal(false, isuseGpgAgent);
@@ -61,13 +60,13 @@ function initalizeService(enigmail) {
     return enigmail;
 }
 
-function shouldUseGpgAgent_test() {
+function shouldUseGpgAgent() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initalizeService(enigmail);
     Assert.equal(true, enigmail.useGpgAgent());
 }
 
-function shouldLocateArmoredBlock_test() {
+function shouldLocateArmoredBlock() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initalizeService(enigmail);
     var text = ""
@@ -99,7 +98,7 @@ function shouldLocateArmoredBlock_test() {
     Assert.equal("SIGNATURE", blockType);
 }
 
-function shouldExtractSignaturePart_test() {
+function shouldExtractSignaturePart() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initalizeService(enigmail);
     const signature = {
@@ -137,7 +136,7 @@ function shouldExtractSignaturePart_test() {
     Assert.equal(signature.armor.replace(/\s*/g, ""), signature_armor);
 }
 
-function shouldGetKeyDetails_test() {
+function shouldGetKeyDetails() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initalizeService(enigmail);
     var publicKey = do_get_file("resources/dev-strike.asc", false);
@@ -149,7 +148,7 @@ function shouldGetKeyDetails_test() {
     Assert.assertContains(keyDetails, "strike.devtest@gmail.com");
 }
 
-function shouldSignMessageTest() {
+function shouldSignMessage() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initalizeService(enigmail);
     var publicKey = do_get_file("resources/dev-strike.asc", false);
@@ -178,7 +177,7 @@ function shouldSignMessageTest() {
     Assert.equal("SIGNED MESSAGE", blockType);
 }
 
-function shouldEncryptMessageTest() {
+function shouldEncryptMessage() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initalizeService(enigmail);
     var publicKey = do_get_file("resources/dev-strike.asc", false);
@@ -207,7 +206,7 @@ function shouldEncryptMessageTest() {
     Assert.equal("MESSAGE", blockType);
 }
 
-function shouldDecryptMessageTest() {
+function shouldDecryptMessage() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initalizeService(enigmail);
     var publicKey = do_get_file("resources/dev-strike.asc", false);
