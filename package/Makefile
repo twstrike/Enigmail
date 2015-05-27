@@ -29,6 +29,7 @@ MODFILES = \
            gpgAgentHandler.jsm \
            keyManagement.jsm \
            pipeConsole.jsm \
+           encryption.jsm \
            enigmailCore.jsm \
            enigmailCommon.jsm \
            enigmailConvert.jsm \
