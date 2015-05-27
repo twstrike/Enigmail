@@ -254,8 +254,3 @@ function shouldDecryptMessage() {
     var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
     Assert.equal("MESSAGE", blockType);
 }
-
-Assert.assertContains = function (actual, expected, message) {
-    var msg = message || "Searching for <".concat(expected).concat("> to be contained within actual string.");
-    Assert.equal(actual.search(expected) > -1, true, msg);
-};

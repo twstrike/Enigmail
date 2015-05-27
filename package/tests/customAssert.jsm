@@ -35,50 +35,15 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-var TestHelper = {
-    loadDirectly: function(name) {
-        do_load_module("file://" + do_get_cwd().parent.path + "/" + name);
+var CustomAssert = {
+    registerExtraAssertionsOn: function(assertModule) {
+        assertModule.assertContains = CustomAssert.assertContains;
     },
 
-    loadModule: function(name) {
-        Components.utils.import("resource://" + name);
-    },
-
-    testing: function(name) {
-        TestHelper.currentlyTesting = name;
-    },
-
-    registerTest: function(fn) {
-        TestHelper.allTests = TestHelper.allTests || [];
-        TestHelper.allTests.push(fn);
-    },
-
-    runTests: function() {
-        if(TestHelper.currentlyTesting) {
-            TestHelper.loadDirectly(TestHelper.currentlyTesting);
-        }
-        if(TestHelper.allTests) {
-            for(var i=0; i < TestHelper.allTests.length; i++) {
-                TestHelper.allTests[i]();
-            }
-        }
-    },
-
-    Assert: {
-        assertContains: function(actual, expected, message) {
-            var msg = message || "Searching for <".concat(expected)
-                    .concat("> to be contained within ")
-                    .concat("<").concat(actual).concat(">");
-            this.report(actual.search(expected) == -1, actual, expected, message, "contains");
-        }
+    assertContains: function(actual, expected, message) {
+        var msg = message || "Searching for <".concat(expected)
+                .concat("> to be contained within ")
+                .concat("<").concat(actual).concat(">");
+        this.report(actual.search(expected) == -1, actual, expected, message, "contains");
     }
 };
-
-TestHelper.loadDirectly("tests/customAssert.jsm");
-
-var testing = TestHelper.testing;
-var component = TestHelper.loadModule;
-var run_test = TestHelper.runTests;
-var test = TestHelper.registerTest;
-
-CustomAssert.registerExtraAssertionsOn(Assert);

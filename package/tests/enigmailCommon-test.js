@@ -187,10 +187,3 @@ var initializeEnigmail = function() {
     enigmail.initialize(window, "", EnigmailCore.prefBranch);
     return enigmail;
 };
-
-Assert.assertContains = function(actual, expected, message) {
-    var msg = message || "Searching for <".concat(expected)
-      .concat("> to be contained within ")
-      .concat("<").concat(actual).concat(">");
-    Assert.equal(actual.search(expected) > -1, true, msg);
-};
