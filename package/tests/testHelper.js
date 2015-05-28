@@ -53,6 +53,16 @@ var TestHelper = {
         TestHelper.allTests.push(fn);
     },
 
+    resetting: function(on, prop, val, f) {
+        let orgVal = on[prop];
+        on[prop] = val;
+        try {
+            return f();
+        } finally {
+            on[prop] = orgVal;
+        }
+    },
+
     runTests: function() {
         if(TestHelper.currentlyTesting) {
             TestHelper.loadDirectly(TestHelper.currentlyTesting);
@@ -80,5 +90,6 @@ var testing = TestHelper.testing;
 var component = TestHelper.loadModule;
 var run_test = TestHelper.runTests;
 var test = TestHelper.registerTest;
+var resetting = TestHelper.resetting;
 
 CustomAssert.registerExtraAssertionsOn(Assert);

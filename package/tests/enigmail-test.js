@@ -283,6 +283,7 @@ test(function extractMimeMessageIdReturnsAnEmptyStringWhenItCantMatch() {
     Assert.equal("", result);
 });
 
+// testing: initialize
 test(function initializeWillPassEnvironmentIfAskedTo() {
     var window = JSUnit.createStubWindow();
     var environment = Cc["@mozilla.org/process/environment;1"].getService(nsIEnvironment);
@@ -303,7 +304,7 @@ test(function initializeWillNotPassEnvironmentsNotAskedTo() {
     Assert.assertArrayNotContains(EnigmailCommon.envList, "STUFF=testing");
 });
 
-test(function initializeWillNotSetEmptyValue() {
+test(function initializeWillNotSetEmptyEnvironmentValue() {
     var window = JSUnit.createStubWindow();
     var environment = Cc["@mozilla.org/process/environment;1"].getService(nsIEnvironment);
     environment.set("APPDATA", "");
@@ -312,11 +313,118 @@ test(function initializeWillNotSetEmptyValue() {
     Assert.assertArrayNotContains(EnigmailCommon.envList, "APPDATA=");
 });
 
-test(function initializeWillNotSetEmptyValue() {
-    var window = JSUnit.createStubWindow();
-    var environment = Cc["@mozilla.org/process/environment;1"].getService(nsIEnvironment);
-    environment.set("APPDATA", "");
-    var enigmail = gEnigmailSvc = new Enigmail();
-    enigmail.initialize(window, "", EnigmailCore.prefBranch);
-    Assert.assertArrayNotContains(EnigmailCommon.envList, "APPDATA=");
+// testing: useGpgAgent
+// useGpgAgent depends on several values:
+//   EnigmailCore.isDosLike()
+//   EnigmailCommon.getGpgFeature("supports-gpg-agent")
+//   EnigmailCommon.getGpgFeature("autostart-gpg-agent")
+//   this.gpgAgentInfo.envStr.length>0
+//   this.prefBranch.getBoolPref("useGpgAgent")
+
+function asDosLike(f) {
+    resetting(EnigmailCore, 'isDosLikeVal', true, f);
+};
+
+function notDosLike(f) {
+    resetting(EnigmailCore, 'isDosLikeVal', false, f);
+};
+
+function withGpgFeatures(features, f) {
+    resetting(EnigmailCommon, 'getGpgFeature', function(feature) {
+        return features.indexOf(feature) != -1;
+    }, f);
+};
+
+function mockPrefs(prefs) {
+    return {
+        getBoolPref: function(name) { return prefs[name]; }
+    };
+}
+
+test(function useGpgAgentIsFalseIfIsDosLikeAndDoesntSupportAgent() {
+    asDosLike(function() {
+        withGpgFeatures([], function() {
+            var enigmail = gEnigmailSvc = new Enigmail();
+            Assert.ok(!enigmail.useGpgAgent());
+        });
+    });
+});
+
+test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndAutostartsAgent() {
+    asDosLike(function() {
+        withGpgFeatures(["supports-gpg-agent", "autostart-gpg-agent"], function() {
+            var enigmail = gEnigmailSvc = new Enigmail();
+            Assert.ok(enigmail.useGpgAgent());
+        });
+    });
+});
+
+test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndThereExistsAnAgentString() {
+    asDosLike(function() {
+        withGpgFeatures(["supports-gpg-agent"], function() {
+            var enigmail = gEnigmailSvc = new Enigmail();
+            enigmail.gpgAgentInfo.envStr = "blarg";
+            Assert.ok(enigmail.useGpgAgent());
+        });
+    });
+});
+
+test(function useGpgAgentIsFalseIfIsDosLikeAndSupportsAgentButNoAgentInfoAvailable() {
+    asDosLike(function() {
+        withGpgFeatures(["supports-gpg-agent"], function() {
+            var enigmail = gEnigmailSvc = new Enigmail();
+            enigmail.gpgAgentInfo.envStr = "";
+            Assert.ok(!enigmail.useGpgAgent());
+        });
+    });
+});
+
+test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndPrefIsSet() {
+    asDosLike(function() {
+        withGpgFeatures(["supports-gpg-agent"], function() {
+            var enigmail = gEnigmailSvc = new Enigmail();
+            enigmail.prefBranch = mockPrefs({useGpgAgent: true});
+            Assert.ok(enigmail.useGpgAgent());
+        });
+    });
+});
+
+
+test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndAutostartsAgent() {
+    notDosLike(function() {
+        withGpgFeatures(["supports-gpg-agent", "autostart-gpg-agent"], function() {
+            var enigmail = gEnigmailSvc = new Enigmail();
+            Assert.ok(enigmail.useGpgAgent());
+        });
+    });
+});
+
+test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndThereExistsAnAgentString() {
+    notDosLike(function() {
+        withGpgFeatures(["supports-gpg-agent"], function() {
+            var enigmail = gEnigmailSvc = new Enigmail();
+            enigmail.gpgAgentInfo.envStr = "blarg";
+            Assert.ok(enigmail.useGpgAgent());
+        });
+    });
+});
+
+test(function useGpgAgentIsFalseIfNotDosLikeAndSupportsAgentButNoAgentInfoAvailable() {
+    notDosLike(function() {
+        withGpgFeatures(["supports-gpg-agent"], function() {
+            var enigmail = gEnigmailSvc = new Enigmail();
+            enigmail.gpgAgentInfo.envStr = "";
+            Assert.ok(!enigmail.useGpgAgent());
+        });
+    });
+});
+
+test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndPrefIsSet() {
+    notDosLike(function() {
+        withGpgFeatures(["supports-gpg-agent"], function() {
+            var enigmail = gEnigmailSvc = new Enigmail();
+            enigmail.prefBranch = mockPrefs({useGpgAgent: true});
+            Assert.ok(enigmail.useGpgAgent());
+        });
+    });
 });
