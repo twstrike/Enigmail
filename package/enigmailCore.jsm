@@ -80,6 +80,9 @@ var gLogLevel = 3;
 
 var gLogData = null;
 
+var gEnigmailSvc = null;      // Global Enigmail Service
+var gEnigmailCommon = null;      // Global Enigmail Common instance, to avoid circular dependencies
+
 var EnigmailCore = {
 
   _logDirectory: null,
@@ -493,8 +496,30 @@ var EnigmailCore = {
   getProfileDirectory: function() {
     let ds = Cc[DIR_SERV_CONTRACTID].getService(Ci.nsIProperties);
     return ds.get("ProfD", Ci.nsIFile);
-  }
-}
+  },
+
+    getEnigmailService: function() {
+        return gEnigmailSvc;
+    },
+
+    ensuredEnigmailService: function(f) {
+        if(gEnigmailSvc === null) {
+            gEnigmailSvc = f();
+        }
+        return gEnigmailSvc;
+    },
+
+    getEnigmailCommon: function() {
+        return gEnigmailCommon;
+    },
+
+    ensuredEnigmailCommon: function(f) {
+        if(gEnigmailCommon === null) {
+            gEnigmailCommon = f();
+        }
+        return gEnigmailCommon;
+    }
+};
 
 function initPath(localFileObj, pathStr) {
   localFileObj.initWithPath(pathStr);
@@ -503,4 +528,3 @@ function initPath(localFileObj, pathStr) {
     localFileObj.persistentDescriptor = pathStr;
   }
 }
-

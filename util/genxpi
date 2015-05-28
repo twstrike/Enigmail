@@ -101,8 +101,10 @@ zip --must-match\
     modules/enigmailCore.jsm \
     modules/enigmailConvert.jsm \
     modules/enigmailErrorHandling.jsm \
+    modules/enigmailProtocolHandler.jsm \
     modules/encryption.jsm \
     modules/decryption.jsm \
+    modules/data.jsm \
     modules/pipeConsole.jsm \
     modules/keyManagement.jsm \
     modules/mimeVerify.jsm \

@@ -38,9 +38,13 @@
 var EXPORTED_SYMBOLS = [ "Encryption" ];
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
 
+const Cc = Components.classes;
 const Ci = Components.interfaces;
 const nsIEnigmail = Ci.nsIEnigmail;
+
+var EC = EnigmailCore;
 
 const gMimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha512", "sha224", "md5" ];
 
@@ -54,25 +58,25 @@ const GPG_COMMENT_OPT = "Using GnuPG with %s - http://www.enigmail.net/";
 // addresses, returning a list of pure email address
 function stripEmailAdr(mailAddrs) {
 
-  var qStart, qEnd;
-  while ((qStart = mailAddrs.indexOf('"')) != -1) {
-     qEnd = mailAddrs.indexOf('"', qStart+1);
-     if (qEnd == -1) {
-       this.ERROR_LOG("enigmailCommon.jsm:: stripEmailAdr: Unmatched quote in mail address: "+mailAddrs+"\n");
-       mailAddrs=mailAddrs.replace(/\"/g, "");
-       break;
-     }
+    var qStart, qEnd;
+    while ((qStart = mailAddrs.indexOf('"')) != -1) {
+        qEnd = mailAddrs.indexOf('"', qStart+1);
+        if (qEnd == -1) {
+            this.ERROR_LOG("enigmailCommon.jsm:: stripEmailAdr: Unmatched quote in mail address: "+mailAddrs+"\n");
+            mailAddrs=mailAddrs.replace(/\"/g, "");
+            break;
+        }
 
-     mailAddrs = mailAddrs.substring(0,qStart) + mailAddrs.substring(qEnd+1);
-  }
+        mailAddrs = mailAddrs.substring(0,qStart) + mailAddrs.substring(qEnd+1);
+    }
 
-  // Eliminate all whitespace, just to be safe
-  mailAddrs = mailAddrs.replace(/\s+/g,"");
+    // Eliminate all whitespace, just to be safe
+    mailAddrs = mailAddrs.replace(/\s+/g,"");
 
-  // Extract pure e-mail address list (stripping out angle brackets)
-  mailAddrs = mailAddrs.replace(/(^|,)[^,]*<([^>]+)>[^,]*/g,"$1$2");
+    // Extract pure e-mail address list (stripping out angle brackets)
+    mailAddrs = mailAddrs.replace(/(^|,)[^,]*<([^>]+)>[^,]*/g,"$1$2");
 
-  return mailAddrs;
+    return mailAddrs;
 }
 
 var Encryption = {
@@ -312,5 +316,91 @@ var Encryption = {
         }
 
         return exitCode;
+    },
+
+    encryptMessage: function (esvc, ec, parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags,
+                              exitCodeObj, statusFlagsObj, errorMsgObj, passphrase) {
+        EC.DEBUG_LOG("enigmail.js: Enigmail.encryptMessage: "+plainText.length+" bytes from "+fromMailAddr+" to "+toMailAddr+" ("+sendFlags+")\n");
+
+        exitCodeObj.value    = -1;
+        statusFlagsObj.value = 0;
+        errorMsgObj.value    = "";
+
+        if (!plainText) {
+            EC.DEBUG_LOG("enigmail.js: Enigmail.encryptMessage: NO ENCRYPTION!\n");
+            exitCodeObj.value = 0;
+            EC.DEBUG_LOG("  <=== encryptMessage()\n");
+            return plainText;
+        }
+
+        if (!esvc.initialized) {
+            EC.ERROR_LOG("enigmail.js: Enigmail.encryptMessage: not yet initialized\n");
+            errorMsgObj.value = ec.getString("notInit");
+            return "";
+        }
+
+        var defaultSend = sendFlags & nsIEnigmail.SEND_DEFAULT;
+        var signMsg     = sendFlags & nsIEnigmail.SEND_SIGNED;
+        var encryptMsg  = sendFlags & nsIEnigmail.SEND_ENCRYPTED;
+
+        if (encryptMsg) {
+            // First convert all linebreaks to newlines
+            plainText = plainText.replace(/\r\n/g, "\n");
+            plainText = plainText.replace(/\r/g,   "\n");
+
+            // we need all data in CRLF according to RFC 4880
+            plainText = plainText.replace(/\n/g, "\r\n");
+        }
+
+        var inspector = Cc["@mozilla.org/jsinspector;1"].createInstance(Ci.nsIJSInspector);
+
+        var listener = ec.newSimpleListener(
+            function _stdin (pipe) {
+                pipe.write(plainText);
+                pipe.close();
+            },
+            function _done(exitCode) {
+                // unlock wait
+                if (inspector.eventLoopNestLevel > 0) {
+                    inspector.exitNestedEventLoop();
+                }
+            });
+
+
+        var proc = ec.encryptMessageStart(parent, uiFlags,
+                                          fromMailAddr, toMailAddr, bccMailAddr,
+                                          null, sendFlags,
+                                          listener, statusFlagsObj, errorMsgObj, passphrase);
+        if (! proc) {
+            exitCodeObj.value = -1;
+            EC.DEBUG_LOG("  <=== encryptMessage()\n");
+            return "";
+        }
+
+        // Wait for child pipes to close
+        inspector.enterNestedEventLoop(0);
+
+        var retStatusObj = {};
+        exitCodeObj.value = ec.encryptMessageEnd(Data.getUnicodeData(listener.stderrData), listener.exitCode,
+                                                 uiFlags, sendFlags,
+                                                 listener.stdoutData.length,
+                                                 retStatusObj);
+
+        statusFlagsObj.value = retStatusObj.statusFlags;
+        errorMsgObj.value = retStatusObj.errorMsg;
+
+
+        if ((exitCodeObj.value == 0) && listener.stdoutData.length == 0)
+            exitCodeObj.value = -1;
+
+        if (exitCodeObj.value == 0) {
+            // Normal return
+            EC.DEBUG_LOG("  <=== encryptMessage()\n");
+            return Data.getUnicodeData(listener.stdoutData);
+        }
+
+        // Error processing
+        EC.DEBUG_LOG("enigmail.js: Enigmail.encryptMessage: command execution exit code: "+exitCodeObj.value+"\n");
+        return "";
     }
 };

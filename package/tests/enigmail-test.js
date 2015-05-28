@@ -1,3 +1,4 @@
+/*global do_load_module do_get_cwd testing test Assert component JSUnit Cc */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -258,28 +259,6 @@ test(function readFileReturnsEmptyStringForNonExistingFile() {
     md.append("..");
     md.append("THIS_FILE_DOESNT_EXIST");
     var result = readFile(md);
-    Assert.equal("", result);
-});
-
-// testing: ExtractMessageId
-test(function extractMessageIdExtractsARegularMessageId() {
-    var result = ExtractMessageId("enigmail:message/foobar");
-    Assert.equal("foobar", result);
-});
-
-test(function extractMessageIdReturnsAnEmptyStringWhenItCantMatch() {
-    var result = ExtractMessageId("enigmail:mime-message/foobar");
-    Assert.equal("", result);
-});
-
-// testing: ExtractMimeMessageId
-test(function extractMimeMessageIdExtractsARegularMessageId() {
-    var result = ExtractMimeMessageId("enigmail:mime-message/fluff");
-    Assert.equal("fluff", result);
-});
-
-test(function extractMimeMessageIdReturnsAnEmptyStringWhenItCantMatch() {
-    var result = ExtractMimeMessageId("enigmail:message/mess");
     Assert.equal("", result);
 });
 
