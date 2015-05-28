@@ -211,7 +211,7 @@ PgpMimeDecrypt.prototype = {
           if (EnigmailVerify.getManualUri()) {
             let msgSvc = messenger.messageServiceFromURI(EnigmailVerify.getManualUri());
 
-            msgSvc.GetUrlForUri(EnigmailVerify.getManualUri(), manUrl, null)
+              msgSvc.GetUrlForUri(EnigmailVerify.getManualUri(), manUrl, null);
           }
           else {
             manUrl.value = { spec: "enigmail://invalid/message" };
@@ -230,7 +230,7 @@ PgpMimeDecrypt.prototype = {
         if (this.msgUriSpec) {
           let msgSvc = messenger.messageServiceFromURI(this.msgUriSpec);
 
-          msgSvc.GetUrlForUri(this.msgUriSpec, url, null)
+          msgSvc.GetUrlForUri(this.msgUriSpec, url, null);
         }
 
         if (this.uri.spec.search(/[\&\?]header=[a-zA-Z0-9]*$/) < 0 &&
