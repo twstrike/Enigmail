@@ -419,7 +419,7 @@ test(function setAgentPathDefaultValues() {
         enigmail.setAgentPath(JSUnit.createStubWindow());
         Assert.equal("gpg", enigmail.agentType);
         Assert.equal("/usr/bin/gpg2", enigmail.agentPath.path);
-        Assert.equal("2.0.22", enigmail.agentVersion);
+//        Assert.equal("2.0.22", enigmail.agentVersion); // this will vary between environments.
         Assert.equal("/usr/bin/gpgconf", enigmail.gpgconfPath.path);
         Assert.equal("/usr/bin/gpg-connect-agent", enigmail.connGpgAgentPath.path);
     });
