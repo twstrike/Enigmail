@@ -110,6 +110,7 @@ zip --must-match\
     modules/mimeVerify.jsm \
     modules/installGnuPG.jsm \
     modules/gpgAgentHandler.jsm \
+    modules/enigmailGpg.jsm \
     modules/passwordCheck.jsm \
     modules/commonFuncs.jsm \
     modules/fixExchangeMsg.jsm \

@@ -1,4 +1,4 @@
-/*global Components EnigmailCore EnigmailCommon XPCOMUtils EnigmailGpgAgent */
+/*global Components EnigmailCore EnigmailCommon XPCOMUtils EnigmailGpgAgent EnigmailGPG */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -48,6 +48,7 @@ Components.utils.import("resource://enigmail/enigmailConvert.jsm");
 Components.utils.import("resource://enigmail/encryption.jsm");
 Components.utils.import("resource://enigmail/decryption.jsm");
 Components.utils.import("resource://enigmail/enigmailProtocolHandler.jsm");
+Components.utils.import("resource://enigmail/enigmailGpg.jsm");
 
 try {
   // TB with omnijar
@@ -491,34 +492,9 @@ Enigmail.prototype = {
     this.initialized = true;
   },
 
-
   determineGpgHomeDir: function () {
-
-    var homeDir = "";
-
-    homeDir = this.environment.get("GNUPGHOME");
-
-    if (! homeDir && this.isWin32) {
-      homeDir=getWinRegistryString("Software\\GNU\\GNUPG", "HomeDir", nsIWindowsRegKey.ROOT_KEY_CURRENT_USER);
-
-      if (! homeDir) {
-        homeDir = this.environment.get("USERPROFILE");
-
-        if (! homeDir) {
-          homeDir = this.environment.get("SystemRoot");
-        }
-
-        if (homeDir) homeDir += "\\Application Data\\GnuPG";
-      }
-
-      if (! homeDir) homeDir = "C:\\gnupg";
-    }
-
-    if (! homeDir) homeDir = this.environment.get("HOME")+"/.gnupg";
-
-    return homeDir;
+      return EnigmailGPG.determineGpgHomeDir(this);
   },
-
 
   setAgentPath: function (domWindow) {
     var agentPath = "";

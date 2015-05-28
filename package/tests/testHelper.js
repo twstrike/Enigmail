@@ -1,3 +1,4 @@
+/*global do_load_module do_get_cwd Components Assert CustomAssert */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -91,5 +92,21 @@ var component = TestHelper.loadModule;
 var run_test = TestHelper.runTests;
 var test = TestHelper.registerTest;
 var resetting = TestHelper.resetting;
+
+function withEnvironment(vals, f) {
+    var environment = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
+    var oldVals = {};
+    for(let key in vals) {
+        oldVals[key] = environment.get(key);
+        environment.set(key, vals[key]);
+    }
+    try {
+        return f(environment);
+    } finally {
+        for(let key in oldVals) {
+            environment.set(key, oldVals[key]);
+        }
+    }
+};
 
 CustomAssert.registerExtraAssertionsOn(Assert);

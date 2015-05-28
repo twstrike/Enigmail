@@ -262,22 +262,6 @@ test(function readFileReturnsEmptyStringForNonExistingFile() {
     Assert.equal("", result);
 });
 
-function withEnvironment(vals, f) {
-    var environment = Cc["@mozilla.org/process/environment;1"].getService(nsIEnvironment);
-    var oldVals = {};
-    for(let key in vals) {
-        oldVals[key] = environment.get(key);
-        environment.set(key, vals[key]);
-    }
-    try {
-        return f(environment);
-    } finally {
-        for(let key in oldVals) {
-            environment.set(key, oldVals[key]);
-        }
-    }
-};
-
 // testing: initialize
 test(function initializeWillPassEnvironmentIfAskedTo() {
     var window = JSUnit.createStubWindow();
@@ -426,83 +410,17 @@ test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndPrefIsSet() {
     });
 });
 
-// testing: determineGpgHomeDir
-//   environment: GNUPGHOME
-//   isWin32:
-//     registry Software\GNU\GNUPG\HomeDir
-//     environment: USERPROFILE + \Application Data\GnuPG
-//     environment: SystemRoot + \Application Data\GnuPG
-//     c:\gnupg
-//   environment: HOME + .gnupg
+// setAgentPath
 
-test(function determineGpgHomeDirReturnsGNUPGHOMEIfExists() {
-    withEnvironment({"GNUPGHOME": "stuffResult1"}, function(e) {
+test(function setAgentPathDefaultValues() {
+    withEnvironment({}, function(e) {
         var enigmail = gEnigmailSvc = new Enigmail();
         enigmail.environment = e;
-        Assert.equal("stuffResult1", enigmail.determineGpgHomeDir());
-    });
-});
-
-test(function determineGpgHomeDirReturnsHomePlusGnupgForNonWindowsIfNoGNUPGHOMESpecificed() {
-    withEnvironment({"HOME": "/my/little/home"}, function(e) {
-        var enigmail = gEnigmailSvc = new Enigmail();
-        enigmail.environment = e;
-        Assert.equal("/my/little/home/.gnupg", enigmail.determineGpgHomeDir());
-    });
-});
-
-var ctx = this;
-
-test(function determineGpgHomeDirReturnsRegistryValueForWindowsIfExists() {
-    withEnvironment({}, function(e) {
-        resetting(ctx, 'getWinRegistryString', function(a, b, c) {
-            if(a === "Software\\GNU\\GNUPG" && b === "HomeDir" && c === "foo bar") {
-                return "\\foo\\bar\\gnupg";
-            } else {
-                return "\\somewhere\\else";
-            }
-        }, function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.isWin32 = true;
-            enigmail.environment = e;
-            nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
-            Assert.equal("\\foo\\bar\\gnupg", enigmail.determineGpgHomeDir());
-        });
-    });
-});
-
-test(function determineGpgHomeDirReturnsUserprofileIfItExists() {
-    withEnvironment({"USERPROFILE": "\\bahamas"}, function(e) {
-        resetting(ctx, 'getWinRegistryString', function(a, b, c) {}, function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.isWin32 = true;
-            enigmail.environment = e;
-            nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
-            Assert.equal("\\bahamas\\Application Data\\GnuPG", enigmail.determineGpgHomeDir());
-        });
-    });
-});
-
-test(function determineGpgHomeDirReturnsSystemrootIfItExists() {
-    withEnvironment({"SystemRoot": "\\tahiti"}, function(e) {
-        resetting(ctx, 'getWinRegistryString', function(a, b, c) {}, function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.isWin32 = true;
-            enigmail.environment = e;
-            nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
-            Assert.equal("\\tahiti\\Application Data\\GnuPG", enigmail.determineGpgHomeDir());
-        });
-    });
-});
-
-test(function determineGpgHomeDirReturnsDefaultForWin32() {
-    withEnvironment({}, function(e) {
-        resetting(ctx, 'getWinRegistryString', function(a, b, c) {}, function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.isWin32 = true;
-            enigmail.environment = e;
-            nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
-            Assert.equal("C:\\gnupg", enigmail.determineGpgHomeDir());
-        });
+        enigmail.setAgentPath(JSUnit.createStubWindow());
+        Assert.equal("gpg", enigmail.agentType);
+        Assert.equal("/usr/bin/gpg2", enigmail.agentPath.path);
+        Assert.equal("2.0.22", enigmail.agentVersion);
+        Assert.equal("/usr/bin/gpgconf", enigmail.gpgconfPath.path);
+        Assert.equal("/usr/bin/gpg-connect-agent", enigmail.connGpgAgentPath.path);
     });
 });
