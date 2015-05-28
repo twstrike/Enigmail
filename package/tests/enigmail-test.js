@@ -40,8 +40,6 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 testing("enigmail.js");
 component("enigmail/enigmailCommon.jsm");
 
-test(shouldNotUseGpgAgent);
-test(shouldUseGpgAgent);
 test(shouldLocateArmoredBlock);
 test(shouldExtractSignaturePart);
 test(shouldGetKeyDetails);
@@ -49,22 +47,10 @@ test(shouldSignMessage);
 test(shouldEncryptMessage);
 test(shouldDecryptMessage);
 
-function shouldNotUseGpgAgent() {
-    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    var isuseGpgAgent = enigmail.useGpgAgent();
-    Assert.equal(false, isuseGpgAgent);
-}
-
 function initalizeService(enigmail) {
     window = JSUnit.createStubWindow();
     enigmail.initialize(window, "", EnigmailCore.prefBranch);
     return enigmail;
-}
-
-function shouldUseGpgAgent() {
-    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    enigmail = initalizeService(enigmail);
-    Assert.equal(true, enigmail.useGpgAgent());
 }
 
 function shouldLocateArmoredBlock() {
