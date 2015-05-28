@@ -38,6 +38,7 @@
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("enigmail.js");
+component("enigmail/enigmailCommon.jsm");
 
 test(shouldNotUseGpgAgent);
 test(shouldUseGpgAgent);
@@ -254,3 +255,82 @@ function shouldDecryptMessage() {
     var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
     Assert.equal("MESSAGE", blockType);
 }
+
+// testing: readFile
+test(function readFileReturnsContentOfExistingFile() {
+    var md = do_get_cwd();
+    md.append("..");
+    md.append("..");
+    md.append("uuid_enig.txt");
+    var result = readFile(md);
+    Assert.assertContains(result, "847b3a00-7ab1-11d4-8f02-006008948af5");
+});
+
+test(function readFileReturnsEmptyStringForNonExistingFile() {
+    var md = do_get_cwd();
+    md.append("..");
+    md.append("..");
+    md.append("THIS_FILE_DOESNT_EXIST");
+    var result = readFile(md);
+    Assert.equal("", result);
+});
+
+// testing: ExtractMessageId
+test(function extractMessageIdExtractsARegularMessageId() {
+    var result = ExtractMessageId("enigmail:message/foobar");
+    Assert.equal("foobar", result);
+});
+
+test(function extractMessageIdReturnsAnEmptyStringWhenItCantMatch() {
+    var result = ExtractMessageId("enigmail:mime-message/foobar");
+    Assert.equal("", result);
+});
+
+// testing: ExtractMimeMessageId
+test(function extractMimeMessageIdExtractsARegularMessageId() {
+    var result = ExtractMimeMessageId("enigmail:mime-message/fluff");
+    Assert.equal("fluff", result);
+});
+
+test(function extractMimeMessageIdReturnsAnEmptyStringWhenItCantMatch() {
+    var result = ExtractMimeMessageId("enigmail:message/mess");
+    Assert.equal("", result);
+});
+
+test(function initializeWillPassEnvironmentIfAskedTo() {
+    var window = JSUnit.createStubWindow();
+    var environment = Cc["@mozilla.org/process/environment;1"].getService(nsIEnvironment);
+    environment.set("ENIGMAIL_PASS_ENV", "STUFF:BLARG");
+    environment.set("STUFF", "testing");
+    var enigmail = gEnigmailSvc = new Enigmail();
+    enigmail.initialize(window, "", EnigmailCore.prefBranch);
+    Assert.assertArrayContains(EnigmailCommon.envList, "STUFF=testing");
+});
+
+test(function initializeWillNotPassEnvironmentsNotAskedTo() {
+    var window = JSUnit.createStubWindow();
+    var environment = Cc["@mozilla.org/process/environment;1"].getService(nsIEnvironment);
+    environment.set("ENIGMAIL_PASS_ENV", "HOME");
+    environment.set("STUFF", "testing");
+    var enigmail = gEnigmailSvc = new Enigmail();
+    enigmail.initialize(window, "", EnigmailCore.prefBranch);
+    Assert.assertArrayNotContains(EnigmailCommon.envList, "STUFF=testing");
+});
+
+test(function initializeWillNotSetEmptyValue() {
+    var window = JSUnit.createStubWindow();
+    var environment = Cc["@mozilla.org/process/environment;1"].getService(nsIEnvironment);
+    environment.set("APPDATA", "");
+    var enigmail = gEnigmailSvc = new Enigmail();
+    enigmail.initialize(window, "", EnigmailCore.prefBranch);
+    Assert.assertArrayNotContains(EnigmailCommon.envList, "APPDATA=");
+});
+
+test(function initializeWillNotSetEmptyValue() {
+    var window = JSUnit.createStubWindow();
+    var environment = Cc["@mozilla.org/process/environment;1"].getService(nsIEnvironment);
+    environment.set("APPDATA", "");
+    var enigmail = gEnigmailSvc = new Enigmail();
+    enigmail.initialize(window, "", EnigmailCore.prefBranch);
+    Assert.assertArrayNotContains(EnigmailCommon.envList, "APPDATA=");
+});
