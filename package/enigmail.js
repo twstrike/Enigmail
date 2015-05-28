@@ -93,8 +93,10 @@ const nsIEnigmail            = Ci.nsIEnigmail;
 const nsICmdLineHandler      = Ci.nsICmdLineHandler;
 const nsIWindowWatcher       = Ci.nsIWindowWatcher;
 const nsICommandLineHandler  = Ci.nsICommandLineHandler;
-const nsIWindowsRegKey       = Ci.nsIWindowsRegKey;
 const nsIFactory             = Ci.nsIFactory;
+
+// Making this a var makes it possible to test windows things on linux
+var nsIWindowsRegKey       = Ci.nsIWindowsRegKey;
 
 const NS_XPCOM_SHUTDOWN_OBSERVER_ID = "xpcom-shutdown";
 
