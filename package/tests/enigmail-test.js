@@ -424,3 +424,60 @@ test(function setAgentPathDefaultValues() {
         Assert.equal("/usr/bin/gpg-connect-agent", enigmail.connGpgAgentPath.path);
     });
 });
+
+// resolveToolPath
+
+test(function resolveToolPathDefaultValues() {
+    withEnvironment({}, function(e) {
+        var enigmail = gEnigmailSvc = new Enigmail();
+        enigmail.environment = e;
+        enigmail.agentPath = "/usr/bin/gpg-agent";
+        var result = enigmail.resolveToolPath("zip");
+        Assert.equal("/usr/bin/zip", result.path);
+    });
+});
+
+test(function resolveToolPathFromPATH() {
+    withEnvironment({PATH: "/sbin"}, function(e) {
+        var enigmail = gEnigmailSvc = new Enigmail();
+        enigmail.environment = e;
+        enigmail.agentPath = null;
+        var result = enigmail.resolveToolPath("route");
+        Assert.equal("/sbin/route", result.path);
+    });
+});
+
+// detectGpgAgent
+test(function detectGpgAgentSetsAgentInfoFromEnvironmentVariable() {
+    withEnvironment({GPG_AGENT_INFO: "a happy agent"}, function(e) {
+        var enigmail = gEnigmailSvc = new Enigmail();
+        enigmail.environment = e;
+        enigmail.detectGpgAgent(JSUnit.createStubWindow());
+
+        Assert.ok(enigmail.gpgAgentInfo.preStarted);
+        Assert.equal("a happy agent", enigmail.gpgAgentInfo.envStr);
+        Assert.ok(!Ec.gpgAgentIsOptional);
+    });
+});
+
+test(function detectGpgAgentWithNoAgentInfoInEnvironment() {
+    withEnvironment({}, function(e) {
+        var enigmail = gEnigmailSvc = new Enigmail();
+        enigmail.environment = e;
+        enigmail.detectGpgAgent(JSUnit.createStubWindow());
+
+        Assert.ok(!enigmail.gpgAgentInfo.preStarted);
+        Assert.ok(!Ec.gpgAgentIsOptional);
+    });
+});
+
+test(function detectGpgAgentWithAutostartFeatureWillDoNothing() {
+    withEnvironment({}, function(e) {
+        withGpgFeatures(["autostart-gpg-agent"], function() {
+            var enigmail = gEnigmailSvc = new Enigmail();
+            enigmail.environment = e;
+            enigmail.detectGpgAgent(JSUnit.createStubWindow());
+            Assert.equal("none", enigmail.gpgAgentInfo.envStr);
+        });
+    });
+});

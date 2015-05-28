@@ -675,15 +675,11 @@ Enigmail.prototype = {
 
   // resolve the path for GnuPG helper tools
   resolveToolPath: function(fileName) {
-    var filePath = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-
     if (EC.isDosLike()) {
       fileName += ".exe";
     }
 
-    filePath = EC.getEnigmailService().agentPath.clone();
-
-    filePath.normalize(); // resolve symlinks; remove . / .. etc.
+    var filePath = EC.getEnigmailService().agentPath.clone();
 
     if (filePath) filePath = filePath.parent;
     if (filePath) {
