@@ -476,25 +476,7 @@ Enigmail.prototype = {
 
 
   useGpgAgent: function() {
-    var useAgent = false;
-
-    try {
-      if (EC.isDosLike() && !Ec.getGpgFeature("supports-gpg-agent")) {
-        useAgent = false;
-      }
-      else {
-        // gpg version >= 2.0.16 launches gpg-agent automatically
-        if (Ec.getGpgFeature("autostart-gpg-agent")) {
-          useAgent = true;
-          EC.DEBUG_LOG("enigmail.js: Setting useAgent to "+useAgent+" for gpg2 >= 2.0.16\n");
-        }
-        else {
-          useAgent = (this.gpgAgentInfo.envStr.length>0 || this.prefBranch.getBoolPref("useGpgAgent"));
-        }
-      }
-    }
-    catch (ex) {}
-    return useAgent;
+      return EnigmailGpgAgent.useGpgAgent(this);
   },
 
 

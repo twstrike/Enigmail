@@ -1,3 +1,4 @@
+/*global Components EnigmailCore */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,6 +36,7 @@
 'use strict';
 
 Components.utils.import("resource://enigmail/subprocess.jsm");
+Components.utils.import("resource://enigmail/enigmailCore.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailGpgAgent" ];
 
@@ -46,16 +48,37 @@ const NS_FILE_CONTRACTID = "@mozilla.org/file/local;1";
 var gIsGpgAgent = -1;
 
 var Ec = null;
+const EC = EnigmailCore;
 
-function DEBUG_LOG(str) {
-  if (Ec) Ec.DEBUG_LOG(str);
-}
+var DEBUG_LOG = function() {};
 
 var EnigmailGpgAgent = {
+    setEnigmailCommon: function(enigCommon) {
+        Ec = enigCommon;
+        DEBUG_LOG = function(str) { Ec.DEBUG_LOG(str); };
+    },
 
-  setEnigmailCommon: function(enigCommon) {
-    Ec = enigCommon;
-  },
+    useGpgAgent: function(ecom) {
+        var useAgent = false;
+
+        try {
+            if (EC.isDosLike() && !Ec.getGpgFeature("supports-gpg-agent")) {
+                useAgent = false;
+            } else {
+                // gpg version >= 2.0.16 launches gpg-agent automatically
+                if (Ec.getGpgFeature("autostart-gpg-agent")) {
+                    useAgent = true;
+                    EC.DEBUG_LOG("enigmail.js: Setting useAgent to "+useAgent+" for gpg2 >= 2.0.16\n");
+                }
+                else {
+                    useAgent = (ecom.gpgAgentInfo.envStr.length>0 || ecom.prefBranch.getBoolPref("useGpgAgent"));
+                }
+            }
+        }
+        catch (ex) {}
+        return useAgent;
+    },
+
 
   resetGpgAgent: function() {
     DEBUG_LOG("gpgAgentHandler.jsm: resetGpgAgent\n");
