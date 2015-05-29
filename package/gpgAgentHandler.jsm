@@ -33,8 +33,6 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-'use strict';
-
 Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 
@@ -97,10 +95,10 @@ var EnigmailGpgAgent = {
   isAbsolutePath: function (filePath, isDosLike) {
     // Check if absolute path
     if (isDosLike) {
-      return ((filePath.search(/^\w+:\\/) == 0) || (filePath.search(/^\\\\/) == 0)
-              || (filePath.search(/^\/\//) == 0));
+        return ((filePath.search(/^\w+:\\/) === 0) || (filePath.search(/^\\\\/) === 0) ||
+                (filePath.search(/^\/\//) === 0));
     } else {
-      return (filePath.search(/^\//) == 0);
+      return (filePath.search(/^\//) === 0);
     }
   },
 
@@ -158,7 +156,7 @@ var EnigmailGpgAgent = {
     var ret = false;
 
     var path = environment.get("PATH");
-    if (! path || path.length == 0) {
+    if (! path || path.length === 0) {
       path = "/bin:/usr/bin:/usr/local/bin";
     }
 
@@ -217,7 +215,7 @@ var EnigmailGpgAgent = {
       done: function(result) {
         exitCode = result.exitCode;
         var data = result.stdout.replace(/[\r\n]/g, "");
-        if (data.search(/^pid: [0-9]+$/) == 0) {
+        if (data.search(/^pid: [0-9]+$/) === 0) {
           pid = data.replace(/^pid: /, "");
         }
       }
@@ -265,9 +263,9 @@ var EnigmailGpgAgent = {
         for (i=0; i < lines.length; i++) {
           DEBUG_LOG("gpgAgentHandler.jsm: getAgentMaxIdle: line: "+lines[i]+"\n");
 
-          if (lines[i].search(/^default-cache-ttl:/) == 0) {
+          if (lines[i].search(/^default-cache-ttl:/) === 0) {
             var m = lines[i].split(/:/);
-            if (m[CFGVALUE].length == 0) {
+            if (m[CFGVALUE].length === 0) {
               maxIdle = Math.round(m[DEFAULT] / 60);
             }
             else
@@ -351,4 +349,4 @@ var EnigmailGpgAgent = {
       catch(ex) {}
     }
   }
-}
+};
