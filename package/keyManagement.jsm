@@ -1,3 +1,4 @@
+/*global Components EnigmailCommon EnigmailCore */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -106,7 +107,7 @@ KeyEditor.prototype = {
   done: function(parentCallback, exitCode) {
     Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.done: exitCode="+exitCode+"\n");
 
-    if (exitCode == 0) exitCode = this._exitCode;
+    if (exitCode === 0) exitCode = this._exitCode;
 
     Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.done: returning exitCode "+exitCode+"\n");
 
@@ -160,7 +161,7 @@ KeyEditor.prototype = {
         r.exitCode=-3;
         r.quitNow=true;
       }
-      if (txt.indexOf("[GNUPG:] ENIGMAIL_FAILURE")==0) {
+      if (txt.indexOf("[GNUPG:] ENIGMAIL_FAILURE")===0) {
         Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.processLine: detected general failure\n");
         r.exitCode = -3;
         r.quitNow = true;
@@ -193,7 +194,7 @@ KeyEditor.prototype = {
       if (txt.indexOf("[GNUPG:] GOT_IT") < 0) {
         if (this._callbackFunc) {
           this._callbackFunc(this._inputData, this, r);
-          if (r.exitCode == 0) {
+          if (r.exitCode === 0) {
             this.writeLine(r.writeTxt);
           }
           else {
@@ -221,7 +222,7 @@ KeyEditor.prototype = {
       }
     }
 
-    if (r.exitCode != null)
+    if (r.exitCode !== null)
       this._exitCode = r.exitCode;
   },
 
@@ -268,7 +269,7 @@ var EnigmailKeyMgmt = {
     var keyIdList = keyId.split(" ");
     var args = Ec.getAgentArgs(false);
 
-    var statusFlags = new Object();
+    var statusFlags = {};
 
     args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);
     if (userId) args=args.concat(["-u", userId]);
@@ -287,7 +288,7 @@ var EnigmailKeyMgmt = {
       args.push("--gen-revoke");
       args=args.concat(keyIdList);
     }
-    else if (editCmdArr[0].indexOf("--")==0) {
+    else if (editCmdArr[0].indexOf("--")===0) {
       args=args.concat(editCmd);
       args=args.concat(keyIdList);
     }
@@ -346,7 +347,7 @@ var EnigmailKeyMgmt = {
     Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.setKeyExpiry: keyId="+keyId+"\n");
 
     expiryLength = "" + expiryLength;
-    if (noExpiry == true) {
+    if (noExpiry === true) {
       expiryLength = "0";
     } else {
       switch (parseInt(timeScale)) {
@@ -609,7 +610,7 @@ function signKeyCallback(inputData, keyEdit, ret) {
   }
   else if (keyEdit.doCheck(GET_LINE, "sign_uid.class" )) {
     ret.exitCode = 0;
-    ret.writeTxt = new String(inputData.trustLevel);
+    ret.writeTxt = String(inputData.trustLevel);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
     GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
@@ -634,7 +635,7 @@ function keyTrustCallback(inputData, keyEdit, ret) {
 
   if (keyEdit.doCheck(GET_LINE, "edit_ownertrust.value" )) {
     ret.exitCode = 0;
-    ret.writeTxt = new String(inputData.trustLevel);
+    ret.writeTxt = String(inputData.trustLevel);
   }
   else if (keyEdit.doCheck(GET_BOOL, "edit_ownertrust.set_ultimate.okay")) {
     ret.exitCode = 0;
@@ -672,7 +673,7 @@ function keyExpiryCallback(inputData, keyEdit, ret) {
   ret.writeTxt = "";
   ret.errorMsg = "";
 
-  if (inputData.subKeys.length == 0) {
+  if (inputData.subKeys.length === 0) {
     // zero keys are submitted to edit: this must be a mistake.
     ret.exitCode = -1;
     ret.quitNow = true;
@@ -702,7 +703,7 @@ function keyExpiryCallback(inputData, keyEdit, ret) {
     // remove current subkey from list of "to be processed keys".
     inputData.subKeys.splice(0, 1);
     // if the list of "to be processed keys" is empty, then quit.
-    if (inputData.subKeys.length == 0) {
+    if (inputData.subKeys.length === 0) {
       ret.quitNow = true;
     }
   }
@@ -780,7 +781,7 @@ function revokeCertCallback(inputData, keyEdit, ret) {
 
   if (keyEdit.doCheck(GET_LINE, "ask_revocation_reason.code" )) {
     ret.exitCode = 0;
-    ret.writeTxt = new String(inputData.reasonCode);
+    ret.writeTxt = String(inputData.reasonCode);
   }
   else if (keyEdit.doCheck(GET_LINE, "ask_revocation_reason.text" )) {
     ret.exitCode = 0;
@@ -1054,7 +1055,7 @@ function genCardKeyCallback(inputData, keyEdit, ret) {
   var pinObj={};
 
   if (keyEdit.doCheck(GET_LINE, "cardedit.prompt")) {
-    if (inputData.step == 0) {
+    if (inputData.step === 0) {
       ret.exitCode = 0;
       ret.writeTxt = "admin";
     }
@@ -1072,7 +1073,7 @@ function genCardKeyCallback(inputData, keyEdit, ret) {
   else if (keyEdit.doCheck(GET_LINE, "cardedit.genkeys.backup_enc") ||
            keyEdit.doCheck(GET_BOOL, "cardedit.genkeys.backup_enc")) {
     ret.exitCode = 0;
-    ret.writeTxt = new String(inputData.backupKey);
+    ret.writeTxt = String(inputData.backupKey);
   }
   else if (keyEdit.doCheck(GET_BOOL, "cardedit.genkeys.replace_keys")) {
     ret.exitCode = 0;
@@ -1090,7 +1091,7 @@ function genCardKeyCallback(inputData, keyEdit, ret) {
   }
   else if (keyEdit.doCheck(GET_LINE, "keygen.valid")) {
     ret.exitCode = 0;
-    ret.writeTxt = new String(inputData.expiry);
+    ret.writeTxt = String(inputData.expiry);
   }
   else if (keyEdit.doCheck(GET_LINE, "cardedit.genkeys.size")) {
     ret.exitCode = 0;
@@ -1149,10 +1150,14 @@ function cardAdminDataCallback(inputData, keyEdit, ret) {
       ret.writeTxt = "login";
       break;
     case 7:
-      if (inputData.forcepin != 0) {
+      if (inputData.forcepin !== 0) {
         ret.writeTxt = "forcesig";
-        break;
+      } else {
+        ret.writeTxt = "quit";
+        ret.exitCode = 0;
+        ret.quitNow=true;
       }
+      break;
     default:
       ret.writeTxt = "quit";
       ret.exitCode = 0;
@@ -1168,11 +1173,11 @@ function cardAdminDataCallback(inputData, keyEdit, ret) {
   }
   else if (keyEdit.doCheck(GET_LINE, "keygen.smartcard.surname")) {
     ret.exitCode = 0;
-    ret.writeTxt = inputData.name.replace(/^$/, "-");;
+    ret.writeTxt = inputData.name.replace(/^$/, "-");
   }
   else if (keyEdit.doCheck(GET_LINE, "keygen.smartcard.givenname")) {
     ret.exitCode = 0;
-    ret.writeTxt = inputData.firstname.replace(/^$/, "-");;
+    ret.writeTxt = inputData.firstname.replace(/^$/, "-");
   }
   else if (keyEdit.doCheck(GET_LINE, "cardedit.change_sex")) {
     ret.exitCode = 0;
@@ -1180,11 +1185,11 @@ function cardAdminDataCallback(inputData, keyEdit, ret) {
   }
   else if (keyEdit.doCheck(GET_LINE, "cardedit.change_lang")) {
     ret.exitCode = 0;
-    ret.writeTxt = inputData.lang.replace(/^$/, "-");;
+    ret.writeTxt = inputData.lang.replace(/^$/, "-");
   }
   else if (keyEdit.doCheck(GET_LINE, "cardedit.change_url")) {
     ret.exitCode = 0;
-    ret.writeTxt = inputData.url.replace(/^$/, "-");;
+    ret.writeTxt = inputData.url.replace(/^$/, "-");
   }
   else if (keyEdit.doCheck(GET_LINE, "cardedit.change_login")) {
     ret.exitCode = 0;
@@ -1261,7 +1266,7 @@ function addPhotoCallback(inputData, keyEdit, ret) {
     ret.quitNow=true;
   }
   else if (keyEdit.doCheck(GET_LINE, "photoid.jpeg.add" )) {
-    if (inputData.step == 0) {
+    if (inputData.step === 0) {
       ++inputData.step;
       ret.exitCode = 0;
       ret.writeTxt = inputData.file;
@@ -1310,7 +1315,7 @@ enigCardAdminObserver.prototype =
   onDataAvailable: function (data) {
     var ret="";
     Ec.DEBUG_LOG("keyManagmenent.jsm: enigCardAdminObserver.onDataAvailable: data="+data+"\n");
-    if (this._isDosLike && data.indexOf("[GNUPG:] BACKUP_KEY_CREATED") == 0) {
+    if (this._isDosLike && data.indexOf("[GNUPG:] BACKUP_KEY_CREATED") === 0) {
       data=data.replace(/\//g, "\\");
     }
     if (data.indexOf("[GNUPG:] SC_OP_FAILURE")>=0) {
@@ -1363,4 +1368,3 @@ ChangePasswdObserver.prototype =
     return ret;
   }
 };
-
