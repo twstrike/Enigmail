@@ -101,7 +101,7 @@ PgpMimeDecrypt.prototype = {
     this.headerMode = 0;
     this.xferEncoding = ENCODING_DEFAULT;
     this.boundary = getBoundary(this.mimeSvc.contentType);
-    if (uri != null) {
+    if (uri !== null) {
       this.uri = uri.QueryInterface(Ci.nsIURI).clone();
       Ec.DEBUG_LOG("mimeDecrypt.js: onStartRequest: uri='"+ this.uri.spec+"'\n");
     }
@@ -129,7 +129,7 @@ PgpMimeDecrypt.prototype = {
 
         if (this.headerMode == 1) {
           // we are in PGP/MIME main part headers
-          if (data.search(/\r|\n/) == 0) {
+          if (data.search(/\r|\n/) === 0) {
             // end of Mime-part headers reached
             this.headerMode = 2;
             return;
@@ -260,7 +260,7 @@ PgpMimeDecrypt.prototype = {
     var statusFlagsObj = {};
     var errorMsgObj = {};
     var windowManager = Cc[APPSHELL_MEDIATOR_CONTRACTID].getService(Ci.nsIWindowMediator);
-    var win = windowManager.getMostRecentWindow(null);
+    win = windowManager.getMostRecentWindow(null);
 
     if (!this.backgroundJob) {
       this.verifier.onStartRequest(true);
@@ -304,7 +304,7 @@ PgpMimeDecrypt.prototype = {
   displayStatus: function() {
     Ec.DEBUG_LOG("mimeDecrypt.js: displayStatus\n");
 
-    if (this.exitCode == null || this.msgWindow == null || this.statusDisplayed)
+    if (this.exitCode === null || this.msgWindow === null || this.statusDisplayed)
       return;
 
     let uriSpec = (this.uri ? this.uri.spec : null);
