@@ -204,7 +204,8 @@ function parseErrorLine(errLine, c) {
   }
 }
 
-function extractBlockSeparation(c) {
+function detectForgedInsets(c) {
+  // detect forged message insets
   for (var j = 0; j < c.statusArray.length; j++) {
     if (c.statusArray[j].search(c.cryptoStartPat) == 0) {
       c.withinCryptoMsg = true;
@@ -226,6 +227,9 @@ function extractBlockSeparation(c) {
       }
     }
   }
+  if (c.plaintextCount > 1) {
+    c.statusFlags |= (Ci.nsIEnigmail.PARTIALLY_PGP | Ci.nsIEnigmail.DECRYPTION_FAILED | Ci.nsIEnigmail.BAD_SIGNATURE);
+  }
 }
 
 function parseErrorOutputWith(c) {
@@ -240,11 +244,7 @@ function parseErrorOutputWith(c) {
     parseErrorLine(errLine, c);
   }
 
-  // detect forged message insets
-  extractBlockSeparation(c);
-  if (c.plaintextCount > 1) {
-    c.statusFlags |= (Ci.nsIEnigmail.PARTIALLY_PGP | Ci.nsIEnigmail.DECRYPTION_FAILED | Ci.nsIEnigmail.BAD_SIGNATURE);
-  }
+  detectForgedInsets(c);
 
   c.retStatusObj.blockSeparation = c.retStatusObj.blockSeparation.replace(/ $/, "");
   c.retStatusObj.statusFlags = c.statusFlags;

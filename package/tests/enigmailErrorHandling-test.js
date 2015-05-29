@@ -60,7 +60,7 @@ function shouldExtractSingleBlockSeparation_test() {
 
     var context = newContext({},{},{},{});
     context.statusArray=testStatusArray;
-    extractBlockSeparation(context);
+    detectForgedInsets(context);
     Assert.equal(context.retStatusObj.blockSeparation, "1:15 ");
 }
 
@@ -96,6 +96,6 @@ function shouldExtractMutipleBlockSeparation_test() {
 
     var context = newContext({},{},{},{});
     context.statusArray=testStatusArray;
-    extractBlockSeparation(context);
+    detectForgedInsets(context);
     Assert.equal(context.retStatusObj.blockSeparation, "1:14 1:14 0:15 ");
 }
