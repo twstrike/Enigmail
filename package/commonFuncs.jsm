@@ -140,7 +140,7 @@ var EnigmailFuncs = {
       valueObj = { keyId: "<"+inputObj.searchList.join("> <")+">" };
     }
 
-    var keysrvObj = new Object();
+    var keysrvObj = {};
 
     win.openDialog("chrome://enigmail/content/enigmailKeyserverDlg.xul",
           "", "dialog,modal,centerscreen", valueObj, keysrvObj);
@@ -154,10 +154,10 @@ var EnigmailFuncs = {
       var searchval = keysrvObj.email;
       searchval = searchval.replace(/^(\s*)(.*)/, "$2").replace(/\s+$/,"");  // trim spaces
       // special handling to convert fingerprints with spaces into fingerprint without spaces
-      if (searchval.length == 49 && searchval.match(/^[0-9a-fA-F ]*$/)
-          && searchval[4]==' ' && searchval[9]==' ' && searchval[14]==' '
-          && searchval[19]==' ' && searchval[24]==' ' && searchval[29]==' '
-          && searchval[34]==' ' && searchval[39]==' ' && searchval[44]==' ') {
+        if (searchval.length == 49 && searchval.match(/^[0-9a-fA-F ]*$/) &&
+            searchval[4]==' ' && searchval[9]==' ' && searchval[14]==' ' &&
+            searchval[19]==' ' && searchval[24]==' ' && searchval[29]==' ' &&
+            searchval[34]==' ' && searchval[39]==' ' && searchval[44]==' ') {
         inputObj.searchList = [ "0x" + searchval.replace(/ /g,"") ];
       }
       else if (searchval.length == 40 && searchval.match(/^[0-9a-fA-F ]*$/)) {
@@ -443,12 +443,12 @@ var EnigmailFuncs = {
     var enigmailSvc = EnigmailCommon.getService(win);
     if (!enigmailSvc) return false;
 
-    var rulesListObj= new Object;
+    var rulesListObj= {};
 
     // open rule dialog
     enigmailSvc.getRulesData(rulesListObj);
-    var inputObj=new Object;
-    var resultObj=new Object;
+    var inputObj={};
+    var resultObj={};
     inputObj.toAddress="{"+emailAddress+"}";
     inputObj.options="";
     inputObj.command = "add";
@@ -535,17 +535,17 @@ var EnigmailFuncs = {
     var enigmailSvc = EnigmailCommon.getService(win);
     if (enigmailSvc) {
 
-      if (photoNumber==null) photoNumber=0;
+      if (photoNumber===null) photoNumber=0;
 
-      var exitCodeObj = new Object();
-      var errorMsgObj = new Object();
+      var exitCodeObj = {};
+      var errorMsgObj = {};
       if (keyId.search(/^0x/) < 0) {
         keyId = "0x" + keyId;
       }
 
       var photoPath = enigmailSvc.showKeyPhoto(keyId, photoNumber, exitCodeObj, errorMsgObj);
 
-      if (photoPath && exitCodeObj.value==0) {
+      if (photoPath && exitCodeObj.value===0) {
 
         var photoFile = Cc[EnigmailCommon.LOCAL_FILE_CONTRACTID].
           createInstance(Ci.nsIFile);
@@ -645,10 +645,10 @@ var EnigmailFuncs = {
    */
   createKeyObjects: function (keyListString, keyListObj) {
 
-    keyListObj.keyList = new Array();
-    keyListObj.keySortList = new Array();
+    keyListObj.keyList = [];
+    keyListObj.keySortList = [];
 
-    var keyObj = new Object();
+    var keyObj = {};
     var i;
     var uatNum=0; // counter for photos (counts per key)
 
@@ -657,7 +657,7 @@ var EnigmailFuncs = {
       if (listRow.length>=0) {
         switch (listRow[0]) {
         case "pub":
-          keyObj = new Object();
+          keyObj = {};
           uatNum = 0;
           keyObj.expiry=EnigmailCommon.getDateTime(listRow[EXPIRY_ID], true, false);
           keyObj.expiryTime = Number(listRow[EXPIRY_ID]);
@@ -666,8 +666,8 @@ var EnigmailFuncs = {
           keyObj.keyTrust=listRow[KEY_TRUST_ID];
           keyObj.keyUseFor=listRow[KEY_USE_FOR_ID];
           keyObj.ownerTrust=listRow[OWNERTRUST_ID];
-          keyObj.SubUserIds=new Array();
-          keyObj.subKeys=new Array();
+          keyObj.SubUserIds=[];
+          keyObj.subKeys=[];
           keyObj.fpr="";
           keyObj.photoAvailable=false;
           keyObj.secretAvailable=false;
@@ -675,12 +675,12 @@ var EnigmailFuncs = {
           break;
         case "fpr":
           // only take first fpr line, this is the fingerprint of the primary key and what we want
-          if (keyObj.fpr=="") {
+          if (keyObj.fpr==="") {
             keyObj.fpr=listRow[USERID_ID];
           }
           break;
         case "uid":
-          if (listRow[USERID_ID].length == 0) {
+          if (listRow[USERID_ID].length === 0) {
             listRow[USERID_ID] = "-";
           }
           if (typeof(keyObj.userId) != "string") {
@@ -713,7 +713,7 @@ var EnigmailFuncs = {
           }
           break;
         case "uat":
-          if (listRow[USERID_ID].indexOf("1 ")==0) {
+          if (listRow[USERID_ID].indexOf("1 ")===0) {
             var userId=EnigmailCommon.getString("userAtt.photo");
             keyObj.SubUserIds.push({userId: userId,
                                     keyTrust:listRow[KEY_TRUST_ID],
@@ -865,9 +865,9 @@ var EnigmailFuncs = {
 
     var userList = null;
     try {
-      var exitCodeObj = new Object();
-      var statusFlagsObj = new Object();
-      var errorMsgObj = new Object();
+      var exitCodeObj = {};
+      var statusFlagsObj = {};
+      var errorMsgObj = {};
 
       var enigmailSvc = EnigmailCommon.getService(win);
       if (! enigmailSvc) return null;
@@ -877,7 +877,7 @@ var EnigmailFuncs = {
                                            exitCodeObj,
                                            statusFlagsObj,
                                            errorMsgObj);
-      if (exitCodeObj.value != 0) {
+      if (exitCodeObj.value !== 0) {
         EnigmailCommon.alert(win, errorMsgObj.value);
         return null;
       }
@@ -910,8 +910,8 @@ var EnigmailFuncs = {
 
     var prefRoot = EnigmailCore.prefRoot;
 
-    if (prefRoot.getPrefType("mail.identity."+identity.key+".pgpSignPlain")==0) {
-      if (prefRoot.getPrefType("mail.identity."+identity.key+".pgpSignMsg")==0) {
+    if (prefRoot.getPrefType("mail.identity."+identity.key+".pgpSignPlain")===0) {
+      if (prefRoot.getPrefType("mail.identity."+identity.key+".pgpSignMsg")===0) {
         sign=identity.getBoolAttribute("pgpAlwaysSign");
         identity.setBoolAttribute("pgpSignEncrypted", sign);
         identity.setBoolAttribute("pgpSignPlain", sign);
@@ -985,7 +985,7 @@ var EnigmailFuncs = {
     for (var i=0; i < lines.length; i++) {
       preface = "";
       oldCiteLevel = citeLevel;
-      if (lines[i].search(/^[\> \t]*\>$/) == 0)
+      if (lines[i].search(/^[\> \t]*\>$/) === 0)
         lines[i]+=" ";
 
       citeLevel = gTxtConverter.citeLevelTXT(lines[i], logLineStart);
@@ -1037,7 +1037,7 @@ var EnigmailFuncs = {
     var a = data.split(/\n/);
     var res = [];
     for (let i = 0; i < a.length; i++) {
-      if (a[i].length == 0) break;
+      if (a[i].length === 0) break;
       let b = a[i].split(/;/);
 
       // extract "abc = xyz" tuples
@@ -1049,7 +1049,7 @@ var EnigmailFuncs = {
           EnigmailCommon.DEBUG_LOG("enigmailFuncs.jsm: getHeaderData: "+m[2].toLowerCase()+" = "+res[m[2].toLowerCase()] +"\n");
         }
       }
-      if (i == 0 && a[i].indexOf(";") < 0) break;
+      if (i === 0 && a[i].indexOf(";") < 0) break;
       if (i > 0 && a[i].search(/^\s/) < 0) break;
     }
     return res;
@@ -1099,5 +1099,3 @@ var EnigmailFuncs = {
   createFileStream: EnigmailCore.createFileStream.bind(EnigmailCore),
 
 };
-
-
