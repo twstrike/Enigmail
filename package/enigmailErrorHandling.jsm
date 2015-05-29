@@ -232,6 +232,29 @@ function detectForgedInsets(c) {
   }
 }
 
+function buildErrorMessageForCardCtrl(errCode, detectedCard) {
+    var errorMsg = "";
+    switch (errCode) {
+    case 1:
+      if (detectedCard) {
+        errorMsg = c.ec.getString("sc.wrongCardAvailable", [ c.detectedCard, c.requestedCard ]);
+      }
+      else {
+        errorMsg = c.ec.getString("sc.insertCard", [ c.requestedCard ]);
+      }
+      break;
+    case 2:
+      errorMsg = c.ec.getString("sc.removeCard");
+    case 4:
+      errorMsg = c.ec.getString("sc.noCardAvailable");
+      break;
+    case 5:
+      errorMsg = c.ec.getString("sc.noReaderAvailable");
+      break;
+    }
+    return errorMsg;
+}
+
 function parseErrorOutputWith(c) {
   c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+c.errOutput+"\n");
 
@@ -254,25 +277,8 @@ function parseErrorOutputWith(c) {
   }
 
   if ((c.statusFlags & Ci.nsIEnigmail.CARDCTRL) && c.errCode >0) {
-    switch (c.errCode) {
-    case 1:
-      if (c.detectedCard) {
-        c.errorMsg = c.ec.getString("sc.wrongCardAvailable", [ c.detectedCard, c.requestedCard ]);
-      }
-      else {
-        c.errorMsg = c.ec.getString("sc.insertCard", [ c.requestedCard ]);
-      }
-      break;
-    case 2:
-      c.errorMsg = c.ec.getString("sc.removeCard");
-    case 4:
-      c.errorMsg = c.ec.getString("sc.noCardAvailable");
-      break;
-    case 5:
-      c.errorMsg = c.ec.getString("sc.noReaderAvailable");
-      break;
-    }
-    c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
+      c.errorMsg = buildErrorMessageForCardCtrl(c.errCode, c.detectedCard);
+      c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   }
 
   c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+c.ec.bytesToHex(c.ec.pack(c.statusFlags,4))+"\n");
