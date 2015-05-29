@@ -59,9 +59,7 @@ function shouldExecCmd() {
             output+=stdout;
         },
         function (result) {
-            Assert.equal(result.exitCode, 0);
-            Assert.equal(result.stdout, "");
-            Assert.equal(result.stderr, "");
+            Assert.deepEqual(result, {"exitCode":0,"stdout":"","stderr":""});
         }
     );
     do_print(output);
