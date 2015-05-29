@@ -35,36 +35,25 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
+var CustomAssert = {
+    registerExtraAssertionsOn: function(assertModule) {
+        assertModule.assertContains = CustomAssert.assertContains;
+        assertModule.assertArrayContains = CustomAssert.assertArrayContains;
+        assertModule.assertArrayNotContains = CustomAssert.assertArrayNotContains;
+    },
 
-testing("enigmailCore.jsm");
+    assertContains: function(actual, expected, message) {
+        var msg = message || "Searching for <".concat(expected)
+                .concat("> to be contained within ")
+                .concat("<").concat(actual).concat(">");
+        this.report(actual.search(expected) == -1, actual, expected, message, "contains");
+    },
 
-test(shouldReadProperty);
-test(shouldSetGetPreference);
-test(shouldCreateLogFile);
+    assertArrayContains: function(array, value, message) {
+        this.report(array.indexOf(value) == -1, array, value, message, "contains");
+    },
 
-function shouldReadProperty() {
-    var importBtnProp = "enigHeader";
-    var importBtnValue = EnigmailCore.getString(importBtnProp);
-    Assert.equal("Enigmail:", importBtnValue);
-}
-
-function shouldSetGetPreference() {
-    var prefName = "mypref";
-    EnigmailCore.setPref(prefName, "yourpref");
-    Assert.equal("yourpref", EnigmailCore.getPref(prefName));
-}
-
-function shouldCreateLogFile() {
-    EnigmailCore.setLogDirectory(do_get_cwd().path);
-    EnigmailCore.setLogLevel(5);
-    EnigmailCore.createLogFiles();
-    var filePath = EnigmailCore._logDirectory + "enigdbug.txt";
-    var localFile = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-    initPath(localFile, filePath);
-
-    Assert.equal(localFile.exists(), true);
-    if (localFile.exists()) {
-        localFile.remove(false);
+    assertArrayNotContains: function(array, value, message) {
+        this.report(array.indexOf(value) > -1, array, value, message, "not contains");
     }
-}
+};

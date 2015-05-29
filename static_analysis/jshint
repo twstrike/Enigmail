@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# To run, install node and npm, then install jshint:
+#   sudo npm install jshint -g
+
+CURRENT_FILE=`realpath "$0"`
+STATIC_ANALYSIS_DIR=`dirname "$CURRENT_FILE"`
+
+if [ "$#" -eq 0 ]; then
+    TESTS=package
+else
+    TESTS="$@"
+fi
+
+jshint --config $STATIC_ANALYSIS_DIR/.jshintrc -e .jsm $TESTS

@@ -1,3 +1,4 @@
+/*global Components */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,36 +36,42 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
+var EXPORTED_SYMBOLS = [ "Data" ];
 
-testing("enigmailCore.jsm");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
-test(shouldReadProperty);
-test(shouldSetGetPreference);
-test(shouldCreateLogFile);
+const Data = {
+    getUnicodeData: function(data) {
+        // convert output from subprocess to Unicode
+        var tmpStream = Cc["@mozilla.org/io/string-input-stream;1"].createInstance(Ci.nsIStringInputStream);
+        tmpStream.setData(data, data.length);
+        var inStream = Cc["@mozilla.org/scriptableinputstream;1"].createInstance(Ci.nsIScriptableInputStream);
+        inStream.init(tmpStream);
+        return inStream.read(tmpStream.available());
+    },
 
-function shouldReadProperty() {
-    var importBtnProp = "enigHeader";
-    var importBtnValue = EnigmailCore.getString(importBtnProp);
-    Assert.equal("Enigmail:", importBtnValue);
-}
+    extractMessageId: function(uri) {
+        var messageId = "";
 
-function shouldSetGetPreference() {
-    var prefName = "mypref";
-    EnigmailCore.setPref(prefName, "yourpref");
-    Assert.equal("yourpref", EnigmailCore.getPref(prefName));
-}
+        var matches = uri.match(/^enigmail:message\/(.+)/);
 
-function shouldCreateLogFile() {
-    EnigmailCore.setLogDirectory(do_get_cwd().path);
-    EnigmailCore.setLogLevel(5);
-    EnigmailCore.createLogFiles();
-    var filePath = EnigmailCore._logDirectory + "enigdbug.txt";
-    var localFile = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-    initPath(localFile, filePath);
+        if (matches && (matches.length > 1)) {
+            messageId = matches[1];
+        }
 
-    Assert.equal(localFile.exists(), true);
-    if (localFile.exists()) {
-        localFile.remove(false);
+        return messageId;
+    },
+
+    extractMimeMessageId: function(uri) {
+        var messageId = "";
+
+        var matches = uri.match(/^enigmail:mime-message\/(.+)/);
+
+        if (matches && (matches.length > 1)) {
+            messageId = matches[1];
+        }
+
+        return messageId;
     }
-}
+};

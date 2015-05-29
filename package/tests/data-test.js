@@ -1,3 +1,4 @@
+/*global do_load_module do_get_cwd testing test Assert Data */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -37,34 +38,26 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
-testing("enigmailCore.jsm");
+testing("data.jsm");
 
-test(shouldReadProperty);
-test(shouldSetGetPreference);
-test(shouldCreateLogFile);
+// testing: extractMessageId
+test(function extractMessageIdExtractsARegularMessageId() {
+    var result = Data.extractMessageId("enigmail:message/foobar");
+    Assert.equal("foobar", result);
+});
 
-function shouldReadProperty() {
-    var importBtnProp = "enigHeader";
-    var importBtnValue = EnigmailCore.getString(importBtnProp);
-    Assert.equal("Enigmail:", importBtnValue);
-}
+test(function extractMessageIdReturnsAnEmptyStringWhenItCantMatch() {
+    var result = Data.extractMessageId("enigmail:mime-message/foobar");
+    Assert.equal("", result);
+});
 
-function shouldSetGetPreference() {
-    var prefName = "mypref";
-    EnigmailCore.setPref(prefName, "yourpref");
-    Assert.equal("yourpref", EnigmailCore.getPref(prefName));
-}
+// testing: extractMimeMessageId
+test(function extractMimeMessageIdExtractsARegularMessageId() {
+    var result = Data.extractMimeMessageId("enigmail:mime-message/fluff");
+    Assert.equal("fluff", result);
+});
 
-function shouldCreateLogFile() {
-    EnigmailCore.setLogDirectory(do_get_cwd().path);
-    EnigmailCore.setLogLevel(5);
-    EnigmailCore.createLogFiles();
-    var filePath = EnigmailCore._logDirectory + "enigdbug.txt";
-    var localFile = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-    initPath(localFile, filePath);
-
-    Assert.equal(localFile.exists(), true);
-    if (localFile.exists()) {
-        localFile.remove(false);
-    }
-}
+test(function extractMimeMessageIdReturnsAnEmptyStringWhenItCantMatch() {
+    var result = Data.extractMimeMessageId("enigmail:message/mess");
+    Assert.equal("", result);
+});

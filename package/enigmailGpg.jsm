@@ -1,3 +1,4 @@
+/*global Components */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,36 +36,56 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
+var EXPORTED_SYMBOLS = [ "EnigmailGPG" ];
 
-testing("enigmailCore.jsm");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
-test(shouldReadProperty);
-test(shouldSetGetPreference);
-test(shouldCreateLogFile);
+// Making this a var makes it possible to test windows things on linux
+var nsIWindowsRegKey       = Ci.nsIWindowsRegKey;
 
-function shouldReadProperty() {
-    var importBtnProp = "enigHeader";
-    var importBtnValue = EnigmailCore.getString(importBtnProp);
-    Assert.equal("Enigmail:", importBtnValue);
+// get a Windows registry value (string)
+// @ keyPath: the path of the registry (e.g. Software\\GNU\\GnuPG)
+// @ keyName: the name of the key to get (e.g. InstallDir)
+// @ rootKey: HKLM, HKCU, etc. (according to constants in nsIWindowsRegKey)
+function getWinRegistryString(keyPath, keyName, rootKey) {
+  var registry = Cc["@mozilla.org/windows-registry-key;1"].createInstance(Ci.nsIWindowsRegKey);
+
+  var retval = "";
+  try {
+    registry.open(rootKey, keyPath, registry.ACCESS_READ);
+    retval = registry.readStringValue(keyName);
+    registry.close();
+  }
+  catch (ex) {}
+
+  return retval;
 }
 
-function shouldSetGetPreference() {
-    var prefName = "mypref";
-    EnigmailCore.setPref(prefName, "yourpref");
-    Assert.equal("yourpref", EnigmailCore.getPref(prefName));
-}
+const EnigmailGPG = {
+    determineGpgHomeDir: function (esvc) {
+        var homeDir = "";
 
-function shouldCreateLogFile() {
-    EnigmailCore.setLogDirectory(do_get_cwd().path);
-    EnigmailCore.setLogLevel(5);
-    EnigmailCore.createLogFiles();
-    var filePath = EnigmailCore._logDirectory + "enigdbug.txt";
-    var localFile = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-    initPath(localFile, filePath);
+        homeDir = esvc.environment.get("GNUPGHOME");
 
-    Assert.equal(localFile.exists(), true);
-    if (localFile.exists()) {
-        localFile.remove(false);
+        if (! homeDir && esvc.isWin32) {
+            homeDir=getWinRegistryString("Software\\GNU\\GNUPG", "HomeDir", nsIWindowsRegKey.ROOT_KEY_CURRENT_USER);
+
+            if (! homeDir) {
+                homeDir = esvc.environment.get("USERPROFILE");
+
+                if (! homeDir) {
+                    homeDir = esvc.environment.get("SystemRoot");
+                }
+
+                if (homeDir) homeDir += "\\Application Data\\GnuPG";
+            }
+
+            if (! homeDir) homeDir = "C:\\gnupg";
+        }
+
+        if (! homeDir) homeDir = esvc.environment.get("HOME")+"/.gnupg";
+
+        return homeDir;
     }
-}
+};

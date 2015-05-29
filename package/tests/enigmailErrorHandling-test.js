@@ -35,18 +35,13 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-function withModule(name) {
-  var md = do_get_cwd().parent;
-  md.append(name);
-  do_load_module("file://" + md.path);
-}
+do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
-function run_test() {
-  withModule("enigmailErrorHandling.jsm");
-  decryptionFailedWillSetDecryptionFailedFlag();
-    shouldExtractSingleBlockSeparation_test();
-    shouldExtractMutipleBlockSeparation_test();
-}
+testing("enigmailErrorHandling.jsm");
+test(decryptionFailedWillSetDecryptionFailedFlag);
+test(shouldExtractSingleBlockSeparation_test);
+test(shouldExtractMutipleBlockSeparation_test);
+
 function decryptionFailedWillSetDecryptionFailedFlag() {
   var context = {};
   decryptionFailed(context);
@@ -65,7 +60,7 @@ function shouldExtractSingleBlockSeparation_test() {
 
     var context = newContext({},{},{},{});
     context.statusArray=testStatusArray;
-    extractBlockSeparation(context);
+    detectForgedInsets(context);
     Assert.equal(context.retStatusObj.blockSeparation, "1:15 ");
 }
 
@@ -101,6 +96,6 @@ function shouldExtractMutipleBlockSeparation_test() {
 
     var context = newContext({},{},{},{});
     context.statusArray=testStatusArray;
-    extractBlockSeparation(context);
+    detectForgedInsets(context);
     Assert.equal(context.retStatusObj.blockSeparation, "1:14 1:14 0:15 ");
 }

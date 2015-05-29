@@ -20,6 +20,7 @@ ipc/src/libsubprocess-*.so
 
 # emacs tmp files:
 \#*\#
+.dir-locals.el
 
 # backup files:
 *~

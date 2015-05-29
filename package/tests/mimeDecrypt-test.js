@@ -4,6 +4,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
+
+testing("mimeDecrypt.js");
+test(getBoundary_test);
 
 function getBoundary_test() {
   var got = getBoundary("content-type: application/pgp-encrypted;\n  boundary='abc'; procol='any'\n");
@@ -13,14 +17,3 @@ function getBoundary_test() {
   got = getBoundary('content-type: application/pgp-encrypted; boundary="abc"; protocol="any"');
   Assert.equal(got, "abc", "get boundary 2");
 }
-
-function run_test() {
-
-  // load mimeDecrypt.js into current context
-  var md = do_get_cwd().parent;
-  md.append("mimeDecrypt.js");
-  do_load_module("file://" + md.path);
-
-  getBoundary_test();
-}
-
