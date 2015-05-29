@@ -1,5 +1,4 @@
 /*global Components EnigmailCommon XPCOMUtils */
-/* jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -13,8 +12,6 @@
 
 // TODO: Missing features
 //   - don't attempt to validate forwarded messages unless message is being viewed
-
-'use strict';
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
@@ -127,7 +124,7 @@ MimeVerify.prototype = {
           i++;
           while (i < msgs.length) {
             // Does the line start with a space or a tab, followed by something else?
-            if(msgs[i].search(/^[ \t]+?/) == 0) {
+            if(msgs[i].search(/^[ \t]+?/) === 0) {
               contentTypeLine += msgs[i];
               i++;
             }
@@ -147,9 +144,9 @@ MimeVerify.prototype = {
             DEBUG_LOG("mimeVerify.jsm: onTextData: found PGP/MIME signed message\n");
             this.foundMsg = true;
             let hdr = EnigmailFuncs.getHeaderData(contentTypeLine);
-            hdr["boundary"] = hdr["boundary"] || "";
-            hdr["micalg"] = hdr["micalg"] || "";
-            this.boundary = hdr["boundary"].replace(/[\'\"]/g, "");
+            hdr.boundary = hdr.boundary || "";
+            hdr.micalg = hdr.micalg || "";
+            this.boundary = hdr.boundary.replace(/[\'\"]/g, "");
           }
 
           // Break after finding the first Content-Type
@@ -160,7 +157,7 @@ MimeVerify.prototype = {
     this.dataCount += data.length;
 
     this.keepData += data;
-    if (this.writeMode == 0) {
+    if (this.writeMode === 0) {
       // header data
       let i = this.findNextMimePart();
       if (i >= 0) {
@@ -262,7 +259,7 @@ MimeVerify.prototype = {
     let endOk = false;
 
     let i = this.keepData.indexOf("--"+this.boundary);
-    if (i == 0) startOk = true;
+    if (i === 0) startOk = true;
     if (i > 0) {
       if (this.keepData[i-1] == '\r' || this.keepData[i-1] == '\n') startOk = true;
     }
@@ -375,7 +372,7 @@ MimeVerify.prototype = {
 
   displayStatus: function() {
     Ec.DEBUG_LOG("mimeVerify.jsm: displayStatus\n");
-    if (this.exitCode == null || this.msgWindow == null || this.statusDisplayed)
+    if (this.exitCode === null || this.msgWindow === null || this.statusDisplayed)
       return;
 
     try {
