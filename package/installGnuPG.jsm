@@ -1,3 +1,4 @@
+/*global Components EnigmailCommon EnigmailCore */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -63,7 +64,7 @@ catch (ex) {
   try {
     Components.utils.import("resource://gre/modules/commonjs/sdk/core/promise.js"); // Gecko 21 to 24
   }
-  catch(ex) {
+  catch(ex2) {
     Components.utils.import("resource://gre/modules/Promise.jsm"); // Gecko >= 25
   }
 }
@@ -73,7 +74,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Ec = EnigmailCommon;
 
-const EXEC_FILE_PERMS = 0x1C0 // 0700
+const EXEC_FILE_PERMS = 0x1C0; // 0700
 
 
 const NS_LOCALFILEOUTPUTSTREAM_CONTRACTID =
@@ -140,8 +141,8 @@ function createTCPErrorFromFailedXHR(xhr) {
     if ((status & 0xffff) < Math.abs(nsINSSErrorsService.NSS_SEC_ERROR_BASE)) {
       // The bases are actually negative, so in our positive numeric space, we
       // need to subtract the base off our value.
-      let nssErr = Math.abs(nsINSSErrorsService.NSS_SEC_ERROR_BASE)
-                       - (status & 0xffff);
+      let nssErr = Math.abs(nsINSSErrorsService.NSS_SEC_ERROR_BASE) -
+              (status & 0xffff);
       switch (nssErr) {
         case 11: // SEC_ERROR_EXPIRED_CERTIFICATE, sec(11)
           errName = 'SecurityExpiredCertificateError';
@@ -170,8 +171,8 @@ function createTCPErrorFromFailedXHR(xhr) {
       }
     }
     else {
-      let sslErr = Math.abs(nsINSSErrorsService.NSS_SSL_ERROR_BASE)
-                       - (status & 0xffff);
+      let sslErr = Math.abs(nsINSSErrorsService.NSS_SSL_ERROR_BASE) -
+                       (status & 0xffff);
       switch (sslErr) {
         case 3: // SSL_ERROR_NO_CERTIFICATE, ssl(3)
           errName = 'SecurityNoCertificateError';
@@ -280,7 +281,7 @@ installer.prototype = {
       arguments:   args,
       charset: null,
       done: function(result) {
-        if (result.exitCode != 0) {
+        if (result.exitCode !== 0) {
           deferred.reject("Installer failed with exit code "+result.exitCode);
         }
         else
@@ -424,7 +425,7 @@ installer.prototype = {
 
     try {
       var xulRuntime = Cc[XPCOM_APPINFO].getService(Ci.nsIXULRuntime);
-      var platform = xulRuntime.XPCOMABI.toLowerCase()
+      var platform = xulRuntime.XPCOMABI.toLowerCase();
       var os = Ec.getOS().toLowerCase();
 
       // create a  XMLHttpRequest object
@@ -615,7 +616,7 @@ installer.prototype = {
     }
 
   }
-}
+};
 
 
 var InstallGnuPG = {
@@ -636,7 +637,7 @@ var InstallGnuPG = {
 
     var i = new installer(progressListener);
     i.getDownloadUrl().
-      then(function _dl() { i.performDownload() });
+        then(function _dl() { i.performDownload(); });
     return i;
   }
-}
+};
