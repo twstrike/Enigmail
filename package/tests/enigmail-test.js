@@ -1,4 +1,4 @@
-/*global do_load_module do_get_cwd do_get_file testing test Assert component JSUnit Cc resetting EnigmailCore */
+/*global do_load_module do_get_cwd do_get_file testing test Assert component JSUnit Cc resetting EnigmailCore Enigmail gEnigmailSvc EnigmailCommon */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -556,5 +556,26 @@ test(function loadRulesFileSetsRulesBasedOnTheFile() {
              pgpMime: "0"}
         ];
         Assert.deepEqual(expected, d);
+    });
+});
+
+// getRulesData
+test(function getRulesDataReturnsFalseAndNullIfNoRulesExist() {
+    var enigmail = gEnigmailSvc = new Enigmail();
+    var res = {};
+    var ret = enigmail.getRulesData(res);
+    Assert.ok(!ret);
+    Assert.equal(null, res.value);
+});
+
+test(function getRulesDataReturnsTrueAndTheRulesListIfExist() {
+    var enigmail = gEnigmailSvc = new Enigmail();
+    resetting(enigmail, 'getRulesFile', function() {
+        return do_get_file("resources/rules.xml", false);
+    }, function() {
+        var res = {};
+        var ret = enigmail.getRulesData(res);
+        Assert.ok(ret);
+        Assert.equal(enigmail.rulesList, res.value);
     });
 });
