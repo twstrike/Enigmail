@@ -95,8 +95,6 @@ var EnigmailCore = {
 
   init: function(enigmailVersion) {
     this.version = enigmailVersion;
-
-    if(! this.prefBranch) this.initPrefService;
   },
 
   setLogLevel: function(newLogLevel) {
@@ -153,7 +151,7 @@ var EnigmailCore = {
     if (gLogLevel >= 4)
       dump(datStr+str);
 
-    if (gLogData == null) {
+    if (gLogData === null) {
       gLogData = "";
       this.WRITE_LOG("Mozilla Platform: "+ this.getAppName()+" "+ this.getAppVersion() + "\n");
     }
@@ -321,15 +319,14 @@ var EnigmailCore = {
   },
 
   printCmdLine: function (command, args) {
-
-    function getQuoted(str) {
-      let i = str.indexOf(" ");
-      if (i>=0) {
-        return '"' + str +'"'
+      function getQuoted(str) {
+          let i = str.indexOf(" ");
+          if (i>=0) {
+              return '"' + str +'"';
+          }
+          else
+              return str;
       }
-      else
-        return str;
-    }
 
     var rStr = getQuoted(this.getFilePathDesc(command)) +" ";
 

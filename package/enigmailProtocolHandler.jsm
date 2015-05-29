@@ -132,8 +132,7 @@ EnigmailProtocolHandler.prototype = {
 
         if (aURI.spec == aURI.scheme+":dummy") {
             // Dummy PKCS7 content (to access mimeEncryptedClass)
-            channel = EC.getEnigmailCommon().newStringChannel(aURI, "message/rfc822", "", gDummyPKCS7);
-            return channel;
+            return EC.getEnigmailCommon().newStringChannel(aURI, "message/rfc822", "", gDummyPKCS7);
         }
 
         var winName, spec;
