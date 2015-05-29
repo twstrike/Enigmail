@@ -39,9 +39,39 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("keyManagement.jsm");
 importKeyForEdit();
+test(shouldExecCmd);
 test(shouldEditKey);
 test(shouldSetTrust);
 test(shouldSignKey);
+function shouldExecCmd() {
+    var enigmailSvc = Ec.getService(window);
+    var command= enigmailSvc.agentPath;
+
+    var args = Ec.getAgentArgs(false);
+    args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);
+    args=args.concat(["--list-packets", "/enigmail-src/package/tests/resources/dev-strike.asc"]);
+    var output = "";
+    EnigmailKeyMgmt.execCmd(command, args,
+        function (pipe) {
+            //Assert.equal(stdin, 0);
+        },
+        function (stdout) {
+            output+=stdout;
+        },
+        function (result) {
+            Assert.equal(result.exitCode, 0);
+            Assert.equal(result.stdout, "");
+            Assert.equal(result.stderr, "");
+        }
+    );
+    do_print(output);
+    Assert.assertContains(output,":public key packet:");
+    Assert.assertContains(output,":user ID packet:");
+    Assert.assertContains(output,":signature packet:");
+    Assert.assertContains(output,":public sub key packet:");
+    Assert.assertContains(output,":signature packet:");
+    Assert.assertContains(output,":secret key packet:");
+}
 function shouldEditKey() {
     do_test_pending();
     EnigmailKeyMgmt.editKey(
