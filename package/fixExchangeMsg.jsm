@@ -1,3 +1,4 @@
+/*global Components EnigmailCommon EnigmailCore */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -98,7 +99,7 @@ EnigmailFixExchangeMsg = {
         self.brokenByApp = brokenByApp;
 
         if (destFolderUri) {
-          self.destFolder = MailUtils.getFolderForURI(destFolderUri, false)
+          self.destFolder = MailUtils.getFolderForURI(destFolderUri, false);
         }
 
 
@@ -128,8 +129,8 @@ EnigmailFixExchangeMsg = {
 
     return new Promise(
       function(resolve, reject) {
-        let u = {}
-        self.msgSvc.GetUrlForUri(self.hdr.folder.getUriForMsg(self.hdr), u, null)
+        let u = {};
+        self.msgSvc.GetUrlForUri(self.hdr.folder.getUriForMsg(self.hdr), u, null);
 
         let op = (u.value.spec.indexOf("?") > 0 ? "&" : "?");
         let url = u.value.spec; // + op + 'part=' + part+"&header=enigmailConvert";
@@ -155,7 +156,7 @@ EnigmailFixExchangeMsg = {
             let hdrLines = data.substr(0, hdrEnd).split(/\r?\n/);
             let hdrObj = self.getFixedHeaderData(hdrLines);
 
-            if (hdrObj.headers.length == 0 || hdrObj.boundary.length == 0) {
+            if (hdrObj.headers.length === 0 || hdrObj.boundary.length === 0) {
               reject(1);
               return;
             }
@@ -222,7 +223,7 @@ EnigmailFixExchangeMsg = {
         i++;
         while (i < hdrLines.length) {
           // Does the line start with a space or a tab, followed by something else?
-          if(hdrLines[i].search(/^[ \t]+?/) == 0) {
+          if(hdrLines[i].search(/^[ \t]+?/) === 0) {
             contentTypeLine += hdrLines[i];
             i++;
           }
@@ -230,7 +231,7 @@ EnigmailFixExchangeMsg = {
             // we got the complete content-type header
             contentTypeLine = contentTypeLine.replace(/[\r\n]/g, "");
             let h = EnigmailFuncs.getHeaderData(contentTypeLine);
-            r.boundary = h["boundary"] || "";
+            r.boundary = h.boundary || "";
             break;
           }
         }
@@ -386,7 +387,6 @@ EnigmailFixExchangeMsg = {
           return this;
         }
         throw Components.results.NS_NOINTERFACE;
-        return null;
       },
       msgKey: null,
       GetMessageId: function (messageId) {},
@@ -396,7 +396,7 @@ EnigmailFixExchangeMsg = {
         this.msgKey = key;
       },
       OnStopCopy: function (statusCode) {
-        if (statusCode != 0) {
+        if (statusCode !== 0) {
           EC.DEBUG_LOG("fixExchangeMsg.jsm: error copying message: "+ statusCode + "\n");
           tempFile.remove(false);
           self.reject(3);
