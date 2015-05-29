@@ -73,18 +73,6 @@ var TestHelper = {
                 TestHelper.allTests[i]();
             }
         }
-    },
-
-    Assert: {
-        assertContains: function(actual, expected, message) {
-            var msg = message || "Searching for <".concat(expected)
-                    .concat("> to be contained within ")
-                    .concat("<").concat(actual).concat(">");
-            this.report(actual.search(expected) == -1, actual, expected, message, "contains");
-        },
-        deepEqual: function(actual, expected, message) {
-            this.report(!(actual === expected), actual, expected, message, "===");
-        }
     }
 };
 
