@@ -1,3 +1,4 @@
+/*global Components EnigmailCommon */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -7,8 +8,6 @@
  *  Module for creating PGP/MIME signed and/or encrypted messages
  *  implemented as XPCOM component
  */
-
-'use strict';
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
