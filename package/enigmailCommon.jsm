@@ -1,3 +1,4 @@
+/*global Components EnigmailCore */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -417,22 +418,22 @@ var EnigmailCommon = {
    */
   confirmDlg: function (win, mesg, okLabel, cancelLabel)
   {
-    var dummy=new Object();
+    var dummy={};
 
     var buttonTitles = 0;
-    if (okLabel == null && cancelLabel == null) {
+    if (okLabel === null && cancelLabel === null) {
       buttonTitles = (gPromptSvc.BUTTON_TITLE_YES * BUTTON_POS_0) +
                      (gPromptSvc.BUTTON_TITLE_NO * BUTTON_POS_1);
     }
     else {
-      if (okLabel != null) {
+      if (okLabel !== null) {
         buttonTitles += (gPromptSvc.BUTTON_TITLE_IS_STRING * gPromptSvc.BUTTON_POS_0);
       }
       else {
         buttonTitles += gPromptSvc.BUTTON_TITLE_OK * BUTTON_POS_0;
       }
 
-      if (cancelLabel != null) {
+      if (cancelLabel !== null) {
         buttonTitles += (gPromptSvc.BUTTON_TITLE_IS_STRING * gPromptSvc.BUTTON_POS_1);
       }
       else {
@@ -447,7 +448,7 @@ var EnigmailCommon = {
                           okLabel, cancelLabel, null,
                           null, dummy);
 
-    return (buttonPressed == 0);
+    return (buttonPressed === 0);
   },
 
 
@@ -480,19 +481,19 @@ var EnigmailCommon = {
     const dontDisplay = false;
 
     var buttonTitles = 0;
-    if (okLabel == null && cancelLabel == null) {
+    if (okLabel === null && cancelLabel === null) {
       buttonTitles = (gPromptSvc.BUTTON_TITLE_YES * BUTTON_POS_0) +
                      (gPromptSvc.BUTTON_TITLE_NO * BUTTON_POS_1);
     }
     else {
-      if (okLabel != null) {
+      if (okLabel !== null) {
         buttonTitles += (gPromptSvc.BUTTON_TITLE_IS_STRING * gPromptSvc.BUTTON_POS_0);
       }
       else {
         buttonTitles += gPromptSvc.BUTTON_TITLE_OK * BUTTON_POS_0;
       }
 
-      if (cancelLabel != null) {
+      if (cancelLabel !== null) {
         buttonTitles += (gPromptSvc.BUTTON_TITLE_IS_STRING * gPromptSvc.BUTTON_POS_1);
       }
       else {
@@ -506,17 +507,17 @@ var EnigmailCommon = {
       // number: remember user's choice
       switch (prefValue) {
       case notSet:
-        var checkBoxObj = { value: false} ;
-        var buttonPressed = gPromptSvc.confirmEx(win,
+        let checkBoxObj = { value: false} ;
+        let buttonPressed = gPromptSvc.confirmEx(win,
                               this.getString("enigConfirm"),
                               mesg,
                               buttonTitles,
                               okLabel, cancelLabel, null,
                               this.getString("dlgKeepSetting"), checkBoxObj);
         if (checkBoxObj.value) {
-          this.setPref(prefText, (buttonPressed==0 ? yes : no));
+          this.setPref(prefText, (buttonPressed===0 ? yes : no));
         }
-        return (buttonPressed==0 ? 1 : 0);
+        return (buttonPressed===0 ? 1 : 0);
 
       case yes:
         return 1;
@@ -532,8 +533,8 @@ var EnigmailCommon = {
       // boolean: "do not show this dialog anymore" (and return default)
       switch (prefValue) {
       case display:
-        var checkBoxObj = { value: false} ;
-        var buttonPressed = gPromptSvc.confirmEx(win,
+        let checkBoxObj = { value: false} ;
+        let buttonPressed = gPromptSvc.confirmEx(win,
                               this.getString("enigConfirm"),
                               mesg,
                               buttonTitles,
@@ -542,7 +543,7 @@ var EnigmailCommon = {
         if (checkBoxObj.value) {
           this.setPref(prefText, false);
         }
-        return (buttonPressed==0 ? 1 : 0);
+        return (buttonPressed===0 ? 1 : 0);
 
       case dontDisplay:
         return 1;
@@ -566,7 +567,7 @@ var EnigmailCommon = {
 
   promptValue: function (win, mesg, valueObj)
   {
-    var checkObj = new Object();
+    var checkObj = {};
     return gPromptSvc.prompt(win, this.getString("enigPrompt"),
                                  mesg, valueObj, "", checkObj);
   },
@@ -594,7 +595,7 @@ var EnigmailCommon = {
                             (gPromptSvc.BUTTON_TITLE_OK * BUTTON_POS_0),
                             null, null, null,
                             this.getString("dlgNoPrompt"), checkBoxObj);
-      if (checkBoxObj.value && buttonPressed==0) {
+      if (checkBoxObj.value && buttonPressed===0) {
         this.setPref(prefText, dontDisplay);
       }
     }
@@ -646,11 +647,11 @@ var EnigmailCommon = {
     while (winEnum.hasMoreElements()) {
       var thisWin = winEnum.getNext();
       if (thisWin.location.href.search(/\/messenger.xul$/) > 0) {
-        bestFit = thisWin
-      };
+        bestFit = thisWin;
+      }
       if (! bestFit && thisWin.location.href.search(/\/messengercompose.xul$/) > 0) {
-        bestFit = thisWin
-      };
+        bestFit = thisWin;
+      }
     }
 
     if (! bestFit) {
@@ -762,7 +763,7 @@ var EnigmailCommon = {
    */
   getDateTime: function (dateNum, withDate, withTime)
   {
-    if (dateNum && dateNum != 0) {
+    if (dateNum && dateNum !== 0) {
       var dat=new Date(dateNum * 1000);
       var appLocale = Cc[LOCALE_SVC_CONTRACTID].getService(Ci.nsILocaleService).getApplicationLocale();
       var dateTimeFormat = Cc[DATE_FORMAT_CONTRACTID].getService(Ci.nsIScriptableDateFormat);
@@ -890,7 +891,7 @@ var EnigmailCommon = {
     try {
       var ds = Cc[DIRSERVICE_CONTRACTID].getService();
       var dsprops = ds.QueryInterface(Ci.nsIProperties);
-      var tmpDirObj = dsprops.get(TEMPDIR_PROP, this.getLocalFileApi());
+      tmpDirObj = dsprops.get(TEMPDIR_PROP, this.getLocalFileApi());
     }
     catch (ex) {
       // let's guess ...
@@ -1014,12 +1015,12 @@ var EnigmailCommon = {
    */
   writeException: function (referenceInfo, ex)
   {
-    this.ERROR_LOG(referenceInfo+": caught exception: "
-              +ex.name+"\n"
-              +"Message: '"+ex.message+"'\n"
-              +"File:    "+ex.fileName+"\n"
-              +"Line:    "+ex.lineNumber+"\n"
-              +"Stack:   "+ex.stack+"\n");
+    this.ERROR_LOG(referenceInfo+": caught exception: " +
+                   ex.name+"\n" +
+                   "Message: '"+ex.message+"'\n" +
+                   "File:    "+ex.fileName+"\n" +
+                   "Line:    "+ex.lineNumber+"\n" +
+                   "Stack:   "+ex.stack+"\n");
   },
 
 
@@ -1216,7 +1217,7 @@ var EnigmailCommon = {
    */
 
   setTimeout: function( callbackFunction, sleepTimeMs ) {
-    if (sleepTimeMs == null) sleepTimeMs = 0;
+    if (sleepTimeMs === null) sleepTimeMs = 0;
     var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
     timer.initWithCallback(callbackFunction, sleepTimeMs, Ci.nsITimer.TYPE_ONE_SHOT);
     return timer;
@@ -1439,7 +1440,7 @@ var EnigmailCommon = {
    * @return: Number - fixed exit code
    */
   fixExitCode: function (exitCode, statusFlags) {
-    if (exitCode != 0) {
+    if (exitCode !== 0) {
       if ((statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) &&
           (statusFlags & nsIEnigmail.DECRYPTION_OKAY )) {
         this.DEBUG_LOG("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode for decrypted msg "+exitCode+"->0\n");
@@ -1541,7 +1542,7 @@ var EnigmailCommon = {
         done: function(result) {
           gKeygenProcess = null;
           try {
-            if (result.exitCode == 0) {
+            if (result.exitCode === 0) {
               self.enigmailSvc.invalidateUserIdList();
             }
             listener.onStopRequest(result.exitCode);
@@ -1587,7 +1588,7 @@ var EnigmailCommon = {
     var inputStream = Cc[NS_STRING_INPUT_STREAM_CONTRACTID].createInstance(Ci.nsIStringInputStream);
     inputStream.setData(data, -1);
 
-    if (! contentCharset || contentCharset.length==0) {
+    if (! contentCharset || contentCharset.length===0) {
       var ioServ = this.getIoService();
       var netUtil = ioServ.QueryInterface(Ci.nsINetUtil);
       var newCharset = {};
@@ -1628,7 +1629,7 @@ var EnigmailCommon = {
 
     let cfgStr = this.enigmailSvc.getGnupgConfig(exitCodeObj, errorMsgObj);
 
-    if (exitCodeObj.value != 0) {
+    if (exitCodeObj.value !== 0) {
       this.aelrt(errorMsgObj.value);
       return null;
     }
@@ -1637,7 +1638,7 @@ var EnigmailCommon = {
     let cfg = cfgStr.split(/\n/);
 
     for (let i=0; i < cfg.length;i++) {
-      if (cfg[i].indexOf("cfg:group") == 0) {
+      if (cfg[i].indexOf("cfg:group") === 0) {
         let groupArr = cfg[i].split(/:/);
         groups.push({
           alias: groupArr[2],
@@ -1702,8 +1703,8 @@ var EnigmailCommon = {
         }
 
         if (proxyHostName) {
-          var userObj = new Object();
-          var passwdObj = new Object();
+          var userObj = {};
+          var passwdObj = {};
           if (GetPasswdForHost(proxyHostName, userObj, passwdObj)) {
             proxyHostName = userObj.value+":"+passwdObj.value+"@"+proxyHostName;
           }
@@ -1731,28 +1732,28 @@ var EnigmailCommon = {
     if (!enigmailSvc) {
       return null;
     }
-    var exitCodeObj = new Object();
-    var statusFlagsObj = new Object();
-    var errorMsgObj = new Object();
+    var exitCodeObj = {};
+    var statusFlagsObj = {};
+    var errorMsgObj = {};
 
-    if (refresh == null) refresh = false;
+    if (refresh === null) refresh = false;
     var keyList=enigmailSvc.getUserIdList(true, refresh, exitCodeObj, statusFlagsObj, errorMsgObj);
 
-    if (exitCodeObj.value != 0 && keyList.length == 0) {
+    if (exitCodeObj.value !== 0 && keyList.length === 0) {
       this.alert(win, errorMsgObj.value);
       return null;
     }
 
     var userList=keyList.split(/\n/);
-    var secretKeyList = new Array();
-    var secretKeyCreated = new Array();
+    var secretKeyList = [];
+    var secretKeyCreated = [];
     var i;
 
     var keyId = null;
     var keys = [];
     for (i=0; i < userList.length; i++) {
       if (userList[i].substr(0,4) == "sec:") {
-        var aLine=userList[i].split(/:/);
+        let aLine=userList[i].split(/:/);
         keyId = aLine[4];
         secretKeyCreated[keyId] = this.getDateTime(aLine[5], true, false);
         secretKeyList.push(keyId);
@@ -1763,13 +1764,13 @@ var EnigmailCommon = {
     userList=keyList.split(/\n/);
 
     for (i=0; i < userList.length; i++) {
-      var aLine = userList[i].split(/:/);
+      let aLine = userList[i].split(/:/);
       switch (aLine[0]) {
       case "pub":
-        if (aLine[1].search(/[muf]/) == 0) keyId = aLine[4]; // public key is valid
+        if (aLine[1].search(/[muf]/) === 0) keyId = aLine[4]; // public key is valid
         break;
       case "uid":
-        if ((keyId != null) && (aLine[1].search(/[muf]/) == 0)) {
+        if ((keyId !== null) && (aLine[1].search(/[muf]/) === 0)) {
           // UID is valid
           keys.push({ name: this.convertGpgToUnicode(aLine[9]),
                       id: keyId,
@@ -1878,10 +1879,10 @@ var EnigmailCommon = {
         done: function(result) {
           gKeygenProcess = null;
           try {
-            if (result.exitCode == 0 && isDownload) {
+            if (result.exitCode === 0 && isDownload) {
               self.enigmailSvc.invalidateUserIdList();
             }
-            if (exitCode == null) {
+            if (exitCode === null) {
               exitCode = result.exitCode;
             }
             listener.done(exitCode);
@@ -1952,7 +1953,7 @@ var EnigmailCommon = {
   getGpgFeature: function(featureName) {
     let gpgVersion = this.enigmailSvc.agentVersion;
 
-    if (! gpgVersion || typeof(gpgVersion) != "string" || gpgVersion.length == 0) {
+    if (! gpgVersion || typeof(gpgVersion) != "string" || gpgVersion.length === 0) {
       return undefined;
     }
 
@@ -2214,10 +2215,10 @@ var EnigmailCommon = {
                                         testUiFlags, sendFlags, 10,
                                         retStatusObj);
 
-      if ((exitCode == 0) && !msgText) exitCode = 1;
+      if ((exitCode === 0) && !msgText) exitCode = 1;
       // if (exitCode > 0) exitCode = -exitCode;
 
-      if (exitCode != 0) {
+      if (exitCode !== 0) {
         // Abormal return
         if (retStatusObj.statusFlags & nsIEnigmail.BAD_PASSPHRASE) {
           // "Unremember" passphrase on error return
@@ -2461,7 +2462,7 @@ function upgradePrefsSending ()
   }
 
   // if all settings are default settings, use convenient encryption
-  if (cbs==false && ats==true && ksfr==true) {
+  if (cbs===false && ats===true && ksfr===true) {
     EnigmailCommon.setPref("encryptionModel", 0); // convenient
     EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=0 (convenient)\n");
   }
@@ -2484,7 +2485,7 @@ function upgradeHeadersView() {
   }
   catch (ex) {}
 
-  if (hdrMode == null) hdrMode = 1;
+  if (hdrMode === null) hdrMode = 1;
   try {
     EnigmailCore.prefBranch.clearUserPref("show_headers");
   }
@@ -2505,7 +2506,7 @@ function upgradeCustomHeaders() {
       "x-bugzilla-reason",
       "x-php-bug" ];
 
-    for (hdr in extraHdrList) {
+    for (let hdr in extraHdrList) {
       extraHdrs = extraHdrs.replace(" "+extraHdrList[hdr]+" ", " ");
     }
 
@@ -2565,7 +2566,7 @@ function ConfigureEnigmail(win, startingPreferences) {
   try {
     EnigmailCore.initPrefService();
     var vc = Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator);
-    if (oldVer == "") {
+    if (oldVer === "") {
       launchSetupWizard(win);
     }
     else {
@@ -2623,7 +2624,7 @@ function ConfigureEnigmail(win, startingPreferences) {
       }
     }
   }
-  catch(ex) {};
+  catch(ex) {}
 
   EnigmailCommon.setPref("configuredVersion", EnigmailCommon.getVersion());
   EnigmailCommon.savePrefs();
