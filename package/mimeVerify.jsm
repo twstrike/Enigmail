@@ -62,7 +62,7 @@ MimeVerify.prototype = {
     var messenger = Cc["@mozilla.org/messenger;1"].getService(Ci.nsIMessenger);
     var msgSvc = messenger.messageServiceFromURI(this.msgUriSpec);
 
-    this.inStream = Cc["@mozilla.org/scriptableinputstream;1"].createInstance(Ci.nsIScriptableInputStream),
+    this.inStream = Cc["@mozilla.org/scriptableinputstream;1"].createInstance(Ci.nsIScriptableInputStream);
 
     msgSvc.streamMessage(this.msgUriSpec,
                     this,

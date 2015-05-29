@@ -95,7 +95,7 @@ PgpMimeEncrypt.prototype = {
 
       if (this.checkSMime) {
         // Remember to use original CID, not CONTRACTID, to avoid infinite looping!
-        this.smimeCompose = Components.classesByID[kMsgComposeSecureCID].createInstance(Ci.nsIMsgComposeSecure),
+        this.smimeCompose = Components.classesByID[kMsgComposeSecureCID].createInstance(Ci.nsIMsgComposeSecure);
         this.useSmime = this.smimeCompose.requiresCryptoEncapsulation(msgIdentity, msgCompFields);
       }
 
