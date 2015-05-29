@@ -66,7 +66,7 @@ var Decryption = {
         var args = ecom.getAgentArgs(true);
 
         var keyserver = ecom.getPref("autoKeyRetrieve");
-        if (keyserver && keyserver != "") {
+        if (keyserver && keyserver !== "") {
             args.push("--keyserver-options");
             var keySrvArgs="auto-key-retrieve";
             var srvProxy = ecom.getHttpProxy(keyserver);
@@ -145,8 +145,8 @@ var Decryption = {
 
         var statusMsg = retStatusObj.statusMsg;
         exitCode = ecom.fixExitCode(exitCode, retStatusObj.statusFlags);
-        if ((exitCode == 0) && !noOutput && !outputLen &&
-            ((retStatusObj.statusFlags & (ecom.statusFlags.DECRYPTION_OKAY | ecom.statusFlags.GOODSIG)) == 0)) {
+        if ((exitCode === 0) && !noOutput && !outputLen &&
+            ((retStatusObj.statusFlags & (ecom.statusFlags.DECRYPTION_OKAY | ecom.statusFlags.GOODSIG)) === 0)) {
             exitCode = -1;
         }
 
@@ -182,7 +182,7 @@ var Decryption = {
         var sigUserId = "";            // user ID of sender
         var sigDetails = "";
         var encToDetails = "";
-        var encToArray = new Array();  // collect ENC_TO lines here
+        var encToArray = [];  // collect ENC_TO lines here
 
         for (j=0; j<errLines.length; j++) {
             ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: process: "+errLines[j]+"\n");
@@ -385,7 +385,7 @@ var Decryption = {
             }
         }
 
-        if (exitCode != 0) {
+        if (exitCode !== 0) {
             // Error processing
             ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: command execution exit code: "+exitCode+"\n");
         }
@@ -470,7 +470,7 @@ var Decryption = {
             var importFlags = nsIEnigmail.UI_INTERACTIVE;
             exitCodeObj.value = esvc.importKey(parent, importFlags, pgpBlock, "",
                                                errorMsgObj);
-            if (exitCodeObj.value == 0) {
+            if (exitCodeObj.value === 0) {
                 statusFlagsObj.value |= nsIEnigmail.IMPORTED_KEY;
             }
             return "";
@@ -540,7 +540,7 @@ var Decryption = {
         }
 
 
-        if (exitCodeObj.value == 0) {
+        if (exitCodeObj.value === 0) {
             // Normal return
 
             var doubleDashSeparator = false;
@@ -610,7 +610,7 @@ var Decryption = {
                     var exitStatus = esvc.importKey(parent, importFlags2, innerKeyBlock,
                                                     pubKeyId, importErrorMsgObj);
 
-                    importedKey = (exitStatus == 0);
+                    importedKey = (exitStatus === 0);
 
                     if (exitStatus > 0) {
                         ec.alert(parent, EC.getString("cantImport")+importErrorMsgObj.value);

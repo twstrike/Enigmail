@@ -21,7 +21,7 @@ var passwordCheck = {
   checkQuality: function (password) {
     return evaluateSecurity(password);
   }
-}
+};
 
 /*********
   Helper functions and variables
@@ -193,4 +193,3 @@ function evaluateSecurity(password) {
 
   return { valid: valid, complexity: complexity};
 }
-

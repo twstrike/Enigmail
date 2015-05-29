@@ -110,6 +110,6 @@ function withEnvironment(vals, f) {
             environment.set(key, oldVals[key]);
         }
     }
-};
+}
 
 CustomAssert.registerExtraAssertionsOn(Assert);

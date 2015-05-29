@@ -12,4 +12,4 @@ else
     TESTS="$@"
 fi
 
-jshint --config $STATIC_ANALYSIS_DIR/.jshintrc -e .jsm $TESTS
+jshint --config $STATIC_ANALYSIS_DIR/../.jshintrc -e .jsm $TESTS
