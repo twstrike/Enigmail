@@ -106,7 +106,7 @@ PgpMimeEncrypt.prototype = {
 
       try {
         var enigSecurityInfo = securityInfo.QueryInterface(Ci.nsIEnigMsgCompFields);
-        return (enigSecurityInfo.sendFlags & (Ci.nsIEnigmail.SEND_SIGNED | Ci.nsIEnigmail.SEND_ENCRYPTED)) != 0;
+        return (enigSecurityInfo.sendFlags & (Ci.nsIEnigmail.SEND_SIGNED | Ci.nsIEnigmail.SEND_ENCRYPTED)) !== 0;
       }
       catch (ex) {
         return false;
@@ -161,7 +161,7 @@ PgpMimeEncrypt.prototype = {
           if (Ec.determineHashAlgorithm(this.win,
                     this.enigSecurityInfo.UIFlags,
                     this.enigSecurityInfo.senderEmailAddr,
-                    hashAlgoObj) == 0) {
+                    hashAlgoObj) === 0) {
             this.hashAlgorithm = hashAlgoObj.value;
           }
           else
@@ -274,7 +274,7 @@ PgpMimeEncrypt.prototype = {
       this.inspector.enterNestedEventLoop(0);
 
       DEBUG_LOG("mimeEncrypt.js: finishCryptoEncapsulation: exitCode = "+this.exitCode+"\n");
-      if (this.exitCode != 0) throw Cr.NS_ERROR_FAILURE;
+      if (this.exitCode !== 0) throw Cr.NS_ERROR_FAILURE;
 
       if (this.cryptoMode == MIME_SIGNED) this.signedHeaders2();
 
@@ -301,15 +301,15 @@ PgpMimeEncrypt.prototype = {
 
     try {
       let line = buffer.substr(0,length);
-      if (this.inputMode == 0) {
+      if (this.inputMode === 0) {
         this.headerData += line;
 
-        if (line.replace(/[\r\n]/g, "").length == 0) {
+        if (line.replace(/[\r\n]/g, "").length === 0) {
           this.inputMode = 1;
 
           if (this.cryptoMode == MIME_ENCRYPTED) {
             let ct = this.getHeader("content-type", false);
-            if ((ct.search(/text\/plain/i) == 0) || (ct.search(/text\/html/i) == 0)) {
+            if ((ct.search(/text\/plain/i) === 0) || (ct.search(/text\/html/i) === 0)) {
               this.encapsulate = Ec.createMimeBoundary();
               this.writeToPipe('Content-Type: multipart/mixed; boundary="'+
                 this.encapsulate+'"\r\n\r\n');
@@ -319,8 +319,8 @@ PgpMimeEncrypt.prototype = {
           else if (this.cryptoMode == MIME_SIGNED) {
             let ct = this.getHeader("content-type", true);
             let hdr = EnigmailFuncs.getHeaderData(ct);
-            hdr["boundary"] = hdr["boundary"] || "";
-            hdr["boundary"] = hdr["boundary"].replace(/[\'\"]/g, "");
+            hdr.boundary = hdr.boundary || "";
+            hdr.boundary = hdr.boundary.replace(/[\'\"]/g, "");
           }
 
           this.writeToPipe(this.headerData);
@@ -402,8 +402,8 @@ PgpMimeEncrypt.prototype = {
     var i;
     for (i=0; i < hdrLines.length; i++) {
       if (hdrLines[i].length > 0) {
-        if (fullHeader && res != "") {
-          if (hdrLines[i].search(/^\s+/) == 0) {
+        if (fullHeader && res !== "") {
+          if (hdrLines[i].search(/^\s+/) === 0) {
             res += hdrLines[i].replace(/\s*[\r\n]*$/, "");
           }
           else
@@ -414,7 +414,7 @@ PgpMimeEncrypt.prototype = {
           if (j > 0) {
             let h = hdrLines[i].substr(0, j).replace(/\s*$/, "");
             let re = new RegExp("^"+hdrStr+"$", "i");
-            if (h.search(re) == 0) {
+            if (h.search(re) === 0) {
               foundIndex = 1;
               res = hdrLines[i].substr(j+1).replace(/^\s*/, "");
               if (! fullHeader) return res;
@@ -462,7 +462,7 @@ PgpMimeEncrypt.prototype = {
           this.dataLength,
           retStatusObj);
 
-    if (this.exitCode != 0)
+    if (this.exitCode !== 0)
       Ec.alert(this.win, retStatusObj.errorMsg);
 
     if (this.inspector && this.inspector.eventLoopNestLevel > 0) {
