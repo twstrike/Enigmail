@@ -1,3 +1,4 @@
+/*global Components EnigmailCommon */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -127,7 +128,7 @@ function setupFailureLookup() {
   return result;
 }
 
-function ignore() {};
+function ignore() {}
 
 const failureLookup = setupFailureLookup();
 
@@ -140,7 +141,7 @@ function handleFailure(c, errorFlag) {
   if (c.flag) {
     c.statusFlags |= c.flag;
   }
-};
+}
 
 function newContext(ecom, statusFlagLookup, errOutput, retStatusObj) {
   retStatusObj.statusMsg = "";
@@ -152,8 +153,8 @@ function newContext(ecom, statusFlagLookup, errOutput, retStatusObj) {
     statusFlagLookup: statusFlagLookup,
     errOutput: errOutput,
     retStatusObj: retStatusObj,
-    errArray: new Array(),
-    statusArray: new Array(),
+    errArray: [],
+    statusArray: [],
     errCode: 0,
     detectedCard: null,
     requestedCard: null,
@@ -181,7 +182,7 @@ function splitErrorOutput(errOutput) {
 }
 
 function parseErrorLine(errLine, c) {
-  if (errLine.search(c.statusPat) == 0) {
+  if (errLine.search(c.statusPat) === 0) {
     // status line
     c.statusLine = errLine.replace(c.statusPat, "");
     c.statusArray.push(c.statusLine);
@@ -207,15 +208,15 @@ function parseErrorLine(errLine, c) {
 function detectForgedInsets(c) {
   // detect forged message insets
   for (var j = 0; j < c.statusArray.length; j++) {
-    if (c.statusArray[j].search(c.cryptoStartPat) == 0) {
+    if (c.statusArray[j].search(c.cryptoStartPat) === 0) {
       c.withinCryptoMsg = true;
     }
-    else if (c.withinCryptoMsg && c.statusArray[j].search(c.cryptoEndPat) == 0) {
+    else if (c.withinCryptoMsg && c.statusArray[j].search(c.cryptoEndPat) === 0) {
       c.withinCryptoMsg = false;
     }
-    else if (c.statusArray[j].search(c.plaintextPat) == 0) {
+    else if (c.statusArray[j].search(c.plaintextPat) === 0) {
       ++c.plaintextCount;
-      if ((c.statusArray.length > j+1) && (c.statusArray[j+1].search(c.plaintextLengthPat) == 0)) {
+      if ((c.statusArray.length > j+1) && (c.statusArray[j+1].search(c.plaintextLengthPat) === 0)) {
         var matches = c.statusArray[j+1].match(/(\w+) (\d+)/);
         if (matches.length>=3) {
           c.retStatusObj.blockSeparation += (c.withinCryptoMsg ? "1" : "0") + ":"+matches[2]+" ";
@@ -245,6 +246,7 @@ function buildErrorMessageForCardCtrl(errCode, detectedCard) {
       break;
     case 2:
       errorMsg = c.ec.getString("sc.removeCard");
+      break;
     case 4:
       errorMsg = c.ec.getString("sc.noCardAvailable");
       break;
@@ -271,8 +273,8 @@ function parseErrorOutputWith(c) {
 
   c.retStatusObj.blockSeparation = c.retStatusObj.blockSeparation.replace(/ $/, "");
   c.retStatusObj.statusFlags = c.statusFlags;
-  if (c.retStatusObj.statusMsg.length == 0) c.retStatusObj.statusMsg = c.statusArray.join("\n");
-  if (c.errorMsg.length == 0) {
+  if (c.retStatusObj.statusMsg.length === 0) c.retStatusObj.statusMsg = c.statusArray.join("\n");
+  if (c.errorMsg.length === 0) {
     c.errorMsg = c.errArray.map(c.ec.convertGpgToUnicode, c.ec).join("\n");
   }
 
@@ -285,7 +287,7 @@ function parseErrorOutputWith(c) {
 
   c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput(): return with c.errorMsg = "+c.errorMsg+"\n");
   return c.errorMsg;
-};
+}
 
 var EnigmailErrorHandling = {
   parseErrorOutput: function(ecom, statusFlagLookup, errOutput, retStatusObj) {
