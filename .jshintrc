@@ -1,5 +1,3 @@
 {
-  "moz": true,
-  "predef": ["Components", "XPCOMUtils"]
-
+  "moz": true
 }
