@@ -49,7 +49,7 @@ function shouldExecCmd() {
 
     var args = Ec.getAgentArgs(false);
     args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);
-    args=args.concat(["--list-packets", "/enigmail-src/package/tests/resources/dev-strike.asc"]);
+    args=args.concat(["--list-packets", "resources/dev-strike.asc"]);
     var output = "";
     EnigmailKeyMgmt.execCmd(command, args,
         function (pipe) {
