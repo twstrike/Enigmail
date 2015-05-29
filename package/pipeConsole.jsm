@@ -60,4 +60,4 @@ var EnigmailConsole = {
     gotNewData = false;
     return dataCache;
   }
-}
+};

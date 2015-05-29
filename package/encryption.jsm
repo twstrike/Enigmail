@@ -119,8 +119,8 @@ var Encryption = {
         if (!useDefaultComment)
             encryptArgs = encryptArgs.concat(["--comment", GPG_COMMENT_OPT.replace(/\%s/, ecom.getAppName())]);
 
-        var angledFromMailAddr = ((fromMailAddr.search(/^0x/) == 0) || hushMailSupport)
-                ? fromMailAddr : "<" + fromMailAddr + ">";
+        var angledFromMailAddr = ((fromMailAddr.search(/^0x/) === 0) || hushMailSupport) ?
+                fromMailAddr : "<" + fromMailAddr + ">";
         angledFromMailAddr = angledFromMailAddr.replace(/([\"\'\`])/g, "\\$1");
 
         if (signMsg && hashAlgorithm) {
@@ -153,12 +153,12 @@ var Encryption = {
                 toAddrList[k] = toAddrList[k].replace(/\'/g, "\\'");
                 if (toAddrList[k].length > 0) {
                     encryptArgs.push("-r");
-                    if (toAddrList[k].search(/^GROUP:/) == 0) {
+                    if (toAddrList[k].search(/^GROUP:/) === 0) {
                         // groups from gpg.conf file
                         encryptArgs.push(toAddrList[k].substr(6));
                     }
                     else {
-                        encryptArgs.push((hushMailSupport || (toAddrList[k].search(/^0x/) == 0)) ? toAddrList[k]
+                        encryptArgs.push((hushMailSupport || (toAddrList[k].search(/^0x/) === 0)) ? toAddrList[k]
                                          :"<" + toAddrList[k] + ">");
                     }
                 }
@@ -168,7 +168,7 @@ var Encryption = {
                 bccAddrList[k] = bccAddrList[k].replace(/\'/g, "\\'");
                 if (bccAddrList[k].length > 0) {
                     encryptArgs.push("--hidden-recipient");
-                    encryptArgs.push((hushMailSupport || (bccAddrList[k].search(/^0x/) == 0)) ? bccAddrList[k]
+                    encryptArgs.push((hushMailSupport || (bccAddrList[k].search(/^0x/) === 0)) ? bccAddrList[k]
                                      :"<" + bccAddrList[k] + ">");
                 }
             }
@@ -275,11 +275,11 @@ var Encryption = {
         ecom.parseErrorOutput(stderrStr, retStatusObj);
 
         exitCode = ecom.fixExitCode(exitCode, retStatusObj.statusFlags);
-        if ((exitCode == 0) && !outputLen) {
+        if ((exitCode === 0) && !outputLen) {
             exitCode = -1;
         }
 
-        if (exitCode != 0 && (signMsg || encryptMsg)) {
+        if (exitCode !== 0 && (signMsg || encryptMsg)) {
             // GnuPG might return a non-zero exit code, even though the message was correctly
             // signed or encryped -> try to fix the exit code
 
@@ -293,7 +293,7 @@ var Encryption = {
             exitCode = correctedExitCode;
         }
 
-        if (exitCode == 0) {
+        if (exitCode === 0) {
             // Normal return
             return 0;
         }
@@ -390,10 +390,10 @@ var Encryption = {
         errorMsgObj.value = retStatusObj.errorMsg;
 
 
-        if ((exitCodeObj.value == 0) && listener.stdoutData.length == 0)
+        if ((exitCodeObj.value === 0) && listener.stdoutData.length === 0)
             exitCodeObj.value = -1;
 
-        if (exitCodeObj.value == 0) {
+        if (exitCodeObj.value === 0) {
             // Normal return
             EC.DEBUG_LOG("  <=== encryptMessage()\n");
             return Data.getUnicodeData(listener.stdoutData);
