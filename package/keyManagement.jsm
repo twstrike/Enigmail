@@ -241,6 +241,20 @@ KeyEditor.prototype = {
 
 var EnigmailKeyMgmt = {
 
+  execCmd: function (command, args, stdinFunc, stdoutFunc, doneFunc) {
+    var proc = {
+      command: command,
+      arguments: args,
+      charset: null,
+      environment: Ec.getEnvList(),
+      stdin: stdinFunc,
+      stdout: stdoutFunc,
+      done: doneFunc,
+      mergeStderr: false
+    };
+    subprocess.call(proc).wait();
+  },
+
   editKey: function (parent, needPassphrase, userId, keyId, editCmd, inputData, callbackFunc, requestObserver, parentCallback) {
     Ec.DEBUG_LOG("keyManagmenent.jsm: editKey: parent="+parent+", editCmd="+editCmd+"\n");
 
@@ -289,23 +303,13 @@ var EnigmailKeyMgmt = {
     var keyEdit = new KeyEditor(requestObserver, callbackFunc, inputData);
 
     try {
-      var proc = subprocess.call({
-        command: command,
-        arguments: args,
-        charset: null,
-        environment: Ec.getEnvList(),
-        stdin: function (stdin) {
-          keyEdit.setStdin(stdin);
-        },
-        stdout: function(data) {
-          keyEdit.gotData(data);
-        },
-        done: function(result) {
-          Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.editKey: GnuPG terminated with code="+result.exitCode+"\n");
-          keyEdit.done(parentCallback, result.exitCode);
-        },
-        mergeStderr: false
-      });
+      this.execCmd(command, args,
+          keyEdit.setStdin.bind(keyEdit),
+          keyEdit.gotData.bind(keyEdit),
+          function (result) {
+            keyEdit.done(parentCallback, result.exitCode);
+          }
+      );
     } catch (ex) {
       Ec.ERROR_LOG("keyManagement.jsm: editKey: "+command.path+" failed\n");
       parentCallback(-1, "");
