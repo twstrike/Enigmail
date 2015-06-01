@@ -256,6 +256,38 @@ var EnigmailKeyMgmt = {
     subprocess.call(proc).wait();
   },
 
+  readKey: function (parent, inputData, outputData, callbackFunc, requestObserver, parentCallback){
+    Ec.DEBUG_LOG("keyManagmenent.jsm: readKey: parent="+parent+"\n");
+
+    var enigmailSvc = Ec.getService(parent);
+    if (!enigmailSvc) {
+      Ec.ERROR_LOG("keyManagmenent.jsm: Enigmail.readKey: not yet initialized\n");
+      parentCallback(-1, Ec.getString("notInit"));
+      return -1;
+    }
+
+    var args = Ec.getAgentArgs(false);
+
+    args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);
+    if (inputData.path) args=args.concat(["--list-packets", inputData.path]);
+    if (inputData.keytext) args=args.concat(["--list-packets"]);
+
+    var command= enigmailSvc.agentPath;
+    Ec.CONSOLE_LOG("enigmail> "+Ec.printCmdLine(command, args)+"\n");
+    outputData.key = "";
+    EnigmailKeyMgmt.execCmd(command, args,
+        function(pipe) {
+        }
+        ,
+        function (stdout) {
+            outputData.key+=stdout;
+        },
+        function (result) {
+            Ec.DEBUG_LOG(result);
+        }
+    );
+  },
+
   editKey: function (parent, needPassphrase, userId, keyId, editCmd, inputData, callbackFunc, requestObserver, parentCallback) {
     Ec.DEBUG_LOG("keyManagmenent.jsm: editKey: parent="+parent+", editCmd="+editCmd+"\n");
 

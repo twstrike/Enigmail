@@ -43,6 +43,8 @@ test(shouldExecCmd);
 test(shouldEditKey);
 test(shouldSetTrust);
 test(shouldSignKey);
+test(shouldReadKeyFromFile);
+
 function shouldExecCmd() {
     var enigmailSvc = Ec.getService(window);
     var command= enigmailSvc.agentPath;
@@ -70,6 +72,31 @@ function shouldExecCmd() {
     Assert.assertContains(output,":signature packet:");
     Assert.assertContains(output,":secret key packet:");
 }
+
+function shouldReadKeyFromFile() {
+    EnigmailCore.setLogLevel(5);
+    var outputData = {};
+    EnigmailKeyMgmt.readKey(
+        window,
+        {"path":"resources/dev-strike.asc"},
+        outputData = {},
+        null,
+        null,
+        function (exitCode, errorMsg) {
+            Assert.equal(exitCode, 0);
+            Assert.equal("", errorMsg);
+        }
+    );
+    var output = outputData.key;
+    do_print(output);
+    Assert.assertContains(output,":public key packet:");
+    Assert.assertContains(output,":user ID packet:");
+    Assert.assertContains(output,":signature packet:");
+    Assert.assertContains(output,":public sub key packet:");
+    Assert.assertContains(output,":signature packet:");
+    Assert.assertContains(output,":secret key packet:");
+}
+
 function shouldEditKey() {
     do_test_pending();
     EnigmailKeyMgmt.editKey(
