@@ -1,3 +1,4 @@
+/*global Components */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -452,12 +453,13 @@ function EnigKeygen() {
 
 // retrieves a localized string from the enigmail.properties stringbundle
 function EnigGetString(aStr) {
-  var argList = new Array();
+  var argList = [];
   // unfortunately arguments.shift() doesn't work, so we use a workaround
 
   if (arguments.length > 1)
-    for (let i=1; i<arguments.length; i++)
-      argList.push(arguments[i]);
+    for (var i=1; i<arguments.length; i++) {
+        argList.push(arguments[i]);
+    }
   return EnigmailCommon.getString(aStr, (arguments.length > 1 ? argList : null));
 }
 
@@ -546,7 +548,7 @@ function EnigChangeKeyPwd(keyId, userId) {
     // gpg-agent used: gpg-agent will handle everything
     EnigmailKeyMgmt.changePassphrase(window, "0x"+keyId, "", "",
       function _changePwdCb(exitCode, errorMsg) {
-        if (exitCode != 0) {
+        if (exitCode !== 0) {
           EnigAlert(EnigGetString("changePassFailed")+"\n\n"+errorMsg);
         }
       });
@@ -564,9 +566,9 @@ function EnigRevokeKey(keyId, userId, callbackFunc) {
       return false;
 
   var tmpDir=EnigGetTempDir();
-
+  var revFile;
   try {
-    var revFile = ENIG_C[ENIG_LOCAL_FILE_CONTRACTID].createInstance(EnigGetLocalFileApi());
+    revFile = ENIG_C[ENIG_LOCAL_FILE_CONTRACTID].createInstance(EnigGetLocalFileApi());
     revFile.initWithPath(tmpDir);
     if (!(revFile.isDirectory() && revFile.isWritable())) {
       EnigAlert(EnigGetString("noTempDir"));
@@ -578,7 +580,7 @@ function EnigRevokeKey(keyId, userId, callbackFunc) {
 
   EnigmailKeyMgmt.genRevokeCert(window, "0x"+keyId, revFile, "0", "",
     function _revokeCertCb(exitCode, errorMsg) {
-      if (exitCode != 0) {
+      if (exitCode !== 0) {
         revFile.remove(false);
         EnigAlert(EnigGetString("revokeKeyFailed")+"\n\n"+errorMsg);
         return;
@@ -587,14 +589,14 @@ function EnigRevokeKey(keyId, userId, callbackFunc) {
       var keyList = {};
       var r = enigmailSvc.importKeyFromFile(window, revFile, errorMsgObj, keyList);
       revFile.remove(false);
-      if (r != 0) {
+      if (r !== 0) {
         EnigAlert(EnigGetString("revokeKeyFailed")+"\n\n"+EnigConvertGpgToUnicode(errorMsgObj.value));
       }
       else {
         EnigAlert(EnigGetString("revokeKeyOk"));
       }
       if (callbackFunc) {
-        callbackFunc(r == 0);
+        callbackFunc(r === 0);
       }
     });
     return true;
@@ -613,7 +615,7 @@ function EnigGetFilePath (nsFileObj) {
 }
 
 function EnigCreateRevokeCert(keyId, userId, callbackFunc) {
-  var defaultFileName = userId.replace(/[\<\>]/g, "");
+  var defaultFileName = userId.replace(/[<\>]/g, "");
   defaultFileName += " (0x"+keyId.substr(-8,8)+") rev.asc";
   var outFile = EnigFilePicker(EnigGetString("saveRevokeCertAs"),
                                "", true, "*.asc",
@@ -627,14 +629,14 @@ function EnigCreateRevokeCert(keyId, userId, callbackFunc) {
 
   EnigmailKeyMgmt.genRevokeCert(window, "0x"+keyId, outFile, "1", "",
     function _revokeCertCb(exitCode, errorMsg) {
-      if (exitCode != 0) {
+      if (exitCode !== 0) {
         EnigAlert(EnigGetString("revokeCertFailed")+"\n\n"+errorMsg);
       }
       else {
         EnigAlert(EnigGetString("revokeCertOK"));
       }
 
-      if (callbackFunc) callbackFunc(exitCode == 0);
+      if (callbackFunc) callbackFunc(exitCode === 0);
     });
   return 0;
 }
@@ -700,12 +702,8 @@ function enigGetService (aURL, aInterface)
   {
     case "object":
       return ENIG_C[aURL].getService(aInterface);
-      break;
-
     case "string":
       return ENIG_C[aURL].getService(ENIG_I[aInterface]);
-      break;
-
     default:
       return ENIG_C[aURL].getService();
   }
@@ -886,7 +884,7 @@ function EnigAddSubkey(treeChildren, aLine, selectCol=false) {
   var expire;
   if (aLine[1]==="r") {
     expire = EnigGetString("keyValid.revoked");
-  } else if (aLine[6].length==0) {
+  } else if (aLine[6].length===0) {
     expire = EnigGetString("keyExpiryNever");
   } else {
     expire = EnigGetDateTime(aLine[6], true, false);
@@ -994,7 +992,7 @@ function EnigGetKeyDetails(sigListStr) {
     switch (aLine[0]) {
     case "pub":
       gUserId=EnigConvertGpgToUnicode(aLine[9]);
-      var calcTrust=aLine[1];
+      calcTrust=aLine[1];
       if (aLine[11].indexOf("D")>=0) {
         calcTrust="d";
       }
@@ -1002,6 +1000,13 @@ function EnigGetKeyDetails(sigListStr) {
       creationDate = EnigmailCommon.getDateTime(aLine[5], true, false);
       expiryDate = EnigmailCommon.getDateTime(aLine[6], true, false);
       subkeyList.push(aLine);
+      if (! gUserId) {
+        gUserId=EnigConvertGpgToUnicode(aLine[9]);
+      }
+      else if (uidList !== false) {
+        uidList.push(aLine);
+      }
+      break;
     case "uid":
       if (! gUserId) {
         gUserId=EnigConvertGpgToUnicode(aLine[9]);
@@ -1012,7 +1017,7 @@ function EnigGetKeyDetails(sigListStr) {
       break;
     case "uat":
       // @TODO document what that means
-      if (aLine[9].search("1 ") == 0) {
+      if (aLine[9].search("1 ") === 0) {
         showPhoto = true;
       }
       break;
@@ -1020,7 +1025,7 @@ function EnigGetKeyDetails(sigListStr) {
       subkeyList.push(aLine);
       break;
     case "fpr":
-      if (fingerprint == null) {
+      if (fingerprint === null) {
         fingerprint = aLine[9];
       }
       break;
@@ -1040,4 +1045,3 @@ function EnigGetKeyDetails(sigListStr) {
   };
   return keyDetails;
 }
-
