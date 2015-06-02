@@ -1,3 +1,4 @@
+/*global Components */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -59,10 +60,9 @@ function onLoad() {
 
   let winOptions = EnigGetWindowOptions();
   if ("skipIntro" in winOptions) {
-    if (winOptions["skipIntro"] == "true") {
+    if (winOptions.skipIntro == "true") {
       var wizard = getWizard();
       wizard.goTo("pgWelcome");
-
     }
   }
 }
@@ -79,7 +79,7 @@ function onCancel() {
     }
   }
   else {
-    var r=(EnigLongAlert(EnigGetString("setupWizard.reallyCancel"), null, EnigGetString("dlg.button.close"), EnigGetString("dlg.button.continue")) == 0);
+    var r=(EnigLongAlert(EnigGetString("setupWizard.reallyCancel"), null, EnigGetString("dlg.button.close"), EnigGetString("dlg.button.continue")) === 0);
 
     if (r && gDownoadObj) {
       gDownoadObj.abort();
@@ -113,7 +113,7 @@ function onBack() {
 
 function onPageShow() {
   var wizard = getWizard();
-  wizard.canRewind = (gPageStack.length > 0)
+  wizard.canRewind = (gPageStack.length > 0);
 }
 
 /***
@@ -128,7 +128,7 @@ function onNext() {
 
   // private function to se the next page of the wizard
   function setNextPage(pageId) {
-    if (pageId == "") {
+    if (pageId === "") {
       enableNext = false;
     }
     else {
@@ -191,6 +191,7 @@ function onAfterPgWelcome() {
       else {
         return "pgKeyCreate";
       }
+      break;
     case "advanced":
       if (countIdentities() > 1) {
         return "pgSelectId";
@@ -204,6 +205,7 @@ function onAfterPgWelcome() {
           return "pgNoKeyFound";
         }
       }
+      break;
     case "expert":
       return "pgExpert";
     }
@@ -224,6 +226,7 @@ function onAfterPgInstallGnuPG() {
     else {
       return "pgKeyCreate";
     }
+    break;
   case "advanced":
     if (countIdentities() > 1) {
       return "pgSelectId";
@@ -237,6 +240,7 @@ function onAfterPgInstallGnuPG() {
         return "pgNoKeyFound";
       }
     }
+    break;
   case "expert":
     return "pgExpert";
   }
@@ -453,7 +457,7 @@ function browseKeyFile(referencedId, referencedVar) {
 
 function importKeyFiles() {
   Ec.DEBUG_LOG("enigmailSetupWizard.js: importKeyFiles\n");
-  if (document.getElementById("publicKeysFile").value.length == 0) {
+  if (document.getElementById("publicKeysFile").value.length === 0) {
     EnigAlert(EnigGetString("setupWizard.specifyFile"));
     return false;
   }
@@ -469,7 +473,7 @@ function importKeyFiles() {
   var errorMsgObj = {};
   var keyListObj = {};
   exitCode = enigmailSvc.importKeyFromFile(window, gPubkeyFile.value, errorMsgObj, keyListObj);
-  if (exitCode != 0) {
+  if (exitCode !== 0) {
     EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
     return false;
   }
@@ -479,7 +483,7 @@ function importKeyFiles() {
     Ec.DEBUG_LOG("enigmailSetupWizard.js: importKeyFiles - private Keys\n");
 
     exitCode = enigmailSvc.importKeyFromFile(window, gSeckeyFile.value, errorMsgObj, keyListObj);
-    if (exitCode != 0) {
+    if (exitCode !== 0) {
       EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
       return false;
     }
@@ -521,7 +525,7 @@ function setKeyTrustNextKey(keyList, index) {
     // imported key contains secret key
     EnigmailKeyMgmt.setKeyTrust(window, aKey[0], 5,
       function(exitCode, errorMsg) {
-        if (exitCode != 0) {
+        if (exitCode !== 0) {
           return;
         }
 
@@ -612,7 +616,7 @@ function checkPassphrasesEqual() {
   let p1 = document.getElementById("passphrase").value;
   let p2 = document.getElementById("passphraseRepeat").value;
 
-  disableNext(p1.length == 0 || p1 != p2);
+  disableNext(p1.length === 0 || p1 != p2);
 }
 
 
@@ -638,7 +642,7 @@ function clearKeyListEntries() {
 
 function onSetStartNow(mode) {
   var wizard = getWizard();
-  if (mode == 0) {
+  if (mode === 0) {
     wizard.lastPage = true;
     wizard.getButton("next").hidden = true;
     wizard.getButton("finish").hidden = false;
@@ -669,7 +673,7 @@ function onKeySelected() {
     gGeneratedKey = null;
   }
 
-  disableNext(uidSel.view.selection.count == 0);
+  disableNext(uidSel.view.selection.count === 0);
 }
 
 function wizardSetFocus() {
@@ -692,7 +696,7 @@ function loadKeys() {
   var statusFlagsObj = {};
   var errorMsgObj = {};
   var keyList = Ec.getSecretKeys(window, true);
-  if (keyList == null) {
+  if (keyList === null) {
     return;
   }
 
@@ -799,7 +803,7 @@ function checkPassphrase() {
 
   if (Ec.getGpgFeature("keygen-passphrase")) {
     var passphrase = enigmailCheckPassphrase();
-    if (passphrase == null) return false;
+    if (passphrase === null) return false;
 
     if (passphrase.length < 8) {
       EnigAlert(EnigGetString("passphrase.min8keys"));
@@ -1014,9 +1018,9 @@ function fillIdentities(fillType)
 
       DEBUG_LOG("enigmailKeygen.js: accountName="+accountName+"\n");
       DEBUG_LOG("enigmailKeygen.js: email="+identity.email+"\n");
-
+      var item;
       if (fillType == "checkbox") {
-        var item = document.createElement('checkbox');
+        item = document.createElement('checkbox');
         item.setAttribute('checked', "true");
         item.setAttribute('disabled', disableId);
         item.setAttribute('oncommand', "checkIdSelection()");
@@ -1058,7 +1062,7 @@ function wizardGetSelectedIdentity()
 
 function applyWizardSettings() {
   DEBUG_LOG("enigmailSetupWizard.js: applyWizardSettings\n");
-  debugger;
+//  debugger;
 
   loadLastPage();
 

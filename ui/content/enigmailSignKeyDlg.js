@@ -54,7 +54,7 @@ function onLoad() {
     return;
   }
   var keys = Ec.getSecretKeys(window);
-  if (keys.length == 0) {
+  if (keys.length === 0) {
     Ec.alert(null, Ec.getString("noTrustedOwnKeys"));
     window.close();
     return;
@@ -68,17 +68,18 @@ function onLoad() {
     menulist.selectedIndex = 0;
   }
 
+  var fingerprint;
   // determine keys that have already signed the key
   try {
-    var exitCodeObj = new Object();
-    var errorMsgObj = new Object();
-    gSignatureList = new Array();
-    gUidCount = new Array();
+    var exitCodeObj = {};
+    var errorMsgObj = {};
+    gSignatureList = [];
+    gUidCount = [];
     var keyId = null;
-    var fingerprint = "";
+    fingerprint = "";
     var sigListStr = enigmailSvc.getKeySig("0x"+window.arguments[0].keyId, exitCodeObj, errorMsgObj);
 
-    if (exitCodeObj.value == 0) {
+    if (exitCodeObj.value === 0) {
       var sigList = sigListStr.split(/[\n\r]+/);
       var currKey = null;
       var currUID = null;
@@ -95,7 +96,7 @@ function onLoad() {
         case "uid":
           if (typeof(currKey) != "string") currKey = aLine[4];
           // Count all UIDs
-          if (gUidCount[keyId]==undefined) {
+          if (gUidCount[keyId]===undefined) {
             gUidCount[keyId]=1;
           }
           else {
@@ -105,7 +106,7 @@ function onLoad() {
 
         case "sig":
           // Count signatures separately for each signing key
-          if (gSignatureList[aLine[4]]==undefined) {
+          if (gSignatureList[aLine[4]]===undefined) {
             gSignatureList[aLine[4]]=1;
           }
           else {
@@ -114,7 +115,7 @@ function onLoad() {
           break;
 
         case "fpr":
-          if (fingerprint=="") {
+          if (fingerprint==="") {
             Ec.DEBUG_LOG("enigmailSignKeyDlg.js: fpr:"+currKey+" -> "+aLine[9]+"\n");
             fingerprint = aLine[9];
           }
@@ -154,7 +155,7 @@ function onAccept() {
     localSig.checked,
     trustLevel.selectedItem.value,
     function (exitCode, errorMsg) {
-      if (exitCode != 0) {
+      if (exitCode !== 0) {
         Ec.alert(window, Ec.getString("signKeyFailed")+"\n\n"+errorMsg);
       }
       else {
@@ -175,7 +176,7 @@ function enigKeySelCb() {
   var alreadySigned = document.getElementById("alreadySigned");
   var acceptButton = document.getElementById("enigmailSignKeyDlg").getButton("accept");
 
-  if (gSignatureList[signWithKeyId] == undefined){
+  if (gSignatureList[signWithKeyId] === undefined){
     // No signature yet, Hide hint field and ENable OK button
     alreadySigned.setAttribute("collapsed", "true");
     acceptButton.disabled = false;
@@ -200,4 +201,3 @@ function enigKeySelCb() {
     acceptButton.disabled = false;
   }
 }
-

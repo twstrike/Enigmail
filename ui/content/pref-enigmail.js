@@ -58,7 +58,7 @@ function displayPrefs(showDefault, showPrefs, setPrefs) {
 
   var s = gEnigmailSvc;
 
-  var obj = new Object;
+  var obj = {};
   var prefList = EnigmailCore.prefBranch.getChildList("",obj);
 
   for (var prefItem in prefList) {
@@ -193,7 +193,7 @@ function prefOnLoad()
   gSavedManualPrefAutoSendEncrypted = EnigGetPref("autoSendEncrypted");
   gSavedManualPrefConfirmBeforeSending = EnigGetPref("confirmBeforeSending");
   gEnigEncryptionModel = EnigGetPref("encryptionModel");
-  if (gEnigEncryptionModel == 0) { // convenient encryption
+  if (gEnigEncryptionModel === 0) { // convenient encryption
     resetSendingPrefsConvenient();
   }
   else {
@@ -289,7 +289,7 @@ function resetPrefs() {
   gSavedManualPrefConfirmBeforeSending = EnigGetPref("confirmBeforeSending");
   // and process encryption model:
   gEnigEncryptionModel = EnigGetPref("encryptionModel");
-  if (gEnigEncryptionModel == 0) { // convenient encryption
+  if (gEnigEncryptionModel === 0) { // convenient encryption
     resetSendingPrefsConvenient();
   }
   else {
@@ -332,7 +332,7 @@ function updateSendingPrefs()
   EnigDisplayRadioPref("confirmBeforeSending", EnigGetPref("confirmBeforeSending"),
                        gEnigConfirmBeforeSending);
   gEnigEncryptionModel = EnigGetPref("encryptionModel");
-  disableManually(gEnigEncryptionModel == 0);
+  disableManually(gEnigEncryptionModel === 0);
   displayPrefs(false, true, false);
 }
 
@@ -571,4 +571,3 @@ function enigLocateGpg() {
     document.getElementById("enigmail_agentPath").value = filePath.path;
   }
 }
-
