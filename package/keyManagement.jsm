@@ -266,25 +266,51 @@ var EnigmailKeyMgmt = {
       return -1;
     }
 
+    var command= enigmailSvc.agentPath;
     var args = Ec.getAgentArgs(false);
 
-    args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);
-    if (inputData.path) args=args.concat(["--list-packets", inputData.path]);
-    if (inputData.keytext) args=args.concat(["--list-packets"]);
-
-    var command= enigmailSvc.agentPath;
-    Ec.CONSOLE_LOG("enigmail> "+Ec.printCmdLine(command, args)+"\n");
     outputData.key = "";
-    EnigmailKeyMgmt.execCmd(command, args,
-        function(pipe) {
-        },
-        function (stdout) {
+    args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);
+
+    if (inputData.path) {//read key from file
+      args=args.concat(["--list-packets", inputData.path]);
+      Ec.CONSOLE_LOG("enigmail> "+Ec.printCmdLine(command, args)+"\n");
+      EnigmailKeyMgmt.execCmd(command, args,
+          function(pipe) {
+          },
+          function (stdout) {
             outputData.key+=stdout;
-        },
-        function (result) {
+          },
+          function (result) {
             Ec.DEBUG_LOG(result);
-        }
-    );
+          }
+      );
+    }
+    else if (inputData.keytext){//read key from text
+      args=args.concat(["--list-packets"]);
+
+      Ec.CONSOLE_LOG("enigmail> "+Ec.printCmdLine(command, args)+"\n");
+      var input = inputData.keytext;
+      if ((typeof input) != "string") input = "";
+
+      var preInput = "";
+
+      EnigmailKeyMgmt.execCmd(command, args,
+          function(pipe) {
+            if (input.length > 0 || preInput.length > 0) {
+              pipe.write(preInput + input);
+            }
+            pipe.close();
+          }
+          ,
+          function (stdout) {
+            outputData.key+=stdout;
+          },
+          function (result) {
+            Ec.DEBUG_LOG(result);
+          }
+      );
+    }
   },
 
   editKey: function (parent, needPassphrase, userId, keyId, editCmd, inputData, callbackFunc, requestObserver, parentCallback) {
