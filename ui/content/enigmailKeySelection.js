@@ -1,3 +1,4 @@
+/*global Components */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -102,21 +103,21 @@ function enigmailRefreshKeys()
 function enigGetUserList(secretOnly, refresh)
 {
   DEBUG_LOG("enigmailMessengerOverlay.js: enigGetUserList\n");
-
+  var userList;
   try {
-    var exitCodeObj = new Object();
-    var statusFlagsObj = new Object();
-    var errorMsgObj = new Object();
+    var exitCodeObj = {};
+    var statusFlagsObj = {};
+    var errorMsgObj = {};
 
     var enigmailSvc = GetEnigmailSvc();
     if (! enigmailSvc)
       return null;
-    var userList = enigmailSvc.getUserIdList(secretOnly,
+    userList = enigmailSvc.getUserIdList(secretOnly,
                                              refresh,
                                              exitCodeObj,
                                              statusFlagsObj,
                                              errorMsgObj);
-    if (exitCodeObj.value != 0) {
+    if (exitCodeObj.value !== 0) {
       EnigAlert(errorMsgObj.value);
       return null;
     }
@@ -143,7 +144,7 @@ function enigGetUserList(secretOnly, refresh)
 function getPubkeysFromSecretKeys(keyString)
 {
   var secretList=keyString.split(/\n/);
-  var aSecretKeys = new Array();
+  var aSecretKeys = [];
   for (var i=0; i<secretList.length; i++) {
     var listRow = secretList[i].split(/:/);
     if (listRow[0] == "sec") {
@@ -184,7 +185,7 @@ function enigmailBuildList(refresh)
      }
      // 3rd: sort non-activateable keys to the end
      else if ((a.activeState != b.activeState) && (a.activeState == 2 || b.activeState == 2)) {
-       r = (a.activeState == 0 ? -1 : 1);
+       r = (a.activeState === 0 ? -1 : 1);
      }
      // 4th: sort according to user IDs
      else if (a.userId.toLowerCase() < b.userId.toLowerCase()) {
@@ -218,9 +219,9 @@ function enigmailBuildList(refresh)
    var aGpgUserList = enigGetUserList(secretOnly, refresh);
 
    if (!aGpgUserList) return;
-
+   var uidNotValid;
    if (gAlwaysTrust) {
-     var uidNotValid="";
+     uidNotValid="";
    }
    else {
      uidNotValid="o-qn";
@@ -336,8 +337,8 @@ function enigmailBuildList(refresh)
       acceptButton.setAttribute("label", window.arguments[INPUT].options.substring(pos1+1,pos2));
    }
 
-   var aUserList = new Array();
-   var userObj = new Object();
+   var aUserList = [];
+   var userObj = {};
    userObj.uidMatchInvalid = false;  // by default don't match list of invalid emails
    var i;
    for (i=0; i<aGpgUserList.length; i++) {
@@ -346,7 +347,7 @@ function enigmailBuildList(refresh)
        switch(listRow[0]) {
        case "pub":
        case "sec":
-         userObj = new Object();
+         userObj = {};
          userObj.expiry=listRow[EXPIRY];
          userObj.created=listRow[CREATED];
          userObj.keyId=listRow[KEY_ID];
@@ -357,12 +358,12 @@ function enigmailBuildList(refresh)
          userObj.valid=false;
          userObj.uidValid=true;
          userObj.subkeyOK=(listRow[KEY_USE_FOR].indexOf("e") >= 0 || secretOnly);
-         userObj.SubUserIds=new Array();
+         userObj.SubUserIds=[];
          aUserList.push(userObj);
          break;
        case "grp":
          // groups
-         userObj = new Object();
+         userObj = {};
          userObj.expiry="";
          userObj.created=1;
          userObj.keyTrust=KEY_IS_GROUP;
@@ -371,7 +372,7 @@ function enigmailBuildList(refresh)
          userObj.subkeyOK=true;
          userObj.userId=EnigConvertGpgToUnicode(listRow[1]).replace(/\\e3A/g, ":");
          userObj.keyId=userObj.userId;
-         userObj.SubUserIds=new Array();
+         userObj.SubUserIds=[];
          var grpMembers=EnigConvertGpgToUnicode(listRow[2]).replace(/\\e3A/g, ":").split(/[,;]/);
          for (var grpIdx=0; grpIdx<grpMembers.length; grpIdx++) {
            userObj.SubUserIds.push({ userId: grpMembers[grpIdx], trustLevel: "q" });
@@ -379,7 +380,7 @@ function enigmailBuildList(refresh)
          aUserList.push(userObj);
          break;
        case "uid":
-         if (listRow[USER_ID].length == 0) {
+         if (listRow[USER_ID].length === 0) {
             listRow[USER_ID] = EMPTY_UID;
          }
          if (typeof(userObj.userId) != "string") {
@@ -478,7 +479,7 @@ function enigmailBuildList(refresh)
           if (((!aUserList[i].keyTrust) ||
                 KEY_NOT_VALID.indexOf(aUserList[i].keyTrust)<0) &&
                 aUserList[i].subkeyOK &&
-                ((!aUserList[i].expiry>0) ||
+                (aUserList[i].expiry<=0 ||
                 (aUserList[i].expiry >= now))) {
               // key still valid
               aUserList[i].valid=true;
@@ -501,7 +502,7 @@ function enigmailBuildList(refresh)
                 aUserList[i].uidValid = false;
                 aUserList[i].activeState = 0;
               }
-              if (aUserList[i].activeState==0 && toKeys.length>0) {
+              if (aUserList[i].activeState===0 && toKeys.length>0) {
                 aUserList[i].activeState=(toKeys.indexOf("0x"+aUserList[i].keyId)>=0 ? 1 : 0);
               }
           }
@@ -521,7 +522,7 @@ function enigmailBuildList(refresh)
 
         if (! hideExpired || aUserList[i].activeState < 2) {
           if ((aUserList[i].keyTrust != KEY_IS_GROUP) && aUserList[i].SubUserIds.length) {
-            for (var user=0; user<aUserList[i].SubUserIds.length; user++) {
+            for (let user=0; user<aUserList[i].SubUserIds.length; user++) {
               if (KEY_NOT_VALID.indexOf(aUserList[i].SubUserIds[user].trustLevel)<0) {
                 if (aUserList[i].activeState < 2 || gAllowExpired) {
                   // add uid's for valid keys
@@ -571,7 +572,7 @@ function enigmailBuildList(refresh)
         }
         if (aUserList[i].SubUserIds.length) {
           var subChildren=document.createElement("treechildren");
-          for (user=0; user<aUserList[i].SubUserIds.length; user++) {
+          for (let user=0; user<aUserList[i].SubUserIds.length; user++) {
             if (KEY_NOT_VALID.indexOf(aUserList[i].SubUserIds[user].trustLevel)<0) {
               var subItem=enigUserSelCreateRow(aUserList[i], -1, aUserList[i].SubUserIds[user].userId, "", "", aUserList[i].SubUserIds[user].trustLevel, true);
               subChildren.appendChild(subItem);
@@ -593,7 +594,7 @@ function enigmailBuildList(refresh)
    var j;
    for (i=0; i<toAddrList.length; i++) {
      if (toAddrList[i].length>0) {
-        var found = false;
+        let found = false;
         for (j=0; j<aValidUsers.length; j++) {
            if (aValidUsers[j].toLowerCase() == toAddrList[i].toLowerCase()) {
               found = true;
@@ -609,7 +610,7 @@ function enigmailBuildList(refresh)
    var toKeyList=toKeys.split(/[, ]+/);
    for (i=0; i<toKeyList.length; i++) {
       if (toKeyList[i].length>0) {
-        var found = false;
+        let found = false;
         for (j=0; j<aUserList.length; j++) {
            if (aUserList[j].valid && "0x"+aUserList[j].keyId == toKeyList[i]) {
               found = true;
@@ -665,10 +666,8 @@ function enigUserSelCreateRow (userObj, activeState, userId, keyValue, dateField
   }
 
   // process which row elements to make insensitive
-  if ( ((userObj.keyTrust.length>0)
-         &&
-         (KEY_NOT_VALID.indexOf(userObj.keyTrust.charAt(0))>=0))
-       ||
+  if ( ((userObj.keyTrust.length>0) &&
+         (KEY_NOT_VALID.indexOf(userObj.keyTrust.charAt(0))>=0)) ||
        (!userObj.subkeyOK) ) {
     // disabled/revoked/expired/invalid (sub)keys inactivate whole row
     userCol.setAttribute("properties", "enigKeyInactive");
@@ -680,9 +679,9 @@ function enigUserSelCreateRow (userObj, activeState, userId, keyValue, dateField
     }
   }
   else if (!gAlwaysTrust) {
-    if (("mfu".indexOf(userObj.keyTrust.charAt(0))<0)
-        || (uidValidityStatus.length>0)
-            && ("o-qn".indexOf(uidValidityStatus.charAt(0))>=0)) {
+    if (("mfu".indexOf(userObj.keyTrust.charAt(0))<0) ||
+        (uidValidityStatus.length>0) &&
+        ("o-qn".indexOf(uidValidityStatus.charAt(0))>=0)) {
       // keys with not enough trust have insensitive elements, but are activateable
       userCol.setAttribute("properties", "enigKeyInactive");
       uidValidityCol.setAttribute("properties", "enigKeyInactive");
@@ -716,10 +715,10 @@ function enigmailUserSelAccept()
   DEBUG_LOG("enigmailKeySelection.js: Accept\n");
 
   var resultObj=window.arguments[RESULT];
-  resultObj.userList = new Array();
+  resultObj.userList = [];
   resultObj.perRecipientRules=false;
   resultObj.repeatEvaluation=false;
-  var t = new String();
+  var t = "";
   gUserList = document.getElementById("enigmailUserIdSelection");
   var treeChildren=gUserList.getElementsByAttribute("id", "enigmailUserIdSelectionChildren")[0];
 
@@ -747,7 +746,7 @@ function enigmailUserSelAccept()
     // no longer force manual disalog even if no keys missing
     EnigSetPref("assignKeysByManuallyAlways", false);
   }
-  if (resultObj.userList.length == 0 && gSendEncrypted) {
+  if (resultObj.userList.length === 0 && gSendEncrypted) {
     EnigAlert(EnigGetString("atLeastOneKey"));
     return false;
   }
@@ -772,7 +771,7 @@ function getToAddrList()
     toAddrList=EnigStripEmail(window.arguments[INPUT].toAddr).split(/[ ,]+/);
   }
   catch(ex) {
-    toAddrList = new Array();
+    toAddrList = [];
   }
   return toAddrList;
 }
@@ -915,12 +914,12 @@ function enigmailSearchMissingKeys ()
   var inputObj = {
     searchList: gKeysNotFound
   };
-  var resultObj = new Object();
+  var resultObj = {};
 
   EnigDownloadKeys(inputObj, resultObj);
 
   if (resultObj.importedKeys > 0) {
-    var resultObj=window.arguments[RESULT];
+    resultObj=window.arguments[RESULT];
     resultObj.userList = [];
     resultObj.repeatEvaluation=true;
     resultObj.perRecipientRules=false;
@@ -939,9 +938,9 @@ function onSearchInput()
   var userTreeList = document.getElementById("enigmailUserIdSelection");
   var treeChildren = userTreeList.getElementsByAttribute("id", "enigmailUserIdSelectionChildren")[0];
 
-  if (searchValue == "") {
+  if (searchValue === "") {
     // unhide all items
-    for (var item=treeChildren.firstChild; item; item = item.nextSibling) {
+    for (let item=treeChildren.firstChild; item; item = item.nextSibling) {
       item.setAttribute("hidden",false);
     }
   }
@@ -949,7 +948,7 @@ function onSearchInput()
     // hide items that are
     // - not active
     // - and do not match the search string in all names/emails or key
-    for (var item=treeChildren.firstChild; item; item = item.nextSibling) {
+    for (let item=treeChildren.firstChild; item; item = item.nextSibling) {
       var showItem = false;
       // check active
       var aRows = item.getElementsByAttribute("id","indicator");
@@ -961,9 +960,9 @@ function onSearchInput()
       }
       if (!showItem) {
         // check all names/emails
-        var str = "";
+        let str = "";
         aRows = item.getElementsByAttribute("id","name");
-        for (var r=0; r<aRows.length; ++r) {
+        for (let r=0; r<aRows.length; ++r) {
           str += aRows[r].getAttribute("label");
         }
         if (str.toLowerCase().indexOf(searchValue) >= 0) {
@@ -972,9 +971,9 @@ function onSearchInput()
       }
       if (!showItem) {
         // check all keys
-        var str = "";
+        let str = "";
         aRows = item.getElementsByAttribute("id","keyid");
-        for (var r=0; r<aRows.length; ++r) {
+        for (let r=0; r<aRows.length; ++r) {
           str += aRows[r].getAttribute("label");
         }
         if (str.toLowerCase().indexOf(searchValue) >= 0) {
@@ -985,4 +984,3 @@ function onSearchInput()
     }
   }
 }
-
