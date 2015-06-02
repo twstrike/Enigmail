@@ -1,3 +1,4 @@
+/*global Components EnigmailCommon */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -58,8 +59,8 @@ function reloadData() {
     window.close();
     return;
   }
-  var exitCodeObj = new Object();
-  var errorMsgObj = new Object();
+  var exitCodeObj = {};
+  var errorMsgObj = {};
   var gKeyId = window.arguments[0].keyId[0];
   var treeChildren = document.getElementById("keyListChildren");
 
@@ -67,7 +68,7 @@ function reloadData() {
   EnigCleanGuiList(treeChildren);
 
   var keyListStr = enigmailSvc.getKeySig("0x"+gKeyId, exitCodeObj, errorMsgObj);
-  if (exitCodeObj.value == 0) {
+  if (exitCodeObj.value === 0) {
     var keyDetails = EnigGetKeyDetails(keyListStr);
 
     for (var i=0; i < keyDetails.subkeyList.length; i++) {
@@ -121,7 +122,7 @@ function processKey(subKeys) {
     timeScale,
     noExpiry,
     function(exitCode, errorMsg) {
-      if (exitCode != 0) {
+      if (exitCode !== 0) {
         Ec.setTimeout(function () {
           Ec.alert(window, Ec.getString("setKeyExpirationDateFailed")+"\n\n"+errorMsg);
         }, 10);
@@ -195,21 +196,21 @@ function checkExpirationDate() {
       /* alert("You cannot create a key that expires in more than 100 years."); */
       /* @TODO GPG throws an error already when using 95 years (multiplying 365 and 95) */
       if (gAlertPopUpIsOpen !== true) {
-        gAlertPopUpIsOpen = true
+        gAlertPopUpIsOpen = true;
         Ec.setTimeout(function () {
           Ec.alert(window, Ec.getString("expiryTooLongShorter")+"\n");
-          gAlertPopUpIsOpen = false
+          gAlertPopUpIsOpen = false;
         }, 10);
       }
       return false;
     }
-    else if (! (expiryTime > 0)) {
+    else if (expiryTime <= 0) {
       /* alert("Your key must be valid for at least one day."); */
       if (gAlertPopUpIsOpen !== true) {
-        gAlertPopUpIsOpen = true
+        gAlertPopUpIsOpen = true;
         Ec.setTimeout(function () {
           Ec.alert(window, Ec.getString("expiryTooShort")+"\n");
-          gAlertPopUpIsOpen = false
+          gAlertPopUpIsOpen = false;
         }, 10);
       }
       return false;
@@ -228,4 +229,3 @@ function onNoExpiry() {
   expireInput.disabled=noExpiry.checked;
   timeScale.disabled=noExpiry.checked;
 }
-

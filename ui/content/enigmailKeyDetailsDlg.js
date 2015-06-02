@@ -1,3 +1,4 @@
+/*global Components */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -63,9 +64,9 @@ function reloadData() {
     window.close();
     return;
   }
-  var exitCodeObj = new Object();
-  var statusFlagsObj = new Object();
-  var errorMsgObj = new Object();
+  var exitCodeObj = {};
+  var statusFlagsObj = {};
+  var errorMsgObj = {};
 
   gUserId = null;
 
@@ -80,21 +81,21 @@ function reloadData() {
   EnigCleanGuiList(uidList);
 
   var sigListStr = enigmailSvc.getKeySig("0x"+gKeyId, exitCodeObj, errorMsgObj);
-  if (exitCodeObj.value == 0) {
+  if (exitCodeObj.value === 0) {
     var keyDetails = EnigGetKeyDetails(sigListStr);
- 
+
     if (keyDetails.showPhoto === true) {
       document.getElementById("showPhoto").removeAttribute("disabled");
     }
-  
-    for (var i=0; i < keyDetails.uidList.length; i++) {
+
+    for (let i=0; i < keyDetails.uidList.length; i++) {
       uidList.appendChild(createUidRow(keyDetails.uidList[i]));
     }
-    for (var i=0; i < keyDetails.subkeyList.length; i++) {
+    for (let i=0; i < keyDetails.subkeyList.length; i++) {
       EnigAddSubkey(treeChildren, keyDetails.subkeyList[i]);
     }
 
-    gUserId = keyDetails.gUserId
+    gUserId = keyDetails.gUserId;
     setAttr("userId", gUserId);
     setAttr("keyId", "0x"+ gKeyId.substr(-8,8));
     setAttr("calcTrust", getTrustLabel(keyDetails.calcTrust));
@@ -129,7 +130,7 @@ function createCell(label) {
 
 function getTrustLabel(trustCode) {
   var trustTxt=EnigGetTrustLabel(trustCode);
-  if (trustTxt=="-" || trustTxt.length==0) {
+  if (trustTxt=="-" || trustTxt.length===0) {
     trustTxt=EnigGetString("keyValid.unknown");
   }
   return trustTxt;

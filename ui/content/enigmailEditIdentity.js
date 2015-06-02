@@ -1,3 +1,4 @@
+/*global Components EnigmailCommon */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -140,7 +141,7 @@ Enigmail.edit = {
   onAcceptEditor: function ()
   {
     try {
-      if (onOk()==false) {
+      if (onOk()===false) {
         return false;
       }
     }
@@ -209,8 +210,8 @@ Enigmail.edit = {
 
   selectKeyId: function ()
   {
-    var resultObj = new Object();
-    var inputObj = new Object();
+    var resultObj = {};
+    var inputObj = {};
     inputObj.dialogHeader = EnigmailCommon.getString("encryptKeyHeader");
     inputObj.options = "single,hidexpired,private,nosending";
     var button = document.getElementById("enigmail_selectPgpKey");

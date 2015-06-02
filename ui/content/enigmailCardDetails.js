@@ -1,3 +1,4 @@
+/*global Components */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -46,8 +47,8 @@ function onLoad() {
     Ec.dispatchEvent(failWithError, 0, Ec.getString("accessError"));
     return;
   }
-  var exitCodeObj = new Object();
-  var errorMsgObj = new Object();
+  var exitCodeObj = {};
+  var errorMsgObj = {};
 
   var dryRun=false;
   try {
@@ -56,7 +57,7 @@ function onLoad() {
   catch(ex) {}
 
   var cardStr = enigmailSvc.getCardStatus(exitCodeObj, errorMsgObj);
-  if (exitCodeObj.value == 0) {
+  if (exitCodeObj.value === 0) {
     var statusList=cardStr.split(/[\r\n]+/);
     for (var i=0; i<statusList.length; i++) {
       var l=statusList[i].split(/:/);
@@ -162,7 +163,7 @@ function doSaveChanges() {
   var forcepin = (getSelection("forcepin") == gCardData.forcepin ? 0 : 1);
   var dialogname = getValue("name");
   var dialogfirstname = getValue("firstname");
-  if ((dialogname.search(/^[A-Za-z0-9\.\-,\?_ ]*$/) != 0) || (dialogfirstname.search(/^[A-Za-z0-9\.\-,\?_ ]*$/) != 0)) {
+  if ((dialogname.search(/^[A-Za-z0-9\.\-,\?_ ]*$/) !== 0) || (dialogfirstname.search(/^[A-Za-z0-9\.\-,\?_ ]*$/) !== 0)) {
     Ec.alert(window, Ec.getString("Carddetails.NoASCII"));
     onLoad();
     doEditData();
@@ -177,7 +178,7 @@ function doSaveChanges() {
                                   getValue("login"),
                                   forcepin,
     function _cardAdminCb(exitCode, errorMsg) {
-      if (exitCode != 0) {
+      if (exitCode !== 0) {
         Ec.alert(window, errorMsg);
       }
 
