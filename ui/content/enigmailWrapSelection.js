@@ -48,7 +48,7 @@ function onAccept () {
   DEBUG_LOG("enigmailWrapSelection.js: onAccept\n");
   WrapSelect=document.getElementById("WrapSelectGroup");
   DEBUG_LOG("enigmailWrapSelection.js: onAccept, selected value='"+WrapSelect.value+"'\n");
-  if (WrapSelect.value != "") {
+  if (WrapSelect.value !== "") {
     window.arguments[0].Select = WrapSelect.value;
     window.arguments[0].cancelled = false;
     DEBUG_LOG("enigmailWrapSelection.js: onAccept, setting return value, disable cancel\n");
