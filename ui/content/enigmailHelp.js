@@ -46,7 +46,7 @@ function enigHelpLoad() {
     return;
 
   var winOptions = EnigGetWindowOptions();
-  var helpFile = winOptions["src"];
+  var helpFile = winOptions.src;
   contentFrame.document.location.href="chrome://enigmail/locale/help/"+helpFile+".html";
 }
 

@@ -121,7 +121,7 @@ function getSelectionStr()
 function isItemSelected()
 {
   Ec.DEBUG_LOG("enigmailConsole.js: isItemSelected\n");
-  return getSelectionStr() != "";
+  return getSelectionStr() !== "";
 }
 
 function UpdateCopyMenu()

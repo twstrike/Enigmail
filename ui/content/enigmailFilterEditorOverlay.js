@@ -1,3 +1,4 @@
+/*global Components EnigmailCommon */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -42,7 +43,7 @@ checkActionsReorder = function()
 {
   enigmail_origCheckActionsReorder();
   EnigmailCommon.setTimeout(EnigmailFilterEditor.checkMoveAction.bind(EnigmailFilterEditor), 0);
-}
+};
 
 var EnigmailFilterEditor = {
   checkMoveAction: function() {
@@ -85,4 +86,4 @@ var EnigmailFilterEditor = {
       acceptButton.setAttribute("disabled", "false");
     }
   }
-}
+};

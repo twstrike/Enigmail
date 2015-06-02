@@ -1,3 +1,4 @@
+/*global Components */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -213,7 +214,7 @@ function genAndSaveRevCert(keyId, uid) {
     // create a revokation cert in the TB profile directoy
     EnigmailKeyMgmt.genRevokeCert(window, "0x"+keyId, keyFile, "1", "",
       function _revokeCertCb(exitCode, errorMsg) {
-        if (exitCode != 0) {
+        if (exitCode !== 0) {
           EnigAlert(EnigGetString("revokeCertFailed")+"\n\n"+errorMsg);
           reject(1);
         }
@@ -228,7 +229,7 @@ function genAndSaveRevCert(keyId, uid) {
  */
 function saveRevCert(inputKeyFile, keyId, uid, resolve, reject) {
 
-  let defaultFileName = uid.replace(/[\\\/\<\>]/g, "");
+  let defaultFileName = uid.replace(/[\\\/<\>]/g, "");
   defaultFileName += " (0x"+keyId.substr(-8,8)+") rev.asc";
 
   let outFile = EnigFilePicker(EnigGetString("saveRevokeCertAs"),
@@ -283,7 +284,7 @@ function enigmailCheckPassphrase() {
       return null;
     }
   }
-  if ((passphrase.search(/^\s/)==0) || (passphrase.search(/\s$/)>=0)) {
+  if ((passphrase.search(/^\s/)===0) || (passphrase.search(/\s$/)>=0)) {
     EnigAlert(EnigGetString("passSpaceProblem"));
     return null;
   }
@@ -313,11 +314,11 @@ function enigmailKeygenStart() {
       return;
    }
 
-
+  var passphrase;
    // gpg >= 2.1 queries passphrase using gpg-agent only
    if (Ec.getGpgFeature("keygen-passphrase")) {
-     var passphrase = enigmailCheckPassphrase();
-     if (passphrase == null) return;
+     passphrase = enigmailCheckPassphrase();
+     if (passphrase === null) return;
 
      var noPassphraseElement = document.getElementById("noPassphrase");
 
@@ -344,7 +345,7 @@ function enigmailKeygenStart() {
         EnigAlert(EnigGetString("expiryTooLong"));
         return;
       }
-      if (! (expiryTime > 0)) {
+      if (expiryTime <= 0) {
         EnigAlert(EnigGetString("expiryTooShort"));
         return;
       }
