@@ -1,3 +1,4 @@
+/*global EnigInitCommon EnigGetString DEBUG_LOG */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -59,7 +60,7 @@ function enigmailAttachDlgLoad() {
 
    // set radiobutton labels according to whether we ask for sign and/or encrypt policy
    if (window.arguments[ENIG_INPUT].reasonForCheck == "sign") {
-       var rb = document.getElementById("enigEncryptAttachNone");
+       let rb = document.getElementById("enigEncryptAttachNone");
        rb.setAttribute("label", rb.getAttribute("data-signLabel"));
        rb = document.getElementById("enigEncryptAttachInline");
        rb.setAttribute("label", rb.getAttribute("data-signLabel"));
@@ -69,7 +70,7 @@ function enigmailAttachDlgLoad() {
        rb.setAttribute("label", rb.getAttribute("data-signLabel"));
    }
    else if (window.arguments[ENIG_INPUT].reasonForCheck == "encrypt") {
-       var rb = document.getElementById("enigEncryptAttachNone");
+       let rb = document.getElementById("enigEncryptAttachNone");
        rb.setAttribute("label", rb.getAttribute("data-encryptLabel"));
        rb = document.getElementById("enigEncryptAttachInline");
        rb.setAttribute("label", rb.getAttribute("data-encryptLabel"));
@@ -79,7 +80,7 @@ function enigmailAttachDlgLoad() {
        rb.setAttribute("label", rb.getAttribute("data-encryptLabel"));
    }
    else if (window.arguments[ENIG_INPUT].reasonForCheck == "encryptAndSign") {
-       var rb = document.getElementById("enigEncryptAttachNone");
+       let rb = document.getElementById("enigEncryptAttachNone");
        rb.setAttribute("label", rb.getAttribute("data-encryptAndSignLabel"));
        rb = document.getElementById("enigEncryptAttachInline");
        rb.setAttribute("label", rb.getAttribute("data-encryptAndSignLabel"));
@@ -128,9 +129,9 @@ function enigmailAttachDlgAccept() {
     EnigSetPref("encryptAttachmentsSkipDlg", 1);
   }
   if (optionSel) {
-    if (optionSel.value != "") {
+    if (optionSel.value !== "") {
       gArguments[ENIG_RESULT].selected = optionSel.value;
-      if (gArguments[ENIG_INPUT].restrictedScenario == false) {
+      if (gArguments[ENIG_INPUT].restrictedScenario === false) {
         EnigSetPref("encryptAttachments", optionSel.value);
       }
       return true;
@@ -141,4 +142,3 @@ function enigmailAttachDlgAccept() {
   }
   return true;
 }
-
