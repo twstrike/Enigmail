@@ -1,4 +1,6 @@
-/*global Components EnigmailCore EnigmailCommon XPCOMUtils EnigmailGpgAgent EnigmailGPG */
+/*global Components: false, EnigmailCore: false, EnigmailCommon: false, XPCOMUtils: false, EnigmailGpgAgent: false, EnigmailGPG: false, Encryption: false, Decryption: false */
+/*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, enigmailDecryptPermanently: false, dump: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -34,6 +36,8 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
+
+"use strict";
 
 Components.utils.import("resource:///modules/iteratorUtils.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -241,7 +245,7 @@ function getWinRegistryString(keyPath, keyName, rootKey) {
 
 
 // Locates STRing in TEXT occurring only at the beginning of a line
-function IndexOfArmorDelimiter(text, str, offset) {
+function indexOfArmorDelimiter(text, str, offset) {
   //EC.DEBUG_LOG("enigmail.js: IndexOfArmorDelimiter: "+str+", "+offset+"\n");
 
   while (offset < text.length) {
@@ -532,7 +536,7 @@ Enigmail.prototype = {
           var dsprops = ds.QueryInterface(Ci.nsIProperties);
           pathDir = dsprops.get("CurProcD", Ci.nsIFile);
 
-          var dirs=agentPath.split(RegExp(EC.isDosLike() ? "\\\\" : "/"));
+          var dirs=agentPath.split(new RegExp(EC.isDosLike() ? "\\\\" : "/"));
           for (var i=0; i< dirs.length; i++) {
             if (dirs[i]!=".") {
               pathDir.append(dirs[i]);
@@ -853,7 +857,7 @@ Enigmail.prototype = {
           try {
             var flags = 0x02 | 0x08 | 0x20;
             var fileOutStream = Cc[NS_LOCALFILEOUTPUTSTREAM_CONTRACTID].createInstance(Ci.nsIFileOutputStream);
-            fileOutStream.init(envFile, flags, 0600, 0);
+            fileOutStream.init(envFile, flags, 384, 0); // 0600
             fileOutStream.write(data, data.length);
             fileOutStream.flush();
             fileOutStream.close();
@@ -1008,7 +1012,7 @@ Enigmail.prototype = {
     beginIndexObj.value = -1;
     endIndexObj.value = -1;
 
-    var beginIndex = IndexOfArmorDelimiter(text, indentStr+"-----BEGIN PGP ", offset);
+    var beginIndex = indexOfArmorDelimiter(text, indentStr+"-----BEGIN PGP ", offset);
 
     if (beginIndex == -1) {
       var blockStart=text.indexOf("-----BEGIN PGP ");
@@ -1016,7 +1020,7 @@ Enigmail.prototype = {
         var indentStart=text.search(/\n.*\-\-\-\-\-BEGIN PGP /)+1;
         indentStrObj.value=text.substring(indentStart, blockStart);
         indentStr=indentStrObj.value;
-        beginIndex = IndexOfArmorDelimiter(text, indentStr+"-----BEGIN PGP ", offset);
+        beginIndex = indexOfArmorDelimiter(text, indentStr+"-----BEGIN PGP ", offset);
       }
     }
 
@@ -1029,7 +1033,7 @@ Enigmail.prototype = {
     if (offset == -1)
       return "";
 
-    var endIndex = IndexOfArmorDelimiter(text, indentStr+"-----END PGP ", offset);
+    var endIndex = indexOfArmorDelimiter(text, indentStr+"-----END PGP ", offset);
 
     if (endIndex == -1)
       return "";
@@ -1707,7 +1711,7 @@ Enigmail.prototype = {
 
     // find area of key entries in key list
     // note: if subkey matches, key entry starts before
-    let regexPub = RegExp("^pub:", "ym");
+    let regexPub = new RegExp("^pub:", "ym");
     let startPos = -1;
     if (listText[foundPos] == "p") {  // ^pub:
       // KEY matches
@@ -1753,7 +1757,7 @@ Enigmail.prototype = {
 
     var lineArr = entry.split(/\n/);
     //EC.DEBUG_LOG("enigmail.js: Enigmail.getFirstUserIdOfKey(): lineArr: "+ lineArr +"\n");
-    for (i=0; i<lineArr.length; ++i) {
+    for (let i=0; i<lineArr.length; ++i) {
       var lineTokens = lineArr[i].split(/:/);
       switch (lineTokens[0]) {
         case "uid":
@@ -1781,7 +1785,7 @@ Enigmail.prototype = {
     }
 
     var lineArr = entry.split(/\n/);
-    for (i=0; i<lineArr.length; ++i) {
+    for (let i=0; i<lineArr.length; ++i) {
       var lineTokens = lineArr[i].split(/:/);
       switch (lineTokens[0]) {
         case "pub":
@@ -2252,7 +2256,7 @@ function getEnigmailString(aStr) {
 function dispatchMessages(aMsgHdrs, targetFolder, move, requireSync) {
   var inspector = Cc["@mozilla.org/jsinspector;1"].getService(Ci.nsIJSInspector);
 
-  var promise = EnigmailDecryptPermanently(aMsgHdrs[0], targetFolder, move);
+  var promise = enigmailDecryptPermanently(aMsgHdrs[0], targetFolder, move);
   var done = false;
 
   var processNext = function (data) {
@@ -2314,7 +2318,7 @@ var filterActionMoveDecrypt = {
   validateActionValue: function (value, folder, type) {
 
     if (Ec === null) {
-      Enigmail();
+      new Enigmail();
       Ec.getService();
     }
 
@@ -2342,7 +2346,7 @@ var filterActionCopyDecrypt = {
   value: "copymessage",
   apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
     if (Ec === null) {
-      Enigmail();
+      new Enigmail();
       Ec.getService();
     }
 

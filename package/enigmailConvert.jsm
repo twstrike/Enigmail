@@ -69,7 +69,7 @@ Components.utils.import("resource://enigmail/commonFuncs.jsm");
 var Ec = EnigmailCommon;
 
 
-var EXPORTED_SYMBOLS = ["EnigmailDecryptPermanently"];
+var EXPORTED_SYMBOLS = ["enigmailDecryptPermanently"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -88,7 +88,7 @@ const STATUS_NOT_REQUIRED = 2;
  *
  * @return a Promise that we do that
  */
-function EnigmailDecryptPermanently(hdr, destFolder, move) {
+function enigmailDecryptPermanently(hdr, destFolder, move) {
   return new Promise(
     function(resolve, reject) {
       let msgUriSpec = hdr.folder.getUriForMsg(hdr);
