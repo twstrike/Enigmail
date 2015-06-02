@@ -1,3 +1,4 @@
+/*global EnigInitCommon */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -45,7 +46,7 @@ function enigmailDlgOnLoad() {
   var matchEnd=false;
 
   var ruleEmail=document.getElementById("ruleEmail");
-  if (window.arguments[INPUT].toAddress.indexOf("{")==0) {
+  if (window.arguments[INPUT].toAddress.indexOf("{")===0) {
     matchBegin=true;
   }
   if (window.arguments[INPUT].toAddress.search(/}$/)>=0) {
@@ -148,11 +149,11 @@ function enigmailDlgOnAccept() {
 
   // Remove trailing whitespace
   ruleEmail.value = ruleEmail.value.replace(/\s+$/,"").replace(/^\s+/,"");
-  if (ruleEmail.value.length==0) {
+  if (ruleEmail.value.length===0) {
     EnigAlert(EnigGetString("noEmptyRule"));
     return false;
   }
-  if (ruleEmail.value.search(/[\<\>]/)>=0) {
+  if (ruleEmail.value.search(/[<\>]/)>=0) {
     EnigAlert(EnigGetString("invalidAddress"));
     return false;
   }
@@ -187,7 +188,7 @@ function enigmailDlgOnAccept() {
     break;
 
   case 2:
-    if (keyList == "" && (window.arguments[RESULT].encrypt>0)) {
+    if (keyList === "" && (window.arguments[RESULT].encrypt>0)) {
       if (!EnigConfirm(EnigGetString("noEncryption", ruleEmail.value, ruleEmail.value))) {
         return false;
       }
@@ -217,8 +218,8 @@ function enigmailDlgKeySelection() {
   if (!enigmailSvc)
     return;
 
-  var resultObj = new Object();
-  var inputObj = new Object();
+  var resultObj = {};
+  var inputObj = {};
   inputObj.dialogHeader = "";
   inputObj.forUser = document.getElementById("ruleEmail").value.replace(/[ ,]+/g, ", ");
   inputObj.toAddr = inputObj.forUser;
@@ -254,7 +255,7 @@ function enigSetKeys(keyList) {
   while (encryptionList.getRowCount()>0) {
     encryptionList.removeItemAt(0);
   }
-  if ((keyList.length==0) || (keyList.length==1 && keyList[0].length==0)) {
+  if ((keyList.length===0) || (keyList.length==1 && keyList[0].length===0)) {
     encryptionList.appendItem(EnigGetString("noKeyToUse"),"");
   }
   else {
@@ -262,15 +263,15 @@ function enigSetKeys(keyList) {
     if (!enigmailSvc)
       return;
 
-    var exitCodeObj= new Object;
-    var statusFlagsObj = new Object;
-    var errorMsgObj = new Object;
+    var exitCodeObj= {};
+    var statusFlagsObj = {};
+    var errorMsgObj = {};
     var userListTxt = enigmailSvc.getUserIdList(false,
                                                false,
                                                exitCodeObj,
                                                statusFlagsObj,
                                                errorMsgObj);
-    if (exitCodeObj.value != 0) {
+    if (exitCodeObj.value !== 0) {
       EnigAlert(errorMsgObj.value);
       return;
     }
@@ -286,7 +287,7 @@ function enigSetKeys(keyList) {
         userDesc = userDescList[9];
       }
 
-      if(keyList[i].indexOf("GROUP:") == 0) {
+      if(keyList[i].indexOf("GROUP:") === 0) {
         encryptionList.appendItem(keyList[i].substr(6)+" "+EnigGetString("keyTrust.group"), keyList[i]);
       }
       else
