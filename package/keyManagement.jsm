@@ -277,8 +277,7 @@ var EnigmailKeyMgmt = {
     outputData.key = "";
     EnigmailKeyMgmt.execCmd(command, args,
         function(pipe) {
-        }
-        ,
+        },
         function (stdout) {
             outputData.key+=stdout;
         },
