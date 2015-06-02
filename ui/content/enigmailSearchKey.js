@@ -1,3 +1,4 @@
+/*global Components EnigmailCommon */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -68,7 +69,7 @@ function onLoad () {
 
   var keyserver = window.arguments[INPUT].keyserver;
   var protocol="";
-  if (keyserver.search(/^[a-zA-Z0-9\-\_\.]+:\/\//)==0) {
+  if (keyserver.search(/^[a-zA-Z0-9\-\_\.]+:\/\//)===0) {
     protocol=keyserver.replace(/^([a-zA-Z0-9\-\_\.]+)(:\/\/.*)/, "$1");
     keyserver=keyserver.replace(/^[a-zA-Z0-9\-\_\.]+:\/\//, "");
   }
@@ -111,7 +112,7 @@ function onLoad () {
   gEnigRequest.progressMeter.mode="undetermined";
 
   if (window.arguments[INPUT].searchList.length == 1 &&
-      window.arguments[INPUT].searchList[0].search(/^0x[A-Fa-f0-9]{8,16}$/) == 0) {
+      window.arguments[INPUT].searchList[0].search(/^0x[A-Fa-f0-9]{8,16}$/) === 0) {
       // shrink dialog and start download if just one key ID provided
 
       gEnigRequest.dlKeyList = window.arguments[INPUT].searchList;
@@ -310,7 +311,7 @@ function enigImportKeys (connType, txt, errorTxt) {
 }
 
 function enigImportHtmlKeys(txt) {
-  var errorMsgObj = new Object();
+  var errorMsgObj = {};
 
   var enigmailSvc = GetEnigmailSvc();
   if (! enigmailSvc)
@@ -322,7 +323,7 @@ function enigImportHtmlKeys(txt) {
                         errorMsgObj);
   if (errorMsgObj.value)
     Ec.alert(window, errorMsgObj.value);
-  if (r == 0) {
+  if (r === 0) {
     window.arguments[RESULT].importedKeys++;
     return true;
   }
@@ -420,7 +421,7 @@ function enigScanKeys(connType, htmlTxt) {
   enigPopulateList(gEnigRequest.keyList);
   document.getElementById("progress.box").setAttribute("hidden", "true");
   document.getElementById("selall-button").removeAttribute("hidden");
-  if (gEnigRequest.keyList.length == 0) {
+  if (gEnigRequest.keyList.length === 0) {
     Ec.alert(window, Ec.getString("noKeyFound"));
     enigCloseDialog();
   }
@@ -436,7 +437,7 @@ function enigScanHtmlKeys (txt) {
   var lines=txt.split(/(\n\r|\n|\r)/);
   var key;
   for (i=0; i<lines.length; i++) {
-    if (lines[i].search(/^\s*pub /)==0) {
+    if (lines[i].search(/^\s*pub /)===0) {
       // new key
       if (key) {
         // first, append prev. key to keylist
@@ -500,21 +501,22 @@ function enigScanGpgKeys(txt) {
   var outputType=0;
   var key;
   for (var i=0; i<lines.length; i++) {
-    if (outputType == 0 && lines[i].search(/^COUNT \d+\s*$/)==0) {
+    if (outputType === 0 && lines[i].search(/^COUNT \d+\s*$/)===0) {
       outputType=1;
       continue;
     }
-    if (outputType == 0 && lines[i].search(/^info:\d+:\d+/)==0) {
+    if (outputType === 0 && lines[i].search(/^info:\d+:\d+/)===0) {
       outputType=2;
       continue;
     }
-    if (outputType == 0 && lines[i].search(/^pub:[\da-fA-F]{8}/)==0) {
+    if (outputType === 0 && lines[i].search(/^pub:[\da-fA-F]{8}/)===0) {
       outputType=2;
     }
-    if (outputType==1 && (lines[i].search(/^([a-fA-F0-9]{8}){1,2}:/))==0) {
+    var m, dat, month, day;
+    if (outputType==1 && (lines[i].search(/^([a-fA-F0-9]{8}){1,2}:/))===0) {
       // output from gpgkeys_* protocol version 0
       // new key
-      var m=lines[i].split(/:/).map(unescape);
+      m=lines[i].split(/:/).map(unescape);
       if (m && m.length>0 ) {
         if (key) {
           if (key.keyId == m[0]) {
@@ -526,9 +528,9 @@ function enigScanGpgKeys(txt) {
           }
         }
         if (! key) {
-          var dat=new Date(m[3]*1000);
-          var month=String(dat.getMonth()+101).substr(1);
-          var day=String(dat.getDate()+100).substr(1);
+          dat=new Date(m[3]*1000);
+          month=String(dat.getMonth()+101).substr(1);
+          day=String(dat.getDate()+100).substr(1);
           key={
             keyId: m[0],
             created: dat.getFullYear()+"-"+month+"-"+day,
@@ -540,7 +542,7 @@ function enigScanGpgKeys(txt) {
         }
       }
     }
-    if (outputType==2 && (lines[i].search(/^pub:/))==0) {
+    if (outputType==2 && (lines[i].search(/^pub:/))===0) {
       // output from gpgkeys_* protocol version 1
       // new key
       m=lines[i].split(/:/).map(unescape);
@@ -560,7 +562,7 @@ function enigScanGpgKeys(txt) {
         };
       }
     }
-    if (outputType==2 && (lines[i].search(/^uid:.+/))==0) {
+    if (outputType==2 && (lines[i].search(/^uid:.+/))===0) {
       // output from gpgkeys_* protocol version 1
       // uid for key
       m=lines[i].split(/:/).map(unescapeAndConvert);
@@ -605,8 +607,9 @@ function enigNewGpgKeysRequest(requestType, callbackFunction) {
     }
   };
 
+  var keyValue;
   if (requestType == nsIEnigmail.SEARCH_KEY) {
-    var keyValue = gEnigRequest.searchList[gEnigRequest.keyNum];
+    keyValue = gEnigRequest.searchList[gEnigRequest.keyNum];
   }
   else {
     keyValue = gEnigRequest.dlKeyList[gEnigRequest.keyNum];
