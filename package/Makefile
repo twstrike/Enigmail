@@ -28,6 +28,7 @@ MODFILES = \
            commonFuncs.jsm \
            gpgAgentHandler.jsm \
            keyManagement.jsm \
+           key.jsm \
            pipeConsole.jsm \
            encryption.jsm \
            decryption.jsm \

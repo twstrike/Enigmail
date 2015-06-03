@@ -38,6 +38,7 @@
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/subprocess.jsm");
+Components.utils.import("resource://enigmail/key.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailKeyMgmt" ];
 
@@ -62,50 +63,6 @@ function KeyEditor(reqObserver, callbackFunc, inputData) {
     this._saveCmd = "save";
 }
 
-function Key(packetlist) {
-  if (!(this instanceof Key)) {
-    return new Key(packetlist);
-  }
-  // same data as in packetlist but in structured form
-  this.primaryKey = null;
-  this.revocationSignature = null;
-  this.directSignatures = null;
-  this.users = null;
-  this.subKeys = null;
-  this.packetlist2structure(packetlist);
-  if (!this.primaryKey || !this.users) {
-    throw new Error('Invalid key: need at least key and user ID packet');
-  }
-}
-
-Key.prototype = {
-
-  packetlist2structure: function (packetlist) {
-    for (var i = 0; i < packetlist.length; i++) {
-      var user, subKey;
-
-      switch (packetlist[i].tag) {
-        case ":secret key packet:":
-          this.primaryKey = packetlist[i];
-          break;
-        case ":user ID packet:":
-          if (!this.users) this.users = [];
-          user = packetlist[i];
-          this.users.push(user);
-          break;
-        case ":public sub key packet:":
-        case ":secret sub key packet:":
-          user = null;
-          if (!this.subKeys) this.subKeys = [];
-          subKey = packetlist[i];
-          this.subKeys.push(subKey);
-          break;
-        case ":signature packet:":
-          break;
-      }
-    }
-  }
-};
 
 KeyEditor.prototype = {
   _stdin: null,
@@ -687,38 +644,8 @@ var EnigmailKeyMgmt = {
 }; // EnigmailKeyMgmt
 
 function keyReadCallback(outputData, ret) {
-  function parsePackets(key) {
-    const packetHeaders = [":public key packet:",
-      ":user ID packet:",
-      ":public sub key packet:",
-      ":secret sub key packet:",
-      ":signature packet:",
-      ":secret key packet:"];
-    this._packets = [];
-    function extractPackets(line){
-      var is_packet_hr = false;
-      packetHeaders.forEach(
-          function (packet) {
-            if (line.search(packet) > -1) {
-              is_packet_hr = true;
-              var obj = {tag:packet,value:""};
-              this._packets.push(obj);
-            }
-          }, this);
-      if(!is_packet_hr) {
-        var obj = _packets.pop();
-        obj.value += line+"\n";
-        _packets.push(obj);
-      }
-    }
-    var lines = key.split("\n");
-    for (var i in  lines) {
-      extractPackets(lines[i]);
-    }
-    return _packets;
-  }
 
-  outputData.keyObj = new Key(parsePackets(outputData.key));
+  outputData.keyObj = new Key(outputData.key);
   ret.exitCode = 0;
 }
 
