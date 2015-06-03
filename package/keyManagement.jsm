@@ -301,8 +301,7 @@ var EnigmailKeyMgmt = {
               pipe.write(preInput + input);
             }
             pipe.close();
-          }
-          ,
+          },
           function (stdout) {
             outputData.key+=stdout;
           },
