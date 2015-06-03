@@ -39,6 +39,7 @@ MODFILES = \
            enigmailGpg.jsm \
            enigmailProtocolHandler.jsm \
            passwordCheck.jsm \
+           rules.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \
            mimeVerify.jsm

@@ -1,5 +1,6 @@
 /*global Components: false, EnigmailCore: false, EnigmailCommon: false, XPCOMUtils: false, EnigmailGpgAgent: false, EnigmailGPG: false, Encryption: false, Decryption: false */
 /*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, enigmailDecryptPermanently: false, dump: false */
+/*global Rules: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -53,6 +54,7 @@ Components.utils.import("resource://enigmail/encryption.jsm");
 Components.utils.import("resource://enigmail/decryption.jsm");
 Components.utils.import("resource://enigmail/enigmailProtocolHandler.jsm");
 Components.utils.import("resource://enigmail/enigmailGpg.jsm");
+Components.utils.import("resource://enigmail/rules.jsm");
 
 try {
   // TB with omnijar
@@ -164,34 +166,6 @@ const ENC_TYPE_ATTACH_ASCII = 2;
 const DUMMY_AGENT_INFO = "none";
 
 var gKeyAlgorithms = [];
-
-// Read the contents of a file into a string
-
-function readFile(filePath) {
-
-// @filePath: nsIFile
-
-  if (filePath.exists()) {
-
-    var ioServ = Cc[NS_IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
-    if (!ioServ)
-      throw Components.results.NS_ERROR_FAILURE;
-
-    var fileURI = ioServ.newFileURI(filePath);
-    var fileChannel = ioServ.newChannel(fileURI.asciiSpec, null, null);
-
-    var rawInStream = fileChannel.open();
-
-    var scriptableInStream = Cc[NS_SCRIPTABLEINPUTSTREAM_CONTRACTID].createInstance(Ci.nsIScriptableInputStream);
-    scriptableInStream.init(rawInStream);
-    var available = scriptableInStream.available();
-    var fileContents = scriptableInStream.read(available);
-    scriptableInStream.close();
-    return fileContents;
-  }
-  return "";
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -825,7 +799,7 @@ Enigmail.prototype = {
             EC.ERROR_LOG("enigmail.js: detectGpgAgent no temp file created\n");
           }
           else {
-            outStr = readFile(tmpFile);
+            outStr = EC.readFile(tmpFile);
             tmpFile.remove(false);
             exitCode = 0;
           }
@@ -2087,101 +2061,27 @@ Enigmail.prototype = {
   // Methods for handling Per-Recipient Rules
 
   getRulesFile: function () {
-    EC.DEBUG_LOG("enigmail.js: getRulesFile\n");
-    var rulesFile = EC.getProfileDirectory();
-    rulesFile.append("pgprules.xml");
-    return rulesFile;
+      return Rules.getRulesFile();
   },
 
   loadRulesFile: function () {
-    EC.DEBUG_LOG("enigmail.js: loadRulesFile\n");
-    var flags = NS_RDONLY;
-    var rulesFile = this.getRulesFile();
-    if (rulesFile.exists()) {
-      var fileContents = readFile(rulesFile);
-
-      if (fileContents.length===0 || fileContents.search(/^\s*$/)===0) {
-        return false;
-      }
-
-      var domParser=Cc[NS_DOMPARSER_CONTRACTID].createInstance(Ci.nsIDOMParser);
-      this.rulesList = domParser.parseFromString(fileContents, "text/xml");
-
-      return true;
-    }
-    return false;
+      return Rules.loadRulesFile();
   },
 
   saveRulesFile: function () {
-    EC.DEBUG_LOG("enigmail.js: saveRulesFile\n");
-
-    var flags = NS_WRONLY | NS_CREATE_FILE | NS_TRUNCATE;
-    var domSerializer=Cc[NS_DOMSERIALIZER_CONTRACTID].createInstance(Ci.nsIDOMSerializer);
-    var rulesFile = this.getRulesFile();
-    if (rulesFile) {
-      if (this.rulesList) {
-        // the rule list is not empty -> write into file
-        return EnigmailFuncs.writeFileContents(rulesFile.path,
-                               domSerializer.serializeToString(this.rulesList.firstChild),
-                               DEFAULT_FILE_PERMS);
-      }
-      else {
-        // empty rule list -> delete rules file
-        try {
-          rulesFile.remove(false);
-        }
-        catch (ex) {}
-        return true;
-      }
-    }
-    else
-      return false;
+      return Rules.saveRulesFile();
   },
 
   getRulesData: function (rulesListObj) {
-    EC.DEBUG_LOG("enigmail.js: getRulesData\n");
-    var ret=true;
-    if (! this.rulesList) {
-       ret=this.loadRulesFile();
-    }
-    if (this.rulesList) {
-      rulesListObj.value = this.rulesList;
-      return ret;
-    }
-
-    rulesListObj.value = null;
-    return false;
+      return Rules.getRulesData(rulesListObj);
   },
 
   addRule: function (appendToEnd, toAddress, keyList, sign, encrypt, pgpMime, flags) {
-    EC.DEBUG_LOG("enigmail.js: addRule\n");
-    if (! this.rulesList) {
-      var domParser=Cc[NS_DOMPARSER_CONTRACTID].createInstance(Ci.nsIDOMParser);
-      this.rulesList = domParser.parseFromString("<pgpRuleList/>", "text/xml");
-    }
-    var negate = (flags & 1);
-    var rule=this.rulesList.createElement("pgpRule");
-    rule.setAttribute("email", toAddress);
-    rule.setAttribute("keyId", keyList);
-    rule.setAttribute("sign", sign);
-    rule.setAttribute("encrypt", encrypt);
-    rule.setAttribute("pgpMime", pgpMime);
-    rule.setAttribute("negateRule", flags);
-    var origFirstChild = this.rulesList.firstChild.firstChild;
-
-    if (origFirstChild && (! appendToEnd)) {
-      this.rulesList.firstChild.insertBefore(rule, origFirstChild);
-      this.rulesList.firstChild.insertBefore(this.rulesList.createTextNode(EC.isDosLike() ? "\r\n" : "\n"), origFirstChild);
-    }
-    else {
-      this.rulesList.firstChild.appendChild(rule);
-      this.rulesList.firstChild.appendChild(this.rulesList.createTextNode(EC.isDosLike() ? "\r\n" : "\n"));
-    }
-
+      return Rules.addRule(appendToEnd, toAddress, keyList, sign, encrypt, pgpMime, flags);
   },
 
   clearRules: function () {
-    this.rulesList = null;
+      return Rules.clearRules();
   }
 
 }; // Enigmail.protoypte

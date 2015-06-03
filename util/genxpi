@@ -112,6 +112,7 @@ zip --must-match\
     modules/gpgAgentHandler.jsm \
     modules/enigmailGpg.jsm \
     modules/passwordCheck.jsm \
+    modules/rules.jsm \
     modules/commonFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \

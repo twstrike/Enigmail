@@ -244,25 +244,6 @@ function shouldDecryptMessage() {
     Assert.equal("MESSAGE", blockType);
 }
 
-// testing: readFile
-test(function readFileReturnsContentOfExistingFile() {
-    var md = do_get_cwd().clone();
-    md.append("..");
-    md.append("..");
-    md.append("uuid_enig.txt");
-    var result = readFile(md);
-    Assert.assertContains(result, "847b3a00-7ab1-11d4-8f02-006008948af5");
-});
-
-test(function readFileReturnsEmptyStringForNonExistingFile() {
-    var md = do_get_cwd().clone();
-    md.append("..");
-    md.append("..");
-    md.append("THIS_FILE_DOESNT_EXIST");
-    var result = readFile(md);
-    Assert.equal("", result);
-});
-
 // testing: initialize
 test(function initializeWillPassEnvironmentIfAskedTo() {
     var window = JSUnit.createStubWindow();
@@ -480,103 +461,5 @@ test(function detectGpgAgentWithAutostartFeatureWillDoNothing() {
             enigmail.detectGpgAgent(JSUnit.createStubWindow());
             Assert.equal("none", enigmail.gpgAgentInfo.envStr);
         });
-    });
-});
-
-
-// getRulesFile
-test(function getRulesFileReturnsTheFile() {
-    var enigmail = gEnigmailSvc = new Enigmail();
-    Assert.equal(EC.getProfileDirectory().path + "/pgprules.xml", enigmail.getRulesFile().path);
-});
-
-// loadRulesFile
-test(function loadRulesFileReturnsFalseIfNoRulesFileExists() {
-    var enigmail = gEnigmailSvc = new Enigmail();
-    var result = enigmail.loadRulesFile();
-    Assert.ok(!result);
-});
-
-test(function loadRulesFileReturnsFalseIfTheFileExistsButIsEmpty() {
-    var enigmail = gEnigmailSvc = new Enigmail();
-    resetting(enigmail, 'getRulesFile', function() {
-        return do_get_file("resources/emptyRules.xml", false);
-    }, function() {
-        var result = enigmail.loadRulesFile();
-        Assert.ok(!result);
-    });
-});
-
-test(function loadRulesFileReturnsTrueIfTheFileExists() {
-    var enigmail = gEnigmailSvc = new Enigmail();
-    resetting(enigmail, 'getRulesFile', function() {
-        return do_get_file("resources/rules.xml", false);
-    }, function() {
-        var result = enigmail.loadRulesFile();
-        Assert.ok(result);
-    });
-});
-
-function xmlToData(x) {
-    var result = [];
-    var node = x.firstChild.firstChild;
-    while(node) {
-        let name = node.tagName;
-        let res = {tagName: name};
-        if(name) {
-            let attrs = node.attributes;
-            for(let i = 0; i < attrs.length; i++) {
-                res[attrs[i].name] = attrs[i].value;
-            }
-            result.push(res);
-        }
-        node = node.nextSibling;
-    }
-    return result;
-}
-
-test(function loadRulesFileSetsRulesBasedOnTheFile() {
-    var enigmail = gEnigmailSvc = new Enigmail();
-    resetting(enigmail, 'getRulesFile', function() {
-        return do_get_file("resources/rules.xml", false);
-    }, function() {
-        enigmail.loadRulesFile();
-        var d = xmlToData(enigmail.rulesList);
-        var expected = [
-            {tagName: "pgpRule",
-             email: "{user1@some.domain}",
-             keyId: "0x1234ABCD",
-             sign: "1",
-             encrypt: "1",
-             pgpMime: "1"},
-            {tagName: "pgpRule",
-             email: "user2@some.domain",
-             keyId: "0x1234ABCE",
-             sign: "2",
-             encrypt: "1",
-             pgpMime: "0"}
-        ];
-        Assert.deepEqual(expected, d);
-    });
-});
-
-// getRulesData
-test(function getRulesDataReturnsFalseAndNullIfNoRulesExist() {
-    var enigmail = gEnigmailSvc = new Enigmail();
-    var res = {};
-    var ret = enigmail.getRulesData(res);
-    Assert.ok(!ret);
-    Assert.equal(null, res.value);
-});
-
-test(function getRulesDataReturnsTrueAndTheRulesListIfExist() {
-    var enigmail = gEnigmailSvc = new Enigmail();
-    resetting(enigmail, 'getRulesFile', function() {
-        return do_get_file("resources/rules.xml", false);
-    }, function() {
-        var res = {};
-        var ret = enigmail.getRulesData(res);
-        Assert.ok(ret);
-        Assert.equal(enigmail.rulesList, res.value);
     });
 });

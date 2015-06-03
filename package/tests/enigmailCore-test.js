@@ -68,3 +68,22 @@ function shouldCreateLogFile() {
         localFile.remove(false);
     }
 }
+
+// testing: readFile
+test(function readFileReturnsContentOfExistingFile() {
+    var md = do_get_cwd().clone();
+    md.append("..");
+    md.append("..");
+    md.append("uuid_enig.txt");
+    var result = EnigmailCore.readFile(md);
+    Assert.assertContains(result, "847b3a00-7ab1-11d4-8f02-006008948af5");
+});
+
+test(function readFileReturnsEmptyStringForNonExistingFile() {
+    var md = do_get_cwd().clone();
+    md.append("..");
+    md.append("..");
+    md.append("THIS_FILE_DOESNT_EXIST");
+    var result = EnigmailCore.readFile(md);
+    Assert.equal("", result);
+});
