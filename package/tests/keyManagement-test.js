@@ -45,6 +45,7 @@ test(shouldSetTrust);
 test(shouldSignKey);
 test(shouldReadKeyFromFile);
 test(shouldReadKeyFromText);
+test(shouldReadKeyObjectFromFile);
 
 function shouldExecCmd() {
     var enigmailSvc = Ec.getService(window);
@@ -83,9 +84,8 @@ function shouldReadKeyFromFile() {
         outputData,
         null,
         null,
-        function (exitCode, errorMsg) {
-            Assert.equal(exitCode, 0);
-            Assert.equal("", errorMsg);
+        function (outputData, result) {
+            Assert.equal(result.exitCode, 0);
         }
     );
     var output = outputData.key;
@@ -96,6 +96,22 @@ function shouldReadKeyFromFile() {
     Assert.assertContains(output,":public sub key packet:");
     Assert.assertContains(output,":signature packet:");
     Assert.assertContains(output,":secret key packet:");
+}
+
+function shouldReadKeyObjectFromFile() {
+    EnigmailCore.setLogLevel(5);
+    var outputData = {};
+    EnigmailKeyMgmt.readKeyObjectFromFile(
+        window,
+        "resources/dev-strike.asc",
+        function (output,result){
+            outputData = output;
+            Assert.equal(result.exitCode, 0);
+        }
+    );
+    Assert.assertContains(outputData.keyObj.primaryKey.value,"keyid: 781617319CE311C4");
+    Assert.equal(outputData.keyObj.users.length,2);
+    Assert.equal(outputData.keyObj.subKeys.length,2);
 }
 
 function shouldReadKeyFromText() {
@@ -266,9 +282,8 @@ function shouldReadKeyFromText() {
         outputData,
         null,
         null,
-        function (exitCode, errorMsg) {
-            Assert.equal(exitCode, 0);
-            Assert.equal("", errorMsg);
+        function (outputData, result) {
+            Assert.equal(result.exitCode, 0);
         }
     );
     var output = outputData.key;
