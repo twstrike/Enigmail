@@ -246,16 +246,14 @@ KeyEditor.prototype = {
 var EnigmailKeyMgmt = {
 
   execCmd: function (command, args, stdinFunc, stdoutFunc, doneFunc) {
-    var proc = {
-      command: command,
-      arguments: args,
-      charset: null,
-      environment: Ec.getEnvList(),
-      stdin: stdinFunc,
-      stdout: stdoutFunc,
-      done: doneFunc,
-      mergeStderr: false
-    };
+    var procBuilder = new subprocess.ProcessBuilder();
+    procBuilder.setCommand(command);
+    procBuilder.setArguments(args);
+    procBuilder.setEnvironment(Ec.getEnvList());
+    procBuilder.setStdin(stdinFunc);
+    procBuilder.setStdout(stdoutFunc);
+    procBuilder.setDone(doneFunc);
+    var proc = procBuilder.build();
     subprocess.call(proc).wait();
   },
 

@@ -907,46 +907,38 @@ Enigmail.prototype = {
     envList = envList.concat(Ec.envList);
 
     var preInput = "";
-
-    if (input.length === 0 && preInput.length === 0)
-
+    var outputData = "";
+    var errOutput  = "";
     EC.CONSOLE_LOG("enigmail> "+EC.printCmdLine(command, args)+"\n");
-
-    var proc = {
-      command:     command,
-      arguments:   args,
-      environment: envList,
-      charset: null,
-      stdin: function(pipe) {
-        if (input.length > 0 || preInput.length > 0) {
-          pipe.write(preInput + input);
+    var procBuilder = new subprocess.ProcessBuilder();
+    procBuilder.setCommand(command);
+    procBuilder.setArguments(args);
+    procBuilder.setEnvironment(envList);
+    procBuilder.setStdin(
+        function (pipe) {
+            if (input.length > 0 || preInput.length > 0) {
+                pipe.write(preInput + input);
+            }
+            pipe.close();
         }
-        pipe.close();
-      },
-      done: function(result) {
-        this.exitCode = result.exitCode;
-        this.resultData = result.stdout;
-        this.errorData = result.stderr;
-      },
-      mergeStderr: false,
-      resultData: "",
-      errorData: "",
-      exitCode: -1
-    };
+    );
+    procBuilder.setDone(
+        function (result) {
+            if (result.stdout) outputData = result.stdout;
+            if (result.stderr) errOutput = result.stderr;
+            exitCodeObj.value = result.exitCode;
+        }
+    );
 
+    var proc = procBuilder.build();
     try {
       subprocess.call(proc).wait();
-      exitCodeObj.value = proc.exitCode;
-
     } catch (ex) {
       EC.ERROR_LOG("enigmail.js: Enigmail.execCmd: subprocess.call failed with '"+ex.toString()+"'\n");
       EC.DEBUG_LOG("  enigmail> DONE with FAILURE\n");
       exitCodeObj.value = -1;
     }
     Ec.DEBUG_LOG("  enigmail> DONE\n");
-
-    var outputData = "";
-    var errOutput  = "";
 
     if (proc.resultData) outputData = proc.resultData;
     if (proc.errorData) errOutput  = proc.errorData;
@@ -964,7 +956,7 @@ Enigmail.prototype = {
     statusMsgObj.value = retStatusObj.statusMsg;
     var blockSeparation = retStatusObj.blockSeparation;
 
-    exitCodeObj.value = Ec.fixExitCode(proc.exitCode, statusFlagsObj.value);
+    exitCodeObj.value = Ec.fixExitCode(exitCodeObj.value, statusFlagsObj.value);
 
     if (blockSeparation.indexOf(" ") > 0) {
       exitCodeObj.value = 2;
