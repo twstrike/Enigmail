@@ -107,6 +107,7 @@ function shouldReadKeyFromFile() {
 
 function shouldReadKeyObjectFromFile() {
     EnigmailCore.setLogLevel(5);
+    var window = JSUnit.createStubWindow();
     var outputData = {};
     EnigmailKeyMgmt.readKeyObjectFromFile(
         window,
