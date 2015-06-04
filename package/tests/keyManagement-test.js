@@ -1,3 +1,6 @@
+/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false */
+/*global Ec: false, Cc: false, Ci: false, do_print: false, EnigmailCore: false, EnigmailKeyMgmt: false, EnigmailCommon: false, Components: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,6 +38,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("keyManagement.jsm");
@@ -48,6 +53,7 @@ test(shouldReadKeyFromText);
 test(shouldReadKeyObjectFromFile);
 
 function shouldExecCmd() {
+    var window = JSUnit.createStubWindow();
     var enigmailSvc = Ec.getService(window);
     var command= enigmailSvc.agentPath;
 
@@ -77,6 +83,7 @@ function shouldExecCmd() {
 
 function shouldReadKeyFromFile() {
     EnigmailCore.setLogLevel(5);
+    var window = JSUnit.createStubWindow();
     var outputData = {};
     EnigmailKeyMgmt.readKey(
         window,
@@ -116,6 +123,7 @@ function shouldReadKeyObjectFromFile() {
 
 function shouldReadKeyFromText() {
     EnigmailCore.setLogLevel(5);
+    var window = JSUnit.createStubWindow();
     var outputData = {};
     EnigmailKeyMgmt.readKey(
         window,
@@ -298,6 +306,7 @@ function shouldReadKeyFromText() {
 
 function shouldEditKey() {
     do_test_pending();
+    var window = JSUnit.createStubWindow();
     EnigmailKeyMgmt.editKey(
         window,
         false,
@@ -322,6 +331,7 @@ function shouldEditKey() {
 
 function shouldSetTrust() {
     do_test_pending();
+    var window = JSUnit.createStubWindow();
     EnigmailKeyMgmt.setKeyTrust(window,
         "781617319CE311C4",
         5,
@@ -335,6 +345,7 @@ function shouldSetTrust() {
 
 function shouldSignKey() {
     do_test_pending();
+    var window = JSUnit.createStubWindow();
     EnigmailKeyMgmt.signKey(window,
         "anonymous strike <strike.devtest@gmail.com>",
         "781617319CE311C4",
@@ -351,7 +362,7 @@ function shouldSignKey() {
 function importKeyForEdit() {
     Components.utils.import("resource://enigmail/enigmailCore.jsm");
     Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-    window = JSUnit.createStubWindow();
+    var window = JSUnit.createStubWindow();
     EnigmailCommon.enigmailSvc = initializeEnigmail();
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
@@ -361,7 +372,7 @@ function importKeyForEdit() {
 
 function initializeEnigmail() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    window = JSUnit.createStubWindow();
+    var window = JSUnit.createStubWindow();
     enigmail.initialize(window, "", EnigmailCore.prefBranch);
     return enigmail;
 }

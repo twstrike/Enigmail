@@ -1,4 +1,6 @@
-/*global do_load_module do_get_cwd testing test Assert component JSUnit Cc resetting TestHelper EnigmailGPG */
+/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false */
+/*global TestHelper: false, EnigmailGPG: false, withEnvironment: false, nsIWindowsRegKey: true */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -36,6 +38,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("enigmailGpg.jsm");
@@ -63,11 +67,9 @@ test(function determineGpgHomeDirReturnsHomePlusGnupgForNonWindowsIfNoGNUPGHOMES
     });
 });
 
-var ctx = this;
-
 test(function determineGpgHomeDirReturnsRegistryValueForWindowsIfExists() {
     withEnvironment({}, function(e) {
-        resetting(ctx, 'getWinRegistryString', function(a, b, c) {
+        resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {
             if(a === "Software\\GNU\\GNUPG" && b === "HomeDir" && c === "foo bar") {
                 return "\\foo\\bar\\gnupg";
             } else {
@@ -83,7 +85,7 @@ test(function determineGpgHomeDirReturnsRegistryValueForWindowsIfExists() {
 
 test(function determineGpgHomeDirReturnsUserprofileIfItExists() {
     withEnvironment({"USERPROFILE": "\\bahamas"}, function(e) {
-        resetting(ctx, 'getWinRegistryString', function(a, b, c) {}, function() {
+        resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {}, function() {
             var enigmail = {environment: e, isWin32: true};
             nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
             Assert.equal("\\bahamas\\Application Data\\GnuPG", EnigmailGPG.determineGpgHomeDir(enigmail));
@@ -93,7 +95,7 @@ test(function determineGpgHomeDirReturnsUserprofileIfItExists() {
 
 test(function determineGpgHomeDirReturnsSystemrootIfItExists() {
     withEnvironment({"SystemRoot": "\\tahiti"}, function(e) {
-        resetting(ctx, 'getWinRegistryString', function(a, b, c) {}, function() {
+        resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {}, function() {
             var enigmail = {environment: e, isWin32: true};
             nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
             Assert.equal("\\tahiti\\Application Data\\GnuPG", EnigmailGPG.determineGpgHomeDir(enigmail));
@@ -103,7 +105,7 @@ test(function determineGpgHomeDirReturnsSystemrootIfItExists() {
 
 test(function determineGpgHomeDirReturnsDefaultForWin32() {
     withEnvironment({}, function(e) {
-        resetting(ctx, 'getWinRegistryString', function(a, b, c) {}, function() {
+        resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {}, function() {
             var enigmail = {environment: e, isWin32: true};
             nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
             Assert.equal("C:\\gnupg", EnigmailGPG.determineGpgHomeDir(enigmail));

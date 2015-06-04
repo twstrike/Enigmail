@@ -1,5 +1,7 @@
-/*global do_load_module do_get_cwd do_get_file testing test Assert component JSUnit Cc resetting EnigmailCore Enigmail gEnigmailSvc EnigmailCommon */
+/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false */
+/*global EnigmailCore: false, Enigmail: false, EnigmailCommon: false, component: false, Cc: false, Ci: false, withEnvironment: false, nsIEnigmail: false, nsIEnvironment: false, Ec: false */
 /*jshint -W120 */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -37,6 +39,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("enigmail.js");
@@ -49,15 +53,15 @@ test(shouldSignMessage);
 test(shouldEncryptMessage);
 test(shouldDecryptMessage);
 
-function initalizeService(enigmail) {
-    window = JSUnit.createStubWindow();
+function initializeService(enigmail) {
+    var window = JSUnit.createStubWindow();
     enigmail.initialize(window, "", EnigmailCore.prefBranch);
     return enigmail;
 }
 
 function shouldLocateArmoredBlock() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    enigmail = initalizeService(enigmail);
+    enigmail = initializeService(enigmail);
     var text = "" +
             "    -----BEGIN PGP SIGNATURE-----\n" +
             "    Version: GnuPG/MacGPG2 v2.0.22 (Darwin)\n" +
@@ -89,7 +93,7 @@ function shouldLocateArmoredBlock() {
 
 function shouldExtractSignaturePart() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    enigmail = initalizeService(enigmail);
+    enigmail = initializeService(enigmail);
     const signature = {
         text: "Hello I'm here.\n please contact me via this email! \n",
         header: "Version: GnuPG/MacGPG2 v2.0.22 (Darwin)\n" +
@@ -127,7 +131,7 @@ function shouldExtractSignaturePart() {
 
 function shouldGetKeyDetails() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    enigmail = initalizeService(enigmail);
+    enigmail = initializeService(enigmail);
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
@@ -139,7 +143,7 @@ function shouldGetKeyDetails() {
 
 function shouldSignMessage() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    enigmail = initalizeService(enigmail);
+    enigmail = initializeService(enigmail);
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
@@ -147,6 +151,8 @@ function shouldSignMessage() {
     var parentWindow = JSUnit.createStubWindow();
     var plainText = "Hello there!";
     var strikeAccount = "strike.devtest@gmail.com";
+    var exitCodeObj = {};
+    var statusFlagObj = {};
     var encryptResult = enigmail.encryptMessage(parentWindow,
         nsIEnigmail.UI_TEST,
         plainText,
@@ -154,21 +160,21 @@ function shouldSignMessage() {
         strikeAccount,
         "",
         nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_SIGNED,
-        exitCodeObj = {},
-        statusFlagObj = {},
-        errorMsgObj = {},
-        passphrase = "STRIKEfreedom@Qu1to"
+        exitCodeObj,
+        statusFlagObj,
+        errorMsgObj,
+        "STRIKEfreedom@Qu1to"
     );
     Assert.equal(0, exitCodeObj.value);
     Assert.equal(0, errorMsgObj.value);
     Assert.equal(true, (statusFlagObj.value == nsIEnigmail.SIG_CREATED));
-    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
+    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, "", {}, {}, {});
     Assert.equal("SIGNED MESSAGE", blockType);
 }
 
 function shouldEncryptMessage() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    enigmail = initalizeService(enigmail);
+    enigmail = initializeService(enigmail);
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
@@ -176,6 +182,8 @@ function shouldEncryptMessage() {
     var parentWindow = JSUnit.createStubWindow();
     var plainText = "Hello there!";
     var strikeAccount = "strike.devtest@gmail.com";
+    var exitCodeObj = {};
+    var statusFlagObj = {};
     var encryptResult = enigmail.encryptMessage(parentWindow,
         nsIEnigmail.UI_TEST,
         plainText,
@@ -183,26 +191,26 @@ function shouldEncryptMessage() {
         strikeAccount,
         "",
         nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_ENCRYPTED | nsIEnigmail.SEND_ALWAYS_TRUST,
-        exitCodeObj = {},
-        statusFlagObj = {},
-        errorMsgObj = {},
-        passphrase = "STRIKEfreedom@Qu1to"
+        exitCodeObj,
+        statusFlagObj,
+        errorMsgObj,
+        "STRIKEfreedom@Qu1to"
     );
     Assert.equal(0, exitCodeObj.value);
     Assert.equal(0, errorMsgObj.value);
     Assert.equal(true, (statusFlagObj.value == nsIEnigmail.END_ENCRYPTION));
-    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
+    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, "", {}, {}, {});
     Assert.equal("MESSAGE", blockType);
 }
 
 function shouldDecryptMessage() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    enigmail = initalizeService(enigmail);
+    enigmail = initializeService(enigmail);
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
     enigmail.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
-    encryptResult = "-----BEGIN PGP MESSAGE-----\n"+
+    var encryptResult = "-----BEGIN PGP MESSAGE-----\n"+
         "Version: GnuPG v2.0.22 (GNU/Linux)\n"+
         "\n"+
         "hQIMA9U1Yju2Dp5xAQ//eeoS38nAWPdJslfVaEuUhthZk4WxAua97+JNGX9vDiae\n"+
@@ -216,33 +224,47 @@ function shouldDecryptMessage() {
         "rxpsraIEs2H4uyF19K1nLioGkyubeUKPnBTB6qAwp0ZhZ1RleMwHRTFQU+jpbi51\n"+
         "t87E+JI0UuLd14pDb7YJUKenHvAqa1jHAZKEfa2XFMfT/1MZzohlwjNpcPhYFWeB\n"+
         "zq3cg/m/J5sb+FpdD42nfYnLsSYu7CwcTX8MU2vrSwHyHnmux6SjDXGrAaddWsrS\n"+
-        "RwGvjZsiFW/E82l2eMj5Zpm6HXY8kZx9TBSbWLSgU44nBhDvX1MrIGdd+rmYT2xt\n"+
-        "j4KAKpyV51VzmJUOqHrb7bPv70ncMx0w\n"+
-        "=uadZ\n"+
-        "-----END PGP MESSAGE-----\n\n";
+            "RwGvjZsiFW/E82l2eMj5Zpm6HXY8kZx9TBSbWLSgU44nBhDvX1MrIGdd+rmYT2xt\n"+
+            "j4KAKpyV51VzmJUOqHrb7bPv70ncMx0w\n"+
+            "=uadZ\n"+
+            "-----END PGP MESSAGE-----\n\n";
 
     var parentWindow = JSUnit.createStubWindow();
+    var exitCodeObj = {};
+    var statusFlagObj = {};
     var decryptResult = enigmail.decryptMessage(parentWindow,
-        nsIEnigmail.UI_TEST,
-        encryptResult,
-        signatureObj = {},
-        exitCodeObj = {},
-        statusFlagObj = {},
-        keyIdObj = {},
-        userIdObj = {},
-        sigDetailsObj = {},
-        errorMsgObj = {},
-        blockSeparationObj = {},
-        encToDetailsObj = {},
-        passphrase = "STRIKEfreedom@Qu1to"
-    );
+                                                nsIEnigmail.UI_TEST,
+                                                encryptResult,
+                                                {},
+                                                exitCodeObj,
+                                                statusFlagObj,
+                                                {},
+                                                {},
+                                                {},
+                                                errorMsgObj = {},
+                                                {},
+                                                {},
+                                                "STRIKEfreedom@Qu1to"
+                                               );
     Assert.equal(0, exitCodeObj.value);
     Assert.equal(0, errorMsgObj.value);
     Assert.equal("Hello there!", decryptResult);
     Assert.equal(true, (statusFlagObj.value == (nsIEnigmail.DISPLAY_MESSAGE | nsIEnigmail.DECRYPTION_OKAY)));
-    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, indentStr = "", beginIndexObj = {}, endIndexObj = {}, indentStrObj = {});
+    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, "", {}, {}, {});
     Assert.equal("MESSAGE", blockType);
 }
+
+function newEnigmail(f) {
+    var oldEnigmail = EnigmailCore.getEnigmailService();
+    try {
+        var enigmail = new Enigmail();
+        EnigmailCore.setEnigmailService(enigmail);
+        f(enigmail);
+    } finally {
+        EnigmailCore.setEnigmailService(oldEnigmail);
+    }
+}
+
 
 // testing: initialize
 test(function initializeWillPassEnvironmentIfAskedTo() {
@@ -251,9 +273,10 @@ test(function initializeWillPassEnvironmentIfAskedTo() {
         "ENIGMAIL_PASS_ENV": "STUFF:BLARG",
         "STUFF": "testing"
     }, function() {
-        var enigmail = gEnigmailSvc = new Enigmail();
-        enigmail.initialize(window, "", EnigmailCore.prefBranch);
-        Assert.assertArrayContains(EnigmailCommon.envList, "STUFF=testing");
+        newEnigmail(function(enigmail) {
+            enigmail.initialize(window, "", EnigmailCore.prefBranch);
+            Assert.assertArrayContains(EnigmailCommon.envList, "STUFF=testing");
+        });
     });
 });
 
@@ -262,18 +285,20 @@ test(function initializeWillNotPassEnvironmentsNotAskedTo() {
     var environment = Cc["@mozilla.org/process/environment;1"].getService(nsIEnvironment);
     environment.set("ENIGMAIL_PASS_ENV", "HOME");
     environment.set("STUFF", "testing");
-    var enigmail = gEnigmailSvc = new Enigmail();
-    enigmail.initialize(window, "", EnigmailCore.prefBranch);
-    Assert.assertArrayNotContains(EnigmailCommon.envList, "STUFF=testing");
+    newEnigmail(function(enigmail) {
+        enigmail.initialize(window, "", EnigmailCore.prefBranch);
+        Assert.assertArrayNotContains(EnigmailCommon.envList, "STUFF=testing");
+    });
 });
 
 test(function initializeWillNotSetEmptyEnvironmentValue() {
     var window = JSUnit.createStubWindow();
     var environment = Cc["@mozilla.org/process/environment;1"].getService(nsIEnvironment);
     environment.set("APPDATA", "");
-    var enigmail = gEnigmailSvc = new Enigmail();
-    enigmail.initialize(window, "", EnigmailCore.prefBranch);
-    Assert.assertArrayNotContains(EnigmailCommon.envList, "APPDATA=");
+    newEnigmail(function(enigmail) {
+        enigmail.initialize(window, "", EnigmailCore.prefBranch);
+        Assert.assertArrayNotContains(EnigmailCommon.envList, "APPDATA=");
+    });
 });
 
 // testing: useGpgAgent
@@ -307,8 +332,9 @@ function mockPrefs(prefs) {
 test(function useGpgAgentIsFalseIfIsDosLikeAndDoesntSupportAgent() {
     asDosLike(function() {
         withGpgFeatures([], function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            Assert.ok(!enigmail.useGpgAgent());
+            newEnigmail(function(enigmail) {
+                Assert.ok(!enigmail.useGpgAgent());
+            });
         });
     });
 });
@@ -316,8 +342,9 @@ test(function useGpgAgentIsFalseIfIsDosLikeAndDoesntSupportAgent() {
 test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndAutostartsAgent() {
     asDosLike(function() {
         withGpgFeatures(["supports-gpg-agent", "autostart-gpg-agent"], function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            Assert.ok(enigmail.useGpgAgent());
+            newEnigmail(function(enigmail) {
+                Assert.ok(enigmail.useGpgAgent());
+            });
         });
     });
 });
@@ -325,9 +352,10 @@ test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndAutostartsAgent() {
 test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndThereExistsAnAgentString() {
     asDosLike(function() {
         withGpgFeatures(["supports-gpg-agent"], function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.gpgAgentInfo.envStr = "blarg";
-            Assert.ok(enigmail.useGpgAgent());
+            newEnigmail(function(enigmail) {
+                enigmail.gpgAgentInfo.envStr = "blarg";
+                Assert.ok(enigmail.useGpgAgent());
+            });
         });
     });
 });
@@ -335,9 +363,10 @@ test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndThereExistsAnAgentS
 test(function useGpgAgentIsFalseIfIsDosLikeAndSupportsAgentButNoAgentInfoAvailable() {
     asDosLike(function() {
         withGpgFeatures(["supports-gpg-agent"], function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.gpgAgentInfo.envStr = "";
-            Assert.ok(!enigmail.useGpgAgent());
+            newEnigmail(function(enigmail) {
+                enigmail.gpgAgentInfo.envStr = "";
+                Assert.ok(!enigmail.useGpgAgent());
+            });
         });
     });
 });
@@ -345,9 +374,10 @@ test(function useGpgAgentIsFalseIfIsDosLikeAndSupportsAgentButNoAgentInfoAvailab
 test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndPrefIsSet() {
     asDosLike(function() {
         withGpgFeatures(["supports-gpg-agent"], function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.prefBranch = mockPrefs({useGpgAgent: true});
-            Assert.ok(enigmail.useGpgAgent());
+            newEnigmail(function(enigmail) {
+                enigmail.prefBranch = mockPrefs({useGpgAgent: true});
+                Assert.ok(enigmail.useGpgAgent());
+            });
         });
     });
 });
@@ -356,8 +386,9 @@ test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndPrefIsSet() {
 test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndAutostartsAgent() {
     notDosLike(function() {
         withGpgFeatures(["supports-gpg-agent", "autostart-gpg-agent"], function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            Assert.ok(enigmail.useGpgAgent());
+            newEnigmail(function(enigmail) {
+                Assert.ok(enigmail.useGpgAgent());
+            });
         });
     });
 });
@@ -365,9 +396,10 @@ test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndAutostartsAgent() 
 test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndThereExistsAnAgentString() {
     notDosLike(function() {
         withGpgFeatures(["supports-gpg-agent"], function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.gpgAgentInfo.envStr = "blarg";
-            Assert.ok(enigmail.useGpgAgent());
+            newEnigmail(function(enigmail) {
+                enigmail.gpgAgentInfo.envStr = "blarg";
+                Assert.ok(enigmail.useGpgAgent());
+            });
         });
     });
 });
@@ -375,9 +407,10 @@ test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndThereExistsAnAgent
 test(function useGpgAgentIsFalseIfNotDosLikeAndSupportsAgentButNoAgentInfoAvailable() {
     notDosLike(function() {
         withGpgFeatures(["supports-gpg-agent"], function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.gpgAgentInfo.envStr = "";
-            Assert.ok(!enigmail.useGpgAgent());
+            newEnigmail(function(enigmail) {
+                enigmail.gpgAgentInfo.envStr = "";
+                Assert.ok(!enigmail.useGpgAgent());
+            });
         });
     });
 });
@@ -385,9 +418,10 @@ test(function useGpgAgentIsFalseIfNotDosLikeAndSupportsAgentButNoAgentInfoAvaila
 test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndPrefIsSet() {
     notDosLike(function() {
         withGpgFeatures(["supports-gpg-agent"], function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.prefBranch = mockPrefs({useGpgAgent: true});
-            Assert.ok(enigmail.useGpgAgent());
+            newEnigmail(function(enigmail) {
+                enigmail.prefBranch = mockPrefs({useGpgAgent: true});
+                Assert.ok(enigmail.useGpgAgent());
+            });
         });
     });
 });
@@ -396,14 +430,15 @@ test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndPrefIsSet() {
 
 test(function setAgentPathDefaultValues() {
     withEnvironment({}, function(e) {
-        var enigmail = gEnigmailSvc = new Enigmail();
-        enigmail.environment = e;
-        enigmail.setAgentPath(JSUnit.createStubWindow());
-        Assert.equal("gpg", enigmail.agentType);
-        Assert.equal("/usr/bin/gpg2", enigmail.agentPath.path);
-//        Assert.equal("2.0.22", enigmail.agentVersion); // this will vary between environments.
-        Assert.equal("/usr/bin/gpgconf", enigmail.gpgconfPath.path);
-        Assert.equal("/usr/bin/gpg-connect-agent", enigmail.connGpgAgentPath.path);
+        newEnigmail(function(enigmail) {
+            enigmail.environment = e;
+            enigmail.setAgentPath(JSUnit.createStubWindow());
+            Assert.equal("gpg", enigmail.agentType);
+            Assert.equal("/usr/bin/gpg2", enigmail.agentPath.path);
+            //        Assert.equal("2.0.22", enigmail.agentVersion); // this will vary between environments.
+            Assert.equal("/usr/bin/gpgconf", enigmail.gpgconfPath.path);
+            Assert.equal("/usr/bin/gpg-connect-agent", enigmail.connGpgAgentPath.path);
+        });
     });
 });
 
@@ -411,55 +446,60 @@ test(function setAgentPathDefaultValues() {
 
 test(function resolveToolPathDefaultValues() {
     withEnvironment({}, function(e) {
-        var enigmail = gEnigmailSvc = new Enigmail();
-        enigmail.environment = e;
-        enigmail.agentPath = "/usr/bin/gpg-agent";
-        var result = enigmail.resolveToolPath("zip");
-        Assert.equal("/usr/bin/zip", result.path);
+        newEnigmail(function(enigmail) {
+            enigmail.environment = e;
+            enigmail.agentPath = "/usr/bin/gpg-agent";
+            var result = enigmail.resolveToolPath("zip");
+            Assert.equal("/usr/bin/zip", result.path);
+        });
     });
 });
 
 test(function resolveToolPathFromPATH() {
     withEnvironment({PATH: "/sbin"}, function(e) {
-        var enigmail = gEnigmailSvc = new Enigmail();
-        enigmail.environment = e;
-        enigmail.agentPath = null;
-        var result = enigmail.resolveToolPath("route");
-        Assert.equal("/sbin/route", result.path);
+        newEnigmail(function(enigmail) {
+            enigmail.environment = e;
+            enigmail.agentPath = null;
+            var result = enigmail.resolveToolPath("route");
+            Assert.equal("/sbin/route", result.path);
+        });
     });
 });
 
 // detectGpgAgent
 test(function detectGpgAgentSetsAgentInfoFromEnvironmentVariable() {
     withEnvironment({GPG_AGENT_INFO: "a happy agent"}, function(e) {
-        var enigmail = gEnigmailSvc = new Enigmail();
-        enigmail.environment = e;
-        enigmail.detectGpgAgent(JSUnit.createStubWindow());
+        newEnigmail(function(enigmail) {
+            enigmail.environment = e;
+            enigmail.detectGpgAgent(JSUnit.createStubWindow());
 
-        Assert.ok(enigmail.gpgAgentInfo.preStarted);
-        Assert.equal("a happy agent", enigmail.gpgAgentInfo.envStr);
-        Assert.ok(!Ec.gpgAgentIsOptional);
+            Assert.ok(enigmail.gpgAgentInfo.preStarted);
+            Assert.equal("a happy agent", enigmail.gpgAgentInfo.envStr);
+            Assert.ok(!Ec.gpgAgentIsOptional);
+        });
     });
 });
 
 test(function detectGpgAgentWithNoAgentInfoInEnvironment() {
     withEnvironment({}, function(e) {
-        var enigmail = gEnigmailSvc = new Enigmail();
-        enigmail.environment = e;
-        enigmail.detectGpgAgent(JSUnit.createStubWindow());
+        newEnigmail(function(enigmail) {
+            enigmail.environment = e;
+            enigmail.detectGpgAgent(JSUnit.createStubWindow());
 
-        Assert.ok(!enigmail.gpgAgentInfo.preStarted);
-        Assert.ok(!Ec.gpgAgentIsOptional);
+            Assert.ok(!enigmail.gpgAgentInfo.preStarted);
+            Assert.ok(!Ec.gpgAgentIsOptional);
+        });
     });
 });
 
 test(function detectGpgAgentWithAutostartFeatureWillDoNothing() {
     withEnvironment({}, function(e) {
         withGpgFeatures(["autostart-gpg-agent"], function() {
-            var enigmail = gEnigmailSvc = new Enigmail();
-            enigmail.environment = e;
-            enigmail.detectGpgAgent(JSUnit.createStubWindow());
-            Assert.equal("none", enigmail.gpgAgentInfo.envStr);
+            newEnigmail(function(enigmail) {
+                enigmail.environment = e;
+                enigmail.detectGpgAgent(JSUnit.createStubWindow());
+                Assert.equal("none", enigmail.gpgAgentInfo.envStr);
+            });
         });
     });
 });

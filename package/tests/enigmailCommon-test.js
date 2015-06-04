@@ -1,3 +1,6 @@
+/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false */
+/*global EnigmailCommon: false, EnigmailCore: false, EnigmailKeyMgmt: false, component: false, Cc: false, Ci: false, do_print: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,6 +38,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("enigmailCommon.jsm");
@@ -55,7 +60,7 @@ function shouldHandleNoDataErrors() {
     "[GNUPG:] NODATA 2\n" +
     "gpg: decrypt_message failed: Unknown system error\n";
 
-  var result = EnigmailCommon.parseErrorOutput(errorOutput, response = {});
+  var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
 
   Assert.assertContains(result, "no valid OpenPGP data found");
 }
@@ -128,7 +133,7 @@ function shouldHandleUnverifiedSignature() {
     "[GNUPG:] USERID_HINT D535623BB60E9E71 anonymous strike <strike.devtest@gmail.com>\n" +
     "Use this key anyway? (y/N) y";
 
-     var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
+     var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "Use this key anyway");
 }
@@ -138,7 +143,7 @@ function shouldHandleEncryptionFailedNoPublicKey() {
          "[GNUPG:] INV_RECP 0 iapazmino@thoughtworks.com\n" +
          "gpg: salida3.xtxt: encryption failed: No public key";
 
-     var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
+     var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "No public key");
 }
@@ -152,7 +157,7 @@ function shouldHandleErrors() {
         "[GNUPG:] MISSING_PASSPHRASE \n" +
         "[GNUPG:] KEY_NOT_CREATED";
 
-     var result = EnigmailCommon.parseErrorOutput(errorOutput, status = {});
+     var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "Invalid IPC response");
 }
@@ -163,7 +168,8 @@ function shouldGetSecretKeys() {
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-    var importResult = EnigmailCommon.enigmailSvc.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
+    var window = JSUnit.createStubWindow();
+    var importResult = EnigmailCommon.enigmailSvc.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
     var expectedKey = [{"name": "anonymous strike <strike.devtest@gmail.com>", "id": "781617319CE311C4", "created": "05/04/2015"}];
     do_test_pending();
     EnigmailKeyMgmt.setKeyTrust(window,
@@ -183,7 +189,7 @@ function shouldGetSecretKeys() {
 
 var initializeEnigmail = function() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    window = JSUnit.createStubWindow();
+    var window = JSUnit.createStubWindow();
     enigmail.initialize(window, "", EnigmailCore.prefBranch);
     return enigmail;
 };

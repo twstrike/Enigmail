@@ -500,9 +500,13 @@ var EnigmailCore = {
         return gEnigmailSvc;
     },
 
+    setEnigmailService: function(v) {
+        gEnigmailSvc = v;
+    },
+
     ensuredEnigmailService: function(f) {
         if(gEnigmailSvc === null) {
-            gEnigmailSvc = f();
+            EnigmailCore.setEnigmailService(f());
         }
         return gEnigmailSvc;
     },

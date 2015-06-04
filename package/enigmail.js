@@ -235,6 +235,14 @@ function indexOfArmorDelimiter(text, str, offset) {
   return -1;
 }
 
+function cloneOrNull(v) {
+  if(v !== null && typeof v.clone === "function") {
+    return v.clone();
+  } else {
+    return v;
+  }
+}
+
 function Enigmail() {
     Components.utils.import("resource://enigmail/commonFuncs.jsm");
     Ec = EC.ensuredEnigmailCommon(function() {
@@ -651,13 +659,14 @@ Enigmail.prototype = {
 
   },
 
+
   // resolve the path for GnuPG helper tools
   resolveToolPath: function(fileName) {
     if (EC.isDosLike()) {
       fileName += ".exe";
     }
 
-    var filePath = EC.getEnigmailService().agentPath.clone();
+    var filePath = cloneOrNull(EC.getEnigmailService().agentPath);
 
     if (filePath) filePath = filePath.parent;
     if (filePath) {

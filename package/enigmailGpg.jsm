@@ -44,32 +44,33 @@ const Ci = Components.interfaces;
 // Making this a var makes it possible to test windows things on linux
 var nsIWindowsRegKey       = Ci.nsIWindowsRegKey;
 
-// get a Windows registry value (string)
-// @ keyPath: the path of the registry (e.g. Software\\GNU\\GnuPG)
-// @ keyName: the name of the key to get (e.g. InstallDir)
-// @ rootKey: HKLM, HKCU, etc. (according to constants in nsIWindowsRegKey)
-function getWinRegistryString(keyPath, keyName, rootKey) {
-  var registry = Cc["@mozilla.org/windows-registry-key;1"].createInstance(Ci.nsIWindowsRegKey);
-
-  var retval = "";
-  try {
-    registry.open(rootKey, keyPath, registry.ACCESS_READ);
-    retval = registry.readStringValue(keyName);
-    registry.close();
-  }
-  catch (ex) {}
-
-  return retval;
-}
 
 const EnigmailGPG = {
+    // get a Windows registry value (string)
+    // @ keyPath: the path of the registry (e.g. Software\\GNU\\GnuPG)
+    // @ keyName: the name of the key to get (e.g. InstallDir)
+    // @ rootKey: HKLM, HKCU, etc. (according to constants in nsIWindowsRegKey)
+    getWinRegistryString: function(keyPath, keyName, rootKey) {
+        var registry = Cc["@mozilla.org/windows-registry-key;1"].createInstance(Ci.nsIWindowsRegKey);
+
+        var retval = "";
+        try {
+            registry.open(rootKey, keyPath, registry.ACCESS_READ);
+            retval = registry.readStringValue(keyName);
+            registry.close();
+        }
+        catch (ex) {}
+
+        return retval;
+    },
+
     determineGpgHomeDir: function (esvc) {
         var homeDir = "";
 
         homeDir = esvc.environment.get("GNUPGHOME");
 
         if (! homeDir && esvc.isWin32) {
-            homeDir=getWinRegistryString("Software\\GNU\\GNUPG", "HomeDir", nsIWindowsRegKey.ROOT_KEY_CURRENT_USER);
+            homeDir=EnigmailGPG.getWinRegistryString("Software\\GNU\\GNUPG", "HomeDir", nsIWindowsRegKey.ROOT_KEY_CURRENT_USER);
 
             if (! homeDir) {
                 homeDir = esvc.environment.get("USERPROFILE");
