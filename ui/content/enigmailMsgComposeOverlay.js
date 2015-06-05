@@ -3194,11 +3194,11 @@ Enigmail.msg = {
        //   - although encryption was
        //     - the recent processed resulting encryption status or
        //     - was signaled in the status bar but is not the outcome now
-       if ((sendFlags&ENCRYPT) == 0
-           && (this.statusEncrypted == EnigmailCommon.ENIG_FINAL_YES
-               || this.statusEncrypted == EnigmailCommon.ENIG_FINAL_FORCEYES
-               || this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_YES
-               || this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_FORCEYES)) {
+      if ((sendFlags&ENCRYPT) === 0 &&
+            (this.statusEncrypted == EnigmailCommon.ENIG_FINAL_YES ||
+             this.statusEncrypted == EnigmailCommon.ENIG_FINAL_FORCEYES ||
+             this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_YES ||
+             this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_FORCEYES)) {
          Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: promised encryption did not succeed\n");
          EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: promised encryption did not succeed\n");
          if (!EnigmailCommon.confirmDlg(window,
