@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Prefs: false, OS: false */
+/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -53,6 +53,7 @@ Components.utils.import("resource://enigmail/decryption.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
+Components.utils.import("resource://enigmail/files.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -1397,10 +1398,6 @@ var EnigmailCommon = {
     return r;
   },
 
-  getFilePathDesc: EnigmailCore.getFilePathDesc.bind(EnigmailCore),
-
-  printCmdLine: EnigmailCore.printCmdLine.bind(EnigmailCore),
-
   /**
    * Fix the exit code of GnuPG (which may be wrong in some circumstances)
    *
@@ -1462,7 +1459,7 @@ var EnigmailCommon = {
     var args = this.getAgentArgs(true);
     args.push("--gen-key");
 
-    Log.CONSOLE(this.printCmdLine(this.enigmailSvc.agentPath, args));
+    Log.CONSOLE(Files.formatCmdLine(this.enigmailSvc.agentPath, args));
 
     var inputData = "%echo Generating key\nKey-Type: ";
 
@@ -1823,7 +1820,7 @@ var EnigmailCommon = {
 
     var isDownload = actionFlags & (nsIEnigmail.REFRESH_KEY | nsIEnigmail.DOWNLOAD_KEY);
 
-    Log.CONSOLE("enigmail> "+this.printCmdLine(this.enigmailSvc.agentPath, args)+"\n");
+    Log.CONSOLE("enigmail> "+Files.formatCmdLine(this.enigmailSvc.agentPath, args)+"\n");
 
     var proc = null;
     var self = this;
@@ -2011,7 +2008,7 @@ var EnigmailCommon = {
    * @return:         handle to suprocess
    */
   execStart: function (command, args, needPassphrase, domWindow, listener, statusFlagsObj) {
-    Log.WRITE("enigmailCommon.jsm: execStart: command = "+this.printCmdLine(command, args)+", needPassphrase="+needPassphrase+", domWindow="+domWindow+", listener="+listener+"\n");
+    Log.WRITE("enigmailCommon.jsm: execStart: command = "+Files.formatCmdLine(command, args)+", needPassphrase="+needPassphrase+", domWindow="+domWindow+", listener="+listener+"\n");
 
     if (! listener) listener = {};
 
@@ -2021,7 +2018,7 @@ var EnigmailCommon = {
 
     listener.command = command;
 
-    Log.CONSOLE("enigmail> "+this.printCmdLine(command, args)+"\n");
+    Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
 
     try {
       proc = subprocess.call({

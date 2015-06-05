@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false, Log: false, OS: false */
+/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false, Log: false, OS: false, Files: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -43,6 +43,7 @@ Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/key.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
+Components.utils.import("resource://enigmail/files.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailKeyMgmt" ];
 
@@ -280,7 +281,7 @@ var EnigmailKeyMgmt = {
 
     if (inputData.path) {//read key from file
       args=args.concat(["--list-packets", inputData.path]);
-      Log.CONSOLE("enigmail> "+Ec.printCmdLine(command, args)+"\n");
+      Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
       EnigmailKeyMgmt.execCmd(command, args,
           function(pipe) {
           },
@@ -297,7 +298,7 @@ var EnigmailKeyMgmt = {
     else if (inputData.keytext){//read key from text
       args=args.concat(["--list-packets"]);
 
-      Log.CONSOLE("enigmail> "+Ec.printCmdLine(command, args)+"\n");
+      Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
       var input = inputData.keytext;
       if ((typeof input) != "string") input = "";
 
@@ -365,7 +366,7 @@ var EnigmailKeyMgmt = {
 
 
     var command= enigmailSvc.agentPath;
-    Log.CONSOLE("enigmail> "+Ec.printCmdLine(command, args)+"\n");
+    Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
 
     var keyEdit = new KeyEditor(requestObserver, callbackFunc, inputData);
 

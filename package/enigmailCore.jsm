@@ -112,31 +112,6 @@ var EnigmailCore = {
     return aStr;
   },
 
-  printCmdLine: function (command, args) {
-      function getQuoted(str) {
-          let i = str.indexOf(" ");
-          if (i>=0) {
-              return '"' + str +'"';
-          }
-          else
-              return str;
-      }
-
-    var rStr = getQuoted(this.getFilePathDesc(command)) +" ";
-
-    let i;
-    rStr += [getQuoted(args[i]) for (i in args)].join(" ").replace(/\\\\/g, '\\');
-
-    return rStr;
-  },
-
-  getFilePathDesc: function (nsFileObj) {
-    if (OS.getOS() == "WINNT")
-      return nsFileObj.persistentDescriptor;
-    else
-      return nsFileObj.path;
-  },
-
   /**
    * Plattform application name (e.g. Thunderbird)
    */

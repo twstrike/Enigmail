@@ -543,7 +543,7 @@ Enigmail.prototype = {
       agentPath = agentPath.QueryInterface(Ci.nsIFile);
     }
 
-    Log.CONSOLE("EnigmailAgentPath="+Ec.getFilePathDesc(agentPath)+"\n\n");
+    Log.CONSOLE("EnigmailAgentPath="+Files.getFilePathDesc(agentPath)+"\n\n");
 
     this.agentType = agentType;
     this.agentPath = agentPath;
@@ -559,7 +559,7 @@ Enigmail.prototype = {
     var errStr = "";
     Log.DEBUG("enigmail.js: Enigmail.setAgentPath: calling subprocess with '"+command.path+"'\n");
 
-    Log.CONSOLE("enigmail> "+Ec.printCmdLine(command, args)+"\n");
+    Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
 
     var proc = {
       command:     command,
@@ -807,7 +807,7 @@ Enigmail.prototype = {
     var outputData = "";
     var errOutput  = "";
 
-    Log.CONSOLE("enigmail> "+EC.printCmdLine(command, args)+"\n");
+    Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
 
     try {
       subprocess.call({
@@ -853,7 +853,7 @@ Enigmail.prototype = {
     var preInput = "";
     var outputData = "";
     var errOutput  = "";
-    Log.CONSOLE("enigmail> "+EC.printCmdLine(command, args)+"\n");
+    Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
     var procBuilder = new subprocess.ProcessBuilder();
     procBuilder.setCommand(command);
     procBuilder.setArguments(args);
@@ -1030,7 +1030,7 @@ Enigmail.prototype = {
       errorMsgObj.value = EC.getString("failKeyExtract");
 
       if (cmdErrorMsgObj.value) {
-        errorMsgObj.value += "\n" + EC.printCmdLine(this.agentPath, args);
+        errorMsgObj.value += "\n" + Files.formatCmdLine(this.agentPath, args);
         errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
       }
 
@@ -1052,7 +1052,7 @@ Enigmail.prototype = {
         errorMsgObj.value = EC.getString("failKeyExtract");
 
         if (cmdErrorMsgObj.value) {
-          errorMsgObj.value += "\n" + EC.printCmdLine(this.agentPath, args);
+          errorMsgObj.value += "\n" + Files.formatCmdLine(this.agentPath, args);
           errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
         }
 
@@ -1271,7 +1271,7 @@ Enigmail.prototype = {
       if (exitCodeObj.value !== 0) {
         errorMsgObj.value = EC.getString("badCommand");
         if (cmdErrorMsgObj.value) {
-          errorMsgObj.value += "\n" + EC.printCmdLine(this.agentPath, args);
+          errorMsgObj.value += "\n" + Files.formatCmdLine(this.agentPath, args);
           errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
         }
 
@@ -1327,7 +1327,7 @@ Enigmail.prototype = {
     if (exitCodeObj.value !== 0) {
       errorMsgObj.value = EC.getString("badCommand");
       if (cmdErrorMsgObj.value) {
-        errorMsgObj.value += "\n" + EC.printCmdLine(this.agentPath, args);
+        errorMsgObj.value += "\n" + Files.formatCmdLine(this.agentPath, args);
         errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
       }
 
@@ -1577,7 +1577,7 @@ Enigmail.prototype = {
     if (exitCodeObj.value !== 0) {
       errorMsgObj.value = EC.getString("badCommand");
       if (cmdErrorMsgObj.value) {
-        errorMsgObj.value += "\n" + EC.printCmdLine(this.agentPath, args);
+        errorMsgObj.value += "\n" + Files.formatCmdLine(this.agentPath, args);
         errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
       }
 
@@ -1633,7 +1633,7 @@ Enigmail.prototype = {
     if (exitCodeObj.value !== 0) {
 
       if (cmdErrorMsgObj.value) {
-        errorMsgObj.value = EC.printCmdLine(this.agentPath, args);
+        errorMsgObj.value = Files.formatCmdLine(this.agentPath, args);
         errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
       }
       else {

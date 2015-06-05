@@ -1,4 +1,4 @@
-/*global Components: false, Log: false */
+/*global Components: false, Log: false, OS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -40,6 +40,8 @@
 "use strict";
 
 var EXPORTED_SYMBOLS = [ "Files" ];
+
+Components.utils.import("resource://enigmail/os.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -184,5 +186,28 @@ const Files = {
             return fileContents;
         }
         return "";
+    },
+
+    formatCmdLine: function (command, args) {
+        function getQuoted(str) {
+            let i = str.indexOf(" ");
+            if (i>=0) {
+                return '"' + str +'"';
+            } else {
+                return str;
+            }
+        }
+
+        var rStr = getQuoted(Files.getFilePathDesc(command)) +" ";
+        let i;
+        return rStr + [getQuoted(args[i]) for (i in args)].join(" ").replace(/\\\\/g, '\\');
+    },
+
+    getFilePathDesc: function (nsFileObj) {
+        if (OS.getOS() == "WINNT") {
+            return nsFileObj.persistentDescriptor;
+        } else {
+            return nsFileObj.path;
+        }
     }
 };
