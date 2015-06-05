@@ -393,6 +393,65 @@ var EnigmailKeyMgmt = {
         callbackFunc);
   },
 
+  importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj){
+    Log.setLogLevel(5);
+    var enigmailSvc = Ec.getService(parent);
+    if (!enigmailSvc) {
+      Log.ERROR("keyManagmenent.jsm: Enigmail.importKeyFromFile: not yet initialized\n");
+      errorMsgObj.value = Ec.getString("notInit");
+      return 1;
+    }
+
+    var command= enigmailSvc.agentPath;
+    var args = Ec.getAgentArgs(false);
+    Log.DEBUG("enigmail.js: Enigmail.importKeyFromFile: fileName="+inputFile.path+"\n");
+    importedKeysObj.value="";
+
+    var fileName=Ec.getEscapedFilename((inputFile.QueryInterface(Ci.nsIFile)).path);
+
+    args.push("--import");
+    args.push(fileName);
+
+    var statusFlagsObj = {};
+    var statusMsgObj   = {};
+    var exitCodeObj    = {};
+
+    var output = enigmailSvc.execCmd(command, args, null, "",
+        exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+
+    var statusMsg = statusMsgObj.value;
+
+    var keyList = [];
+
+    if (exitCodeObj.value === 0) {
+      // Normal return
+      enigmailSvc.invalidateUserIdList();
+
+      var statusLines = statusMsg.split(/\r?\n/);
+
+      // Discard last null string, if any
+
+      for (var j=0; j<statusLines.length; j++) {
+        var matches = statusLines[j].match(/IMPORT_OK ([0-9]+) (\w+)/);
+        if (matches && (matches.length > 2)) {
+          if (typeof (keyList[matches[2]]) != "undefined") {
+            keyList[matches[2]] |= Number(matches[1]);
+          }
+          else
+            keyList[matches[2]] = Number(matches[1]);
+
+          Log.DEBUG("enigmail.js: Enigmail.importKey: imported "+matches[2]+":"+matches[1]+"\n");
+        }
+      }
+
+      for (j in keyList) {
+        importedKeysObj.value += j+":"+keyList[j]+";";
+      }
+    }
+
+    return exitCodeObj.value;
+  },
+
   setKeyTrust: function (parent, keyId, trustLevel, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.setKeyTrust: trustLevel="+trustLevel+", keyId="+keyId+"\n");
 

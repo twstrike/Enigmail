@@ -45,7 +45,8 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 testing("keyManagement.jsm");
 component("enigmail/prefs.jsm");
 
-importKeyForEdit();
+initializeEnigmail();
+test(importKeyForEdit);
 test(shouldExecCmd);
 test(shouldEditKey);
 test(shouldSetTrust);
@@ -363,17 +364,17 @@ function shouldSignKey() {
 }
 
 function importKeyForEdit() {
-    Components.utils.import("resource://enigmail/enigmailCore.jsm");
-    Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     var window = JSUnit.createStubWindow();
-    EnigmailCommon.enigmailSvc = initializeEnigmail();
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-    var importResult = EnigmailCommon.enigmailSvc.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
+    var importResult = EnigmailKeyMgmt.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
+    Assert.equal(importResult, 0);
 }
 
 function initializeEnigmail() {
+    Components.utils.import("resource://enigmail/enigmailCore.jsm");
+    Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     var window = JSUnit.createStubWindow();
     enigmail.initialize(window, "", Prefs.getPrefBranch());

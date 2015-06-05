@@ -477,7 +477,7 @@ function importKeyFiles() {
 
   var errorMsgObj = {};
   var keyListObj = {};
-  exitCode = enigmailSvc.importKeyFromFile(window, gPubkeyFile.value, errorMsgObj, keyListObj);
+  exitCode = EnigmailKeyMgmt.importKeyFromFile(window, gPubkeyFile.value, errorMsgObj, keyListObj);
   if (exitCode !== 0) {
     EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
     return false;
@@ -487,7 +487,7 @@ function importKeyFiles() {
   if (document.getElementById("privateKeysFile").value.trim().length > 0) {
     Log.DEBUG("enigmailSetupWizard.js: importKeyFiles - private Keys\n");
 
-    exitCode = enigmailSvc.importKeyFromFile(window, gSeckeyFile.value, errorMsgObj, keyListObj);
+    exitCode = EnigmailKeyMgmt.importKeyFromFile(window, gSeckeyFile.value, errorMsgObj, keyListObj);
     if (exitCode !== 0) {
       EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
       return false;

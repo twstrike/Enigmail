@@ -170,7 +170,7 @@ function shouldGetSecretKeys() {
     var errorMsgObj = {};
     var importedKeysObj = {};
     var window = JSUnit.createStubWindow();
-    var importResult = EnigmailCommon.enigmailSvc.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
+    var importResult = EnigmailKeyMgmt.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
     var expectedKey = [{"name": "anonymous strike <strike.devtest@gmail.com>", "id": "781617319CE311C4", "created": "05/04/2015"}];
     do_test_pending();
     EnigmailKeyMgmt.setKeyTrust(window,

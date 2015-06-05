@@ -571,7 +571,7 @@ function EnigRevokeKey(keyId, userId, callbackFunc) {
       }
       var errorMsgObj = {};
       var keyList = {};
-      var r = enigmailSvc.importKeyFromFile(window, revFile, errorMsgObj, keyList);
+      var r = EnigmailKeyMgmt.importKeyFromFile(window, revFile, errorMsgObj, keyList);
       revFile.remove(false);
       if (r !== 0) {
         EnigAlert(EnigGetString("revokeKeyFailed")+"\n\n"+EnigConvertGpgToUnicode(errorMsgObj.value));

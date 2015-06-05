@@ -908,7 +908,7 @@ function enigmailImportKeysFromFile() {
 
   var errorMsgObj = {};
   var keyListObj = {};
-  var exitCode = enigmailSvc.importKeyFromFile(window, inFile, errorMsgObj, keyListObj);
+  var exitCode = EnigmailKeyMgmt.importKeyFromFile(window, inFile, errorMsgObj, keyListObj);
   if (exitCode !== 0) {
     EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
   }
