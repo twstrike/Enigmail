@@ -35,6 +35,7 @@
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 const Ec = EnigmailCommon;
 
 
@@ -116,7 +117,7 @@ function onLoad() {
 
         case "fpr":
           if (fingerprint==="") {
-            Ec.DEBUG_LOG("enigmailSignKeyDlg.js: fpr:"+currKey+" -> "+aLine[9]+"\n");
+            Log.DEBUG("enigmailSignKeyDlg.js: fpr:"+currKey+" -> "+aLine[9]+"\n");
             fingerprint = aLine[9];
           }
           break;

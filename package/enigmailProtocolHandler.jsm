@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, XPCOMUtils: false, Data: false */
+/*global Components: false, EnigmailCore: false, XPCOMUtils: false, Data: false, Log: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -44,6 +44,7 @@ var EXPORTED_SYMBOLS = [ "EnigmailProtocolHandler" ];
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 const NS_SIMPLEURI_CONTRACTID   = "@mozilla.org/network/simple-uri;1";
 const NS_ENIGMAILPROTOCOLHANDLER_CONTRACTID = "@mozilla.org/network/protocol;1?name=enigmail";
@@ -80,7 +81,7 @@ EnigmailProtocolHandler.prototype = {
     QueryInterface: XPCOMUtils.generateQI([nsIProtocolHandler]),
 
     newURI: function (aSpec, originCharset, aBaseURI) {
-        EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.newURI: aSpec='"+aSpec+"'\n");
+        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.newURI: aSpec='"+aSpec+"'\n");
 
         // cut of any parameters potentially added to the URI; these cannot be handled
         if (aSpec.substr(0,14) == "enigmail:dummy") aSpec = "enigmail:dummy";
@@ -92,7 +93,7 @@ EnigmailProtocolHandler.prototype = {
     },
 
     newChannel: function (aURI) {
-        EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.newChannel: URI='"+aURI.spec+"'\n");
+        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.newChannel: URI='"+aURI.spec+"'\n");
 
         var messageId = Data.extractMessageId(aURI.spec);
         var mimeMessageId = Data.extractMimeMessageId(aURI.spec);
@@ -113,7 +114,7 @@ EnigmailProtocolHandler.prototype = {
                 contentCharset = messageUriObj.contentCharset;
                 contentData    = messageUriObj.contentData;
 
-                EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.newChannel: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
+                Log.DEBUG("enigmail.js: EnigmailProtocolHandler.newChannel: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
 
                 // do NOT delete the messageUriObj now from the list, this will be done once the message is unloaded (fix for bug 9730).
 
@@ -185,8 +186,8 @@ EnigmailProtocolHandler.prototype = {
     },
 
     handleMimeMessage: function (messageId) {
-        //        EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
-        EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL=, content length=, , \n");
+        //        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
+        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL=, content length=, , \n");
     },
 
     allowPort: function (port, scheme) {

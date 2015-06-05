@@ -34,11 +34,12 @@
  * ***** END LICENSE BLOCK ***** */
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 const Ec = EnigmailCommon;
 
 function enigmailEncryptionDlgLoad() {
-  Ec.DEBUG_LOG("enigmailEncryptionDlgLoad.js: Load\n");
+  Log.DEBUG("enigmailEncryptionDlgLoad.js: Load\n");
 
   // Get Enigmail service, such that e.g. the wizard can be executed
   // if needed.
@@ -117,4 +118,3 @@ function enigmailEncryptionDlgAccept () {
 
   resultObj.success = true;
 }
-

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, EnigmailFuncs: false */
+/*global Components: false, EnigmailCore: false, EnigmailFuncs: false, Log: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -41,6 +41,7 @@
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 var EXPORTED_SYMBOLS = [ "Rules" ];
 
@@ -64,14 +65,14 @@ const rulesListHolder = {
 
 const Rules = {
     getRulesFile: function() {
-        EC.DEBUG_LOG("enigmail.js: getRulesFile\n");
+        Log.DEBUG("enigmail.js: getRulesFile\n");
         var rulesFile = EC.getProfileDirectory();
         rulesFile.append("pgprules.xml");
         return rulesFile;
     },
 
     loadRulesFile: function() {
-        EC.DEBUG_LOG("enigmail.js: loadRulesFile\n");
+        Log.DEBUG("enigmail.js: loadRulesFile\n");
         var flags = NS_RDONLY;
         var rulesFile = this.getRulesFile();
         if (rulesFile.exists()) {
@@ -90,7 +91,7 @@ const Rules = {
     },
 
     saveRulesFile: function() {
-        EC.DEBUG_LOG("enigmail.js: saveRulesFile\n");
+        Log.DEBUG("enigmail.js: saveRulesFile\n");
 
         var flags = NS_WRONLY | NS_CREATE_FILE | NS_TRUNCATE;
         var domSerializer=Cc[NS_DOMSERIALIZER_CONTRACTID].createInstance(Ci.nsIDOMSerializer);
@@ -115,7 +116,7 @@ const Rules = {
     },
 
     getRulesData: function(rulesListObj) {
-        EC.DEBUG_LOG("enigmail.js: getRulesData\n");
+        Log.DEBUG("enigmail.js: getRulesData\n");
 
         var ret=true;
 
@@ -133,7 +134,7 @@ const Rules = {
     },
 
     addRule: function(appendToEnd, toAddress, keyList, sign, encrypt, pgpMime, flags) {
-        EC.DEBUG_LOG("enigmail.js: addRule\n");
+        Log.DEBUG("enigmail.js: addRule\n");
         if (! rulesListHolder.rulesList) {
             var domParser=Cc[NS_DOMPARSER_CONTRACTID].createInstance(Ci.nsIDOMParser);
             rulesListHolder.rulesList = domParser.parseFromString("<pgpRuleList/>", "text/xml");

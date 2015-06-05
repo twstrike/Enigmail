@@ -111,6 +111,7 @@
 
   Components.utils.import("resource://enigmail/enigmailCommon.jsm");
   Components.utils.import("resource://enigmail/keyManagement.jsm");
+  Components.utils.import("resource://enigmail/log.jsm");
 
   const Ec = EnigmailCommon;
   const nsIEnigmail = Components.interfaces.nsIEnigmail;
@@ -266,7 +267,7 @@
 
     onDataAvailable: function (data) {
       var ret="";
-      Ec.DEBUG_LOG("enigmailSetCardPin: changePinObserver.onDataAvailable: data="+data+"\n");
+      Log.DEBUG("enigmailSetCardPin: changePinObserver.onDataAvailable: data="+data+"\n");
       if (data.indexOf("[GNUPG:] SC_OP_FAILURE")>=0) {
         this.result = this._data;
       }
@@ -284,5 +285,3 @@
   ]]>
   </script>
 </dialog>
-
-

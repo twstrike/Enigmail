@@ -59,6 +59,7 @@
 
     Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     Components.utils.import("resource://enigmail/keyManagement.jsm");
+    Components.utils.import("resource://enigmail/log.jsm");
     const Ec = EnigmailCommon;
 
     function onLoad() {
@@ -102,7 +103,7 @@
     }
 
     function processNextKey(index) {
-      Ec.DEBUG_LOG("enigmailEditKeyTrust: processNextKey("+index+")\n");
+      Log.DEBUG("enigmailEditKeyTrust: processNextKey("+index+")\n");
 
       var t=document.getElementById("trustLevelGroup");
       EnigmailKeyMgmt.setKeyTrust(window,
@@ -160,4 +161,3 @@
     </vbox>
   </vbox>
 </dialog>
-

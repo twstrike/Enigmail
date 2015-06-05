@@ -12,6 +12,7 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/mimeVerify.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 
 const Cc = Components.classes;
@@ -39,7 +40,7 @@ var gNumProc = 0;
 
 function PgpMimeDecrypt() {
 
-  Ec.DEBUG_LOG("mimeDecrypt.js: PgpMimeDecrypt()\n");   // always log this one
+  Log.DEBUG("mimeDecrypt.js: PgpMimeDecrypt()\n");   // always log this one
   this.mimeSvc = null;
   this.initOk = false;
   this.boundary = "";
@@ -73,11 +74,11 @@ PgpMimeDecrypt.prototype = {
   onStartRequest: function(request, uri) {
     if (!Ec.getService()) // Ensure Enigmail is initialized
       return;
-    Ec.DEBUG_LOG("mimeDecrypt.js: onStartRequest\n");   // always log this one
+    Log.DEBUG("mimeDecrypt.js: onStartRequest\n");   // always log this one
 
     ++gNumProc;
     if (gNumProc > 2) {
-      Ec.DEBUG_LOG("mimeDecrypt.js: number of parallel requests above threshold - ignoring requst\n");
+      Log.DEBUG("mimeDecrypt.js: number of parallel requests above threshold - ignoring requst\n");
       return;
     }
 
@@ -103,7 +104,7 @@ PgpMimeDecrypt.prototype = {
     this.boundary = getBoundary(this.mimeSvc.contentType);
     if (uri !== null) {
       this.uri = uri.QueryInterface(Ci.nsIURI).clone();
-      Ec.DEBUG_LOG("mimeDecrypt.js: onStartRequest: uri='"+ this.uri.spec+"'\n");
+      Log.DEBUG("mimeDecrypt.js: onStartRequest: uri='"+ this.uri.spec+"'\n");
     }
     this.verifier = EnigmailVerify.newVerifier(true, this.uri, false);
     this.verifier.setMsgWindow(this.msgWindow, this.msgUriSpec);
@@ -118,7 +119,7 @@ PgpMimeDecrypt.prototype = {
       var data = this.inStream.read(count);
       // detect MIME part boundary
       if (data.indexOf(this.boundary) >= 0) {
-        DEBUG_LOG("mimeDecrypt.js: onDataAvailable: found boundary\n");
+        LOCAL_DEBUG("mimeDecrypt.js: onDataAvailable: found boundary\n");
         ++this.mimePartCount;
         this.headerMode = 1;
         return;
@@ -166,15 +167,15 @@ PgpMimeDecrypt.prototype = {
   // cache encrypted data for writing to subprocess
   cacheData: function(str) {
     if (gDebugLogLevel > 4)
-      DEBUG_LOG("mimeDecrypt.js: cacheData: "+str.length+"\n");
+      LOCAL_DEBUG("mimeDecrypt.js: cacheData: "+str.length+"\n");
 
     this.outQueue += str;
   },
 
   flushInput: function() {
-    DEBUG_LOG("mimeDecrypt.js: flushInput: "+this.outQueue.length+" bytes\n");
+    LOCAL_DEBUG("mimeDecrypt.js: flushInput: "+this.outQueue.length+" bytes\n");
     if (! this.pipe) {
-      DEBUG_LOG("mimeDecrypt.js: flushInput: no pipe\n");
+      LOCAL_DEBUG("mimeDecrypt.js: flushInput: no pipe\n");
       return;
     }
 
@@ -183,7 +184,7 @@ PgpMimeDecrypt.prototype = {
   },
 
   onStopRequest: function(request, win, status) {
-    DEBUG_LOG("mimeDecrypt.js: onStopRequest\n");
+    LOCAL_DEBUG("mimeDecrypt.js: onStopRequest\n");
     --gNumProc;
     if (! this.initOk) return;
 
@@ -248,7 +249,7 @@ PgpMimeDecrypt.prototype = {
       }
       catch(ex) {
         Ec.writeException("mimeDecrypt.js", ex);
-        Ec.DEBUG_LOG("mimeDecrypt.js: error while processing "+this.msgUriSpec+"\n");
+        Log.DEBUG("mimeDecrypt.js: error while processing "+this.msgUriSpec+"\n");
       }
     }
 
@@ -297,12 +298,12 @@ PgpMimeDecrypt.prototype = {
       this.verifier.onStopRequest();
     }
 
-    Ec.DEBUG_LOG("mimeDecrypt.js: onStopRequest: process terminated\n");  // always log this one
+    Log.DEBUG("mimeDecrypt.js: onStopRequest: process terminated\n");  // always log this one
     this.proc = null;
   },
 
   displayStatus: function() {
-    Ec.DEBUG_LOG("mimeDecrypt.js: displayStatus\n");
+    Log.DEBUG("mimeDecrypt.js: displayStatus\n");
 
     if (this.exitCode === null || this.msgWindow === null || this.statusDisplayed)
       return;
@@ -310,7 +311,7 @@ PgpMimeDecrypt.prototype = {
     let uriSpec = (this.uri ? this.uri.spec : null);
 
     try {
-      Ec.DEBUG_LOG("mimeDecrypt.js: displayStatus for uri " + uriSpec + "\n");
+      Log.DEBUG("mimeDecrypt.js: displayStatus for uri " + uriSpec + "\n");
       let headerSink = this.msgWindow.msgHeaderSink.securityInfo.QueryInterface(Ci.nsIEnigMimeHeaderSink);
 
       if (headerSink && this.uri && !this.backgroundJob) {
@@ -331,12 +332,12 @@ PgpMimeDecrypt.prototype = {
     catch(ex) {
       Ec.writeException("mimeDecrypt.js", ex);
     }
-    DEBUG_LOG("mimeDecrypt.js: displayStatus done\n");
+    LOCAL_DEBUG("mimeDecrypt.js: displayStatus done\n");
   },
 
   // API for decryptMessage Listener
   stdin: function(pipe) {
-    DEBUG_LOG("mimeDecrypt.js: stdin\n");
+    LOCAL_DEBUG("mimeDecrypt.js: stdin\n");
     if (this.outQueue.length > 0) {
       pipe.write(this.outQueue);
       this.outQueue = "";
@@ -347,21 +348,21 @@ PgpMimeDecrypt.prototype = {
 
   stdout: function(s) {
     // write data back to libmime
-    //DEBUG_LOG("mimeDecrypt.js: stdout:"+s.length+"\n");
+    //LOCAL_DEBUG("mimeDecrypt.js: stdout:"+s.length+"\n");
     this.dataLength += s.length;
     this.decryptedData += s;
   },
 
   stderr: function(s) {
-    DEBUG_LOG("mimeDecrypt.js: stderr\n");
+    LOCAL_DEBUG("mimeDecrypt.js: stderr\n");
     this.statusStr += s;
   },
 
   done: function(exitCode) {
-    DEBUG_LOG("mimeDecrypt.js: done: "+exitCode+"\n");
+    LOCAL_DEBUG("mimeDecrypt.js: done: "+exitCode+"\n");
 
     if (gDebugLogLevel > 4)
-      DEBUG_LOG("mimeDecrypt.js: done: decrypted data='"+this.decryptedData+"'\n");
+      LOCAL_DEBUG("mimeDecrypt.js: done: decrypted data='"+this.decryptedData+"'\n");
 
     // ensure newline at the end of the stream
     if (! this.decryptedData.endsWith("\n")) {
@@ -376,7 +377,7 @@ PgpMimeDecrypt.prototype = {
       var j;
       for (j in hdr) {
         if (hdr[j].search(/^\s*content-type:\s+text\/(plain|html)/i) >= 0) {
-          DEBUG_LOG("mimeDecrypt.js: done: adding multipart/mixed around "+ hdr[j]+"\n");
+          LOCAL_DEBUG("mimeDecrypt.js: done: adding multipart/mixed around "+ hdr[j]+"\n");
 
           let wrapper = Ec.createMimeBoundary();
           this.decryptedData = 'Content-Type: multipart/mixed; boundary="' + wrapper + '"\r\n\r\n'+
@@ -406,7 +407,7 @@ PgpMimeDecrypt.prototype = {
       this.mimeSvc.onDataAvailable(null, null, gConv, 0, data.length);
     }
     catch(ex) {
-      Ec.ERROR_LOG("mimeDecrypt.js: returnData(): mimeSvc.onDataAvailable failed:\n"+ex.toString());
+      Log.ERROR("mimeDecrypt.js: returnData(): mimeSvc.onDataAvailable failed:\n"+ex.toString());
     }
   },
 
@@ -440,7 +441,7 @@ PgpMimeDecrypt.prototype = {
 // General-purpose functions, not exported
 
 function getBoundary(contentType) {
-  DEBUG_LOG("mimeDecrypt.js: getBoundary: "+contentType+"\n");
+  LOCAL_DEBUG("mimeDecrypt.js: getBoundary: "+contentType+"\n");
 
   contentType = contentType.replace(/[\r\n]/g, "");
   let boundary = "";
@@ -452,13 +453,13 @@ function getBoundary(contentType) {
     }
   }
   boundary = boundary.replace(/\s*boundary\s*=/i, "").replace(/[\'\"]/g, "");
-  DEBUG_LOG("mimeDecrypt.js: getBoundary: found '"+ boundary+"'\n");
+  LOCAL_DEBUG("mimeDecrypt.js: getBoundary: found '"+ boundary+"'\n");
   return boundary;
 }
 
 
-function DEBUG_LOG(str) {
-  if (gDebugLogLevel) Ec.DEBUG_LOG(str);
+function LOCAL_DEBUG(str) {
+  if (gDebugLogLevel) Log.DEBUG(str);
 }
 
 function initModule() {

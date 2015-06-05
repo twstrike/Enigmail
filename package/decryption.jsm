@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -43,6 +43,7 @@ var EXPORTED_SYMBOLS = [ "Decryption" ];
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 const Ci = Components.interfaces;
 const nsIEnigmail = Ci.nsIEnigmail;
@@ -53,11 +54,11 @@ var Decryption = {
     decryptMessageStart: function (ecom, win, verifyOnly, noOutput, listener,
                                    statusFlagsObj, errorMsgObj, mimeSignatureFile,
                                    maxOutputLength, passphrase) {
-        ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageStart: verifyOnly="+verifyOnly+"\n");
+        Log.DEBUG("enigmailCommon.jsm: decryptMessageStart: verifyOnly="+verifyOnly+"\n");
 
         ecom.getService(win);
         if (! (ecom.enigmailSvc)) {
-            ecom.ERROR_LOG("enigmailCommon.jsm: decryptMessageStart: not yet initialized\n");
+            Log.ERROR("enigmailCommon.jsm: decryptMessageStart: not yet initialized\n");
             errorMsgObj.value = ecom.getString("notInit");
             return null;
         }
@@ -108,7 +109,7 @@ var Decryption = {
                                   listener, statusFlagsObj);
 
         if (statusFlagsObj.value & nsIEnigmail.MISSING_PASSPHRASE) {
-            ecom.ERROR_LOG("enigmailCommon.jsm: decryptMessageStart: Error - no passphrase supplied\n");
+            Log.ERROR("enigmailCommon.jsm: decryptMessageStart: Error - no passphrase supplied\n");
 
             errorMsgObj.value = ecom.getString("noPassphrase");
             return null;
@@ -120,10 +121,10 @@ var Decryption = {
 
     decryptMessageEnd: function (ecom, stderrStr, exitCode, outputLen, verifyOnly, noOutput, uiFlags, retStatusObj)
     {
-        ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: uiFlags="+uiFlags+", verifyOnly="+verifyOnly+", noOutput="+noOutput+"\n");
+        Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: uiFlags="+uiFlags+", verifyOnly="+verifyOnly+", noOutput="+noOutput+"\n");
 
         stderrStr = stderrStr.replace(/\r\n/g,"\n");
-        ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: stderrStr=\n"+stderrStr+"\n");
+        Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: stderrStr=\n"+stderrStr+"\n");
         var interactive = uiFlags & nsIEnigmail.UI_INTERACTIVE;
         var pgpMime     = uiFlags & nsIEnigmail.UI_PGP_MIME;
         var allowImport = uiFlags & nsIEnigmail.UI_ALLOW_KEY_IMPORT;
@@ -189,7 +190,7 @@ var Decryption = {
         var encToArray = [];  // collect ENC_TO lines here
 
         for (j=0; j<errLines.length; j++) {
-            ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: process: "+errLines[j]+"\n");
+            Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: process: "+errLines[j]+"\n");
 
             // ENC_TO entry
             // - collect them for later processing to print details
@@ -212,7 +213,7 @@ var Decryption = {
             matches = errLines[j].match(goodsigPat);
             if (matches && (matches.length > 2)) {
                 if (signed) {
-                    ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                    Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                 }
                 signed = true;
                 goodOrExpOrRevSignature = true;
@@ -224,7 +225,7 @@ var Decryption = {
                 matches = errLines[j].match(badsigPat);
                 if (matches && (matches.length > 2)) {
                     if (signed) {
-                        ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                        Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                     }
                     signed = true;
                     goodOrExpOrRevSignature = false;
@@ -236,7 +237,7 @@ var Decryption = {
                     matches = errLines[j].match(expsigPat);
                     if (matches && (matches.length > 2)) {
                         if (signed) {
-                            ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                            Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                         }
                         signed = true;
                         goodOrExpOrRevSignature = true;
@@ -248,7 +249,7 @@ var Decryption = {
                         matches = errLines[j].match(expkeysigPat);
                         if (matches && (matches.length > 2)) {
                             if (signed) {
-                                ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                                Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                             }
                             signed = true;
                             goodOrExpOrRevSignature = true;
@@ -260,7 +261,7 @@ var Decryption = {
                             matches = errLines[j].match(revkeysigPat);
                             if (matches && (matches.length > 2)) {
                                 if (signed) {
-                                    ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                                    Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                                 }
                                 signed = true;
                                 goodOrExpOrRevSignature = true;
@@ -272,7 +273,7 @@ var Decryption = {
                                 matches = errLines[j].match(errsigPat);
                                 if (matches && (matches.length > 2)) {
                                     if (signed) {
-                                        ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                                        Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                                     }
                                     signed = true;
                                     goodOrExpOrRevSignature = false;
@@ -391,7 +392,7 @@ var Decryption = {
 
         if (exitCode !== 0) {
             // Error processing
-            ecom.DEBUG_LOG("enigmailCommon.jsm: decryptMessageEnd: command execution exit code: "+exitCode+"\n");
+            Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: command execution exit code: "+exitCode+"\n");
         }
 
         return exitCode;
@@ -401,7 +402,7 @@ var Decryption = {
                               signatureObj, exitCodeObj,
                               statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
                               blockSeparationObj, encToDetailsObj, passphrase) {
-        EC.DEBUG_LOG("enigmail.js: Enigmail.decryptMessage: "+cipherText.length+" bytes, "+uiFlags+"\n");
+        Log.DEBUG("enigmail.js: Enigmail.decryptMessage: "+cipherText.length+" bytes, "+uiFlags+"\n");
 
         if (! cipherText)
             return "";
@@ -411,7 +412,7 @@ var Decryption = {
         var unverifiedEncryptedOK = uiFlags & nsIEnigmail.UI_UNVERIFIED_ENC_OK;
         var oldSignature = signatureObj.value;
 
-        EC.DEBUG_LOG("enigmail.js: Enigmail.decryptMessage: oldSignature="+oldSignature+"\n");
+        Log.DEBUG("enigmail.js: Enigmail.decryptMessage: oldSignature="+oldSignature+"\n");
 
         signatureObj.value   = "";
         exitCodeObj.value    = -1;
@@ -453,7 +454,7 @@ var Decryption = {
 
         // HACK to better support messages from Outlook: if there are empty lines, drop them
         if (pgpBlock.search(/MESSAGE-----\r?\n\r?\nVersion/) >=0) {
-            EC.DEBUG_LOG("enigmail.js: Enigmail.decryptMessage: apply Outlook empty line workaround\n");
+            Log.DEBUG("enigmail.js: Enigmail.decryptMessage: apply Outlook empty line workaround\n");
             pgpBlock = pgpBlock.replace( /\r?\n\r?\n/g, "\n" );
         }
 
@@ -487,7 +488,7 @@ var Decryption = {
                                                      nsIEnigmail.SIGNATURE_ARMOR);
 
             if (oldSignature && (newSignature != oldSignature)) {
-                EC.ERROR_LOG("enigmail.js: Enigmail.decryptMessage: Error - signature mismatch "+newSignature+"\n");
+                Log.ERROR("enigmail.js: Enigmail.decryptMessage: Error - signature mismatch "+newSignature+"\n");
                 errorMsgObj.value = EC.getString("sigMismatch");
                 statusFlagsObj.value |= nsIEnigmail.DISPLAY_MESSAGE;
 
@@ -600,7 +601,7 @@ var Decryption = {
                     innerKeyBlock = innerKeyBlock.replace(/- -----/g, "-----");
 
                     statusFlagsObj.value |= nsIEnigmail.INLINE_KEY;
-                    EC.DEBUG_LOG("enigmail.js: Enigmail.decryptMessage: innerKeyBlock found\n");
+                    Log.DEBUG("enigmail.js: Enigmail.decryptMessage: innerKeyBlock found\n");
                 }
             }
 

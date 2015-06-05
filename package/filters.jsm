@@ -1,4 +1,4 @@
-/*global Components: false, enigmailDecryptPermanently: false, EnigmailCore: false  */
+/*global Components: false, enigmailDecryptPermanently: false, EnigmailCore: false, Log: false  */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -43,6 +43,7 @@ var EXPORTED_SYMBOLS = [ "Filters" ];
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/enigmailConvert.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -91,7 +92,7 @@ function dispatchMessages(aMsgHdrs, targetFolder, move, requireSync) {
         else {
             // last message was finished processing
             done = true;
-            EC.DEBUG_LOG("enigmail.js: dispatchMessage: exit nested loop\n");
+            Log.DEBUG("enigmail.js: dispatchMessage: exit nested loop\n");
             inspector.exitNestedEventLoop();
         }
     };
@@ -99,14 +100,14 @@ function dispatchMessages(aMsgHdrs, targetFolder, move, requireSync) {
     promise.then(processNext);
 
     promise.catch(function(err) {
-        EC.ERROR_LOG("enigmail.js: dispatchMessage: caught error: "+err+"\n");
+        Log.ERROR("enigmail.js: dispatchMessage: caught error: "+err+"\n");
         processNext(null);
     });
 
     if (requireSync && ! done) {
         // wait here until all messages processed, such that the function returns
         // synchronously
-        EC.DEBUG_LOG("enigmail.js: dispatchMessage: enter nested loop\n");
+        Log.DEBUG("enigmail.js: dispatchMessage: enter nested loop\n");
         inspector.enterNestedEventLoop({value : 0});
     }
 }
@@ -122,7 +123,7 @@ const filterActionMoveDecrypt = {
     value: "movemessage",
     apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
 
-        EC.DEBUG_LOG("enigmail.js: filterActionMoveDecrypt: Move to: " + aActionValue + "\n");
+        Log.DEBUG("enigmail.js: filterActionMoveDecrypt: Move to: " + aActionValue + "\n");
 
         var msgHdrs = [];
 
@@ -163,7 +164,7 @@ const filterActionCopyDecrypt = {
     name: EC.getString("filter.decryptCopy.label"),
     value: "copymessage",
     apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
-        ensuredEc().DEBUG_LOG("enigmail.js: filterActionCopyDecrypt: Copy to: " + aActionValue + "\n");
+        Log.DEBUG("enigmail.js: filterActionCopyDecrypt: Copy to: " + aActionValue + "\n");
 
         var msgHdrs = [];
 

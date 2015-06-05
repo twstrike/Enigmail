@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false */
+/*global Components: false, EnigmailCommon: false, Log: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -39,7 +39,7 @@
  * Enigmail Core:
  * this file serves to be included by other components in Enigmail;
  * it should not import anything from other Enigmail modules, except
- * pipeConsole!
+ * log!
  */
 
 /*
@@ -47,8 +47,7 @@
  * 'Components.utils.import("resource://enigmail/enigmailCore.jsm");'
  */
 
-Components.utils.import("resource://enigmail/pipeConsole.jsm");
-
+Components.utils.import("resource://enigmail/log.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCore" ];
 
@@ -62,33 +61,17 @@ const ENIG_EXTENSION_GUID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
 const THUNDERBIRD_ID = "{3550f703-e582-4d05-9a08-453d09bdfdc6}";
 const SEAMONKEY_ID   = "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}";
 
-const NS_LOCAL_FILE_CONTRACTID = "@mozilla.org/file/local;1";
-const NS_LOCALFILEOUTPUTSTREAM_CONTRACTID =
-                              "@mozilla.org/network/file-output-stream;1";
 
 const NS_IOSERVICE_CONTRACTID       = "@mozilla.org/network/io-service;1";
 const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
 const NS_SCRIPTABLEINPUTSTREAM_CONTRACTID = "@mozilla.org/scriptableinputstream;1";
 
-const NS_RDONLY      = 0x01;
-const NS_WRONLY      = 0x02;
-const NS_CREATE_FILE = 0x08;
-const NS_TRUNCATE    = 0x20;
-const DEFAULT_FILE_PERMS = 0x180; // equals 0600
-
 const ENIGMAIL_PREFS_ROOT = "extensions.enigmail.";
-
-var gLogLevel = 3;
-
-var gLogData = null;
 
 var gEnigmailSvc = null;      // Global Enigmail Service
 var gEnigmailCommon = null;      // Global Enigmail Common instance, to avoid circular dependencies
 
 var EnigmailCore = {
-
-  _logDirectory: null,
-  _logFileStream: null,
   enigStringBundle: null,
   prefService: null,
   prefBranch: null,
@@ -97,31 +80,6 @@ var EnigmailCore = {
 
   init: function(enigmailVersion) {
     this.version = enigmailVersion;
-  },
-
-  setLogLevel: function(newLogLevel) {
-    gLogLevel = newLogLevel;
-  },
-
-  getLogLevel: function() {
-    return gLogLevel;
-  },
-
-  setLogDirectory: function(newLogDirectory) {
-    this._logDirectory = newLogDirectory + (this.isDosLike() ? "\\" : "/");
-
-    this.createLogFiles();
-  },
-
-  createLogFiles: function() {
-    if (this._logDirectory && (! this._logFileStream) && gLogLevel >= 5) {
-      this._logFileStream = this.createFileStream(this._logDirectory+"enigdbug.txt");
-    }
-  },
-
-  onShutdown: function() {
-    if (this._logFileStream) this._logFileStream.close();
-    this._logFileStream = null;
   },
 
   getOS: function () {
@@ -136,115 +94,8 @@ var EnigmailCore = {
     return this.isDosLikeVal;
   },
 
-  isSuite: function () {
-    // return true if Seamonkey, false otherwise
-    var xulAppinfo = Cc[XPCOM_APPINFO].getService(Ci.nsIXULAppInfo);
-    return (xulAppinfo.ID == SEAMONKEY_ID);
-  },
-
-  WRITE_LOG: function (str)
-  {
-    function f00(val, digits) {
-      return ("0000"+val.toString()).substr(-digits);
-    }
-
-    var d = new Date();
-    var datStr=d.getFullYear()+"-"+f00(d.getMonth()+1, 2)+"-"+f00(d.getDate(),2)+" "+f00(d.getHours(),2)+":"+f00(d.getMinutes(),2)+":"+f00(d.getSeconds(),2)+"."+f00(d.getMilliseconds(),3)+" ";
-    if (gLogLevel >= 4)
-      dump(datStr+str);
-
-    if (gLogData === null) {
-      gLogData = "";
-      this.WRITE_LOG("Mozilla Platform: "+ this.getAppName()+" "+ this.getAppVersion() + "\n");
-    }
-    // truncate first part of log data if it grow too much
-    if (gLogData.length > 5120000) {
-      gLogData = gLogData.substr(-400000);
-    }
-
-    gLogData += datStr + str;
-
-    if (this._logFileStream) {
-      this._logFileStream.write(datStr, datStr.length);
-      this._logFileStream.write(str, str.length);
-    }
-  },
-
-  DEBUG_LOG: function (str)
-  {
-    this.WRITE_LOG("[DEBUG] "+str);
-  },
-
-  WARNING_LOG: function (str)
-  {
-    this.WRITE_LOG("[WARN] "+str);
-
-    EnigmailConsole.write(str);
-  },
-
-  ERROR_LOG: function (str)
-  {
-    try {
-      var consoleSvc = Cc["@mozilla.org/consoleservice;1"].
-          getService(Ci.nsIConsoleService);
-
-      var scriptError = Cc["@mozilla.org/scripterror;1"]
-                                  .createInstance(Ci.nsIScriptError);
-      scriptError.init(str, null, null, 0,
-                       0, scriptError.errorFlag, "Enigmail");
-      consoleSvc.logMessage(scriptError);
-
-    }
-    catch (ex) {}
-
-    this.WRITE_LOG("[ERROR] "+str);
-  },
-
-  CONSOLE_LOG: function (str)
-  {
-    if (gLogLevel >= 3)
-      this.WRITE_LOG("[CONSOLE] "+str);
-
-    EnigmailConsole.write(str);
-  },
-
-  getLogFileStream: function() {
-    return this._logFileStream;
-  },
-
   getLogData: function() {
-
-    let ioServ = Cc[NS_IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
-
-    let oscpu = "";
-    let platform = "";
-
-    try {
-      let httpHandler = ioServ.getProtocolHandler("http");
-      httpHandler = httpHandler.QueryInterface(Ci.nsIHttpProtocolHandler);
-      oscpu = httpHandler.oscpu;
-      platform = httpHandler.platform;
-    }
-    catch (ex) {
-    }
-
-
-
-    let data = "Enigmail version "+this.version+"\n" +
-      "OS/CPU="+oscpu+"\n" +
-      "Platform="+platform+"\n" +
-      "Non-default preference values:\n";
-
-    let p = this.prefBranch.getChildList("");
-
-    for (let i in p) {
-      if (this.prefBranch.prefHasUserValue(p[i])) {
-        data += p[i] +": "+ this.getPref(p[i])+"\n";
-      }
-    }
-
-    return data +"\n" + gLogData;
-
+      return Log.getLogData(EnigmailCore);
   },
 
   // retrieves a localized string from the enigmail.properties stringbundle
@@ -258,7 +109,7 @@ var EnigmailCore = {
         this.enigStringBundle = strBundleService.createBundle("chrome://enigmail/locale/enigmail.properties");
       }
       catch (ex) {
-        this.ERROR_LOG("enigmailCore.jsm: Error in instantiating stringBundleService\n");
+        Log.ERROR("enigmailCore.jsm: Error in instantiating stringBundleService\n");
       }
     }
 
@@ -276,48 +127,10 @@ var EnigmailCore = {
         }
       }
       catch (ex) {
-        this.ERROR_LOG("enigmailCore.jsm: Error in querying stringBundleService for string '"+aStr+"'\n");
+        Log.ERROR("enigmailCore.jsm: Error in querying stringBundleService for string '"+aStr+"'\n");
       }
     }
     return aStr;
-  },
-
-  createFileStream: function(filePath, permissions) {
-
-    try {
-      var localFile;
-      if (typeof filePath == "string") {
-        localFile = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-        EnigmailCore.initPath(localFile, filePath);
-      }
-      else {
-        localFile = filePath.QueryInterface(Ci.nsIFile);
-      }
-
-      if (localFile.exists()) {
-
-        if (localFile.isDirectory() || !localFile.isWritable())
-           throw Components.results.NS_ERROR_FAILURE;
-
-        if (!permissions)
-          permissions = localFile.permissions;
-      }
-
-      if (!permissions)
-        permissions = DEFAULT_FILE_PERMS;
-
-      var flags = NS_WRONLY | NS_CREATE_FILE | NS_TRUNCATE;
-
-      var fileStream = Cc[NS_LOCALFILEOUTPUTSTREAM_CONTRACTID].createInstance(Ci.nsIFileOutputStream);
-
-      fileStream.init(localFile, flags, permissions, 0);
-
-      return fileStream;
-
-    } catch (ex) {
-      this.ERROR_LOG("enigmailCore.jsm: createFileStream: Failed to create "+filePath+"\n");
-      return null;
-    }
   },
 
   printCmdLine: function (command, args) {
@@ -355,12 +168,12 @@ var EnigmailCore = {
       this.prefBranch      = this.prefService.getBranch(ENIGMAIL_PREFS_ROOT);
 
       if (this.prefBranch.getCharPref("logDirectory"))
-        gLogLevel = 5;
+        Log.setLogLevel = 5;
 
     }
     catch (ex) {
-      this.ERROR_LOG("enigmailCore.jsm: Error in instantiating PrefService\n");
-      this.ERROR_LOG(ex.toString());
+      Log.ERROR("enigmailCore.jsm: Error in instantiating PrefService\n");
+      Log.ERROR(ex.toString());
     }
   },
 
@@ -400,7 +213,7 @@ var EnigmailCore = {
 
    } catch (ex) {
       // Failed to get pref value
-      this.ERROR_LOG("enigmailCommon.jsm: getPref: unknown prefName:"+prefName+" \n");
+      Log.ERROR("enigmailCommon.jsm: getPref: unknown prefName:"+prefName+" \n");
    }
 
    return prefValue;
@@ -416,7 +229,7 @@ var EnigmailCore = {
    */
   setPref: function (prefName, value)
   {
-     this.DEBUG_LOG("enigmailCommon.jsm: setPref: "+prefName+", "+value+"\n");
+     Log.DEBUG("enigmailCommon.jsm: setPref: "+prefName+", "+value+"\n");
 
      if (! this.prefBranch) {
        this.initPrefService();
@@ -478,16 +291,6 @@ var EnigmailCore = {
 
     return xulAppinfo.name;
   },
-
-  /**
-   * Plattform application version
-   */
-  getAppVersion: function() {
-    var xulAppinfo = Cc[XPCOM_APPINFO].getService(Ci.nsIXULAppInfo);
-
-    return xulAppinfo.version;
-  },
-
 
   /**
    * Return the directory holding the current profile as nsIFile object
@@ -553,16 +356,5 @@ var EnigmailCore = {
             return fileContents;
         }
         return "";
-    },
-
-    // path initialization function
-    // uses persistentDescriptor in case that initWithPath fails
-    // (seems to happen frequently with UTF-8 characters in path names)
-    initPath: function(localFileObj, pathStr) {
-        localFileObj.initWithPath(pathStr);
-
-        if (! localFileObj.exists()) {
-            localFileObj.persistentDescriptor = pathStr;
-        }
     }
 };

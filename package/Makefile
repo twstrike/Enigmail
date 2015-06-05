@@ -44,6 +44,7 @@ MODFILES = \
            filters.jsm \
            files.jsm \
            armor.jsm \
+           log.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \
            mimeVerify.jsm

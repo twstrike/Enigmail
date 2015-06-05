@@ -50,6 +50,7 @@ Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm");
 Components.utils.import("resource://enigmail/encryption.jsm");
 Components.utils.import("resource://enigmail/decryption.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -139,6 +140,8 @@ const gMimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha
 // various global variables
 var gKeygenProcess = null;
 
+const EC = EnigmailCore;
+
 var EnigmailCommon = {
 
   // "constants"
@@ -207,7 +210,7 @@ var EnigmailCommon = {
       this.enigmailSvc = Cc[this.ENIGMAIL_CONTRACTID].createInstance(Ci.nsIEnigmail);
     }
     catch (ex) {
-      this.ERROR_LOG("enigmailCommon.jsm: Error in instantiating EnigmailService: "+ex+"\n");
+      Log.ERROR("enigmailCommon.jsm: Error in instantiating EnigmailService: "+ex+"\n");
       return null;
     }
 
@@ -215,7 +218,7 @@ var EnigmailCommon = {
       win = this.getBestParentWin();
     }
 
-    this.DEBUG_LOG("enigmailCommon.jsm: this.enigmailSvc = "+this.enigmailSvc+"\n");
+    Log.DEBUG("enigmailCommon.jsm: this.enigmailSvc = "+this.enigmailSvc+"\n");
 
     if (!this.enigmailSvc.initialized) {
       // Initialize enigmail
@@ -268,7 +271,7 @@ var EnigmailCommon = {
 
       var configuredVersion = this.getPref("configuredVersion");
 
-      this.DEBUG_LOG("enigmailCommon.jsm: getService: "+configuredVersion+"\n");
+      Log.DEBUG("enigmailCommon.jsm: getService: "+configuredVersion+"\n");
 
       if (firstInitialization && this.enigmailSvc.initialized &&
           this.enigmailSvc.agentType && this.enigmailSvc.agentType == "pgp") {
@@ -292,11 +295,11 @@ var EnigmailCommon = {
    */
   getVersion: function()
   {
-    this.DEBUG_LOG("enigmailCommon.jsm: getVersion\n");
+    Log.DEBUG("enigmailCommon.jsm: getVersion\n");
 
     var addonVersion = gEnigExtensionVersion;
 
-    this.DEBUG_LOG("enigmailCommon.jsm: installed version: "+addonVersion+"\n");
+    Log.DEBUG("enigmailCommon.jsm: installed version: "+addonVersion+"\n");
     return addonVersion;
   },
 
@@ -324,7 +327,7 @@ var EnigmailCommon = {
    */
   savePrefs: function ()
   {
-    this.DEBUG_LOG("enigmailCommon.js: savePrefs\n");
+    Log.DEBUG("enigmailCommon.js: savePrefs\n");
     try {
       EnigmailCore.prefService.savePrefFile(null);
     }
@@ -715,7 +718,7 @@ var EnigmailCommon = {
    */
   getFrame: function(win, frameName)
   {
-    this.DEBUG_LOG("enigmailCommon.jsm: getFrame: name="+frameName+"\n");
+    Log.DEBUG("enigmailCommon.jsm: getFrame: name="+frameName+"\n");
     for (var j=0; j<win.frames.length; j++) {
       if (win.frames[j].name == frameName) {
         return win.frames[j];
@@ -796,7 +799,7 @@ var EnigmailCommon = {
    */
   filePicker: function (win, title, displayDir, save, defaultExtension, defaultName, filterPairs)
   {
-    this.DEBUG_LOG("enigmailCommon.jsm: filePicker: "+save+"\n");
+    Log.DEBUG("enigmailCommon.jsm: filePicker: "+save+"\n");
 
     var filePicker = Cc["@mozilla.org/filepicker;1"].createInstance();
     filePicker = filePicker.QueryInterface(Ci.nsIFilePicker);
@@ -925,7 +928,7 @@ var EnigmailCommon = {
    */
   newStringStreamListener: function (onStopCallback)
   {
-    this.DEBUG_LOG("enigmailCommon.jsm: newStreamListener\n");
+    Log.DEBUG("enigmailCommon.jsm: newStreamListener\n");
 
     var simpleStreamListener = {
       data: "",
@@ -935,12 +938,12 @@ var EnigmailCommon = {
 
       onStartRequest: function (channel, ctxt)
       {
-        // EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: stringListener.onStartRequest\n");
+        // Log.DEBUG("enigmailCommon.jsm: stringListener.onStartRequest\n");
       },
 
       onStopRequest: function (channel, ctxt, status)
       {
-        // EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: stringListener.onStopRequest: "+ctxt+"\n");
+        // Log.DEBUG("enigmailCommon.jsm: stringListener.onStopRequest: "+ctxt+"\n");
         this.inStream = null;
         var cbFunc = this._onStopCallback;
         var cbData = this.data;
@@ -953,7 +956,7 @@ var EnigmailCommon = {
       onDataAvailable: function(req, sup, stream, offset, count)
       {
         // get data from stream
-        // EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: stringListener.onDataAvailable: "+count+"\n");
+        // Log.DEBUG("enigmailCommon.jsm: stringListener.onDataAvailable: "+count+"\n");
         this.inStream.setInputStream(stream);
         this.data += this.inStream.readBytes(count);
       }
@@ -993,12 +996,12 @@ var EnigmailCommon = {
 
       onStartRequest: function (channel, ctxt)
       {
-        EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: requestObserver.onStartRequest\n");
+        Log.DEBUG("enigmailCommon.jsm: requestObserver.onStartRequest\n");
       },
 
       onStopRequest: function (channel, ctxt, status)
       {
-        EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: requestObserver.onStopRequest: "+ctxt+"\n");
+        Log.DEBUG("enigmailCommon.jsm: requestObserver.onStopRequest: "+ctxt+"\n");
         EnigmailCommon.dispatchEvent(this._terminateFunc, 0, [ this._terminateArg ]);
       }
     };
@@ -1014,7 +1017,7 @@ var EnigmailCommon = {
    */
   writeException: function (referenceInfo, ex)
   {
-    this.ERROR_LOG(referenceInfo+": caught exception: " +
+    Log.ERROR(referenceInfo+": caught exception: " +
                    ex.name+"\n" +
                    "Message: '"+ex.message+"'\n" +
                    "File:    "+ex.fileName+"\n" +
@@ -1022,22 +1025,15 @@ var EnigmailCommon = {
                    "Stack:   "+ex.stack+"\n");
   },
 
-
-  WRITE_LOG: EnigmailCore.WRITE_LOG.bind(EnigmailCore),
-
-  DEBUG_LOG: EnigmailCore.DEBUG_LOG.bind(EnigmailCore),
-
-  WARNING_LOG: EnigmailCore.WARNING_LOG.bind(EnigmailCore),
-
-  ERROR_LOG: EnigmailCore.ERROR_LOG.bind(EnigmailCore),
-
-  CONSOLE_LOG: EnigmailCore.CONSOLE_LOG.bind(EnigmailCore),
-
   getString: EnigmailCore.getString.bind(EnigmailCore),
 
   getOS: EnigmailCore.getOS.bind(EnigmailCore),
 
-  isSuite: EnigmailCore.isSuite.bind(EnigmailCore),
+  isSuite: function () {
+    // return true if Seamonkey, false otherwise
+    var xulAppinfo = Cc[XPCOM_APPINFO].getService(Ci.nsIXULAppInfo);
+    return (xulAppinfo.ID == SEAMONKEY_ID);
+  },
 
 
   /***
@@ -1063,7 +1059,7 @@ var EnigmailCommon = {
 
   convertToUnicode: function (text, charset)
   {
-    //this.DEBUG_LOG("enigmailCommon.jsm: convertToUnicode: "+charset+"\n");
+    //Log.DEBUG("enigmailCommon.jsm: convertToUnicode: "+charset+"\n");
 
     if (!text || (charset && (charset.toLowerCase() == "iso-8859-1")))
       return text;
@@ -1092,7 +1088,7 @@ var EnigmailCommon = {
    * @return: converted text
    */
   convertFromUnicode: function (text, charset) {
-    //this.DEBUG_LOG("enigmailCommon.jsm: convertFromUnicode: "+charset+"\n");
+    //Log.DEBUG("enigmailCommon.jsm: convertFromUnicode: "+charset+"\n");
 
     if (!text)
       return "";
@@ -1107,7 +1103,7 @@ var EnigmailCommon = {
       return unicodeConv.ConvertFromUnicode(text);
 
     } catch (ex) {
-      this.DEBUG_LOG("enigmailCommon.jsm: convertFromUnicode: caught an exception\n");
+      Log.DEBUG("enigmailCommon.jsm: convertFromUnicode: caught an exception\n");
 
       return text;
     }
@@ -1195,8 +1191,6 @@ var EnigmailCommon = {
     return hex;
   },
 
-  getLogLevel: EnigmailCore.getLogLevel.bind(EnigmailCore),
-
   /**
    * initialize this module
    */
@@ -1233,7 +1227,7 @@ var EnigmailCommon = {
 
   dispatchEvent: function (callbackFunction, sleepTimeMs, arrayOfArgs)
   {
-    this.DEBUG_LOG("enigmailCommon.jsm: dispatchEvent f="+callbackFunction.name+"\n");
+    Log.DEBUG("enigmailCommon.jsm: dispatchEvent f="+callbackFunction.name+"\n");
 
     // object for dispatching callback back to main thread
     var mainEvent = function(cbFunc, arrayOfArgs) {
@@ -1252,13 +1246,13 @@ var EnigmailCommon = {
 
       run: function()
       {
-        EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: dispatchEvent running mainEvent\n");
+        Log.DEBUG("enigmailCommon.jsm: dispatchEvent running mainEvent\n");
         this.cbFunc(this.args);
       },
 
       notify: function()
       {
-        EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: dispatchEvent got notified\n");
+        Log.DEBUG("enigmailCommon.jsm: dispatchEvent got notified\n");
         this.cbFunc(this.args);
       }
 
@@ -1287,7 +1281,7 @@ var EnigmailCommon = {
    */
 
   rememberEncryptedUri: function (uri) {
-    this.DEBUG_LOG("enigmailCommon.jsm: rememberEncryptedUri: uri="+uri+"\n");
+    Log.DEBUG("enigmailCommon.jsm: rememberEncryptedUri: uri="+uri+"\n");
     if (gEncryptedUris.indexOf(uri) < 0)
       gEncryptedUris.push(uri);
   },
@@ -1301,7 +1295,7 @@ var EnigmailCommon = {
    */
 
   forgetEncryptedUri: function (uri) {
-    this.DEBUG_LOG("enigmailCommon.jsm: forgetEncryptedUri: uri="+uri+"\n");
+    Log.DEBUG("enigmailCommon.jsm: forgetEncryptedUri: uri="+uri+"\n");
     var pos = gEncryptedUris.indexOf(uri);
     if (pos >= 0) {
       gEncryptedUris.splice(pos, 1);
@@ -1317,7 +1311,7 @@ var EnigmailCommon = {
    */
 
   isEncryptedUri: function (uri) {
-    this.DEBUG_LOG("enigmailCommon.jsm: isEncryptedUri: uri="+uri+"\n");
+    Log.DEBUG("enigmailCommon.jsm: isEncryptedUri: uri="+uri+"\n");
     return gEncryptedUris.indexOf(uri) >= 0;
   },
 
@@ -1442,18 +1436,18 @@ var EnigmailCommon = {
     if (exitCode !== 0) {
       if ((statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) &&
           (statusFlags & nsIEnigmail.DECRYPTION_OKAY )) {
-        this.DEBUG_LOG("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode for decrypted msg "+exitCode+"->0\n");
+        Log.DEBUG("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode for decrypted msg "+exitCode+"->0\n");
         exitCode = 0;
       }
     }
 
     if ((this.enigmailSvc.agentType == "gpg") && (exitCode == 256) && (this.getOS() == "WINNT")) {
-      this.WARNING_LOG("enigmailCommon.jsm: Enigmail.fixExitCode: Using gpg and exit code is 256. You seem to use cygwin-gpg, activating countermeasures.\n");
+      Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Using gpg and exit code is 256. You seem to use cygwin-gpg, activating countermeasures.\n");
       if (statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) {
-        this.WARNING_LOG("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->2\n");
+        Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->2\n");
         exitCode = 2;
       } else {
-        this.WARNING_LOG("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->0\n");
+        Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->0\n");
         exitCode = 0;
       }
     }
@@ -1481,7 +1475,7 @@ var EnigmailCommon = {
    */
   generateKey: function (parent, name, comment, email, expiryDate, keyLength, keyType,
             passphrase, listener) {
-    this.WRITE_LOG("enigmailCommon.jsm: generateKey:\n");
+    Log.WRITE("enigmailCommon.jsm: generateKey:\n");
 
     if (gKeygenProcess) {
       // key generation already ongoing
@@ -1491,7 +1485,7 @@ var EnigmailCommon = {
     var args = this.getAgentArgs(true);
     args.push("--gen-key");
 
-    this.CONSOLE_LOG(this.printCmdLine(this.enigmailSvc.agentPath, args));
+    Log.CONSOLE(this.printCmdLine(this.enigmailSvc.agentPath, args));
 
     var inputData = "%echo Generating key\nKey-Type: ";
 
@@ -1515,7 +1509,7 @@ var EnigmailCommon = {
     inputData += "Name-Email: "+email+"\n";
     inputData += "Expire-Date: "+String(expiryDate)+"\n";
 
-    this.CONSOLE_LOG(inputData+" \n");
+    Log.CONSOLE(inputData+" \n");
 
     if (passphrase.length)
       inputData += "Passphrase: "+passphrase+"\n";
@@ -1551,13 +1545,13 @@ var EnigmailCommon = {
         mergeStderr: false
       });
     } catch (ex) {
-      this.ERROR_LOG("enigmailCommon.jsm: generateKey: subprocess.call failed with '"+ex.toString()+"'\n");
+      Log.ERROR("enigmailCommon.jsm: generateKey: subprocess.call failed with '"+ex.toString()+"'\n");
       throw ex;
     }
 
     gKeygenProcess = proc;
 
-    this.DEBUG_LOG("enigmailCommon.jsm: generateKey: subprocess = "+proc+"\n");
+    Log.DEBUG("enigmailCommon.jsm: generateKey: subprocess = "+proc+"\n");
 
     return proc;
   },
@@ -1582,7 +1576,7 @@ var EnigmailCommon = {
    */
   newStringChannel: function(uri, contentType, contentCharset, data)
   {
-    this.DEBUG_LOG("enigmailCommon.jsm: newStringChannel\n");
+    Log.DEBUG("enigmailCommon.jsm: newStringChannel\n");
 
     var inputStream = Cc[NS_STRING_INPUT_STREAM_CONTRACTID].createInstance(Ci.nsIStringInputStream);
     inputStream.setData(data, -1);
@@ -1605,7 +1599,7 @@ var EnigmailCommon = {
     if (contentType && contentType.length) chan.contentType = contentType;
     if (contentCharset && contentCharset.length) chan.contentCharset = contentCharset;
 
-    this.DEBUG_LOG("enigmailCommon.jsm: newStringChannel - done\n");
+    Log.DEBUG("enigmailCommon.jsm: newStringChannel - done\n");
 
     return chan;
   },
@@ -1796,10 +1790,10 @@ var EnigmailCommon = {
    * @return:      Subprocess object, or null in case process could not be started
    */
   keyserverAccess: function (actionFlags, keyserver, searchTerms, listener, errorMsgObj) {
-    this.DEBUG_LOG("enigmailCommon.jsm: keyserverAccess: "+searchTerms+"\n");
+    Log.DEBUG("enigmailCommon.jsm: keyserverAccess: "+searchTerms+"\n");
 
     if (! (this.enigmailSvc && this.enigmailSvc.initialized)) {
-      this.ERROR_LOG("enigmailCommon.jsm: keyserverAccess: not yet initialized\n");
+      Log.ERROR("enigmailCommon.jsm: keyserverAccess: not yet initialized\n");
       errorMsgObj.value = this.getString("notInit");
       return null;
     }
@@ -1852,7 +1846,7 @@ var EnigmailCommon = {
 
     var isDownload = actionFlags & (nsIEnigmail.REFRESH_KEY | nsIEnigmail.DOWNLOAD_KEY);
 
-    this.CONSOLE_LOG("enigmail> "+this.printCmdLine(this.enigmailSvc.agentPath, args)+"\n");
+    Log.CONSOLE("enigmail> "+this.printCmdLine(this.enigmailSvc.agentPath, args)+"\n");
 
     var proc = null;
     var self = this;
@@ -1892,12 +1886,12 @@ var EnigmailCommon = {
       });
     }
     catch (ex) {
-      this.ERROR_LOG("enigmailCommon.jsm: keyserverAccess: subprocess.call failed with '"+ex.toString()+"'\n");
+      Log.ERROR("enigmailCommon.jsm: keyserverAccess: subprocess.call failed with '"+ex.toString()+"'\n");
       throw ex;
     }
 
     if (!proc) {
-      this.ERROR_LOG("enigmailCommon.jsm: keyserverAccess: subprocess failed due to unknown reasons\n");
+      Log.ERROR("enigmailCommon.jsm: keyserverAccess: subprocess failed due to unknown reasons\n");
       return null;
     }
 
@@ -1911,7 +1905,7 @@ var EnigmailCommon = {
    */
 
   recalcTrustDb: function() {
-    this.DEBUG_LOG("enigmailCommon.jsm: recalcTrustDb:\n");
+    Log.DEBUG("enigmailCommon.jsm: recalcTrustDb:\n");
 
     let command = this.agentPath;
     let args = this.getAgentArgs(false);
@@ -1928,7 +1922,7 @@ var EnigmailCommon = {
       proc.wait();
     }
     catch (ex) {
-      this.ERROR_LOG("enigmailCommon.jsm: recalcTrustDb: subprocess.call failed with '"+ex.toString()+"'\n");
+      Log.ERROR("enigmailCommon.jsm: recalcTrustDb: subprocess.call failed with '"+ex.toString()+"'\n");
       throw ex;
     }
   },
@@ -2005,7 +1999,7 @@ var EnigmailCommon = {
     var matchb = statusMsg.match(/(^|\n)NO_PUBKEY (\w{8})(\w{8})/);
 
     if (matchb && (matchb.length > 3)) {
-      this.DEBUG_LOG("enigmailCommon.jsm:: Enigmail.extractPubkey: NO_PUBKEY 0x"+matchb[3]+"\n");
+      Log.DEBUG("enigmailCommon.jsm:: Enigmail.extractPubkey: NO_PUBKEY 0x"+matchb[3]+"\n");
       keyId = matchb[2]+matchb[3];
     }
 
@@ -2040,7 +2034,7 @@ var EnigmailCommon = {
    * @return:         handle to suprocess
    */
   execStart: function (command, args, needPassphrase, domWindow, listener, statusFlagsObj) {
-    this.WRITE_LOG("enigmailCommon.jsm: execStart: command = "+this.printCmdLine(command, args)+", needPassphrase="+needPassphrase+", domWindow="+domWindow+", listener="+listener+"\n");
+    Log.WRITE("enigmailCommon.jsm: execStart: command = "+this.printCmdLine(command, args)+", needPassphrase="+needPassphrase+", domWindow="+domWindow+", listener="+listener+"\n");
 
     if (! listener) listener = {};
 
@@ -2050,7 +2044,7 @@ var EnigmailCommon = {
 
     listener.command = command;
 
-    this.CONSOLE_LOG("enigmail> "+this.printCmdLine(command, args)+"\n");
+    Log.CONSOLE("enigmail> "+this.printCmdLine(command, args)+"\n");
 
     try {
       proc = subprocess.call({
@@ -2075,11 +2069,11 @@ var EnigmailCommon = {
         mergeStderr: false
       });
     } catch (ex) {
-      this.ERROR_LOG("enigmailCommon.jsm: execStart: subprocess.call failed with '"+ex.toString()+"'\n");
-      this.DEBUG_LOG("  enigmail> DONE with FAILURE\n");
+      Log.ERROR("enigmailCommon.jsm: execStart: subprocess.call failed with '"+ex.toString()+"'\n");
+      Log.DEBUG("  enigmail> DONE with FAILURE\n");
       return null;
     }
-    this.DEBUG_LOG("  enigmail> DONE\n");
+    Log.DEBUG("  enigmail> DONE\n");
 
     return proc;
   },
@@ -2091,7 +2085,7 @@ var EnigmailCommon = {
     */
   execEnd: function (listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj, blockSeparationObj) {
 
-    this.DEBUG_LOG("enigmailCommon.jsm: execEnd:\n");
+    Log.DEBUG("enigmailCommon.jsm: execEnd:\n");
 
     cmdLineObj.value = listener.command;
 
@@ -2099,8 +2093,8 @@ var EnigmailCommon = {
     var errOutput = listener.stderrData;
 
 
-    this.DEBUG_LOG("enigmailCommon.jsm: execEnd: exitCode = "+exitCode+"\n");
-    this.DEBUG_LOG("enigmailCommon.jsm: execEnd: errOutput = "+errOutput+"\n");
+    Log.DEBUG("enigmailCommon.jsm: execEnd: exitCode = "+exitCode+"\n");
+    Log.DEBUG("enigmailCommon.jsm: execEnd: errOutput = "+errOutput+"\n");
 
     var retObj = {};
     errorMsgObj.value = this.parseErrorOutput(errOutput, retObj);
@@ -2116,7 +2110,7 @@ var EnigmailCommon = {
       exitCode = 2;
     }
 
-    this.CONSOLE_LOG(this.convertFromUnicode(errorMsgObj.value)+"\n");
+    Log.CONSOLE(this.convertFromUnicode(errorMsgObj.value)+"\n");
 
     return exitCode;
   },
@@ -2152,7 +2146,7 @@ var EnigmailCommon = {
   },
 
   determineHashAlgorithm: function (win, uiFlags, fromMailAddr, hashAlgoObj) {
-    this.DEBUG_LOG("enigmailCommon.jsm: determineHashAlgorithm\n");
+    Log.DEBUG("enigmailCommon.jsm: determineHashAlgorithm\n");
 
     if (! win) {
       var windowManager = Cc[this.APPSHELL_MEDIATOR_CONTRACTID].getService(Ci.nsIWindowMediator);
@@ -2161,7 +2155,7 @@ var EnigmailCommon = {
 
     this.getService(win);
     if (! (this.enigmailSvc)) {
-      this.ERROR_LOG("enigmailCommon.jsm: determineHashAlgorithm: not yet initialized\n");
+      Log.ERROR("enigmailCommon.jsm: determineHashAlgorithm: not yet initialized\n");
       errorMsgObj.value = this.getString("notInit");
       return 2;
     }
@@ -2234,22 +2228,22 @@ var EnigmailCommon = {
         hashAlgorithm = m[2].toLowerCase();
       }
       else
-        this.DEBUG_LOG("enigmailCommon.jsm: determineHashAlgorithm: no hashAlgorithm specified - using MD5\n");
+        Log.DEBUG("enigmailCommon.jsm: determineHashAlgorithm: no hashAlgorithm specified - using MD5\n");
 
       for (var i=1; i < gMimeHashAlgorithms.length; i++) {
         if (gMimeHashAlgorithms[i] == hashAlgorithm) {
-          this.DEBUG_LOG("enigmailCommon.jsm: determineHashAlgorithm: found hashAlgorithm "+hashAlgorithm+"\n");
+          Log.DEBUG("enigmailCommon.jsm: determineHashAlgorithm: found hashAlgorithm "+hashAlgorithm+"\n");
           gKeyAlgorithms[fromMailAddr] = hashAlgorithm;
           hashAlgoObj.value = hashAlgorithm;
           return 0;
         }
       }
 
-      this.ERROR_LOG("enigmailCommon.jsm: determineHashAlgorithm: no hashAlgorithm found\n");
+      Log.ERROR("enigmailCommon.jsm: determineHashAlgorithm: no hashAlgorithm found\n");
       return 2;
     }
     else {
-      this.DEBUG_LOG("enigmailCommon.jsm: determineHashAlgorithm: hashAlgorithm "+gKeyAlgorithms[fromMailAddr]+" is cached\n");
+      Log.DEBUG("enigmailCommon.jsm: determineHashAlgorithm: hashAlgorithm "+gKeyAlgorithms[fromMailAddr]+" is cached\n");
       hashAlgoObj.value = gKeyAlgorithms[fromMailAddr];
     }
 
@@ -2302,7 +2296,7 @@ var EnigmailCommon = {
 
 
   getAttachmentFileName: function (parent, byteData) {
-    this.DEBUG_LOG("enigmailCommon.jsm: getAttachmentFileName\n");
+    Log.DEBUG("enigmailCommon.jsm: getAttachmentFileName\n");
 
     var args = this.getAgentArgs(true);
     args = args.concat(this.passwdCommand());
@@ -2310,7 +2304,7 @@ var EnigmailCommon = {
 
     var listener = this.newSimpleListener(
       function _stdin (pipe) {
-          EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: getAttachmentFileName: _stdin\n");
+          Log.DEBUG("enigmailCommon.jsm: getAttachmentFileName: _stdin\n");
           pipe.write(byteData);
           pipe.write("\n");
           pipe.close();
@@ -2368,12 +2362,12 @@ var timerObserver = {
   QueryInterface: XPCOMUtils.generateQI([ Ci.nsIObserver, Ci.nsISupports ]),
 
   observe: function (aSubject, aTopic, aData) {
-    EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: timerObserver.observe: topic='"+aTopic+"' \n");
+    Log.DEBUG("enigmailCommon.jsm: timerObserver.observe: topic='"+aTopic+"' \n");
 
     if (aTopic == "timer-callback") {
     }
     else {
-      EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: timerObserver.observe: no handler for '"+aTopic+"'\n");
+      Log.DEBUG("enigmailCommon.jsm: timerObserver.observe: no handler for '"+aTopic+"'\n");
     }
   }
 };
@@ -2433,12 +2427,12 @@ function upgradeRecipientsSelection () {
 
 function upgradePrefsSending ()
 {
-  EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: upgradePrefsSending()\n");
+  Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending()\n");
 
   var  cbs = EnigmailCommon.getPref("confirmBeforeSend");
   var  ats = EnigmailCommon.getPref("alwaysTrustSend");
   var  ksfr = EnigmailCommon.getPref("keepSettingsForReply");
-  EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: upgradePrefsSending cbs="+cbs+" ats="+ats+" ksfr="+ksfr+"\n");
+  Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending cbs="+cbs+" ats="+ats+" ksfr="+ksfr+"\n");
 
   // Upgrade confirmBeforeSend (bool) to confirmBeforeSending (int)
   switch (cbs) {
@@ -2463,11 +2457,11 @@ function upgradePrefsSending ()
   // if all settings are default settings, use convenient encryption
   if (cbs===false && ats===true && ksfr===true) {
     EnigmailCommon.setPref("encryptionModel", 0); // convenient
-    EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=0 (convenient)\n");
+    Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=0 (convenient)\n");
   }
   else {
     EnigmailCommon.setPref("encryptionModel", 1); // manually
-    EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=1 (manually)\n");
+    Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=1 (manually)\n");
   }
 
   // clear old prefs
@@ -2559,7 +2553,7 @@ function launchSetupWizard(win) {
 }
 
 function ConfigureEnigmail(win, startingPreferences) {
-  EnigmailCommon.DEBUG_LOG("enigmailCommon.jsm: ConfigureEnigmail\n");
+  Log.DEBUG("enigmailCommon.jsm: ConfigureEnigmail\n");
   var oldVer=EnigmailCommon.getPref("configuredVersion");
 
   try {

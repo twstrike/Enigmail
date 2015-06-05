@@ -117,6 +117,7 @@ zip --must-match\
     modules/filters.jsm \
     modules/armor.jsm \
     modules/files.jsm \
+    modules/log.jsm \
     modules/commonFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \

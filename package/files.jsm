@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false */
+/*global Components: false, Log: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,18 +39,31 @@
 
 "use strict";
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-
 var EXPORTED_SYMBOLS = [ "Files" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 const NS_FILE_CONTRACTID = "@mozilla.org/file/local;1";
+const NS_LOCAL_FILE_CONTRACTID = "@mozilla.org/file/local;1";
+const NS_LOCALFILEOUTPUTSTREAM_CONTRACTID =
+                              "@mozilla.org/network/file-output-stream;1";
 
-const EC = EnigmailCore;
+const NS_RDONLY      = 0x01;
+const NS_WRONLY      = 0x02;
+const NS_CREATE_FILE = 0x08;
+const NS_TRUNCATE    = 0x20;
+const DEFAULT_FILE_PERMS = 0x180; // equals 0600
 
 const Files = {
+    lazyLog: function() {
+        if(!Files.log) {
+            Components.utils.import("resource://enigmail/log.jsm");
+            Files.log = Log;
+        }
+        return Files.log;
+    },
+
     isAbsolutePath: function (filePath, isDosLike) {
         // Check if absolute path
         if (isDosLike) {
@@ -62,7 +75,7 @@ const Files = {
     },
 
     resolvePath: function (filePath, envPath, isDosLike) {
-        EC.DEBUG_LOG("gpgAgentHandler.jsm: resolvePath: filePath="+filePath+"\n");
+        Files.lazyLog().DEBUG("gpgAgentHandler.jsm: resolvePath: filePath="+filePath+"\n");
 
         if (Files.isAbsolutePath(filePath, isDosLike))
             return filePath;
@@ -79,9 +92,9 @@ const Files = {
                 try {
                     var pathDir = Cc[NS_FILE_CONTRACTID].createInstance(Ci.nsIFile);
 
-                    EC.DEBUG_LOG("gpgAgentHandler.jsm: resolvePath: checking for "+pathDirs[j]+"/"+fileNames[i]+"\n");
+                    Files.lazyLog().DEBUG("gpgAgentHandler.jsm: resolvePath: checking for "+pathDirs[j]+"/"+fileNames[i]+"\n");
 
-                    EC.initPath(pathDir, pathDirs[j]);
+                    Files.initPath(pathDir, pathDirs[j]);
 
                     try {
                         if (pathDir.exists() && pathDir.isDirectory()) {
@@ -98,5 +111,53 @@ const Files = {
             }
         }
         return null;
+    },
+
+    createFileStream: function(filePath, permissions) {
+        try {
+            var localFile;
+            if (typeof filePath == "string") {
+                localFile = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
+                Files.initPath(localFile, filePath);
+            }
+            else {
+                localFile = filePath.QueryInterface(Ci.nsIFile);
+            }
+
+            if (localFile.exists()) {
+
+                if (localFile.isDirectory() || !localFile.isWritable())
+                    throw Components.results.NS_ERROR_FAILURE;
+
+                if (!permissions)
+                    permissions = localFile.permissions;
+            }
+
+            if (!permissions)
+                permissions = DEFAULT_FILE_PERMS;
+
+            var flags = NS_WRONLY | NS_CREATE_FILE | NS_TRUNCATE;
+
+            var fileStream = Cc[NS_LOCALFILEOUTPUTSTREAM_CONTRACTID].createInstance(Ci.nsIFileOutputStream);
+
+            fileStream.init(localFile, flags, permissions, 0);
+
+            return fileStream;
+
+        } catch (ex) {
+            Files.lazyLog().ERROR("enigmailCore.jsm: createFileStream: Failed to create "+filePath+"\n");
+            return null;
+        }
+    },
+
+    // path initialization function
+    // uses persistentDescriptor in case that initWithPath fails
+    // (seems to happen frequently with UTF-8 characters in path names)
+    initPath: function(localFileObj, pathStr) {
+        localFileObj.initWithPath(pathStr);
+
+        if (! localFileObj.exists()) {
+            localFileObj.persistentDescriptor = pathStr;
+        }
     }
 };

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false */
+/*global Components: false, Log: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -41,7 +41,7 @@
 
 const EXPORTED_SYMBOLS = [ "Armor" ];
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 const Ci = Components.interfaces;
 
@@ -63,8 +63,6 @@ function indexOfArmorDelimiter(text, str, offset) {
 
     return -1;
 }
-
-const EC = EnigmailCore;
 
 function searchBlankLine(str, then) {
     var offset = str.search(/\n\s*\r?\n/);
@@ -91,7 +89,7 @@ const Armor = {
     // endIndex = offset of last character of block (newline)
     // If block is not found, the null string is returned;
     locateArmoredBlock: function (text, offset, indentStr, beginIndexObj, endIndexObj, indentStrObj) {
-        EC.DEBUG_LOG("enigmail.js: Enigmail.locateArmoredBlock: "+offset+", '"+indentStr+"'\n");
+        Log.DEBUG("enigmail.js: Enigmail.locateArmoredBlock: "+offset+", '"+indentStr+"'\n");
 
         beginIndexObj.value = -1;
         endIndexObj.value = -1;
@@ -140,7 +138,7 @@ const Armor = {
         var blockType = "";
         if (matches && (matches.length > 1)) {
             blockType = matches[1];
-            EC.DEBUG_LOG("enigmail.js: Enigmail.locateArmoredBlock: blockType="+blockType+"\n");
+            Log.DEBUG("enigmail.js: Enigmail.locateArmoredBlock: blockType="+blockType+"\n");
         }
 
         if (blockType == "UNVERIFIED MESSAGE") {
@@ -185,12 +183,12 @@ const Armor = {
             i = endObj.value;
         }
 
-        EC.DEBUG_LOG("enigmail.js: locateArmorBlocks: Found " + blocks.length + " Blocks\n");
+        Log.DEBUG("enigmail.js: locateArmorBlocks: Found " + blocks.length + " Blocks\n");
         return blocks;
     },
 
     extractSignaturePart: function (signatureBlock, part) {
-        EC.DEBUG_LOG("enigmail.js: Enigmail.extractSignaturePart: part="+part+"\n");
+        Log.DEBUG("enigmail.js: Enigmail.extractSignaturePart: part="+part+"\n");
 
         return searchBlankLine(signatureBlock, function(offset) {
             return indexOfNewline(signatureBlock, offset+1, function(offset) {

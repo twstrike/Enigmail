@@ -68,19 +68,19 @@ PgpMimeEncrypt.prototype = {
 
   // nsIStreamListener interface
   onStartRequest: function(request) {
-    DEBUG_LOG("mimeEncrypt.js: onStartRequest\n");
+    LOCAL_DEBUG("mimeEncrypt.js: onStartRequest\n");
   },
 
   onDataAvailable: function(req, sup, stream, offset, count) {
-    DEBUG_LOG("mimeEncrypt.js: onDataAvailable\n");
+    LOCAL_DEBUG("mimeEncrypt.js: onDataAvailable\n");
     this.inStream.init(stream);
     var data = this.inStream.read(count);
-    //DEBUG_LOG("mimeEncrypt.js: >"+data+"<\n");
+    //LOCAL_DEBUG("mimeEncrypt.js: >"+data+"<\n");
 
   },
 
   onStopRequest: function(request, win, status) {
-    DEBUG_LOG("mimeEncrypt.js: onStopRequest\n");
+    LOCAL_DEBUG("mimeEncrypt.js: onStopRequest\n");
   },
 
   disableSMimeCheck: function() {
@@ -90,7 +90,7 @@ PgpMimeEncrypt.prototype = {
 
   // nsIMsgComposeSecure interface
   requiresCryptoEncapsulation: function (msgIdentity, msgCompFields) {
-    DEBUG_LOG("mimeEncrypt.js: requiresCryptoEncapsulation\n");
+    LOCAL_DEBUG("mimeEncrypt.js: requiresCryptoEncapsulation\n");
     try {
 
       if (this.checkSMime) {
@@ -119,10 +119,10 @@ PgpMimeEncrypt.prototype = {
   },
 
   beginCryptoEncapsulation: function (outStream, recipientList, msgCompFields, msgIdentity, sendReport, isDraft) {
-    DEBUG_LOG("mimeEncrypt.js: beginCryptoEncapsulation\n");
+    LOCAL_DEBUG("mimeEncrypt.js: beginCryptoEncapsulation\n");
 
     if (this.checkSMime && (! this.smimeCompose)) {
-      DEBUG_LOG("mimeEncrypt.js: beginCryptoEncapsulation: ERROR MsgComposeSecure not instantiated\n");
+      LOCAL_DEBUG("mimeEncrypt.js: beginCryptoEncapsulation: ERROR MsgComposeSecure not instantiated\n");
       throw Cr.NS_ERROR_FAILURE;
     }
 
@@ -196,14 +196,14 @@ PgpMimeEncrypt.prototype = {
   },
 
   startCryptoHeaders: function() {
-    DEBUG_LOG("mimeEncrypt.js: startCryptoHeaders\n");
+    LOCAL_DEBUG("mimeEncrypt.js: startCryptoHeaders\n");
 
     if (this.cryptoMode == MIME_SIGNED) this.signedHeaders1(false);
     if (this.cryptoMode == MIME_ENCRYPTED) this.encryptedHeaders();
   },
 
   encryptedHeaders: function(isEightBit) {
-    DEBUG_LOG("mimeEncrypt.js: encryptedHeaders\n");
+    LOCAL_DEBUG("mimeEncrypt.js: encryptedHeaders\n");
     this.writeOut( "Content-Type: multipart/encrypted;\r\n" +
       " protocol=\"application/pgp-encrypted\";\r\n" +
       " boundary=\"" + this.cryptoBoundary + "\"\r\n" +
@@ -223,7 +223,7 @@ PgpMimeEncrypt.prototype = {
   },
 
   signedHeaders1: function(isEightBit) {
-    DEBUG_LOG("mimeEncrypt.js: signedHeaders1\n");
+    LOCAL_DEBUG("mimeEncrypt.js: signedHeaders1\n");
     this.writeOut("Content-Type: multipart/signed; micalg=pgp-" +
       this.hashAlgorithm.toLowerCase() +
       ";\r\n"+
@@ -236,7 +236,7 @@ PgpMimeEncrypt.prototype = {
 
 
   signedHeaders2: function() {
-    DEBUG_LOG("mimeEncrypt.js: signedHeaders2\n");
+    LOCAL_DEBUG("mimeEncrypt.js: signedHeaders2\n");
 
     this.writeOut("\r\n--" + this.cryptoBoundary +"\r\n"+
       "Content-Type: application/pgp-signature; name=\"signature.asc\"\r\n" +
@@ -245,13 +245,13 @@ PgpMimeEncrypt.prototype = {
   },
 
   finishCryptoHeaders: function() {
-    DEBUG_LOG("mimeEncrypt.js: finishCryptoHeaders\n");
+    LOCAL_DEBUG("mimeEncrypt.js: finishCryptoHeaders\n");
 
     this.writeOut("\r\n--" + this.cryptoBoundary +"--\r\n");
   },
 
   finishCryptoEncapsulation: function (abort, sendReport) {
-    DEBUG_LOG("mimeEncrypt.js: finishCryptoEncapsulation\n");
+    LOCAL_DEBUG("mimeEncrypt.js: finishCryptoEncapsulation\n");
 
     if (this.checkSMime && (! this.smimeCompose))
       throw Cr.NS_ERROR_NOT_INITIALIZED;
@@ -273,7 +273,7 @@ PgpMimeEncrypt.prototype = {
       // wait here for this.proc to terminate
       this.inspector.enterNestedEventLoop(0);
 
-      DEBUG_LOG("mimeEncrypt.js: finishCryptoEncapsulation: exitCode = "+this.exitCode+"\n");
+      LOCAL_DEBUG("mimeEncrypt.js: finishCryptoEncapsulation: exitCode = "+this.exitCode+"\n");
       if (this.exitCode !== 0) throw Cr.NS_ERROR_FAILURE;
 
       if (this.cryptoMode == MIME_SIGNED) this.signedHeaders2();
@@ -292,7 +292,7 @@ PgpMimeEncrypt.prototype = {
 
   mimeCryptoWriteBlock: function (buffer, length) {
     if (gDebugLogLevel > 4)
-      DEBUG_LOG("mimeEncrypt.js: mimeCryptoWriteBlock: "+length+"\n");
+      LOCAL_DEBUG("mimeEncrypt.js: mimeCryptoWriteBlock: "+length+"\n");
 
     if (this.checkSMime && (! this.smimeCompose))
       throw Cr.NS_ERROR_NOT_INITIALIZED;
@@ -332,7 +332,7 @@ PgpMimeEncrypt.prototype = {
         if (this.cryptoMode == MIME_SIGNED) {
           // special treatments for various special cases with PGP/MIME signed messages
           if (line.substr(0, 5) == "From ") {
-            DEBUG_LOG("mimeEncrypt.js: added >From\n");
+            LOCAL_DEBUG("mimeEncrypt.js: added >From\n");
             this.writeToPipe(">");
           }
         }
@@ -349,7 +349,7 @@ PgpMimeEncrypt.prototype = {
 
   writeOut: function(str) {
     if (gDebugLogLevel > 4)
-      DEBUG_LOG("mimeEncrypt.js: writeOut: "+str.length+"\n");
+      LOCAL_DEBUG("mimeEncrypt.js: writeOut: "+str.length+"\n");
 
     this.outQueue += str;
 
@@ -358,26 +358,26 @@ PgpMimeEncrypt.prototype = {
   },
 
   flushOutput: function() {
-    DEBUG_LOG("mimeEncrypt.js: flushOutput: "+this.outQueue.length+"\n");
+    LOCAL_DEBUG("mimeEncrypt.js: flushOutput: "+this.outQueue.length+"\n");
 
     // check for output errors
     // TODO: remove check
     let i = this.outQueue.search(/[^\r]\n/);
     if (i != -1) {
-      DEBUG_LOG("mimeEncrypt.js: flushOutput -- ERROR: found \\n without \\r at pos. "+i+"\n");
-      DEBUG_LOG("mimeEncrypt.js: flushOutput: data= '"+this.outQueue.substr(i-10 < 0 ? 0 : i-10, 20)+"'\n");
+      LOCAL_DEBUG("mimeEncrypt.js: flushOutput -- ERROR: found \\n without \\r at pos. "+i+"\n");
+      LOCAL_DEBUG("mimeEncrypt.js: flushOutput: data= '"+this.outQueue.substr(i-10 < 0 ? 0 : i-10, 20)+"'\n");
     }
     this.outStringStream.setData(this.outQueue, this.outQueue.length);
     var writeCount = this.outStream.writeFrom(this.outStringStream, this.outQueue.length);
     if (writeCount < this.outQueue.length) {
-      DEBUG_LOG("mimeEncrypt.js: flushOutput: wrote "+writeCount+" instead of "+length+" bytes\n");
+      LOCAL_DEBUG("mimeEncrypt.js: flushOutput: wrote "+writeCount+" instead of "+length+" bytes\n");
     }
     this.outQueue = "";
   },
 
   writeToPipe: function(str) {
     if (gDebugLogLevel > 4)
-      DEBUG_LOG("mimeEncrypt.js: writeToPipe: "+str.length+"\n");
+      LOCAL_DEBUG("mimeEncrypt.js: writeToPipe: "+str.length+"\n");
 
     if (this.pipe) {
       this.pipeQueue += str;
@@ -389,7 +389,7 @@ PgpMimeEncrypt.prototype = {
   },
 
   flushInput: function() {
-    DEBUG_LOG("mimeEncrypt.js: flushInput\n");
+    LOCAL_DEBUG("mimeEncrypt.js: flushInput\n");
     if (! this.pipe) return;
     this.pipe.write(this.pipeQueue);
     this.pipeQueue = "";
@@ -430,7 +430,7 @@ PgpMimeEncrypt.prototype = {
 
   // API for decryptMessage Listener
   stdin: function(pipe) {
-    DEBUG_LOG("mimeEncrypt.js: stdin\n");
+    LOCAL_DEBUG("mimeEncrypt.js: stdin\n");
     if (this.pipeQueue.length > 0) {
       pipe.write(this.pipeQueue);
       this.pipeQueue = "";
@@ -440,18 +440,18 @@ PgpMimeEncrypt.prototype = {
   },
 
   stdout: function(s) {
-    DEBUG_LOG("mimeEncrypt.js: stdout:"+s.length+"\n");
+    LOCAL_DEBUG("mimeEncrypt.js: stdout:"+s.length+"\n");
     this.encryptedData += s;
     this.dataLength += s.length;
   },
 
   stderr: function(s) {
-    DEBUG_LOG("mimeEncrypt.js: stderr\n");
+    LOCAL_DEBUG("mimeEncrypt.js: stderr\n");
     this.statusStr += s;
   },
 
   done: function(exitCode) {
-    DEBUG_LOG("mimeEncrypt.js: done: "+exitCode+"\n");
+    LOCAL_DEBUG("mimeEncrypt.js: done: "+exitCode+"\n");
 
     let retStatusObj = {};
 
@@ -479,8 +479,8 @@ PgpMimeEncrypt.prototype = {
 // General-purpose functions, not exported
 
 
-function DEBUG_LOG(str) {
-  if (gDebugLogLevel) Ec.DEBUG_LOG(str);
+function LOCAL_DEBUG(str) {
+  if (gDebugLogLevel) Log.DEBUG(str);
 }
 
 function initModule() {
@@ -491,7 +491,7 @@ function initModule() {
 
     if (matches && (matches.length > 1)) {
       gDebugLogLevel = matches[1];
-      DEBUG_LOG("mimeEncrypt.js: enabled debug logging\n");
+      LOCAL_DEBUG("mimeEncrypt.js: enabled debug logging\n");
     }
   }
   catch (ex) {

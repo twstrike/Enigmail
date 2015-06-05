@@ -35,6 +35,8 @@
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
+Components.utils.import("resource://enigmail/log.jsm");
+
 // Initialize enigmailCommon
 EnigInitCommon("enigmailSingleRcptSettings");
 
@@ -212,7 +214,7 @@ function enigmailDlgOnAccept() {
 }
 
 function enigmailDlgKeySelection() {
-  DEBUG_LOG("enigmailMsgComposeHelper.js: enigmailDlgKeySelection: \n");
+  Log.DEBUG("enigmailMsgComposeHelper.js: enigmailDlgKeySelection: \n");
 
   var enigmailSvc = GetEnigmailSvc();
   if (!enigmailSvc)

@@ -36,6 +36,7 @@
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeySelection");
@@ -77,7 +78,7 @@ const EMPTY_UID = " -";
 
 function enigmailUserSelLoad()
 {
-  DEBUG_LOG("enigmailKeySelection.js: Load\n");
+  Log.DEBUG("enigmailKeySelection.js: Load\n");
   window.enigIpcRequest = null;
   if (window.arguments[INPUT].options.indexOf("private")>= 0) {
     document.getElementById("enigmailKeySelectionDlg").setAttribute("title", EnigGetString("userSel.secretKeySel.title"));
@@ -102,7 +103,7 @@ function enigmailRefreshKeys()
 
 function enigGetUserList(secretOnly, refresh)
 {
-  DEBUG_LOG("enigmailMessengerOverlay.js: enigGetUserList\n");
+  Log.DEBUG("enigmailMessengerOverlay.js: enigGetUserList\n");
   var userList;
   try {
     var exitCodeObj = {};
@@ -133,7 +134,7 @@ function enigGetUserList(secretOnly, refresh)
       userList = getPubkeysFromSecretKeys(userList);
     }
   } catch (ex) {
-    ERROR_LOG("ERROR in enigmailUserSelection: enigGetUserList\n");
+      Log.ERROR("ERROR in enigmailUserSelection: enigGetUserList\n");
   }
 
   return userList.split(/\n/);
@@ -163,8 +164,8 @@ function getPubkeysFromSecretKeys(keyString)
 
 function enigmailBuildList(refresh)
 {
-   DEBUG_LOG("=====> enigmailBuildList()\n");
-   DEBUG_LOG("enigmailKeySelection.js: enigmailBuildList\n");
+   Log.DEBUG("=====> enigmailBuildList()\n");
+   Log.DEBUG("enigmailKeySelection.js: enigmailBuildList\n");
 
    const TRUSTLEVELS_SORTED = EnigmailFuncs.trustlevelsSorted();
 
@@ -254,7 +255,7 @@ function enigmailBuildList(refresh)
                msg = EnigGetString("userSel.problemMultipleKeys");
                break;
              default:
-               DEBUG_LOG("missing label for '" + array[detIdx].msg + "'\n");
+               Log.DEBUG("missing label for '" + array[detIdx].msg + "'\n");
                msg = "???";
                break;
            }
@@ -275,7 +276,7 @@ function enigmailBuildList(refresh)
        }
      }
    } catch (ex) {
-     DEBUG_LOG("EXCEPTION: " + ex + "\n");
+     Log.DEBUG("EXCEPTION: " + ex + "\n");
    }
 
    if (secretOnly) {
@@ -549,10 +550,10 @@ function enigmailBuildList(refresh)
       }
    }
    catch (ex) {
-      ERROR_LOG("enigmailKeySelection.js: ERROR in enigmailUserSelLoad:\n");
-      ERROR_LOG("  userId="+aUserList[i].userId+" expiry="+ aUserList[i].expiry+"\n");
+      Log.ERROR("enigmailKeySelection.js: ERROR in enigmailUserSelLoad:\n");
+      Log.ERROR("  userId="+aUserList[i].userId+" expiry="+ aUserList[i].expiry+"\n");
       if ((typeof user)=="number" && (typeof aUserList[i].SubUserIds[user].userId)=="string") {
-        ERROR_LOG("  subUserId="+aUserList[i].SubUserIds[user].userId+"\n");
+        Log.ERROR("  subUserId="+aUserList[i].SubUserIds[user].userId+"\n");
       }
    }
 
@@ -602,7 +603,7 @@ function enigmailBuildList(refresh)
            }
         }
         if (!found) {
-           DEBUG_LOG("enigmailKeySelection.js: enigmailUserSelLoad: not found " + toAddrList[i] +"\n");
+           Log.DEBUG("enigmailKeySelection.js: enigmailUserSelLoad: not found " + toAddrList[i] +"\n");
            gKeysNotFound.push(toAddrList[i]);
         }
      }
@@ -618,13 +619,13 @@ function enigmailBuildList(refresh)
            }
         }
         if (!found) {
-           DEBUG_LOG("enigmailKeySelection.js: enigmailUserSelLoad: not found " + toKeyList[i] +"\n");
+           Log.DEBUG("enigmailKeySelection.js: enigmailUserSelLoad: not found " + toKeyList[i] +"\n");
            gKeysNotFound.push(toKeyList[i]);
         }
       }
    }
 
-   DEBUG_LOG("  <=== enigmailBuildList()\n");
+   Log.DEBUG("  <=== enigmailBuildList()\n");
 }
 
 
@@ -712,7 +713,7 @@ function enigUserSelCreateRow (userObj, activeState, userId, keyValue, dateField
 
 function enigmailUserSelAccept()
 {
-  DEBUG_LOG("enigmailKeySelection.js: Accept\n");
+  Log.DEBUG("enigmailKeySelection.js: Accept\n");
 
   var resultObj=window.arguments[RESULT];
   resultObj.userList = [];

@@ -16,6 +16,7 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailVerify" ];
 
@@ -54,7 +55,7 @@ MimeVerify.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIStreamListener]),
 
   startStreaming: function(window, msgWindow, msgUriSpec) {
-    DEBUG_LOG("mimeVerify.jsm: startStreaming\n");
+    LOCAL_DEBUG("mimeVerify.jsm: startStreaming\n");
 
     this.msgWindow = msgWindow;
     this.msgUriSpec = msgUriSpec;
@@ -74,7 +75,7 @@ MimeVerify.prototype = {
   },
 
   verifyData: function(window, msgWindow, msgUriSpec, data) {
-    DEBUG_LOG("mimeVerify.jsm: streamFromChannel\n");
+    LOCAL_DEBUG("mimeVerify.jsm: streamFromChannel\n");
 
     this.msgWindow = msgWindow;
     this.msgUriSpec = msgUriSpec;
@@ -85,7 +86,7 @@ MimeVerify.prototype = {
   },
 
   onStartRequest: function() {
-    Ec.DEBUG_LOG("mimeVerify.jsm: onStartRequest\n"); // always log this one
+    Log.DEBUG("mimeVerify.jsm: onStartRequest\n"); // always log this one
     this.dataCount = 0;
     this.foundMsg = false;
     this.startMsgStr = "";
@@ -102,14 +103,14 @@ MimeVerify.prototype = {
   },
 
   onDataAvailable: function(req, sup, stream, offset, count) {
-    DEBUG_LOG("mimeVerify.jsm: onDataAvailable: "+count+"\n");
+    LOCAL_DEBUG("mimeVerify.jsm: onDataAvailable: "+count+"\n");
     this.inStream.init(stream);
     var data = this.inStream.read(count);
     this.onTextData(data);
   },
 
   onTextData: function(data) {
-    DEBUG_LOG("mimeVerify.jsm: onTextData\n");
+    LOCAL_DEBUG("mimeVerify.jsm: onTextData\n");
     if (!this.foundMsg) {
       // check if mime part could be pgp/mime signed message
       if (this.dataCount > 10240) return;
@@ -135,13 +136,13 @@ MimeVerify.prototype = {
 
           // Eat up CRLF's.
           contentTypeLine = contentTypeLine.replace(/[\r\n]/g, "");
-          DEBUG_LOG("mimeVerify.jsm: onTextData: " + contentTypeLine + "\n");
+          LOCAL_DEBUG("mimeVerify.jsm: onTextData: " + contentTypeLine + "\n");
 
           if (contentTypeLine.search(/multipart\/signed/i) > 0 &&
               contentTypeLine.search(/micalg\s*=\s*[\"\']?pgp-[\"\']?/i) > 0 &&
               contentTypeLine.search(/protocol\s*=\s*[\'\"]application\/pgp-signature[\"\']/i) > 0) {
 
-            DEBUG_LOG("mimeVerify.jsm: onTextData: found PGP/MIME signed message\n");
+            LOCAL_DEBUG("mimeVerify.jsm: onTextData: found PGP/MIME signed message\n");
             this.foundMsg = true;
             let hdr = EnigmailFuncs.getHeaderData(contentTypeLine);
             hdr.boundary = hdr.boundary || "";
@@ -278,7 +279,7 @@ MimeVerify.prototype = {
   },
 
   onStopRequest: function() {
-    DEBUG_LOG("mimeVerify.jsm: onStopRequest\n");
+    LOCAL_DEBUG("mimeVerify.jsm: onStopRequest\n");
 
     // don't try to verify if no message found
     if (this.verifyEmbedded && (!this.foundMsg)) return;
@@ -301,7 +302,7 @@ MimeVerify.prototype = {
                 Ec.getEscapedFilename(Ec.getFilePath(this.sigFile)));
 
     if (this.pipe) {
-      Ec.DEBUG_LOG("Closing pipe\n"); // always log this one
+      Log.DEBUG("Closing pipe\n"); // always log this one
       this.pipe.close();
     }
     else
@@ -309,16 +310,16 @@ MimeVerify.prototype = {
   },
 
   appendQueue: function(str) {
-    //DEBUG_LOG("mimeVerify.jsm: appendQueue: "+str+"\n");
+    //LOCAL_DEBUG("mimeVerify.jsm: appendQueue: "+str+"\n");
 
     this.outQueue += str;
   },
 
   // API for decryptMessage Listener
   stdin: function(pipe) {
-    DEBUG_LOG("mimeVerify.jsm: stdin\n");
+    LOCAL_DEBUG("mimeVerify.jsm: stdin\n");
     if (this.outQueue.length > 0) {
-      DEBUG_LOG("mimeVerify.jsm:  writing " + this.outQueue.length + " bytes\n");
+      LOCAL_DEBUG("mimeVerify.jsm:  writing " + this.outQueue.length + " bytes\n");
 
       // ensure all lines end with CRLF as specified in RFC 3156, section 5
       this.outQueue = this.outQueue.replace(/\r\n/g, "\n").replace(/\n/g, "\r\n");
@@ -330,19 +331,19 @@ MimeVerify.prototype = {
   },
 
   stdout: function(s) {
-    DEBUG_LOG("mimeVerify.jsm: stdout:"+s.length+"\n");
+    LOCAL_DEBUG("mimeVerify.jsm: stdout:"+s.length+"\n");
     this.dataLength += s.length;
   },
 
   stderr: function(s) {
-    DEBUG_LOG("mimeVerify.jsm: stderr\n");
+    LOCAL_DEBUG("mimeVerify.jsm: stderr\n");
     this.statusStr += s;
   },
 
   done: function(exitCode) {
-    DEBUG_LOG("mimeVerify.jsm: done: "+exitCode+"\n");
+    LOCAL_DEBUG("mimeVerify.jsm: done: "+exitCode+"\n");
     this.exitCode = exitCode;
-    //DEBUG_LOG("mimeVerify.jsm: "+this.statusStr+"\n");
+    //LOCAL_DEBUG("mimeVerify.jsm: "+this.statusStr+"\n");
 
     this.returnStatus = {};
     Ec.decryptMessageEnd(this.statusStr,
@@ -362,7 +363,7 @@ MimeVerify.prototype = {
   },
 
   setMsgWindow: function(msgWindow, msgUriSpec) {
-    Ec.DEBUG_LOG("mimeVerify.jsm: setMsgWindow: "+msgUriSpec+"\n");
+    Log.DEBUG("mimeVerify.jsm: setMsgWindow: "+msgUriSpec+"\n");
 
     if (! this.msgWindow) {
       this.msgWindow = msgWindow;
@@ -371,12 +372,12 @@ MimeVerify.prototype = {
   },
 
   displayStatus: function() {
-    Ec.DEBUG_LOG("mimeVerify.jsm: displayStatus\n");
+    Log.DEBUG("mimeVerify.jsm: displayStatus\n");
     if (this.exitCode === null || this.msgWindow === null || this.statusDisplayed)
       return;
 
     try {
-      DEBUG_LOG("mimeVerify.jsm: displayStatus displaying result\n");
+      LOCAL_DEBUG("mimeVerify.jsm: displayStatus displaying result\n");
       let headerSink = this.msgWindow.msgHeaderSink.securityInfo.QueryInterface(Ci.nsIEnigMimeHeaderSink);
 
       if (headerSink) {
@@ -405,7 +406,7 @@ var EnigmailVerify = {
   manualMsgUri: null,
 
   setMsgWindow: function(msgWindow, msgUriSpec) {
-    DEBUG_LOG("mimeVerify.jsm: setMsgWindow: "+msgUriSpec+"\n");
+    LOCAL_DEBUG("mimeVerify.jsm: setMsgWindow: "+msgUriSpec+"\n");
 
     this.lastMsgWindow = msgWindow;
     this.lastMsgUri = msgUriSpec;
@@ -417,7 +418,7 @@ var EnigmailVerify = {
   },
 
   setManualUri: function(msgUriSpec) {
-    DEBUG_LOG("mimeVerify.jsm: setManualUri: "+msgUriSpec+"\n");
+    LOCAL_DEBUG("mimeVerify.jsm: setManualUri: "+msgUriSpec+"\n");
     this.manualMsgUri = msgUriSpec;
   },
 
@@ -430,8 +431,8 @@ var EnigmailVerify = {
 ////////////////////////////////////////////////////////////////////
 // General-purpose functions, not exported
 
-function DEBUG_LOG(str) {
-  if (gDebugLog) Ec.DEBUG_LOG(str);
+function LOCAL_DEBUG(str) {
+  if (gDebugLog) Log.DEBUG(str);
 }
 
 function initModule() {

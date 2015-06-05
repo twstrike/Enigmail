@@ -34,11 +34,12 @@
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 const   Ec = EnigmailCommon;
 
 function consoleLoad() {
-  Ec.DEBUG_LOG("enigmailConsole.js: consoleLoad\n");
+  Log.DEBUG("enigmailConsole.js: consoleLoad\n");
 
   top.controllers.insertControllerAt(0, CommandController);
 
@@ -50,7 +51,7 @@ function consoleLoad() {
 }
 
 function consoleUnload() {
-  Ec.DEBUG_LOG("enigmailConsole.js: consoleUnload\n");
+  Log.DEBUG("enigmailConsole.js: consoleUnload\n");
 
   // Cancel console refresh
   if (window.consoleIntervalId) {
@@ -63,10 +64,10 @@ window.onload = consoleLoad;
 window.onunload = consoleUnload;
 
 function refreshConsole() {
-  //Ec.DEBUG_LOG("enigmailConsole.js: refreshConsole():\n");
+  //Log.DEBUG("enigmailConsole.js: refreshConsole():\n");
 
   if (EnigmailConsole.hasNewData()) {
-    Ec.DEBUG_LOG("enigmailConsole.js: refreshConsole(): hasNewData\n");
+    Log.DEBUG("enigmailConsole.js: refreshConsole(): hasNewData\n");
 
     updateData();
   }
@@ -75,7 +76,7 @@ function refreshConsole() {
 }
 
 function updateData() {
-  //Ec.DEBUG_LOG("enigmailConsole.js: updateData():\n");
+  //Log.DEBUG("enigmailConsole.js: updateData():\n");
 
     var contentFrame = Ec.getFrame(window, "contentFrame");
     if (!contentFrame)
@@ -94,7 +95,7 @@ function enigmailConsoleCopy()
 {
   var selText = getSelectionStr();
 
-  Ec.DEBUG_LOG("enigmailConsole.js: enigmailConsoleCopy: selText='"+selText+"'\n");
+  Log.DEBUG("enigmailConsole.js: enigmailConsoleCopy: selText='"+selText+"'\n");
 
   if (selText) {
     var clipHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"].createInstance(Components.interfaces.nsIClipboardHelper);
@@ -120,13 +121,13 @@ function getSelectionStr()
 
 function isItemSelected()
 {
-  Ec.DEBUG_LOG("enigmailConsole.js: isItemSelected\n");
+  Log.DEBUG("enigmailConsole.js: isItemSelected\n");
   return getSelectionStr() !== "";
 }
 
 function UpdateCopyMenu()
 {
-  Ec.DEBUG_LOG("enigmailConsole.js: UpdateCopyMenu\n");
+  Log.DEBUG("enigmailConsole.js: UpdateCopyMenu\n");
   goUpdateCommand("cmd_copy");
 }
 

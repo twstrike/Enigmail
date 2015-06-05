@@ -36,6 +36,7 @@
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
 Components.utils.import("resource://enigmail/keyManagement.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeyManager");
@@ -64,7 +65,7 @@ var gShowUntrustedKeys = null;
 var gShowOthersKeys = null;
 
 function enigmailKeyManagerLoad() {
-  DEBUG_LOG("enigmailKeyManager.js: enigmailKeyManagerLoad\n");
+  Log.DEBUG("enigmailKeyManager.js: enigmailKeyManagerLoad\n");
   gUserList = document.getElementById("pgpKeyList");
   gSearchInput = document.getElementById("filterKey");
   gShowAllKeysElement = document.getElementById("showAllKeys");
@@ -94,7 +95,7 @@ function displayFullList() {
 }
 
 function loadkeyList() {
-  DEBUG_LOG("enigmailKeyManager.js: loadkeyList\n");
+  Log.DEBUG("enigmailKeyManager.js: loadkeyList\n");
 
   //enigmailBuildList(false);
   sortTree();
@@ -105,7 +106,7 @@ function loadkeyList() {
 }
 
 function enigmailRefreshKeys() {
-  DEBUG_LOG("enigmailKeyManager.js: enigmailRefreshKeys\n");
+  Log.DEBUG("enigmailKeyManager.js: enigmailRefreshKeys\n");
   var keyList = enigmailGetSelectedKeys();
   gEnigLastSelectedKeys = [];
   for (var i=0; i<keyList.length; i++) {
@@ -125,7 +126,7 @@ function enigmailClearTree() {
 }
 
 function enigmailBuildList(refresh) {
-  DEBUG_LOG("enigmailKeyManager.js: enigmailBuildList\n");
+  Log.DEBUG("enigmailKeyManager.js: enigmailBuildList\n");
 
   var keyListObj = {};
 
@@ -971,7 +972,7 @@ function enigmailChangePwd() {
 
 
 function enigGetClipboard() {
-  DEBUG_LOG("enigmailKeyManager.js: enigGetClipboard:\n");
+  Log.DEBUG("enigmailKeyManager.js: enigGetClipboard:\n");
   var cBoardContent = "";
   var clipBoard = Cc[ENIG_CLIPBOARD_CONTRACTID].getService(Ci.nsIClipboard);
   try {
@@ -983,7 +984,7 @@ function enigGetClipboard() {
     var length = {};
     transferable.getAnyTransferData(flavour, data, length);
     cBoardContent=data.value.QueryInterface(Ci.nsISupportsString).data;
-    DEBUG_LOG("enigmailKeyManager.js: enigGetClipboard: got data\n");
+    Log.DEBUG("enigmailKeyManager.js: enigGetClipboard: got data\n");
   }
   catch(ex) {}
   return cBoardContent;
@@ -1029,7 +1030,7 @@ function enigmailCopyToClipbrd() {
     if (clipBoard.supportsSelectionClipboard()) {
       clipBoardHlp.copyStringToClipboard(keyData, clipBoard.kSelectionClipboard);
     }
-    DEBUG_LOG("enigmailKeyManager.js: enigmailImportFromClipbrd: got data from clipboard");
+    Log.DEBUG("enigmailKeyManager.js: enigmailImportFromClipbrd: got data from clipboard");
     EnigAlert(EnigGetString("copyToClipbrdOK"));
   }
   catch(ex) {
@@ -1182,7 +1183,7 @@ function displayResult(arrayOfMsgText) {
 }
 
 function enigmailReceiveKeyCb(exitCode, errorMsg, msgBox) {
-  DEBUG_LOG("enigmailKeyManager.js: enigmailReceiveKeyCb\n");
+  Log.DEBUG("enigmailKeyManager.js: enigmailReceiveKeyCb\n");
   if (msgBox) {
     if (exitCode===0) {
       enigmailRefreshKeys();

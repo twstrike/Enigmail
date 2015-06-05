@@ -38,6 +38,7 @@
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 try {
   Components.utils.import("resource://gre/modules/Promise.jsm");
@@ -45,6 +46,7 @@ try {
   Components.utils.import("resource://gre/modules/commonjs/sdk/core/promise.js");
 }
 
+const EC = EnigmailCore;
 const Ec = EnigmailCommon;
 
 // Initialize enigmailCommon
@@ -66,7 +68,7 @@ const KEYTYPE_DSA = 1;
 const KEYTYPE_RSA = 2;
 
 function enigmailKeygenLoad() {
-  DEBUG_LOG("enigmailKeygen.js: Load\n");
+  Log.DEBUG("enigmailKeygen.js: Load\n");
 
   gUserIdentityList      = document.getElementById("userIdentity");
   gUserIdentityListPopup = document.getElementById("userIdentityPopup");
@@ -116,14 +118,14 @@ function enigmailOnClose() {
 }
 
 function enigmailKeygenUnload() {
-   DEBUG_LOG("enigmailKeygen.js: Unload\n");
+   Log.DEBUG("enigmailKeygen.js: Unload\n");
 
    enigmailKeygenCloseRequest();
 }
 
 
 function enigmailKeygenUpdate(getPrefs, setPrefs) {
-  DEBUG_LOG("enigmailKeygen.js: Update: "+getPrefs+", "+setPrefs+"\n");
+  Log.DEBUG("enigmailKeygen.js: Update: "+getPrefs+", "+setPrefs+"\n");
 
   var noPassphrase        = document.getElementById("noPassphrase");
   var noPassphraseChecked = getPrefs ? EnigGetPref("noPassphrase")
@@ -142,7 +144,7 @@ function enigmailKeygenUpdate(getPrefs, setPrefs) {
 }
 
 function enigmailKeygenTerminate(exitCode) {
-  DEBUG_LOG("enigmailKeygen.js: Terminate:\n");
+  Log.DEBUG("enigmailKeygen.js: Terminate:\n");
 
   var curId = gUsedId;
 
@@ -202,7 +204,7 @@ function enigmailKeygenTerminate(exitCode) {
  */
 
 function genAndSaveRevCert(keyId, uid) {
-  DEBUG_LOG("enigmailKeygen.js: genAndSaveRevCert\n");
+  Log.DEBUG("enigmailKeygen.js: genAndSaveRevCert\n");
 
   return new Promise(
     function(resolve, reject) {
@@ -258,7 +260,7 @@ function closeAndReset() {
 
 // Cleanup
 function enigmailKeygenCloseRequest() {
-   DEBUG_LOG("enigmailKeygen.js: CloseRequest\n");
+   Log.DEBUG("enigmailKeygen.js: CloseRequest\n");
 
   if (gKeygenRequest) {
     var p = gKeygenRequest;
@@ -294,7 +296,7 @@ function enigmailCheckPassphrase() {
 
 
 function enigmailKeygenStart() {
-   DEBUG_LOG("enigmailKeygen.js: Start\n");
+   Log.DEBUG("enigmailKeygen.js: Start\n");
 
 
    if (gKeygenRequest) {
@@ -390,7 +392,7 @@ function enigmailKeygenStart() {
         enigmailKeygenTerminate(status);
       },
       onDataAvailable: function(data) {
-        DEBUG_LOG("enigmailKeygen.js: onDataAvailable() "+data+"\n");
+        Log.DEBUG("enigmailKeygen.js: onDataAvailable() "+data+"\n");
 
         gAllData += data;
         var keyCreatedIndex = gAllData.indexOf("[GNUPG:] KEY_CREATED");
@@ -419,14 +421,14 @@ function enigmailKeygenStart() {
                          Ec.convertFromUnicode(passphrase),
                          listener);
    } catch (ex) {
-      Ec.DEBUG_LOG("enigmailKeygen.js: generateKey() failed with "+ex.toString()+"\n"+ex.stack+"\n");
+      Log.DEBUG("enigmailKeygen.js: generateKey() failed with "+ex.toString()+"\n"+ex.stack+"\n");
    }
 
    if (!gKeygenRequest) {
       EnigAlert(EnigGetString("keyGenFailed"));
    }
 
-   WRITE_LOG("enigmailKeygen.js: Start: gKeygenRequest = "+gKeygenRequest+"\n");
+   Log.WRITE("enigmailKeygen.js: Start: gKeygenRequest = "+gKeygenRequest+"\n");
 }
 
 function abortKeyGeneration() {
@@ -435,7 +437,7 @@ function abortKeyGeneration() {
 }
 
 function enigmailKeygenCancel() {
-  DEBUG_LOG("enigmailKeygen.js: Cancel\n");
+  Log.DEBUG("enigmailKeygen.js: Cancel\n");
   var closeWin=false;
 
   if (gKeygenRequest) {
@@ -482,13 +484,13 @@ function getCurrentIdentity()
 
 function fillIdentityListPopup()
 {
-  DEBUG_LOG("enigmailKeygen.js: fillIdentityListPopup\n");
+  Log.DEBUG("enigmailKeygen.js: fillIdentityListPopup\n");
 
   var idSupports = gAccountManager.allIdentities;
   var identities = queryISupArray(idSupports,
                                        Components.interfaces.nsIMsgIdentity);
 
-  DEBUG_LOG("enigmailKeygen.js: fillIdentityListPopup: "+identities + "\n");
+  Log.DEBUG("enigmailKeygen.js: fillIdentityListPopup: "+identities + "\n");
 
   // Default identity
   var defIdentity;
@@ -510,13 +512,13 @@ function fillIdentityListPopup()
     }
   }
 
-  DEBUG_LOG("enigmailKeygen.js: fillIdentityListPopup: default="+defIdentity.key+"\n");
+  Log.DEBUG("enigmailKeygen.js: fillIdentityListPopup: default="+defIdentity.key+"\n");
 
   var selected = false;
   for (var i=0; i<identities.length; i++) {
     var identity = identities[i];
 
-    DEBUG_LOG("id.valid="+identity.valid+"\n");
+    Log.DEBUG("id.valid="+identity.valid+"\n");
     if (!identity.valid || !identity.email)
       continue;
 
@@ -539,8 +541,8 @@ function fillIdentityListPopup()
     if (inServer) {
       var accountName = " - "+inServer.prettyName;
 
-      DEBUG_LOG("enigmailKeygen.js: accountName="+accountName+"\n");
-      DEBUG_LOG("enigmailKeygen.js: email="+identity.email+"\n");
+      Log.DEBUG("enigmailKeygen.js: accountName="+accountName+"\n");
+      Log.DEBUG("enigmailKeygen.js: email="+identity.email+"\n");
 
       var item = document.createElement('menuitem');
 //      item.setAttribute('label', identity.identityName);

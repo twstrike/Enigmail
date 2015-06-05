@@ -35,6 +35,7 @@
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 const Ec = EnigmailCommon;
 
 var gAlertPopUpIsOpen = false;
@@ -44,7 +45,7 @@ var gAlertPopUpIsOpen = false;
  * The function for when the popup window for changing the key expiry is loaded.
  */
 function onLoad() {
-  Ec.DEBUG_LOG("enigmailEditKeyExpiryDlg.js: onLoad()\n");
+  Log.DEBUG("enigmailEditKeyExpiryDlg.js: onLoad()\n");
 
   reloadData();
 }
@@ -78,7 +79,7 @@ function reloadData() {
 }
 
 function enigmailKeySelCallback(event) {
-  Ec.DEBUG_LOG("enigmailEditKeyExpiryDlg.js: enigmailKeySelCallback\n");
+  Log.DEBUG("enigmailEditKeyExpiryDlg.js: enigmailKeySelCallback\n");
 
   var Tree = document.getElementById("subkeyList");
   var row = {};
@@ -108,7 +109,7 @@ function enigmailKeySelCallback(event) {
 
 
 function processKey(subKeys) {
-  Ec.DEBUG_LOG("enigmailEditKeyExpiryDlg.js: processKey()\n");
+  Log.DEBUG("enigmailEditKeyExpiryDlg.js: processKey()\n");
 
   var noExpiry = document.getElementById("noExpiry").checked;
   var expiryTime = Number(document.getElementById("expireInput").value);
@@ -139,7 +140,7 @@ function processKey(subKeys) {
  * @return  Array  The indexes of the selected subkeys. 0 is the main key.
  */
 function getSelectedSubkeys() {
-  Ec.DEBUG_LOG("enigmailEditKeyExpiryDlg.js: getSelectedSubkeys()\n");
+  Log.DEBUG("enigmailEditKeyExpiryDlg.js: getSelectedSubkeys()\n");
 
   var keySelList   = document.getElementById("subkeyList");
   var treeChildren = keySelList.getElementsByAttribute("id", "keyListChildren")[0];
@@ -168,7 +169,7 @@ function getSelectedSubkeys() {
  * After clicking on the "ok" button ...
  */
 function onAccept() {
-  Ec.DEBUG_LOG("enigmailEditKeyExpiryDlg.js: onAccept()\n");
+  Log.DEBUG("enigmailEditKeyExpiryDlg.js: onAccept()\n");
   if (checkExpirationDate()) {
     subkeys = getSelectedSubkeys();
     if (subkeys.length > 0) {
@@ -183,7 +184,7 @@ function onAccept() {
 }
 
 function checkExpirationDate() {
-  Ec.DEBUG_LOG("enigmailEditKeyExpiryDlg.js: checkExpirationDate()\n");
+  Log.DEBUG("enigmailEditKeyExpiryDlg.js: checkExpirationDate()\n");
 
   var noExpiry = document.getElementById("noExpiry");
   var expireInput = document.getElementById("expireInput");
@@ -220,7 +221,7 @@ function checkExpirationDate() {
 }
 
 function onNoExpiry() {
-  Ec.DEBUG_LOG("enigmailEditKeyExpiryDlg.js: onNoExpiry()\n");
+  Log.DEBUG("enigmailEditKeyExpiryDlg.js: onNoExpiry()\n");
 
   var noExpiry = document.getElementById("noExpiry");
   var expireInput = document.getElementById("expireInput");

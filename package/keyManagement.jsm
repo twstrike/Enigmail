@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false */
+/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false, Log: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -41,6 +41,7 @@
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/key.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailKeyMgmt" ];
 
@@ -80,13 +81,13 @@ KeyEditor.prototype = {
   },
 
   gotData: function(data) {
-    //Ec.DEBUG_LOG("keyManagement.jsm: KeyEditor.gotData: '"+data+"'\n");
+    //Log.DEBUG("keyManagement.jsm: KeyEditor.gotData: '"+data+"'\n");
     this._data += data.replace(/\r\n/g, "\n");
     this.processData();
   },
 
   processData: function() {
-    //Ec.DEBUG_LOG("keyManagement.jsm: KeyEditor.processData\n");
+    //Log.DEBUG("keyManagement.jsm: KeyEditor.processData\n");
     var txt = "";
     while (this._data.length > 0 && this._stdin) {
       var index = this._data.indexOf("\n");
@@ -103,7 +104,7 @@ KeyEditor.prototype = {
   },
 
   closeStdin: function() {
-    Ec.DEBUG_LOG("keyManagement.jsm: KeyEditor.closeStdin:\n");
+    Log.DEBUG("keyManagement.jsm: KeyEditor.closeStdin:\n");
     if (this._stdin) {
       this._stdin.close();
       this._stdin = null;
@@ -111,17 +112,17 @@ KeyEditor.prototype = {
   },
 
   done: function(parentCallback, exitCode) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.done: exitCode="+exitCode+"\n");
+    Log.DEBUG("keyManagmenent.jsm: KeyEditor.done: exitCode="+exitCode+"\n");
 
     if (exitCode === 0) exitCode = this._exitCode;
 
-    Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.done: returning exitCode "+exitCode+"\n");
+    Log.DEBUG("keyManagmenent.jsm: KeyEditor.done: returning exitCode "+exitCode+"\n");
 
     parentCallback(exitCode, this.errorMsg);
   },
 
   writeLine: function (inputData) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.writeLine: '"+inputData+"'\n");
+    Log.DEBUG("keyManagmenent.jsm: KeyEditor.writeLine: '"+inputData+"'\n");
     this._stdin.write(inputData+"\n");
   },
 
@@ -149,38 +150,38 @@ KeyEditor.prototype = {
   },
 
   processLine: function(txt) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.processLine: '"+txt+"'\n");
+    Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: '"+txt+"'\n");
     var r = { quitNow: false,
               exitCode: -1 };
 
     try {
       if (txt.indexOf("[GNUPG:] BAD_PASSPHRASE")>=0 ||
           txt.indexOf("[GNUPG:] SC_OP_FAILURE 2") >= 0) {
-        Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.processLine: detected bad passphrase\n");
+        Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: detected bad passphrase\n");
         r.exitCode=-2;
         r.quitNow=true;
         this.errorMsg=Ec.getString("badPhrase");
       }
       if (txt.indexOf("[GNUPG:] NO_CARD_AVAILABLE")>=0) {
-        Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.processLine: detected missing card\n");
+        Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: detected missing card\n");
         this.errorMsg=Ec.getString("sc.noCardAvailable");
         r.exitCode=-3;
         r.quitNow=true;
       }
       if (txt.indexOf("[GNUPG:] ENIGMAIL_FAILURE")===0) {
-        Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.processLine: detected general failure\n");
+        Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: detected general failure\n");
         r.exitCode = -3;
         r.quitNow = true;
         this.errorMsg = txt.substr(26);
       }
       if (txt.indexOf("[GNUPG:] ALREADY_SIGNED")>=0) {
-        Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.processLine: detected key already signed\n");
+        Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: detected key already signed\n");
         this.errorMsg=Ec.getString("keyAlreadySigned");
         r.exitCode=-1;
         r.quitNow = true;
       }
       if (txt.indexOf("[GNUPG:] MISSING_PASSPHRASE")>=0) {
-        Ec.DEBUG_LOG("keyManagmenent.jsm: KeyEditor.processLine: detected missing passphrase\n");
+        Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: detected missing passphrase\n");
         this.errorMsg=Ec.getString("noPassphrase");
         r.exitCode = -2;
         this._exitCode = -2;
@@ -224,7 +225,7 @@ KeyEditor.prototype = {
         this.closeStdin();
       }
       catch (ex) {
-        Ec.DEBUG_LOG("no more data\n");
+        Log.DEBUG("no more data\n");
       }
     }
 
@@ -261,11 +262,11 @@ var EnigmailKeyMgmt = {
   },
 
   readKey: function (parent, inputData, outputData, callbackFunc, requestObserver, parentCallback){
-    Ec.DEBUG_LOG("keyManagmenent.jsm: readKey: parent="+parent+"\n");
+    Log.DEBUG("keyManagmenent.jsm: readKey: parent="+parent+"\n");
 
     var enigmailSvc = Ec.getService(parent);
     if (!enigmailSvc) {
-      Ec.ERROR_LOG("keyManagmenent.jsm: Enigmail.readKey: not yet initialized\n");
+      Log.ERROR("keyManagmenent.jsm: Enigmail.readKey: not yet initialized\n");
       parentCallback(-1, Ec.getString("notInit"));
       return -1;
     }
@@ -278,7 +279,7 @@ var EnigmailKeyMgmt = {
 
     if (inputData.path) {//read key from file
       args=args.concat(["--list-packets", inputData.path]);
-      Ec.CONSOLE_LOG("enigmail> "+Ec.printCmdLine(command, args)+"\n");
+      Log.CONSOLE("enigmail> "+Ec.printCmdLine(command, args)+"\n");
       EnigmailKeyMgmt.execCmd(command, args,
           function(pipe) {
           },
@@ -286,7 +287,7 @@ var EnigmailKeyMgmt = {
             outputData.key+=stdout;
           },
           function (result) {
-            Ec.DEBUG_LOG(result);
+            Log.DEBUG(result);
             if(callbackFunc) callbackFunc(outputData,result);
             if(parentCallback) parentCallback(outputData,result);
           }
@@ -295,7 +296,7 @@ var EnigmailKeyMgmt = {
     else if (inputData.keytext){//read key from text
       args=args.concat(["--list-packets"]);
 
-      Ec.CONSOLE_LOG("enigmail> "+Ec.printCmdLine(command, args)+"\n");
+      Log.CONSOLE("enigmail> "+Ec.printCmdLine(command, args)+"\n");
       var input = inputData.keytext;
       if ((typeof input) != "string") input = "";
 
@@ -312,7 +313,7 @@ var EnigmailKeyMgmt = {
             outputData.key+=stdout;
           },
           function (result) {
-            Ec.DEBUG_LOG(result);
+            Log.DEBUG(result);
             if(callbackFunc) callbackFunc(outputData,result);
             if(parentCallback) parentCallback(outputData,result);
           }
@@ -321,11 +322,11 @@ var EnigmailKeyMgmt = {
   },
 
   editKey: function (parent, needPassphrase, userId, keyId, editCmd, inputData, callbackFunc, requestObserver, parentCallback) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: editKey: parent="+parent+", editCmd="+editCmd+"\n");
+    Log.DEBUG("keyManagmenent.jsm: editKey: parent="+parent+", editCmd="+editCmd+"\n");
 
     var enigmailSvc = Ec.getService(parent);
     if (!enigmailSvc) {
-      Ec.ERROR_LOG("keyManagmenent.jsm: Enigmail.editKey: not yet initialized\n");
+      Log.ERROR("keyManagmenent.jsm: Enigmail.editKey: not yet initialized\n");
       parentCallback(-1, Ec.getString("notInit"));
       return -1;
     }
@@ -363,7 +364,7 @@ var EnigmailKeyMgmt = {
 
 
     var command= enigmailSvc.agentPath;
-    Ec.CONSOLE_LOG("enigmail> "+Ec.printCmdLine(command, args)+"\n");
+    Log.CONSOLE("enigmail> "+Ec.printCmdLine(command, args)+"\n");
 
     var keyEdit = new KeyEditor(requestObserver, callbackFunc, inputData);
 
@@ -376,13 +377,13 @@ var EnigmailKeyMgmt = {
           }
       );
     } catch (ex) {
-      Ec.ERROR_LOG("keyManagement.jsm: editKey: "+command.path+" failed\n");
+      Log.ERROR("keyManagement.jsm: editKey: "+command.path+" failed\n");
       parentCallback(-1, "");
     }
   },
 
   readKeyObjectFromFile: function (parent,path,callbackFunc){
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.readKeyObjectFromFile: filepath="+path+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.readKeyObjectFromFile: filepath="+path+"\n");
 
     return this.readKey(parent, {"path":path}, {},
         keyReadCallback,
@@ -391,7 +392,7 @@ var EnigmailKeyMgmt = {
   },
 
   setKeyTrust: function (parent, keyId, trustLevel, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.setKeyTrust: trustLevel="+trustLevel+", keyId="+keyId+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.setKeyTrust: trustLevel="+trustLevel+", keyId="+keyId+"\n");
 
     return this.editKey(parent, false, null, keyId, "trust",
                         { trustLevel: trustLevel},
@@ -417,7 +418,7 @@ var EnigmailKeyMgmt = {
    *          returnCode != 0 and errorMsg set in case of failure
    */
   setKeyExpiration: function (parent, keyId, subKeys, expiryLength, timeScale, noExpiry, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.setKeyExpiry: keyId="+keyId+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.setKeyExpiry: keyId="+keyId+"\n");
 
     expiryLength = "" + expiryLength;
     if (noExpiry === true) {
@@ -450,7 +451,7 @@ var EnigmailKeyMgmt = {
 
 
   signKey: function (parent, userId, keyId, signLocally, trustLevel, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.signKey: trustLevel="+trustLevel+", userId="+userId+", keyId="+keyId+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.signKey: trustLevel="+trustLevel+", userId="+userId+", keyId="+keyId+"\n");
     return this.editKey(parent, true, userId, keyId,
                         (signLocally ? "lsign" : "sign"),
                         { trustLevel: trustLevel,
@@ -461,7 +462,7 @@ var EnigmailKeyMgmt = {
   },
 
   genRevokeCert: function (parent, keyId, outFile, reasonCode, reasonText, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.genRevokeCert: keyId="+keyId+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.genRevokeCert: keyId="+keyId+"\n");
 
     var r= this.editKey(parent, true, null, keyId, "revoke",
                         { outFile: outFile,
@@ -475,7 +476,7 @@ var EnigmailKeyMgmt = {
   },
 
   addUid: function (parent, keyId, name, email, comment, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.addUid: keyId="+keyId+", name="+name+", email="+email+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.addUid: keyId="+keyId+", name="+name+", email="+email+"\n");
     var r= this.editKey(parent, true, null, keyId, "adduid",
                         { email: email,
                           name: name,
@@ -490,7 +491,7 @@ var EnigmailKeyMgmt = {
   },
 
   deleteKey: function (parent, keyId, deleteSecretKey, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.addUid: keyId="+keyId+", deleteSecretKey="+deleteSecretKey+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.addUid: keyId="+keyId+", deleteSecretKey="+deleteSecretKey+"\n");
 
     var cmd = (deleteSecretKey ? "--delete-secret-and-public-key" : "--delete-key");
     var r= this.editKey(parent, false, null, keyId, cmd,
@@ -502,7 +503,7 @@ var EnigmailKeyMgmt = {
   },
 
   changePassphrase: function (parent, keyId, oldPw, newPw, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.changePassphrase: keyId="+keyId+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.changePassphrase: keyId="+keyId+"\n");
 
     var pwdObserver = new ChangePasswdObserver();
     var r= this.editKey(parent, false, null, keyId, "passwd",
@@ -520,7 +521,7 @@ var EnigmailKeyMgmt = {
 
 
   enableDisableKey: function (parent, keyId, disableKey, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.enableDisableKey: keyId="+keyId+", disableKey="+disableKey+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.enableDisableKey: keyId="+keyId+", disableKey="+disableKey+"\n");
 
     var cmd = (disableKey ? "disable" : "enable");
     var r= this.editKey(parent, false, null, keyId, cmd,
@@ -532,7 +533,7 @@ var EnigmailKeyMgmt = {
   },
 
   setPrimaryUid: function (parent, keyId, idNumber, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.setPrimaryUid: keyId="+keyId+", idNumber="+idNumber+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.setPrimaryUid: keyId="+keyId+", idNumber="+idNumber+"\n");
     var r = this.editKey(parent, true, null, keyId, "",
                         { idNumber: idNumber,
                           step: 0,
@@ -545,7 +546,7 @@ var EnigmailKeyMgmt = {
 
 
   deleteUid: function (parent, keyId, idNumber, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.deleteUid: keyId="+keyId+", idNumber="+idNumber+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.deleteUid: keyId="+keyId+", idNumber="+idNumber+"\n");
     var r = this.editKey(parent, true, null, keyId, "",
                         { idNumber: idNumber,
                           step: 0,
@@ -558,7 +559,7 @@ var EnigmailKeyMgmt = {
 
 
   revokeUid: function (parent, keyId, idNumber, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.revokeUid: keyId="+keyId+", idNumber="+idNumber+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.revokeUid: keyId="+keyId+", idNumber="+idNumber+"\n");
     var r = this.editKey(parent, true, null, keyId, "",
                         { idNumber: idNumber,
                           step: 0,
@@ -570,7 +571,7 @@ var EnigmailKeyMgmt = {
   },
 
   addPhoto: function (parent, keyId, photoFile, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.addPhoto: keyId="+keyId+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.addPhoto: keyId="+keyId+"\n");
 
     var photoFileName = Ec.getEscapedFilename(Ec.getFilePath(photoFile.QueryInterface(Ec.getLocalFileApi())));
 
@@ -586,7 +587,7 @@ var EnigmailKeyMgmt = {
 
 
   genCardKey: function (parent, name, email, comment, expiry, backupPasswd, requestObserver, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.genCardKey: \n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.genCardKey: \n");
     var generateObserver = new EnigCardAdminObserver(requestObserver, Ec.isDosLike());
     var r = this.editKey(parent, false, null, "", ["--with-colons", "--card-edit"] ,
                         { step: 0,
@@ -605,7 +606,7 @@ var EnigmailKeyMgmt = {
   },
 
   cardAdminData: function (parent, name, firstname, lang, sex, url, login, forcepin, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.cardAdminData: parent="+parent+", name="+name+", firstname="+firstname+", lang="+lang+", sex="+sex+", url="+url+", login="+login+", forcepin="+forcepin+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.cardAdminData: parent="+parent+", name="+name+", firstname="+firstname+", lang="+lang+", sex="+sex+", url="+url+", login="+login+", forcepin="+forcepin+"\n");
     var adminObserver = new EnigCardAdminObserver(null, Ec.isDosLike());
     var r = this.editKey(parent, false, null, "", ["--with-colons", "--card-edit"],
             { step: 0,
@@ -624,7 +625,7 @@ var EnigmailKeyMgmt = {
   },
 
   cardChangePin: function (parent, action, oldPin, newPin, adminPin, pinObserver, callbackFunc) {
-    Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.cardChangePin: parent="+parent+", action="+action+"\n");
+    Log.DEBUG("keyManagmenent.jsm: Enigmail.cardChangePin: parent="+parent+", action="+action+"\n");
     var adminObserver = new EnigCardAdminObserver(pinObserver, Ec.isDosLike());
     var enigmailSvc = Ec.getService(parent);
 
@@ -702,7 +703,7 @@ function signKeyCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -731,7 +732,7 @@ function keyTrustCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -746,7 +747,7 @@ function keyTrustCallback(inputData, keyEdit, ret) {
  * @param  Object  ret
  */
 function keyExpiryCallback(inputData, keyEdit, ret) {
-  Ec.DEBUG_LOG("keyManagmenent.jsm: keyExpiryCallback()\n");
+  Log.DEBUG("keyManagmenent.jsm: keyExpiryCallback()\n");
 
   ret.writeTxt = "";
   ret.errorMsg = "";
@@ -793,7 +794,7 @@ function keyExpiryCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow = true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode = -1;
   }
 }
@@ -847,7 +848,7 @@ function addUidCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -889,7 +890,7 @@ function revokeCertCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -922,7 +923,7 @@ function setPrimaryUidCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -962,7 +963,7 @@ function changePassphraseCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -1005,7 +1006,7 @@ function deleteUidCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -1063,7 +1064,7 @@ function revokeUidCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -1093,13 +1094,13 @@ function deleteKeyCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
 
 function getPin(domWindow, promptMsg, ret) {
-  Ec.DEBUG_LOG("keyManagmenent.jsm: getPin: \n");
+  Log.DEBUG("keyManagmenent.jsm: getPin: \n");
 
   var passwdObj = {value: ""};
   var dummyObj = {};
@@ -1120,7 +1121,7 @@ function getPin(domWindow, promptMsg, ret) {
     return false;
   }
 
-  Ec.DEBUG_LOG("keyManagmenent.jsm: getPin: got pin\n");
+  Log.DEBUG("keyManagmenent.jsm: getPin: got pin\n");
   ret.writeTxt = passwdObj.value;
 
   return true;
@@ -1194,7 +1195,7 @@ function genCardKeyCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -1275,7 +1276,7 @@ function cardAdminDataCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -1329,7 +1330,7 @@ function cardChangePinCallback(inputData, keyEdit, ret) {
   else {
     ret.exitCode=-1;
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
   }
 }
 
@@ -1366,7 +1367,7 @@ function addPhotoCallback(inputData, keyEdit, ret) {
   }
   else {
     ret.quitNow=true;
-    Ec.ERROR_LOG("Unknown command prompt: "+keyEdit.getText()+"\n");
+    Log.ERROR("Unknown command prompt: "+keyEdit.getText()+"\n");
     ret.exitCode=-1;
   }
 }
@@ -1392,7 +1393,7 @@ EnigCardAdminObserver.prototype =
 
   onDataAvailable: function (data) {
     var ret="";
-    Ec.DEBUG_LOG("keyManagmenent.jsm: enigCardAdminObserver.onDataAvailable: data="+data+"\n");
+    Log.DEBUG("keyManagmenent.jsm: enigCardAdminObserver.onDataAvailable: data="+data+"\n");
     if (this._isDosLike && data.indexOf("[GNUPG:] BACKUP_KEY_CREATED") === 0) {
       data=data.replace(/\//g, "\\");
     }
@@ -1433,7 +1434,7 @@ ChangePasswdObserver.prototype =
 
   onDataAvailable: function (data) {
     var ret="";
-    Ec.DEBUG_LOG("keyManagmenent.jsm: ChangePasswdObserver.onDataAvailable: data="+data+"\n");
+    Log.DEBUG("keyManagmenent.jsm: ChangePasswdObserver.onDataAvailable: data="+data+"\n");
     if (this._failureCode) {
       ret = "[GNUPG:] ENIGMAIL_FAILURE "+data;
     }

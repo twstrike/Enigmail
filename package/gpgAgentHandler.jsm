@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, subprocess: false, Files: false */
+/*global Components: false, EnigmailCore: false, subprocess: false, Files: false, Log: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,6 +39,7 @@
 Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailGpgAgent" ];
 
@@ -65,7 +66,7 @@ var EnigmailGpgAgent = {
                 // gpg version >= 2.0.16 launches gpg-agent automatically
                 if (Ec.getGpgFeature("autostart-gpg-agent")) {
                     useAgent = true;
-                    EC.DEBUG_LOG("enigmail.js: Setting useAgent to "+useAgent+" for gpg2 >= 2.0.16\n");
+                    Log.DEBUG("enigmail.js: Setting useAgent to "+useAgent+" for gpg2 >= 2.0.16\n");
                 }
                 else {
                     useAgent = (ecom.gpgAgentInfo.envStr.length>0 || ecom.prefBranch.getBoolPref("useGpgAgent"));
@@ -78,7 +79,7 @@ var EnigmailGpgAgent = {
 
 
   resetGpgAgent: function() {
-    EC.DEBUG_LOG("gpgAgentHandler.jsm: resetGpgAgent\n");
+    Log.DEBUG("gpgAgentHandler.jsm: resetGpgAgent\n");
     gIsGpgAgent = -1;
   },
 
@@ -92,7 +93,7 @@ var EnigmailGpgAgent = {
   },
 
   isCmdGpgAgent: function(pid) {
-    EC.DEBUG_LOG("gpgAgentHandler.jsm: isCmdGpgAgent:\n");
+    Log.DEBUG("gpgAgentHandler.jsm: isCmdGpgAgent:\n");
 
     var environment = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
     var ret = false;
@@ -110,7 +111,7 @@ var EnigmailGpgAgent = {
       environment: Ec.envList,
       charset: null,
       done: function(result) {
-        EC.DEBUG_LOG("gpgAgentHandler.jsm: isCmdGpgAgent: got data: '"+result.stdout+"'\n");
+        Log.DEBUG("gpgAgentHandler.jsm: isCmdGpgAgent: got data: '"+result.stdout+"'\n");
         var data = result.stdout.replace(/[\r\n]/g, " ");
         if (data.search(/gpg-agent/) >= 0)
           ret = true;
@@ -129,7 +130,7 @@ var EnigmailGpgAgent = {
   isAgentTypeGpgAgent: function() {
     // determine if the used agent is a gpg-agent
 
-    EC.DEBUG_LOG("gpgAgentHandler.jsm: isAgentTypeGpgAgent:\n");
+    Log.DEBUG("gpgAgentHandler.jsm: isAgentTypeGpgAgent:\n");
 
     // to my knowledge there is no other agent than gpg-agent on Windows
     if (Ec.getOS() == "WINNT") return true;
@@ -169,7 +170,7 @@ var EnigmailGpgAgent = {
     }
     catch (ex) {}
 
-    EC.DEBUG_LOG("gpgAgentHandler.jsm: isAgentTypeGpgAgent: pid="+pid+"\n");
+    Log.DEBUG("gpgAgentHandler.jsm: isAgentTypeGpgAgent: pid="+pid+"\n");
 
     this.isCmdGpgAgent(pid);
     var isAgent = false;
@@ -184,7 +185,7 @@ var EnigmailGpgAgent = {
   },
 
   getAgentMaxIdle: function() {
-    EC.DEBUG_LOG("gpgAgentHandler.jsm: getAgentMaxIdle:\n");
+    Log.DEBUG("gpgAgentHandler.jsm: getAgentMaxIdle:\n");
     var svc = Ec.getService();
     var maxIdle = -1;
 
@@ -203,7 +204,7 @@ var EnigmailGpgAgent = {
         var i;
 
         for (i=0; i < lines.length; i++) {
-          EC.DEBUG_LOG("gpgAgentHandler.jsm: getAgentMaxIdle: line: "+lines[i]+"\n");
+          Log.DEBUG("gpgAgentHandler.jsm: getAgentMaxIdle: line: "+lines[i]+"\n");
 
           if (lines[i].search(/^default-cache-ttl:/) === 0) {
             var m = lines[i].split(/:/);
@@ -225,7 +226,7 @@ var EnigmailGpgAgent = {
   },
 
   setAgentMaxIdle: function(idleMinutes) {
-    EC.DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle:\n");
+    Log.DEBUG("gpgAgentHandler.jsm: setAgentMaxIdle:\n");
     var svc = Ec.getService();
 
     if (! svc) return;
@@ -244,10 +245,10 @@ var EnigmailGpgAgent = {
         pipe.close();
       },
       stdout: function (data) {
-        EC.DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle.stdout: "+data+"\n");
+        Log.DEBUG("gpgAgentHandler.jsm: setAgentMaxIdle.stdout: "+data+"\n");
       },
       done: function(result) {
-        EC.DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle.stdout: gpgconf exitCode="+result.exitCode+"\n");
+        Log.DEBUG("gpgAgentHandler.jsm: setAgentMaxIdle.stdout: gpgconf exitCode="+result.exitCode+"\n");
       }
     };
 
@@ -255,7 +256,7 @@ var EnigmailGpgAgent = {
       subprocess.call(proc);
     }
     catch (ex) {
-      EC.DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle: exception: "+ex.toString()+"\n");
+      Log.DEBUG("gpgAgentHandler.jsm: setAgentMaxIdle: exception: "+ex.toString()+"\n");
     }
   },
 

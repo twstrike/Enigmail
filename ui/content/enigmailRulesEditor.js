@@ -35,6 +35,8 @@
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
+Components.utils.import("resource://enigmail/log.jsm");
+
 // Initialize enigmailCommon
 EnigInitCommon("enigmailRulesEditor");
 
@@ -57,7 +59,7 @@ function enigmailDlgOnLoad() {
       EnigAlert("Invalid pgprules.xml file:\n"+ rulesList.firstChild.textContent);
       return;
     }
-    DEBUG_LOG("enigmailRulesEditor.js: dlgOnLoad: keys loaded\n");
+    Log.DEBUG("enigmailRulesEditor.js: dlgOnLoad: keys loaded\n");
     gNumRows=0;
     var node=rulesList.firstChild.firstChild;
     while (node) {
@@ -90,7 +92,7 @@ function enigmailDlgOnLoad() {
 }
 
 function enigmailDlgOnAccept() {
-  DEBUG_LOG("enigmailRulesEditor.js: dlgOnAccept:\n");
+  Log.DEBUG("enigmailRulesEditor.js: dlgOnAccept:\n");
   var enigmailSvc = GetEnigmailSvc();
   if (!enigmailSvc)
     return false;

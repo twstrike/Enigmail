@@ -36,6 +36,7 @@
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 const Ec = EnigmailCommon;
 
@@ -114,7 +115,7 @@ var progressListener = {
 
 function onLoad() {
   // Set global variables.
-  Ec.DEBUG_LOG("enigRetrieveProgress: onLoad\n");
+  Log.DEBUG("enigRetrieveProgress: onLoad\n");
   var inArg = window.arguments[0];
   var subject;
   window.arguments[1].result=false;
@@ -146,14 +147,14 @@ function onLoad() {
 
   var procListener = {
     done: function (exitCode) {
-      Ec.DEBUG_LOG("enigRetrieveProgress: subprocess terminated with "+exitCode+"\n");
+      Log.DEBUG("enigRetrieveProgress: subprocess terminated with "+exitCode+"\n");
       processEnd(msgProgress, exitCode);
     },
     stdout: function(data) {
-      Ec.DEBUG_LOG("enigRetrieveProgress: got data on stdout: '"+data+"'\n");
+      Log.DEBUG("enigRetrieveProgress: got data on stdout: '"+data+"'\n");
     },
     stderr: function(data) {
-      Ec.DEBUG_LOG("enigRetrieveProgress: got data on stderr: '"+data+"'\n");
+      Log.DEBUG("enigRetrieveProgress: got data on stderr: '"+data+"'\n");
       gErrorData += data;
     }
   };
@@ -200,11 +201,11 @@ function onCancel ()
 }
 
 function processEnd (progressBar, exitCode) {
-  Ec.DEBUG_LOG("enigmailRetrieveProgress.js: processEnd\n");
+  Log.DEBUG("enigmailRetrieveProgress.js: processEnd\n");
   var errorMsg;
   if (gProcess) {
     gProcess = null;
-    Ec.DEBUG_LOG("enigmailRetrieveProgress.js: processEnd: exitCode = "+exitCode+"\n");
+    Log.DEBUG("enigmailRetrieveProgress.js: processEnd: exitCode = "+exitCode+"\n");
 
     var statusText=gEnigCallbackFunc(exitCode, "", false);
 
@@ -217,7 +218,7 @@ function processEnd (progressBar, exitCode) {
       }
     } catch (ex) {}
 
-    Ec.DEBUG_LOG("enigmailRetrieveProgress.js: processEnd: errorMsg="+errorMsg);
+    Log.DEBUG("enigmailRetrieveProgress.js: processEnd: errorMsg="+errorMsg);
     if (errorMsg.search(/ec=\d+/i)>=0) {
       exitCode=-1;
     }

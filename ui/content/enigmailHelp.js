@@ -35,11 +35,13 @@
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
+Components.utils.import("resource://enigmail/log.jsm");
+
 // Initialize enigmailCommon
 EnigInitCommon("enigmailHelp");
 
 function enigHelpLoad() {
-  DEBUG_LOG("enigmailHelp.js: enigHelpLoad\n");
+  Log.DEBUG("enigmailHelp.js: enigHelpLoad\n");
 
   var contentFrame = EnigGetFrame(window, "contentFrame");
   if (!contentFrame)

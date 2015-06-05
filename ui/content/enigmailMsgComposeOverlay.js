@@ -48,6 +48,7 @@ catch (ex) {
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
@@ -119,7 +120,7 @@ Enigmail.msg = {
 
   composeStartup: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.composeStartup\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.composeStartup\n");
 
     function delayedProcessFinalState() {
       EnigmailCommon.setTimeout(function _f() {
@@ -166,7 +167,7 @@ Enigmail.msg = {
 
   composeUnload: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.composeUnload\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.composeUnload\n");
     //if (gMsgCompose)
     //  gMsgCompose.UnregisterStateListener(Enigmail.composeStateListener);
   },
@@ -174,7 +175,7 @@ Enigmail.msg = {
 
   handleClick: function (event, modifyType)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.handleClick\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.handleClick\n");
     switch (event.button) {
     case 2:
       // do not process the event any futher
@@ -191,7 +192,7 @@ Enigmail.msg = {
 
   setIdentityCallback: function (elementId)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.setIdentityCallback: elementId="+elementId+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.setIdentityCallback: elementId="+elementId+"\n");
 
     EnigmailCommon.setTimeout(function _f() {
         Enigmail.msg.setIdentityDefaults();
@@ -204,7 +205,7 @@ Enigmail.msg = {
    */
   getAccDefault: function (key)
   {
-    //EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.getAccDefault: identity="+this.identity.key+"("+this.identity.email+") key="+key+"\n");
+    //Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.getAccDefault: identity="+this.identity.key+"("+this.identity.email+") key="+key+"\n");
 
     var enabled = this.identity.getBoolAttribute("enablePgp");
     if (key == "enabled") {
@@ -233,7 +234,7 @@ Enigmail.msg = {
         res=this.identity.getBoolAttribute(key);
         break;
       }
-      //EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.getAccDefault:   "+key+"="+res+"\n");
+      //Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.getAccDefault:   "+key+"="+res+"\n");
       return res;
     }
     else {
@@ -250,14 +251,14 @@ Enigmail.msg = {
     }
 
     // should not be reached
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.getAccDefault:   internal error: invalid key '"+key+"'\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.getAccDefault:   internal error: invalid key '"+key+"'\n");
     return null;
   },
 
 
   setIdentityDefaults: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.setIdentityDefaults\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.setIdentityDefaults\n");
 
     this.identity = getCurrentIdentity();
     if (this.getAccDefault("enabled")) {
@@ -285,7 +286,7 @@ Enigmail.msg = {
   // depending on the identity
   processAccountSpecificDefaultOptions: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.processAccountSpecificDefaultOptions\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.processAccountSpecificDefaultOptions\n");
 
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
     const SIGN    = nsIEnigmail.SEND_SIGNED;
@@ -317,7 +318,7 @@ Enigmail.msg = {
 
   getMsgProperties: function (msgUri, draft)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMessengerOverlay.js: Enigmail.msg.getMsgProperties:\n");
+    Log.DEBUG("enigmailMessengerOverlay.js: Enigmail.msg.getMsgProperties:\n");
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
 
     var properties = 0;
@@ -332,13 +333,13 @@ Enigmail.msg = {
             { examineEncryptedParts: true });
           }
           catch (ex) {
-            EnigmailCommon.DEBUG_LOG("enigmailMessengerOverlay.js: Enigmail.msg.getMsgProperties: cannot use MsgHdrToMimeMessage\n");
+            Log.DEBUG("enigmailMessengerOverlay.js: Enigmail.msg.getMsgProperties: cannot use MsgHdrToMimeMessage\n");
           }
         }
       }
     }
     catch (ex) {
-      EnigmailCommon.DEBUG_LOG("enigmailMessengerOverlay.js: Enigmail.msg.getMsgProperties: got exception '"+ex.toString() +"'\n");
+      Log.DEBUG("enigmailMessengerOverlay.js: Enigmail.msg.getMsgProperties: got exception '"+ex.toString() +"'\n");
     }
 
     if (EnigmailCommon.isEncryptedUri(msgUri)) {
@@ -350,7 +351,7 @@ Enigmail.msg = {
 
   getMsgPropertiesCb: function  (msg, mimeMsg)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.getMsgPropertiesCb\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.getMsgPropertiesCb\n");
 
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
 
@@ -362,7 +363,7 @@ Enigmail.msg = {
       return;
     }
 
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.getMsgPropertiesCb: draftStatus: "+stat+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.getMsgPropertiesCb: draftStatus: "+stat+"\n");
 
     if (stat.substr(0,1) == "N") {
       // new style drafts (Enigmail 1.7)
@@ -413,7 +414,7 @@ Enigmail.msg = {
 
   composeOpen: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.composeOpen\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.composeOpen\n");
 
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
     const SIGN    = nsIEnigmail.SEND_SIGNED;
@@ -461,8 +462,8 @@ Enigmail.msg = {
           msgFlags = this.getMsgProperties(msgUri, msgIsDraft);
           if (! msgIsDraft) {
             if (msgFlags & nsIEnigmail.DECRYPTION_OKAY) {
-              EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.composeOpen: has encrypted originalMsgUri\n");
-              EnigmailCommon.DEBUG_LOG("originalMsgURI="+gMsgCompose.originalMsgURI+"\n");
+              Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.composeOpen: has encrypted originalMsgUri\n");
+              Log.DEBUG("originalMsgURI="+gMsgCompose.originalMsgURI+"\n");
               this.setSendMode('encrypt');
 
               // TODO: disable S/MIME in case it is enabled
@@ -536,20 +537,20 @@ Enigmail.msg = {
 
   msgComposeReopen: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.msgComposeReopen\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.msgComposeReopen\n");
     this.msgComposeReset(false);   // false => not closing => call setIdentityDefaults()
     this.composeOpen();
     this.fireSendFlags();
 
     EnigmailCommon.setTimeout(function _f() {
-        EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay: re-determine send flags\n");
+        Log.DEBUG("enigmailMsgComposeOverlay: re-determine send flags\n");
         try {
           this.determineSendFlags();
           this.processFinalState();
           this.updateStatusBar();
         }
         catch(ex) {
-          EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay: re-determine send flags - ERROR: "+ex.toString()+"\n");
+          Log.DEBUG("enigmailMsgComposeOverlay: re-determine send flags - ERROR: "+ex.toString()+"\n");
         }
       }.bind(Enigmail.msg), 1000);
   },
@@ -557,7 +558,7 @@ Enigmail.msg = {
 
   msgComposeClose: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.msgComposeClose\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.msgComposeClose\n");
 
     var ioServ;
     try {
@@ -570,7 +571,7 @@ Enigmail.msg = {
 
         for (var i in this.modifiedAttach) {
           if (this.modifiedAttach[i].origTemp) {
-            EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.msgComposeClose: deleting "+this.modifiedAttach[i].origUrl+"\n");
+            Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.msgComposeClose: deleting "+this.modifiedAttach[i].origUrl+"\n");
             var fileUri = ioServ.newURI(this.modifiedAttach[i].origUrl, null, null);
             var fileHandle = Components.classes[EnigmailCommon.LOCAL_FILE_CONTRACTID].createInstance(EnigmailCommon.getLocalFileApi());
             fileHandle.initWithPath(fileUri.path);
@@ -581,7 +582,7 @@ Enigmail.msg = {
       }
 
     } catch (ex) {
-      EnigmailCommon.ERROR_LOG("enigmailMsgComposeOverlay.js: ECSL.ComposeProcessDone: could not delete all files:\n"+ex.toString()+"\n");
+      Log.ERROR("enigmailMsgComposeOverlay.js: ECSL.ComposeProcessDone: could not delete all files:\n"+ex.toString()+"\n");
     }
 
     this.msgComposeReset(true);  // true => closing => don't call setIdentityDefaults()
@@ -590,7 +591,7 @@ Enigmail.msg = {
 
   msgComposeReset: function (closing)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.msgComposeReset\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.msgComposeReset\n");
 
     this.dirty = 0;
     this.processed = null;
@@ -628,7 +629,7 @@ Enigmail.msg = {
 
   initRadioMenu: function (prefName, optionIds)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMessengerOverlay.js: Enigmail.msg.initRadioMenu: "+prefName+"\n");
+    Log.DEBUG("enigmailMessengerOverlay.js: Enigmail.msg.initRadioMenu: "+prefName+"\n");
 
     var encryptId;
 
@@ -645,7 +646,7 @@ Enigmail.msg = {
 
   usePpgMimeOption: function (value)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMessengerOverlay.js: Enigmail.msg.usePpgMimeOption: "+value+"\n");
+    Log.DEBUG("enigmailMessengerOverlay.js: Enigmail.msg.usePpgMimeOption: "+value+"\n");
 
     EnigmailCommon.setPref("usePGPMimeOption", value);
 
@@ -654,7 +655,7 @@ Enigmail.msg = {
 
   togglePgpMime: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.togglePgpMime\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.togglePgpMime\n");
 
     this.sendPgpMime = !this.sendPgpMime;
   },
@@ -665,7 +666,7 @@ Enigmail.msg = {
 
   toggleAttachOwnKey: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.toggleAttachOwnKey\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.toggleAttachOwnKey\n");
     EnigmailCommon.getService(window); // make sure Enigmail is loaded and working
 
     this.attachOwnKeyObj.appendAttachment = !this.attachOwnKeyObj.appendAttachment;
@@ -693,7 +694,7 @@ Enigmail.msg = {
 
   attachOwnKey: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.attachOwnKey:\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.attachOwnKey:\n");
 
     var userIdValue;
 
@@ -714,13 +715,13 @@ Enigmail.msg = {
       }
     }
     else {
-       EnigmailCommon.ERROR_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.attachOwnKey: trying to attach unknown own key!\n");
+       Log.ERROR("enigmailMsgComposeOverlay.js: Enigmail.msg.attachOwnKey: trying to attach unknown own key!\n");
     }
   },
 
   attachKey: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.attachKey: \n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.attachKey: \n");
 
     var resultObj = {};
     var inputObj = {};
@@ -743,7 +744,7 @@ Enigmail.msg = {
 
   extractAndAttachKey: function (uid)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.attachKey: \n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.attachKey: \n");
     var enigmailSvc = EnigmailCommon.getService(window);
     if (!enigmailSvc)
       return null;
@@ -820,7 +821,7 @@ Enigmail.msg = {
    */
   undoEncryption: function (useEditorUndo)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.undoEncryption:\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.undoEncryption:\n");
     if (this.processed) {
       if (useEditorUndo) {
         EnigmailCommon.setTimeout(function _f() {
@@ -879,7 +880,7 @@ Enigmail.msg = {
 
   removeAttachedKey: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.removeAttachedKey: \n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.removeAttachedKey: \n");
 
     var bucketList = document.getElementById("attachmentBucket");
     var node = bucketList.firstChild;
@@ -914,7 +915,7 @@ Enigmail.msg = {
 
   replaceEditorText: function (text)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.replaceEditorText:\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.replaceEditorText:\n");
     this.editorSelectAll();
 
     // Overwrite text in clipboard for security
@@ -951,7 +952,7 @@ Enigmail.msg = {
 
   goAccountManager: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.goAccountManager:\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.goAccountManager:\n");
     EnigmailCommon.getService(window);
     var currentId=null;
     var server=null;
@@ -978,7 +979,7 @@ Enigmail.msg = {
 
   doPgpButton: function (what)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.doPgpButton: what="+what+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.doPgpButton: what="+what+"\n");
 
     // Note: For the toolbar button this is indirectly triggered:
     //       - the menu items trigger nextCommand()
@@ -1059,7 +1060,7 @@ Enigmail.msg = {
 
   nextCommand: function (what)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.nextCommand: what="+what+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.nextCommand: what="+what+"\n");
     this.nextCommandId=what;
   },
 
@@ -1068,7 +1069,7 @@ Enigmail.msg = {
   // - also called internally for saved emails
   setSendMode: function (sendMode)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.setSendMode: sendMode="+sendMode+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.setSendMode: sendMode="+sendMode+"\n");
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
     const SIGN    = nsIEnigmail.SEND_SIGNED;
     const ENCRYPT = nsIEnigmail.SEND_ENCRYPTED;
@@ -1115,7 +1116,7 @@ Enigmail.msg = {
   // - triggered by the user interface
   setFinalSendMode: function (sendMode)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.setFinalSendMode: sendMode="+sendMode+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.setFinalSendMode: sendMode="+sendMode+"\n");
 
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
     const SIGN    = nsIEnigmail.SEND_SIGNED;
@@ -1256,7 +1257,7 @@ Enigmail.msg = {
   //   - this.statusEncrypt, this.statusSign, this.statusPGPMime
   processFinalState: function (sendFlags)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.processFinalState()\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.processFinalState()\n");
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
     const SIGN    = nsIEnigmail.SEND_SIGNED;
     const ENCRYPT = nsIEnigmail.SEND_ENCRYPTED;
@@ -1306,8 +1307,8 @@ Enigmail.msg = {
         encReason = EnigmailCommon.getString("reasonByConflict");
         break;
     }
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js:   encrypt="+((this.sendMode&ENCRYPT)!==0)+" encryptByRules="+this.encryptByRules+" encFinally="+encFinally+"\n");
-    EnigmailCommon.DEBUG_LOG("                                encReason="+encReason+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js:   encrypt="+((this.sendMode&ENCRYPT)!==0)+" encryptByRules="+this.encryptByRules+" encFinally="+encFinally+"\n");
+    Log.DEBUG("                                encReason="+encReason+"\n");
 
     // process resulting sign mode
     if (this.signForced == EnigmailCommon.ENIG_NEVER) {  // force not to sign?
@@ -1343,8 +1344,8 @@ Enigmail.msg = {
         signReason = EnigmailCommon.getString("reasonByConflict");
         break;
     }
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js:   signed="+((this.sendMode&SIGN)!==0)+" signByRules="+this.signByRules+" signFinally="+signFinally+"\n");
-    EnigmailCommon.DEBUG_LOG("                                signReason="+signReason+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js:   signed="+((this.sendMode&SIGN)!==0)+" signByRules="+this.signByRules+" signFinally="+signFinally+"\n");
+    Log.DEBUG("                                signReason="+signReason+"\n");
 
     // process option to finally sign if encrypted/unencrypted
     // (unless rules force not to sign)
@@ -1377,8 +1378,8 @@ Enigmail.msg = {
             }
             break;
         }
-        EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js:   derived signFinally="+signFinally+"\n");
-        EnigmailCommon.DEBUG_LOG("                                signReason="+signReason+"\n");
+        Log.DEBUG("enigmailMsgComposeOverlay.js:   derived signFinally="+signFinally+"\n");
+        Log.DEBUG("                                signReason="+signReason+"\n");
       }
     }
 
@@ -1417,7 +1418,7 @@ Enigmail.msg = {
         pgpmimeFinally = EnigmailCommon.ENIG_FINAL_CONFLICT;
         break;
     }
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js:   pgpmimeByRules="+this.pgpmimeByRules+" pgpmimeFinally="+pgpmimeFinally+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js:   pgpmimeByRules="+this.pgpmimeByRules+" pgpmimeFinally="+pgpmimeFinally+"\n");
 
     this.statusEncrypted = encFinally;
     this.statusSigned = signFinally;
@@ -1435,7 +1436,7 @@ Enigmail.msg = {
   //   - this.statusEncryptStr, this.statusSignStr, this.statusPGPMimeStr, this.statusInlinePGPStr
   updateStatusBar: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.updateStatusBar()\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.updateStatusBar()\n");
     this.statusEncryptedInStatusBar = this.statusEncrypted; // to double check broken promise for encryption
 
     if (! this.identity) {
@@ -1510,7 +1511,7 @@ Enigmail.msg = {
         encReasonStr = EnigmailCommon.getString("encryptOff");
       }
     }
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js:   encSymbol="+encSymbol+"  encReasonStr="+encReasonStr+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js:   encSymbol="+encSymbol+"  encReasonStr="+encReasonStr+"\n");
 
     // update encrypt icon and tooltip/menu-text
     encBroadcaster.setAttribute("encrypted", encSymbol);
@@ -1571,7 +1572,7 @@ Enigmail.msg = {
         signReasonStr = signStr;
       }
     }
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js:   signSymbol="+signSymbol+"  signReasonStr="+signReasonStr+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js:   signSymbol="+signSymbol+"  signReasonStr="+signReasonStr+"\n");
 
     // update sign icon and tooltip/menu-text
     signBroadcaster.setAttribute("signed", signSymbol);
@@ -1676,7 +1677,7 @@ Enigmail.msg = {
    */
   determineSendFlags: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.focusChange: Enigmail.msg.determineSendFlags\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.focusChange: Enigmail.msg.determineSendFlags\n");
     this.statusEncryptedInStatusBar = null; // to double check broken promise for encryption
 
     if (! this.identity) {
@@ -1754,7 +1755,7 @@ Enigmail.msg = {
 
   setMenuSettings: function (postfix)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.setMenuSettings: postfix="+postfix+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.setMenuSettings: postfix="+postfix+"\n");
 
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
     const SIGN    = nsIEnigmail.SEND_SIGNED;
@@ -1844,7 +1845,7 @@ Enigmail.msg = {
 
   displaySecuritySettings: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.displaySecuritySettings\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.displaySecuritySettings\n");
 
     if (this.statusEncrypted == EnigmailCommon.ENIG_FINAL_SMIME_DISABLED) {
       EnigmailCommon.alert(window, "Enigmail is not used because S/MIME is currently enabled. Please turn off S/MIME signing and/or encryption and then enable Enigmail encryption");
@@ -1892,7 +1893,7 @@ Enigmail.msg = {
   signingNoLongerDependsOnEnc: function ()
   {
     if (this.finalSignDependsOnEncrypt) {
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.signingNoLongerDependsOnEnc(): unbundle final signing\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.signingNoLongerDependsOnEnc(): unbundle final signing\n");
       this.finalSignDependsOnEncrypt = false;
 
       EnigmailCommon.alertPref(window, EnigmailCommon.getString("signIconClicked"), "displaySignWarn");
@@ -1902,7 +1903,7 @@ Enigmail.msg = {
 
   confirmBeforeSend: function (toAddrStr, gpgKeys, sendFlags, isOffline)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.confirmBeforeSend: sendFlags="+sendFlags+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.confirmBeforeSend: sendFlags="+sendFlags+"\n");
     // get confirmation before sending message
 
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
@@ -1956,7 +1957,7 @@ Enigmail.msg = {
 
   setDraftStatus: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.setDraftStatus - enabling draft mode\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.setDraftStatus - enabling draft mode\n");
 
     // Draft Status:
     // N (for new style) plus String of 4 numbers:
@@ -2002,7 +2003,7 @@ Enigmail.msg = {
     }
 
     if (typeof(userIdValue) != "string") {
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.getSenderUserId: type of userIdValue="+typeof(userIdValue)+"\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.getSenderUserId: type of userIdValue="+typeof(userIdValue)+"\n");
       userIdValue = this.identity.email;
     }
     return userIdValue;
@@ -2028,8 +2029,8 @@ Enigmail.msg = {
    */
   keySelection: function (enigmailSvc, sendFlags, optSendFlags, gotSendFlags, fromAddr, toAddrList, bccAddrList)
   {
-    EnigmailCommon.DEBUG_LOG("=====> keySelection()\n");
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.keySelection()\n");
+    Log.DEBUG("=====> keySelection()\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.keySelection()\n");
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
     const SIGN    = nsIEnigmail.SEND_SIGNED;
     const ENCRYPT = nsIEnigmail.SEND_ENCRYPTED;
@@ -2042,7 +2043,7 @@ Enigmail.msg = {
     //       (thus compromising the concept of bcc)
     //       THUS, we disable encryption even though all bcc receivers might want to have it encrypted.
     if (toAddrStr.length === 0) {
-       EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.keySelection(): skip key selection because we neither have \"to\" nor \"cc\" addresses\n");
+       Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.keySelection(): skip key selection because we neither have \"to\" nor \"cc\" addresses\n");
 
        if (this.statusPGPMime == EnigmailCommon.ENIG_FINAL_YES ||
            this.statusPGPMime == EnigmailCommon.ENIG_FINAL_FORCEYES) {
@@ -2062,7 +2063,7 @@ Enigmail.msg = {
        };
     }
 
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.keySelection(): toAddrStr=\""+toAddrStr+"\" bccAddrStr=\""+bccAddrStr+"\"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.keySelection(): toAddrStr=\""+toAddrStr+"\" bccAddrStr=\""+bccAddrStr+"\"\n");
 
     // force add-rule dialog for each missing key?:
     var forceRecipientSettings = false;
@@ -2121,8 +2122,8 @@ Enigmail.msg = {
       }
     } while (doRulesProcessingAgain);
 
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.keySelection(): return toAddrStr=\""+toAddrStr+"\" bccAddrStr=\""+bccAddrStr+"\"\n");
-    EnigmailCommon.DEBUG_LOG("  <=== keySelection()");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.keySelection(): return toAddrStr=\""+toAddrStr+"\" bccAddrStr=\""+bccAddrStr+"\"\n");
+    Log.DEBUG("  <=== keySelection()");
     return {
       sendFlags: sendFlags,
       toAddrStr: toAddrStr,
@@ -2205,8 +2206,8 @@ Enigmail.msg = {
    */
   processRules: function (forceRecipientSettings, sendFlags, optSendFlags, toAddrStr, bccAddrStr)
   {
-    EnigmailCommon.DEBUG_LOG("=====> processRules()\n");
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.processRules(): toAddrStr=\""+toAddrStr+"\" bccAddrStr=\""+bccAddrStr+"\" forceRecipientSettings="+forceRecipientSettings+"\n");
+    Log.DEBUG("=====> processRules()\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.processRules(): toAddrStr=\""+toAddrStr+"\" bccAddrStr=\""+bccAddrStr+"\" forceRecipientSettings="+forceRecipientSettings+"\n");
 
     // process defaults
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
@@ -2227,7 +2228,7 @@ Enigmail.msg = {
     }
     if (matchedKeysObj.value) {
       toAddrStr = matchedKeysObj.value;
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.processRules(): after getRecipientsKeys() toAddrStr=\""+toAddrStr+"\"\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.processRules(): after getRecipientsKeys() toAddrStr=\""+toAddrStr+"\"\n");
     }
     this.encryptByRules = flagsObj.encrypt;
     this.signByRules    = flagsObj.sign;
@@ -2314,10 +2315,10 @@ Enigmail.msg = {
     }
     if (matchedKeysObj.value) {
       bccAddrStr = matchedKeysObj.value;
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.processRules(): after getRecipientsKeys() bccAddrStr=\""+bccAddrStr+"\"\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.processRules(): after getRecipientsKeys() bccAddrStr=\""+bccAddrStr+"\"\n");
     }
 
-    EnigmailCommon.DEBUG_LOG("  <=== processRules()\n");
+    Log.DEBUG("  <=== processRules()\n");
     return {
       sendFlags: sendFlags,
       optSendFlags: optSendFlags,
@@ -2341,7 +2342,7 @@ Enigmail.msg = {
    */
   encryptTestMessage: function (enigmailSvc, sendFlags, optSendFlags, fromAddr, toAddrStr, bccAddrStr, bccAddrList, refresh)
   {
-    EnigmailCommon.DEBUG_LOG("=====> encryptTestMessage()\n");
+    Log.DEBUG("=====> encryptTestMessage()\n");
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
     const SIGN    = nsIEnigmail.SEND_SIGNED;
     const ENCRYPT = nsIEnigmail.SEND_ENCRYPTED;
@@ -2368,7 +2369,7 @@ Enigmail.msg = {
     var testPlain = "Test Message";
     var testUiFlags   = nsIEnigmail.UI_TEST;
     var testSendFlags = nsIEnigmail.SEND_TEST | ENCRYPT | optSendFlags ;
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptTestMessage(): call encryptMessage() for fromAddr=\""+fromAddr+"\" toAddrStr=\""+toAddrStr+"\" bccAddrStr=\""+bccAddrStr+"\"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptTestMessage(): call encryptMessage() for fromAddr=\""+fromAddr+"\" toAddrStr=\""+toAddrStr+"\" bccAddrStr=\""+bccAddrStr+"\"\n");
     testCipher = enigmailSvc.encryptMessage(window, testUiFlags, testPlain,
                                             fromAddr, toAddrStr, bccAddrStr,
                                             testSendFlags,
@@ -2500,9 +2501,9 @@ Enigmail.msg = {
       sendFlags &= ~ENCRYPT;
       this.statusEncrypted = EnigmailCommon.ENIG_FINAL_NO;
       this.statusEncryptedInStatusBar = EnigmailCommon.ENIG_FINAL_NO;
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptTestMessage: No default encryption because test failed\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptTestMessage: No default encryption because test failed\n");
     }
-    EnigmailCommon.DEBUG_LOG("  <=== encryptTestMessage()");
+    Log.DEBUG("  <=== encryptTestMessage()");
     return {
       doRulesProcessingAgain : false,
       createNewRule : false,
@@ -2521,7 +2522,7 @@ Enigmail.msg = {
 
   wrapInLine: function (wrapresultObj)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: WrapInLine\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: WrapInLine\n");
     wrapresultObj.cancelled = false;
     wrapresultObj.usePpgMime = false;
     {
@@ -2561,7 +2562,7 @@ Enigmail.msg = {
           }
 
           if (excess) {
-            EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Excess lines detected\n");
+            Log.DEBUG("enigmailMsgComposeOverlay.js: Excess lines detected\n");
             var resultObj = {};
             window.openDialog("chrome://enigmail/content/enigmailWrapSelection.xul","", "dialog,modal,centerscreen", resultObj);
             try {
@@ -2615,14 +2616,14 @@ Enigmail.msg = {
         }
       }
       catch (ex) {
-        EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Exception while wrapping="+ex+"\n");
+        Log.DEBUG("enigmailMsgComposeOverlay.js: Exception while wrapping="+ex+"\n");
       }
     }
   },
 
     // Save draft message. We do not want most of the other processing for encrypted mails here...
   saveDraftMessage: function() {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: saveDraftMessage()\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: saveDraftMessage()\n");
 
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
 
@@ -2631,7 +2632,7 @@ Enigmail.msg = {
     this.setDraftStatus();
 
     if (! doEncrypt) {
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: drafts disabled\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: drafts disabled\n");
 
       try {
         if (gMsgCompose.compFields.securityInfo instanceof Components.interfaces.nsIEnigMsgCompFields) {
@@ -2673,7 +2674,7 @@ Enigmail.msg = {
     // encrypt test message for test recipients
     var testPlain = "Test Message";
     var testUiFlags   = nsIEnigmail.UI_TEST;
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.saveDraft(): call encryptMessage() for fromAddr=\""+fromAddr+"\"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.saveDraft(): call encryptMessage() for fromAddr=\""+fromAddr+"\"\n");
     testCipher = enigmailSvc.encryptMessage(null, testUiFlags, testPlain,
                                             fromAddr, fromAddr, "",
                                             sendFlags | nsIEnigmail.SEND_TEST,
@@ -2729,7 +2730,7 @@ Enigmail.msg = {
 
   encryptMsg: function (msgSendType)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: msgSendType="+msgSendType+", Enigmail.msg.sendMode="+this.sendMode+", Enigmail.msg.statusEncrypted="+this.statusEncrypted+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: msgSendType="+msgSendType+", Enigmail.msg.sendMode="+this.sendMode+", Enigmail.msg.statusEncrypted="+this.statusEncrypted+"\n");
 
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
     const SIGN    = nsIEnigmail.SEND_SIGNED;
@@ -2753,13 +2754,13 @@ Enigmail.msg = {
 
     switch (msgSendType) {
     case CiMsgCompDeliverMode.Later:
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: adding SEND_LATER\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: adding SEND_LATER\n");
       sendFlags |= nsIEnigmail.SEND_LATER;
       break;
     case CiMsgCompDeliverMode.SaveAsDraft:
     case CiMsgCompDeliverMode.SaveAsTemplate:
     case CiMsgCompDeliverMode.AutoSaveAsDraft:
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: detected save draft\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: detected save draft\n");
 
       // saving drafts is simpler and works differently than the rest of Enigmail.
       // All rules except account-settings are ignored.
@@ -2830,7 +2831,7 @@ Enigmail.msg = {
 
        this.modifiedAttach = null;
 
-       EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: currentId="+this.identity+
+       Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: currentId="+this.identity+
                 ", "+this.identity.email+"\n");
        var fromAddr = this.identity.email;
 
@@ -2854,7 +2855,7 @@ Enigmail.msg = {
              optSendFlags |= nsIEnigmail.SEND_ALWAYS_TRUST;
              break;
            default:
-             EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: INVALID VALUE for acceptedKeys: \""+acceptedKeys+"\"\n");
+             Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: INVALID VALUE for acceptedKeys: \""+acceptedKeys+"\"\n");
              break;
          }
        }
@@ -2870,7 +2871,7 @@ Enigmail.msg = {
          fromAddr = userIdValue;
        }
 
-       EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg:gMsgCompose="+gMsgCompose+"\n");
+       Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg:gMsgCompose="+gMsgCompose+"\n");
 
        var toAddrList = [];
        var bccAddrList = [];
@@ -2898,12 +2899,12 @@ Enigmail.msg = {
          recList = splitRecipients(msgCompFields.bcc, true, arrLen);
 
          var bccLC = EnigmailFuncs.stripEmail(msgCompFields.bcc).toLowerCase();
-         EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: BCC: "+bccLC+"\n");
+         Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: BCC: "+bccLC+"\n");
 
          var selfBCC = this.identity.email && (this.identity.email.toLowerCase() == bccLC);
 
          if (selfBCC) {
-           EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: Self BCC\n");
+           Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: Self BCC\n");
            this.addRecipients(toAddrList, recList);
 
          }
@@ -2912,7 +2913,7 @@ Enigmail.msg = {
 
            if (encryptIfPossible) {
              sendFlags &= ~ENCRYPT;
-             EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: No default encryption because of BCC\n");
+             Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: No default encryption because of BCC\n");
            }
            else {
              var dummy={value: null};
@@ -2962,7 +2963,7 @@ Enigmail.msg = {
            }
            else {
              sendFlags &= ~ENCRYPT;
-             EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: No default encryption because of newsgroups\n");
+             Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: No default encryption because of newsgroups\n");
            }
          }
        }
@@ -3003,7 +3004,7 @@ Enigmail.msg = {
        var bucketList = document.getElementById("attachmentBucket");
        var hasAttachments = ((bucketList && bucketList.hasChildNodes()) || gMsgCompose.compFields.attachVCard);
 
-       EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: hasAttachments = "+hasAttachments+"\n");
+       Log.DEBUG("enigmailMsgComposeOverlay.js: hasAttachments = "+hasAttachments+"\n");
 
        if ( hasAttachments &&
           (sendFlags & (ENCRYPT | SIGN)) &&
@@ -3113,11 +3114,11 @@ Enigmail.msg = {
 
        if ((sendFlags & (ENCRYPT | SIGN)) && usingPGPMime) {
          // Use PGP/MIME
-         EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: Using PGP/MIME, flags="+sendFlags+"\n");
+         Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: Using PGP/MIME, flags="+sendFlags+"\n");
 
          var oldSecurityInfo = gMsgCompose.compFields.securityInfo;
 
-         EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: oldSecurityInfo = "+oldSecurityInfo+"\n");
+         Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: oldSecurityInfo = "+oldSecurityInfo+"\n");
 
          if (!oldSecurityInfo) {
            try {
@@ -3142,7 +3143,7 @@ Enigmail.msg = {
          newSecurityInfo.recipients = toAddrStr;
          newSecurityInfo.bccRecipients = bccAddrStr;
 
-         EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: securityInfo = "+newSecurityInfo+"\n");
+         Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: securityInfo = "+newSecurityInfo+"\n");
 
        }
        else if (!this.processed && (sendFlags & (ENCRYPT | SIGN))) {
@@ -3202,7 +3203,7 @@ Enigmail.msg = {
             this.statusEncrypted == EnigmailCommon.ENIG_FINAL_FORCEYES ||
             this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_YES ||
             this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_FORCEYES)) {
-         EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: promised encryption did not succeed\n");
+         Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: promised encryption did not succeed\n");
          if (!EnigmailCommon.confirmDlg(window,
                                         EnigmailCommon.getString("msgCompose.internalEncryptionError"),
                                         EnigmailCommon.getString("msgCompose.button.sendAnyway"))) {
@@ -3244,7 +3245,7 @@ Enigmail.msg = {
               // make sure plaintext is not changed to 7bit
               if (typeof(msgCompFields.forceMsgEncoding) == "boolean") {
                 msgCompFields.forceMsgEncoding = true;
-                EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: enabled forceMsgEncoding\n");
+                Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: enabled forceMsgEncoding\n");
               }
            }
            catch (ex) {}
@@ -3364,7 +3365,7 @@ Enigmail.msg = {
       if (sendFlowed && !(sendInfo.sendFlags & ENCRYPT)) {
         // Prevent space stuffing a la RFC 2646 (format=flowed).
 
-        //EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: escText["+encoderFlags+"] = '"+escText+"'\n");
+        //Log.DEBUG("enigmailMsgComposeOverlay.js: escText["+encoderFlags+"] = '"+escText+"'\n");
 
         // MULTILINE MATCHING ON
         RegExp.multiline = true;
@@ -3377,7 +3378,7 @@ Enigmail.msg = {
         // MULTILINE MATCHING OFF
         RegExp.multiline = false;
 
-        //EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: escText = '"+escText+"'\n");
+        //Log.DEBUG("enigmailMsgComposeOverlay.js: escText = '"+escText+"'\n");
         // Replace plain text and get it again
         this.replaceEditorText(escText);
 
@@ -3389,11 +3390,11 @@ Enigmail.msg = {
 
       escText = this.editorGetContentAs("text/plain", encoderFlags);
 
-      //EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: escText["+encoderFlags+"] = '"+escText+"'\n");
+      //Log.DEBUG("enigmailMsgComposeOverlay.js: escText["+encoderFlags+"] = '"+escText+"'\n");
 
       // Encrypt plaintext
       var charset = this.editorGetCharset();
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: charset="+charset+"\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: charset="+charset+"\n");
 
       // Encode plaintext to charset from unicode
       var plainText = (sendInfo.sendFlags & ENCRYPT) ?
@@ -3408,7 +3409,7 @@ Enigmail.msg = {
 
       exitCode = exitCodeObj.value;
 
-      //EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: cipherText = '"+cipherText+"'\n");
+      //Log.DEBUG("enigmailMsgComposeOverlay.js: cipherText = '"+cipherText+"'\n");
       if (cipherText && (exitCode === 0)) {
         // Encryption/signing succeeded; overwrite plaintext
 
@@ -3542,7 +3543,7 @@ Enigmail.msg = {
 
      } catch (ex) {
         // Failed to get pref value
-        EnigmailCommon.ERROR_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.getMailPref: unknown prefName:"+prefName+" \n");
+        Log.ERROR("enigmailMsgComposeOverlay.js: Enigmail.msg.getMailPref: unknown prefName:"+prefName+" \n");
      }
 
      return prefValue;
@@ -3550,7 +3551,7 @@ Enigmail.msg = {
 
   messageSendCheck: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.messageSendCheck\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.messageSendCheck\n");
 
     try {
       var warn = this.getMailPref("mail.warn_on_send_accel_key");
@@ -3639,7 +3640,7 @@ Enigmail.msg = {
 
   sendMessageListener: function (event)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.sendMessageListener\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.sendMessageListener\n");
     let msgcomposeWindow = document.getElementById("msgcomposeWindow");
     let sendMsgType = Number(msgcomposeWindow.getAttribute("msgtype"));
 
@@ -3657,7 +3658,7 @@ Enigmail.msg = {
       catch (ex) {}
     }
     else {
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.sendMessageListener: sending in progress - autosave aborted\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.sendMessageListener: sending in progress - autosave aborted\n");
       event.preventDefault();
       event.stopPropagation();
     }
@@ -3698,7 +3699,7 @@ Enigmail.msg = {
                                   fromAddr, toAddr, bccAddr, sendFlags,
                                   errorMsgObj)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptAttachments\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptAttachments\n");
 
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
     const SIGN    = nsIEnigmail.SEND_SIGNED;
@@ -3734,7 +3735,7 @@ Enigmail.msg = {
       errorMsgObj.value=EnigmailCommon.getString("noTempDir");
       return -1;
     }
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptAttachments tmpDir=" + tmpDir+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptAttachments tmpDir=" + tmpDir+"\n");
     var enigmailSvc = EnigmailCommon.getService(window);
     if (!enigmailSvc)
       return null;
@@ -3830,7 +3831,7 @@ Enigmail.msg = {
 
   toggleAttribute: function (attrName)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.toggleAttribute('"+attrName+"')\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.toggleAttribute('"+attrName+"')\n");
 
     var menuElement = document.getElementById("enigmail_"+attrName);
 
@@ -3840,7 +3841,7 @@ Enigmail.msg = {
 
   toggleAccountAttr: function (attrName)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.toggleAccountAttr('"+attrName+"')\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.toggleAccountAttr('"+attrName+"')\n");
 
     var oldValue = this.identity.getBoolAttribute(attrName);
     this.identity.setBoolAttribute(attrName, !oldValue);
@@ -3849,13 +3850,13 @@ Enigmail.msg = {
 
   toggleRules: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.toggleRules: Enigmail.msg.enableRules="+Enigmail.msg.enableRules+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.toggleRules: Enigmail.msg.enableRules="+Enigmail.msg.enableRules+"\n");
     this.enableRules = !this.enableRules;
   },
 
   decryptQuote: function (interactive)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: "+interactive+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: "+interactive+"\n");
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
 
     if (gWindowLocked || this.processed)
@@ -3878,7 +3879,7 @@ Enigmail.msg = {
     var indentBegin = docText.substr(0, blockBegin).lastIndexOf("\n");
     var indentStr = docText.substring(indentBegin+1, blockBegin);
 
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: indentStr='"+indentStr+"'\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: indentStr='"+indentStr+"'\n");
 
     var beginIndexObj = {};
     var endIndexObj = {};
@@ -3938,10 +3939,10 @@ Enigmail.msg = {
       tail = "";
     }
 
-    //EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: pgpBlock='"+pgpBlock+"'\n");
+    //Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: pgpBlock='"+pgpBlock+"'\n");
 
     var charset = this.editorGetCharset();
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: charset="+charset+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: charset="+charset+"\n");
 
     // Encode ciphertext from unicode to charset
     var cipherText = EnigmailCommon.convertFromUnicode(pgpBlock, charset);
@@ -4057,7 +4058,7 @@ Enigmail.msg = {
     // Replace encrypted quote with decrypted quote (destroys selection clipboard on X11)
     this.editorSelectAll();
 
-    //EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: plainText='"+plainText+"'\n");
+    //Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: plainText='"+plainText+"'\n");
 
     if (head)
       this.editorInsertText(head);
@@ -4096,7 +4097,7 @@ Enigmail.msg = {
 
     if (!indentStr || !quoteElement) replyOnTop = 1;
 
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: replyOnTop="+replyOnTop+", quoteElement="+quoteElement+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: replyOnTop="+replyOnTop+", quoteElement="+quoteElement+"\n");
 
     var nsISelectionController = Components.interfaces.nsISelectionController;
 
@@ -4150,14 +4151,14 @@ Enigmail.msg = {
 
   editorInsertText: function (plainText)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorInsertText\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorInsertText\n");
     if (this.editor) {
       var mailEditor;
       try {
         mailEditor = this.editor.QueryInterface(Components.interfaces.nsIEditorMailSupport);
         mailEditor.insertTextWithQuotations(plainText);
       } catch (ex) {
-        EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorInsertText: no mail editor\n");
+        Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorInsertText: no mail editor\n");
         this.editor.insertText(plainText);
       }
     }
@@ -4165,7 +4166,7 @@ Enigmail.msg = {
 
   editorInsertAsQuotation: function (plainText)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorInsertAsQuotation\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorInsertAsQuotation\n");
     if (this.editor) {
       var mailEditor;
       try {
@@ -4175,7 +4176,7 @@ Enigmail.msg = {
       if (!mailEditor)
         return 0;
 
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorInsertAsQuotation: mailEditor="+mailEditor+"\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorInsertAsQuotation: mailEditor="+mailEditor+"\n");
 
       mailEditor.insertAsQuotation(plainText);
 
@@ -4194,12 +4195,12 @@ Enigmail.msg = {
 
   editorGetCharset: function ()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorGetCharset\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorGetCharset\n");
     return this.editor.documentCharacterSet;
   },
 
   editorGetContentAs: function (mimeType, flags) {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorGetContentAs\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.editorGetContentAs\n");
     if (this.editor) {
       return this.editor.outputToString(mimeType, flags);
     }
@@ -4209,7 +4210,7 @@ Enigmail.msg = {
 
   addressOnChange: function(element)
   {
-     EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.addressOnChange\n");
+     Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.addressOnChange\n");
      if (! this.addrOnChangeTimer) {
         var self = this;
         this.addrOnChangeTimer = EnigmailCommon.setTimeout(function _f() {
@@ -4240,7 +4241,7 @@ Enigmail.msg = {
   fireSendFlags: function ()
   {
     try {
-      EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.fireSendFlags\n");
+      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.fireSendFlags\n");
       if (! this.determineSendFlagId) {
         this.determineSendFlagId = EnigmailCommon.dispatchEvent(
           function _sendFlagWrapper() {
@@ -4257,7 +4258,7 @@ Enigmail.msg = {
 Enigmail.composeStateListener = {
   NotifyComposeFieldsReady: function() {
     // Note: NotifyComposeFieldsReady is only called when a new window is created (i.e. not in case a window object is reused).
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: ECSL.NotifyComposeFieldsReady\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: ECSL.NotifyComposeFieldsReady\n");
 
     try {
       Enigmail.msg.editor = gMsgCompose.editor.QueryInterface(Components.interfaces.nsIEditor);
@@ -4280,17 +4281,17 @@ Enigmail.composeStateListener = {
 
       NotifyDocumentCreated: function ()
       {
-        EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: EDSL.NotifyDocumentCreated\n");
+        Log.DEBUG("enigmailMsgComposeOverlay.js: EDSL.NotifyDocumentCreated\n");
       },
 
       NotifyDocumentWillBeDestroyed: function ()
       {
-        EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: EDSL.enigDocStateListener.NotifyDocumentWillBeDestroyed\n");
+        Log.DEBUG("enigmailMsgComposeOverlay.js: EDSL.enigDocStateListener.NotifyDocumentWillBeDestroyed\n");
       },
 
       NotifyDocumentStateChanged: function (nowDirty)
       {
-        EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: EDSL.enigDocStateListener.NotifyDocumentStateChanged\n");
+        Log.DEBUG("enigmailMsgComposeOverlay.js: EDSL.enigDocStateListener.NotifyDocumentStateChanged\n");
       }
     };
 
@@ -4302,7 +4303,7 @@ Enigmail.composeStateListener = {
   ComposeProcessDone: function(aResult)
   {
     // Note: called after a mail was sent (or saved)
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: ECSL.ComposeProcessDone: "+aResult+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: ECSL.ComposeProcessDone: "+aResult+"\n");
 
     if (aResult != Components.results.NS_OK) {
       if (Enigmail.msg.processed) {
@@ -4315,17 +4316,17 @@ Enigmail.composeStateListener = {
 
   NotifyComposeBodyReady: function()
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: ECSL.ComposeBodyReady\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: ECSL.ComposeBodyReady\n");
 
     var isEmpty, isEditable;
 
     isEmpty    = Enigmail.msg.editor.documentIsEmpty;
     isEditable = Enigmail.msg.editor.isDocumentEditable;
 
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: EDSL.ComposeBodyReady: isEmpty="+isEmpty+", isEditable="+isEditable+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: EDSL.ComposeBodyReady: isEmpty="+isEmpty+", isEditable="+isEditable+"\n");
 
     //FIXME
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: EDSL.ComposeBodyReady: disableSmime="+Enigmail.msg.disableSmime+"\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: EDSL.ComposeBodyReady: disableSmime="+Enigmail.msg.disableSmime+"\n");
 
     if (Enigmail.msg.disableSmime) {
       if (gMsgCompose && gMsgCompose.compFields && gMsgCompose.compFields.securityInfo) {
@@ -4333,7 +4334,7 @@ Enigmail.composeStateListener = {
         gMsgCompose.compFields.securityInfo.requireEncryptMessage = false;
       }
       else {
-        EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: EDSL.ComposeBodyReady: could not disable S/MIME\n");
+        Log.DEBUG("enigmailMsgComposeOverlay.js: EDSL.ComposeBodyReady: could not disable S/MIME\n");
       }
     }
 
@@ -4352,7 +4353,7 @@ Enigmail.composeStateListener = {
 
   SaveInFolderDone: function(folderURI)
   {
-    //EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: ECSL.SaveInFolderDone\n");
+    //Log.DEBUG("enigmailMsgComposeOverlay.js: ECSL.SaveInFolderDone\n");
   }
 };
 
@@ -4360,7 +4361,7 @@ Enigmail.composeStateListener = {
 window.addEventListener("load",
   function _enigmail_composeStartup (event)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: got load event\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: got load event\n");
 
     Enigmail.msg.composeStartup(event);
   },
@@ -4399,7 +4400,7 @@ window.addEventListener('compose-send-message',
 window.addEventListener('compose-window-init',
   function _enigmail_composeWindowInit (event)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: _enigmail_composeWindowInit\n");
+    Log.DEBUG("enigmailMsgComposeOverlay.js: _enigmail_composeWindowInit\n");
     gMsgCompose.RegisterStateListener(Enigmail.composeStateListener);
   },
   true);

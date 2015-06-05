@@ -37,6 +37,7 @@
 //       chrome://enigmail/content/enigmailBuildDate.js
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 // Initialize enigmailCommon
 const Ec = EnigmailCommon;
@@ -44,7 +45,7 @@ const Ec = EnigmailCommon;
 
 
 function enigAboutLoad() {
-  DEBUG_LOG("enigmailAbout.js: enigAboutLoad\n");
+    Log.DEBUG("enigmailAbout.js: enigAboutLoad\n");
 
   var contentFrame = Ec.getFrame(window, "contentFrame");
   if (!contentFrame)
@@ -87,4 +88,3 @@ function contentAreaClick(event)
 
   return true;
 }
-

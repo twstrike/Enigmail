@@ -36,6 +36,7 @@
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 const Ec = EnigmailCommon;
 
 const INPUT = 0;
@@ -136,7 +137,7 @@ function onLoad () {
 
 
 function selectAllKeys () {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: selectAllkeys\n");
+  Log.DEBUG("enigmailSearchKey.js: selectAllkeys\n");
   var keySelList = document.getElementById("enigmailKeySel");
   var treeChildren=keySelList.getElementsByAttribute("id", "enigmailKeySelChildren")[0];
 
@@ -158,7 +159,7 @@ function selectAllKeys () {
 
 
 function onAccept () {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: onAccept\n");
+  Log.DEBUG("enigmailSearchKey.js: onAccept\n");
 
   var keySelList = document.getElementById("enigmailKeySel");
   var treeChildren=keySelList.getElementsByAttribute("id", "enigmailKeySelChildren")[0];
@@ -180,7 +181,7 @@ function onAccept () {
 
 
 function startDownload() {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: startDownload\n");
+  Log.DEBUG("enigmailSearchKey.js: startDownload\n");
   if (gEnigRequest.dlKeyList.length>0) {
     gEnigRequest.progressMeter.value = 0;
     gEnigRequest.progressMeter.mode = "undetermined";
@@ -207,7 +208,7 @@ function startDownload() {
 
 
 function onCancel() {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: onCancel\n");
+  Log.DEBUG("enigmailSearchKey.js: onCancel\n");
 
   if (gEnigRequest.httpInProgress) {
     // stop download
@@ -234,7 +235,7 @@ function onCancel() {
 
 
 function enigStatusError () {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: enigStatusError\n");
+  Log.DEBUG("enigmailSearchKey.js: enigStatusError\n");
   gEnigRequest.httpInProgress=false;
   Ec.alert(window, Ec.getString("noKeyserverConn", this.channel.originalURI.prePath));
   enigCloseDialog();
@@ -251,7 +252,7 @@ function enigCloseDialog() {
 }
 
 function enigStatusLoaded (event) {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: enigStatusLoaded\n");
+  Log.DEBUG("enigmailSearchKey.js: enigStatusLoaded\n");
 
   if (this.status == 200) {
     // de-HTMLize the result
@@ -272,7 +273,7 @@ function enigStatusLoaded (event) {
 
 
 function enigImportKeys (connType, txt, errorTxt) {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: enigImportKeys\n");
+  Log.DEBUG("enigmailSearchKey.js: enigImportKeys\n");
 
   gEnigRequest.keyNum++;
   gEnigRequest.progressMeter.mode = "determined";
@@ -332,7 +333,7 @@ function enigImportHtmlKeys(txt) {
 
 
 function enigNewHttpRequest(requestType, requestCallbackFunc) {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: enigNewHttpRequest\n");
+  Log.DEBUG("enigmailSearchKey.js: enigNewHttpRequest\n");
 
   switch (gEnigRequest.protocol) {
   case "hkp":
@@ -380,7 +381,7 @@ function enigNewHttpRequest(requestType, requestCallbackFunc) {
 
 
 function enigScanKeys(connType, htmlTxt) {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: enigScanKeys\n");
+  Log.DEBUG("enigmailSearchKey.js: enigScanKeys\n");
 
   gEnigRequest.keyNum++;
   gEnigRequest.progressMeter.mode = "determined";
@@ -403,7 +404,7 @@ function enigScanKeys(connType, htmlTxt) {
       enigScanGpgKeys(Ec.convertGpgToUnicode(htmlTxt));
       break;
     default:
-      Ec.ERROR_LOG("Unkonwn connType: "+connType+"\n");
+      Log.ERROR("Unkonwn connType: "+connType+"\n");
   }
 
   if (gEnigRequest.searchList.length > gEnigRequest.keyNum) {
@@ -432,7 +433,7 @@ function enigScanKeys(connType, htmlTxt) {
 }
 
 function enigScanHtmlKeys (txt) {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: enigScanHtmlKeys\n");
+  Log.DEBUG("enigmailSearchKey.js: enigScanHtmlKeys\n");
 
   var lines=txt.split(/(\n\r|\n|\r)/);
   var key;
@@ -456,7 +457,7 @@ function enigScanHtmlKeys (txt) {
           if (! ignoreUid(m[4])) key.uid.push(trim(m[4]));
         }
         else if (m[4].search(/key (revoked|expired|disabled)/i)>=0) {
-          Ec.DEBUG_LOG("revoked key id "+m[4]+"\n");
+          Log.DEBUG("revoked key id "+m[4]+"\n");
           key=null;
         }
       }
@@ -491,8 +492,8 @@ function unescapeAndConvert(txt) {
 }
 
 function enigScanGpgKeys(txt) {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: enigScanGpgKeys\n");
-  Ec.DEBUG_LOG("got text: "+txt+"\n");
+  Log.DEBUG("enigmailSearchKey.js: enigScanGpgKeys\n");
+  Log.DEBUG("got text: "+txt+"\n");
 
   // protocol version 0: GnuPG 1.2 and older versions of GnuPG 1.4.x
   // protocol version 1: GnuPG 2.x and newer versions of GnuPG 1.4.x
@@ -581,7 +582,7 @@ function enigScanGpgKeys(txt) {
 // interaction with gpgkeys_xxx
 
 function enigNewGpgKeysRequest(requestType, callbackFunction) {
-  Ec.DEBUG_LOG("enigmailSearchkey.js: enigNewGpgKeysRequest\n");
+  Log.DEBUG("enigmailSearchkey.js: enigNewGpgKeysRequest\n");
 
   var enigmailSvc = GetEnigmailSvc();
   if (!enigmailSvc) {
@@ -643,19 +644,19 @@ function enigNewGpgKeysRequest(requestType, callbackFunction) {
     }
   }
 
-  Ec.DEBUG_LOG("enigmailSearchkey.js: Start: gEnigRequest.gpgkeysRequest = "+gEnigRequest.gpgkeysRequest+"\n");
+  Log.DEBUG("enigmailSearchkey.js: Start: gEnigRequest.gpgkeysRequest = "+gEnigRequest.gpgkeysRequest+"\n");
 }
 
 
 function enigmailGpgkeysTerminate(exitCode) {
-  Ec.DEBUG_LOG("enigmailSearchkey.js: enigmailGpgkeysTerminate: exitCode="+exitCode+"\n");
+  Log.DEBUG("enigmailSearchkey.js: enigmailGpgkeysTerminate: exitCode="+exitCode+"\n");
 
   gEnigRequest.gpgkeysRequest = null;
 
   try {
     if (gErrorData.length > 0) {
-      Ec.DEBUG_LOG("enigmailSearchkey.js: Terminate(): stderr has data:\n");
-      Ec.CONSOLE_LOG(gErrorData+"\n");
+      Log.DEBUG("enigmailSearchkey.js: Terminate(): stderr has data:\n");
+      Log.CONSOLE(gErrorData+"\n");
     }
 
     // ignore exit code --> try next key if any
@@ -667,7 +668,7 @@ function enigmailGpgkeysTerminate(exitCode) {
 // GUI related stuff
 
 function enigPopulateList(keyList) {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: enigPopulateList\n");
+  Log.DEBUG("enigmailSearchKey.js: enigPopulateList\n");
 
   var sortUsers = function (a,b) {
      if (a.uid[0]<b.uid[0]) { return -1; } else {return 1; }
@@ -717,7 +718,7 @@ function enigPopulateList(keyList) {
 }
 
 function enigUserSelCreateRow (keyId, subKey, userId, dateField, trustStatus) {
-    Ec.DEBUG_LOG("enigmailSearchKey.js: enigUserSelCreateRow\n");
+    Log.DEBUG("enigmailSearchKey.js: enigUserSelCreateRow\n");
     var selectCol=document.createElement("treecell");
     selectCol.setAttribute("id", "indicator");
     var expCol=document.createElement("treecell");
@@ -770,7 +771,7 @@ function enigUserSelCreateRow (keyId, subKey, userId, dateField, trustStatus) {
 }
 
 function enigmailKeySelCallback(event) {
-  Ec.DEBUG_LOG("enigmailSearchKey.js: enigmailKeySelCallback\n");
+  Log.DEBUG("enigmailSearchKey.js: enigmailKeySelCallback\n");
 
   var Tree = document.getElementById("enigmailKeySel");
   var row = {};

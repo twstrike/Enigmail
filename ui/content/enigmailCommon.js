@@ -44,7 +44,9 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
+const EC = EnigmailCore;
 
 // The compatible Enigmime version
 var gEnigmimeVersion = "1.4";
@@ -174,7 +176,7 @@ function EnigGetFrame(win, frameName) {
 
 // Initializes enigmailCommon
 function EnigInitCommon(id) {
-   DEBUG_LOG("enigmailCommon.js: EnigInitCommon: id="+id+"\n");
+   Log.DEBUG("enigmailCommon.js: EnigInitCommon: id="+id+"\n");
 
    gEnigPromptSvc = enigGetService("@mozilla.org/embedcomp/prompt-service;1", "nsIPromptService");
 }
@@ -188,7 +190,7 @@ function GetEnigmailSvc() {
 
 // maxBytes == -1 => read everything
 function EnigReadURLContents(url, maxBytes) {
-  DEBUG_LOG("enigmailCommon.js: EnigReadURLContents: url="+url+
+  Log.DEBUG("enigmailCommon.js: EnigReadURLContents: url="+url+
             ", "+maxBytes+"\n");
 
   var ioServ = enigGetService(ENIG_IOSERVICE_CONTRACTID, "nsIIOService");
@@ -216,7 +218,7 @@ function EnigReadURLContents(url, maxBytes) {
 // maxBytes == -1 => read whole file
 function EnigReadFileContents(localFile, maxBytes) {
 
-  DEBUG_LOG("enigmailCommon.js: EnigReadFileContents: file="+localFile.leafName+
+  Log.DEBUG("enigmailCommon.js: EnigReadFileContents: file="+localFile.leafName+
             ", "+maxBytes+"\n");
 
   if (!localFile.exists() || !localFile.isReadable())
@@ -232,26 +234,6 @@ function EnigReadFileContents(localFile, maxBytes) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
-function WRITE_LOG(str) {
-  EnigmailCommon.WRITE_LOG(str);
-}
-
-function DEBUG_LOG(str) {
-  EnigmailCommon.DEBUG_LOG(str);
-}
-
-function WARNING_LOG(str) {
-  EnigmailCommon.WARNING_LOG(str);
-}
-
-function ERROR_LOG(str) {
-  EnigmailCommon.ERROR_LOG(str);
-}
-
-function CONSOLE_LOG(str) {
-  EnigmailCommon.CONSOLE_LOG(str);
-}
 
 
 // write exception information
@@ -298,7 +280,7 @@ function EnigError(mesg) {
 }
 
 function EnigPrefWindow(showBasic, clientType, selectTab) {
-  DEBUG_LOG("enigmailCommon.js: EnigPrefWindow\n");
+  Log.DEBUG("enigmailCommon.js: EnigPrefWindow\n");
   EnigmailFuncs.openPrefWindow(window, showBasic, selectTab);
 }
 
@@ -309,7 +291,7 @@ function EnigHelpWindow(source) {
 
 
 function EnigDisplayRadioPref(prefName, prefValue, optionElementIds) {
-  DEBUG_LOG("enigmailCommon.js: EnigDisplayRadioPref: "+prefName+", "+prefValue+"\n");
+  Log.DEBUG("enigmailCommon.js: EnigDisplayRadioPref: "+prefName+", "+prefValue+"\n");
 
   if (prefValue >= optionElementIds.length)
     return;
@@ -324,7 +306,7 @@ function EnigDisplayRadioPref(prefName, prefValue, optionElementIds) {
 }
 
 function EnigSetRadioPref(prefName, optionElementIds) {
-  DEBUG_LOG("enigmailCommon.js: EnigSetRadioPref: "+prefName+"\n");
+  Log.DEBUG("enigmailCommon.js: EnigSetRadioPref: "+prefName+"\n");
 
   try {
     var groupElement = document.getElementById("enigmail_"+prefName);
@@ -349,7 +331,7 @@ function EnigGetPref(prefName) {
 }
 
 function EnigGetDefaultPref(prefName) {
-  DEBUG_LOG("enigmailCommon.js: EnigGetDefaultPref: prefName="+prefName+"\n");
+  Log.DEBUG("enigmailCommon.js: EnigGetDefaultPref: prefName="+prefName+"\n");
   var prefValue=null;
   try {
     EnigmailCore.prefBranch.lockPref(prefName);
@@ -371,7 +353,7 @@ function EnigGetSignMsg(identity) {
 
 
 function EnigConvertFromUnicode(text, charset) {
-  DEBUG_LOG("enigmailCommon.js: EnigConvertFromUnicode: "+charset+"\n");
+  Log.DEBUG("enigmailCommon.js: EnigConvertFromUnicode: "+charset+"\n");
 
   if (!text)
     return "";
@@ -386,7 +368,7 @@ function EnigConvertFromUnicode(text, charset) {
     return unicodeConv.ConvertFromUnicode(text);
 
   } catch (ex) {
-    DEBUG_LOG("enigmailCommon.js: EnigConvertFromUnicode: caught an exception\n");
+    Log.DEBUG("enigmailCommon.js: EnigConvertFromUnicode: caught an exception\n");
 
     return text;
   }
@@ -394,7 +376,7 @@ function EnigConvertFromUnicode(text, charset) {
 
 
 function EnigConvertToUnicode(text, charset) {
-  // DEBUG_LOG("enigmailCommon.js: EnigConvertToUnicode: "+charset+"\n");
+  // Log.DEBUG("enigmailCommon.js: EnigConvertToUnicode: "+charset+"\n");
 
   if (!text || !charset /*|| (charset.toLowerCase() == "iso-8859-1")*/)
     return text;
@@ -407,7 +389,7 @@ function EnigConvertToUnicode(text, charset) {
     return unicodeConv.ConvertToUnicode(text);
 
   } catch (ex) {
-    DEBUG_LOG("enigmailCommon.js: EnigConvertToUnicode: caught an exception while converting'"+text+"' to "+charset+"\n");
+    Log.DEBUG("enigmailCommon.js: EnigConvertToUnicode: caught an exception while converting'"+text+"' to "+charset+"\n");
     return text;
   }
 }
@@ -786,7 +768,7 @@ function EnigGetHttpUri (aEvent) {
 
   let href = hRefForClickEvent(aEvent);
 
-  EnigmailCommon.DEBUG_LOG("enigmailAbout.js: interpretHtmlClick: href='"+href+"'\n");
+  Log.DEBUG("enigmailAbout.js: interpretHtmlClick: href='"+href+"'\n");
 
   var ioServ = EnigmailCommon.getIoService();
   var uri = ioServ.newURI(href, null, null);
@@ -839,7 +821,7 @@ function EnigSetActive(element, status) {
  *
  */
 function EnigAddSubkeyWithSelectboxes(treeChildren, aLine, keyCount) {
-  DEBUG_LOG("enigmailCommon.js: EnigAddSubkeyWithSelectboxes("+aLine+")\n");
+  Log.DEBUG("enigmailCommon.js: EnigAddSubkeyWithSelectboxes("+aLine+")\n");
 
   var preSelected;
   // Pre-Selection logic:
@@ -878,7 +860,7 @@ function EnigAddSubkeyWithSelectboxes(treeChildren, aLine, keyCount) {
  *                          (assumed, there is a preceeding select column)
  */
 function EnigAddSubkey(treeChildren, aLine, selectCol=false) {
-  DEBUG_LOG("enigmailCommon.js: EnigAddSubkey("+aLine+")\n");
+  Log.DEBUG("enigmailCommon.js: EnigAddSubkey("+aLine+")\n");
 
   // Get expiry state of this subkey
   var expire;

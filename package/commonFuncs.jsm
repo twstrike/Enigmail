@@ -43,6 +43,8 @@
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/files.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailFuncs" ];
 
@@ -125,7 +127,7 @@ var EnigmailFuncs = {
 
   downloadKeys: function (win, inputObj, resultObj)
   {
-    EnigmailCommon.DEBUG_LOG("commonFuncs.jsm: downloadKeys: searchList="+inputObj.searchList+"\n");
+    Log.DEBUG("commonFuncs.jsm: downloadKeys: searchList="+inputObj.searchList+"\n");
 
     resultObj.importedKeys=0;
 
@@ -212,7 +214,7 @@ var EnigmailFuncs = {
     while ((qStart = mailAddrs.indexOf('"')) != -1) {
        qEnd = mailAddrs.indexOf('"', qStart+1);
        if (qEnd == -1) {
-         EnigmailCommon.ERROR_LOG("commonFuncs.jsm: stripEmail: Unmatched quote in mail address: "+mailAddrs+"\n");
+         Log.ERROR("commonFuncs.jsm: stripEmail: Unmatched quote in mail address: "+mailAddrs+"\n");
          throw Components.results.NS_ERROR_FAILURE;
        }
 
@@ -243,7 +245,7 @@ var EnigmailFuncs = {
 
   collapseAdvanced: function (obj, attribute, dummy)
   {
-    EnigmailCommon.DEBUG_LOG("commonFuncs.jsm: collapseAdvanced:\n");
+    Log.DEBUG("commonFuncs.jsm: collapseAdvanced:\n");
 
     var advancedUser = EnigmailCommon.getPref("advancedUser");
 
@@ -417,7 +419,7 @@ var EnigmailFuncs = {
    */
   openPrefWindow: function (win, showBasic, selectTab)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailCommon.js: prefWindow\n");
+    Log.DEBUG("enigmailCommon.js: prefWindow\n");
 
     EnigmailCommon.getService(win,true);  // true: starting preferences dialog
 
@@ -741,7 +743,7 @@ var EnigmailFuncs = {
    */
   loadKeyList: function (win, refresh, keyListObj, sortColumn, sortDirection)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailFuncs.jsm: loadKeyList\n");
+    Log.DEBUG("enigmailFuncs.jsm: loadKeyList\n");
 
     if (! sortColumn) sortColumn = "userid";
     if (! sortDirection) sortDirection = 1;
@@ -861,7 +863,7 @@ var EnigmailFuncs = {
    */
   obtainKeyList: function (win, secretOnly, refresh)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailFuncs.jsm: obtainKeyList\n");
+    Log.DEBUG("enigmailFuncs.jsm: obtainKeyList\n");
 
     var userList = null;
     try {
@@ -882,7 +884,7 @@ var EnigmailFuncs = {
         return null;
       }
     } catch (ex) {
-      EnigmailCommon.ERROR_LOG("ERROR in enigmailFuncs: obtainKeyList"+ex.toString()+"\n");
+      Log.ERROR("ERROR in enigmailFuncs: obtainKeyList"+ex.toString()+"\n");
     }
 
     if (typeof(userList) == "string") {
@@ -903,7 +905,7 @@ var EnigmailFuncs = {
    */
   getSignMsg: function (identity)
   {
-    EnigmailCommon.DEBUG_LOG("enigmailFuncs.jsm: getSignMsg: identity.key="+identity.key+"\n");
+    Log.DEBUG("enigmailFuncs.jsm: getSignMsg: identity.key="+identity.key+"\n");
     var sign = null;
 
     EnigmailCommon.getPref("configuredVersion"); // dummy call to getPref to ensure initialization
@@ -1020,7 +1022,7 @@ var EnigmailFuncs = {
     }
 
     var r='<pre wrap="">' + lines.join("\n") + (isSignature ? '</div>': '') + '</pre>';
-    //EnigmailCommon.DEBUG_LOG("enigmailFuncs.jsm: r='"+r+"'\n");
+    //Log.DEBUG("enigmailFuncs.jsm: r='"+r+"'\n");
     return r;
   },
 
@@ -1033,7 +1035,7 @@ var EnigmailFuncs = {
    * @return |array| of |arrays| containing pairs of aa/b and cc/d
    */
   getHeaderData: function (data) {
-    EnigmailCommon.DEBUG_LOG("enigmailFuncs.jsm: getHeaderData: "+data.substr(0, 100)+"\n");
+    Log.DEBUG("enigmailFuncs.jsm: getHeaderData: "+data.substr(0, 100)+"\n");
     var a = data.split(/\n/);
     var res = [];
     for (let i = 0; i < a.length; i++) {
@@ -1046,7 +1048,7 @@ var EnigmailFuncs = {
         if (m) {
           // m[2]: identifier / m[6]: data
           res[m[2].toLowerCase()] = m[6].replace(/\s*$/, "");
-          EnigmailCommon.DEBUG_LOG("enigmailFuncs.jsm: getHeaderData: "+m[2].toLowerCase()+" = "+res[m[2].toLowerCase()] +"\n");
+          Log.DEBUG("enigmailFuncs.jsm: getHeaderData: "+m[2].toLowerCase()+" = "+res[m[2].toLowerCase()] +"\n");
         }
       }
       if (i === 0 && a[i].indexOf(";") < 0) break;
@@ -1066,10 +1068,10 @@ var EnigmailFuncs = {
 
   writeFileContents: function(filePath, data, permissions) {
 
-    // EnigmailCommon.DEBUG_LOG("enigmailFuncs.jsm: WriteFileContents: file="+filePath.toString()+"\n");
+    // Log.DEBUG("enigmailFuncs.jsm: WriteFileContents: file="+filePath.toString()+"\n");
 
     try {
-      var fileOutStream = this.createFileStream(filePath, permissions);
+      var fileOutStream = Files.createFileStream(filePath, permissions);
 
       if (data.length) {
         if (fileOutStream.write(data, data.length) != data.length)
@@ -1080,22 +1082,10 @@ var EnigmailFuncs = {
       fileOutStream.close();
 
     } catch (ex) {
-      EnigmailCommon.ERROR_LOG("enigmailFuncs.jsm: writeFileContents: Failed to write to "+filePath+"\n");
+      Log.ERROR("enigmailFuncs.jsm: writeFileContents: Failed to write to "+filePath+"\n");
       return false;
     }
 
     return true;
-  },
-
-  /**
-   *  Create an nsIFileOutputStream object associated with a file to
-   *  allow for writing data via the stream to the file
-   *  @filePath |string| or |nsIFile| object - the file to be written
-   *  @permissions  |number|                 - file permissions according to Unix spec (0600 by default)
-   *
-   *  @return nsIFileOutputStream object or null if creation failed
-   */
-
-  createFileStream: EnigmailCore.createFileStream.bind(EnigmailCore),
-
+  }
 };

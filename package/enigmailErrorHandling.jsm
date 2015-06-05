@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false */
+/*global Components: false, Log: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,6 +39,8 @@
 
 "use strict";
 
+Components.utils.import("resource://enigmail/log.jsm");
+
 var EXPORTED_SYMBOLS = [ "EnigmailErrorHandling" ];
 
 const Ci = Components.interfaces;
@@ -63,7 +65,7 @@ function missingPassphrase(c) {
   c.statusFlags |= Ci.nsIEnigmail.MISSING_PASSPHRASE;
   c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   c.flag = 0;
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: missing passphrase"+"\n");
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: missing passphrase"+"\n");
   c.retStatusObj.statusMsg += "Missing Passphrase\n";
 }
 
@@ -71,17 +73,17 @@ function invalidSignature(c) {
   var lineSplit = c.statusLine.split(/ +/);
   c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   c.flag = 0;
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: detected invalid sender: "+lineSplit[2]+" / code: "+lineSplit[1]+"\n");
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: detected invalid sender: "+lineSplit[2]+" / code: "+lineSplit[1]+"\n");
   c.retStatusObj.statusMsg += c.ec.getString("gnupg.invalidKey.desc", [ lineSplit[2] ]);
 }
 
 function importOk(c) {
   var lineSplit = c.statusLine.split(/ +/);
   if (lineSplit.length > 1) {
-    c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: key imported: "+ lineSplit[2]+ "\n");
+    Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: key imported: "+ lineSplit[2]+ "\n");
   }
   else {
-    c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: key without FPR imported\n");
+    Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: key without FPR imported\n");
   }
 
   let importFlag = Number(lineSplit[1]);
@@ -261,7 +263,7 @@ function buildErrorMessageForCardCtrl(c, errCode, detectedCard) {
 }
 
 function parseErrorOutputWith(c) {
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+c.errOutput+"\n");
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+c.errOutput+"\n");
 
   c.errLines = splitErrorOutput(c.errOutput);
 
@@ -286,9 +288,9 @@ function parseErrorOutputWith(c) {
       c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   }
 
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+c.ec.bytesToHex(c.ec.pack(c.statusFlags,4))+"\n");
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+c.ec.bytesToHex(c.ec.pack(c.statusFlags,4))+"\n");
 
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput(): return with c.errorMsg = "+c.errorMsg+"\n");
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput(): return with c.errorMsg = "+c.errorMsg+"\n");
   return c.errorMsg;
 }
 

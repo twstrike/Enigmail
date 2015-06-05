@@ -38,6 +38,7 @@
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/gpgAgentHandler.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
 
 // Initialize enigmailCommon
 EnigInitCommon("pref-enigmail");
@@ -54,7 +55,7 @@ var gSavedManualPrefConfirmBeforeSending = 0;
 var gOrigMaxIdle = "-";
 
 function displayPrefs(showDefault, showPrefs, setPrefs) {
-  DEBUG_LOG("pref-enigmail.js displayPrefs\n");
+  Log.DEBUG("pref-enigmail.js displayPrefs\n");
 
   var s = gEnigmailSvc;
 
@@ -75,7 +76,7 @@ function displayPrefs(showDefault, showPrefs, setPrefs) {
         prefValue = EnigGetPref(prefName);
       }
 
-      DEBUG_LOG("pref-enigmail.js displayPrefs: "+prefName+"="+prefValue+"\n");
+      Log.DEBUG("pref-enigmail.js displayPrefs: "+prefName+"="+prefValue+"\n");
 
       switch (prefType) {
       case EnigmailCore.prefBranch.PREF_BOOL:
@@ -128,7 +129,7 @@ function displayPrefs(showDefault, showPrefs, setPrefs) {
         break;
 
       default:
-        DEBUG_LOG("pref-enigmail.js displayPrefs: "+prefName+" does not have a type?!\n");
+        Log.DEBUG("pref-enigmail.js displayPrefs: "+prefName+" does not have a type?!\n");
       }
     }
   }
@@ -136,7 +137,7 @@ function displayPrefs(showDefault, showPrefs, setPrefs) {
 
 function prefOnLoad()
 {
-  DEBUG_LOG("pref-enigmail.js: prefOnLoad()\n");
+  Log.DEBUG("pref-enigmail.js: prefOnLoad()\n");
 
   GetEnigmailSvc();
   displayPrefs(false, true, false);
@@ -276,7 +277,7 @@ function selectPrefTabPanel(panelName) {
 }
 
 function resetPrefs() {
-  DEBUG_LOG("pref-enigmail.js: resetPrefs\n");
+  Log.DEBUG("pref-enigmail.js: resetPrefs\n");
 
   displayPrefs(true, true, false);
 
@@ -338,7 +339,7 @@ function updateSendingPrefs()
 
 function resetSendingPrefsConvenient()
 {
-  DEBUG_LOG("pref-enigmail.js: resetSendingPrefsConvenient()\n");
+  Log.DEBUG("pref-enigmail.js: resetSendingPrefsConvenient()\n");
 
   // save current manual preferences to be able to switch back to them:
   gSavedManualPrefKeepSettingsForReply = document.getElementById("enigmail_keepSettingsForReply").checked;
@@ -365,7 +366,7 @@ function resetSendingPrefsConvenient()
 
 function resetSendingPrefsManually()
 {
-  DEBUG_LOG("pref-enigmail.js: resetSendingPrefsManually()\n");
+  Log.DEBUG("pref-enigmail.js: resetSendingPrefsManually()\n");
 
   // switch encryption model:
   gEnigEncryptionModel = 1;         // manual encryption settings
@@ -386,7 +387,7 @@ function resetSendingPrefsManually()
 }
 
 function resetRememberedValues() {
-  DEBUG_LOG("pref-enigmail.js: resetRememberedValues\n");
+  Log.DEBUG("pref-enigmail.js: resetRememberedValues\n");
   var prefs=["confirmBeforeSend",
              "displaySignWarn",
              "encryptAttachmentsSkipDlg",
@@ -409,7 +410,7 @@ function resetRememberedValues() {
 
 function prefOnAccept() {
 
-  DEBUG_LOG("pref-enigmail.js: prefOnAccept\n");
+  Log.DEBUG("pref-enigmail.js: prefOnAccept\n");
 
   var autoKey = document.getElementById("enigmail_autoKeyRetrieve").value;
 

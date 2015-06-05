@@ -165,6 +165,7 @@
     Components.utils.import("resource://enigmail/commonFuncs.jsm");
     Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     Components.utils.import("resource://enigmail/keyManagement.jsm");
+    Components.utils.import("resource://enigmail/log.jsm");
 
     // Ec is predefined by enigmailCommon.js
 
@@ -220,7 +221,7 @@
 
       QueryInterface : function(iid)
       {
-        //DEBUG_LOG("enigmailGenCardKey: EnigMimeReadCallback.QI: "+iid+"\n");
+        //Log.DEBUG("enigmailGenCardKey: EnigMimeReadCallback.QI: "+iid+"\n");
         if (iid.equals(Components.interfaces.nsIEnigMimeReadCallback) ||
             iid.equals(Components.interfaces.nsISupports) )
           return this;
@@ -263,7 +264,7 @@
     }
 
     function startKeyGen() {
-      DEBUG_LOG("enigmailGenCardKey: startKeyGen(): Start\n");
+      Log.DEBUG("enigmailGenCardKey: startKeyGen(): Start\n");
 
       var enigmailSvc = Ec.getService(window);
       if (!enigmailSvc) {
@@ -389,4 +390,3 @@
   </script>
 
 </window>
-
