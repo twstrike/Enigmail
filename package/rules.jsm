@@ -40,7 +40,6 @@
 "use strict";
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 
 var EXPORTED_SYMBOLS = [ "Rules" ];

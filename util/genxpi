@@ -115,6 +115,7 @@ zip --must-match\
     modules/passwordCheck.jsm \
     modules/rules.jsm \
     modules/filters.jsm \
+    modules/armor.jsm \
     modules/commonFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \

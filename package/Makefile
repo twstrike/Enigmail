@@ -42,6 +42,7 @@ MODFILES = \
            passwordCheck.jsm \
            rules.jsm \
            filters.jsm \
+           armor.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \
            mimeVerify.jsm
