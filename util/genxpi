@@ -120,6 +120,7 @@ zip --must-match\
     modules/log.jsm \
     modules/prefs.jsm \
     modules/os.jsm \
+    modules/app.jsm \
     modules/commonFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \

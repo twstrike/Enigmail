@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Log: false, Prefs: false, OS: false */
+/*global Components: false, EnigmailCommon: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -33,48 +33,20 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-
-
-/***
- * Enigmail Core:
- * this file serves to be included by other components in Enigmail;
- * it should not import anything from other Enigmail modules, except
- * log!
- */
-
-/*
- * Import into a JS component using
- * 'Components.utils.import("resource://enigmail/enigmailCore.jsm");'
- */
-
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/prefs.jsm");
-Components.utils.import("resource://enigmail/os.jsm");
-
-var EXPORTED_SYMBOLS = [ "EnigmailCore" ];
+const EXPORTED_SYMBOLS = [ "EnigmailCore" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const nsIEnigmail = Ci.nsIEnigmail;
-
-const XPCOM_APPINFO = "@mozilla.org/xre/app-info;1";
-const ENIG_EXTENSION_GUID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
-
-const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
 
 var gEnigmailSvc = null;      // Global Enigmail Service
 var gEnigmailCommon = null;      // Global Enigmail Common instance, to avoid circular dependencies
 
-var EnigmailCore = {
+const EnigmailCore = {
   enigStringBundle: null,
   version: "",
 
   init: function(enigmailVersion) {
     this.version = enigmailVersion;
-  },
-
-  getLogData: function() {
-      return Log.getLogData(EnigmailCore.version, Prefs);
   },
 
   // retrieves a localized string from the enigmail.properties stringbundle
@@ -110,24 +82,6 @@ var EnigmailCore = {
       }
     }
     return aStr;
-  },
-
-  /**
-   * Plattform application name (e.g. Thunderbird)
-   */
-
-  getAppName: function() {
-    var xulAppinfo = Cc[XPCOM_APPINFO].getService(Ci.nsIXULAppInfo);
-
-    return xulAppinfo.name;
-  },
-
-  /**
-   * Return the directory holding the current profile as nsIFile object
-   */
-  getProfileDirectory: function() {
-    let ds = Cc[DIR_SERV_CONTRACTID].getService(Ci.nsIProperties);
-    return ds.get("ProfD", Ci.nsIFile);
   },
 
     getEnigmailService: function() {

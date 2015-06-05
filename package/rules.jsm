@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, EnigmailFuncs: false, Log: false, OS: false, Files: false */
+/*global Components: false, EnigmailFuncs: false, Log: false, OS: false, Files: false, App: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,18 +39,16 @@
 
 "use strict";
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
+Components.utils.import("resource://enigmail/app.jsm");
 
 var EXPORTED_SYMBOLS = [ "Rules" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-
-const EC = EnigmailCore;
 
 const NS_RDONLY      = 0x01;
 const NS_WRONLY      = 0x02;
@@ -68,7 +66,7 @@ const rulesListHolder = {
 const Rules = {
     getRulesFile: function() {
         Log.DEBUG("enigmail.js: getRulesFile\n");
-        var rulesFile = EC.getProfileDirectory();
+        var rulesFile = App.getProfileDirectory();
         rulesFile.append("pgprules.xml");
         return rulesFile;
     },

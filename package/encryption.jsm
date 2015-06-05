@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, App: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -45,6 +45,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/app.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -123,7 +124,7 @@ var Encryption = {
         var encryptArgs = ecom.getAgentArgs(true);
 
         if (!useDefaultComment)
-            encryptArgs = encryptArgs.concat(["--comment", GPG_COMMENT_OPT.replace(/\%s/, ecom.getAppName())]);
+            encryptArgs = encryptArgs.concat(["--comment", GPG_COMMENT_OPT.replace(/\%s/, App.getName())]);
 
         var angledFromMailAddr = ((fromMailAddr.search(/^0x/) === 0) || hushMailSupport) ?
                 fromMailAddr : "<" + fromMailAddr + ">";

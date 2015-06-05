@@ -1,5 +1,4 @@
-/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false, component: false */
-/*global EnigmailCore: false, Cc: false, Ci: false, Files: false, Log: false, Prefs: false */
+/*global Components: false, Log: false, OS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -40,39 +39,30 @@
 
 "use strict";
 
-do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
+var EXPORTED_SYMBOLS = [ "App" ];
 
-testing("enigmailCore.jsm");
-component("enigmail/files.jsm");
-component("enigmail/prefs.jsm");
-component("enigmail/log.jsm");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
-test(shouldReadProperty);
-test(shouldSetGetPreference);
-test(shouldCreateLogFile);
+const XPCOM_APPINFO = "@mozilla.org/xre/app-info;1";
 
-function shouldReadProperty() {
-    var importBtnProp = "enigHeader";
-    var importBtnValue = EnigmailCore.getString(importBtnProp);
-    Assert.equal("Enigmail:", importBtnValue);
-}
+const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
 
-function shouldSetGetPreference() {
-    var prefName = "mypref";
-    Prefs.setPref(prefName, "yourpref");
-    Assert.equal("yourpref", Prefs.getPref(prefName));
-}
+const App = {
 
-function shouldCreateLogFile() {
-    Log.setLogDirectory(do_get_cwd().path);
-    Log.setLogLevel(5);
-    Log.createLogFiles();
-    var filePath = Log.directory + "enigdbug.txt";
-    var localFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
-    Files.initPath(localFile, filePath);
+    /**
+     * Plattform application name (e.g. Thunderbird)
+     */
+    getName: function() {
+        return Cc[XPCOM_APPINFO].getService(Ci.nsIXULAppInfo).name;
+    },
 
-    Assert.equal(localFile.exists(), true);
-    if (localFile.exists()) {
-        localFile.remove(false);
+    /**
+     * Return the directory holding the current profile as nsIFile object
+     */
+    getProfileDirectory: function() {
+        let ds = Cc[DIR_SERV_CONTRACTID].getService(Ci.nsIProperties);
+        return ds.get("ProfD", Ci.nsIFile);
     }
-}
+
+};

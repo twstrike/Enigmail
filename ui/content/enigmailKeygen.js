@@ -39,6 +39,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/app.jsm");
 
 try {
   Components.utils.import("resource://gre/modules/Promise.jsm");
@@ -46,7 +47,6 @@ try {
   Components.utils.import("resource://gre/modules/commonjs/sdk/core/promise.js");
 }
 
-const EC = EnigmailCore;
 const Ec = EnigmailCommon;
 
 // Initialize enigmailCommon
@@ -210,7 +210,7 @@ function genAndSaveRevCert(keyId, uid) {
     function(resolve, reject) {
 
     let keyIdShort = "0x"+keyId.substr(-16, 16);
-    let keyFile = EnigmailCore.getProfileDirectory();
+    let keyFile = App.getProfileDirectory();
     keyFile.append(keyIdShort + "_rev.asc");
 
     // create a revokation cert in the TB profile directoy

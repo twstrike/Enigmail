@@ -84,6 +84,7 @@
     Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     Components.utils.import("resource://enigmail/commonFuncs.jsm");
     Components.utils.import("resource://enigmail/log.jsm");
+    Components.utils.import("resource://enigmail/prefs.jsm");
 
     const Ec = EnigmailCommon;
 
@@ -119,7 +120,7 @@
         cf.setAttribute("collapsed", "true");
 
         let cb = document.getElementById("contentBox");
-        logFileData = EnigmailCore.getLogData();
+        logFileData = Log.getLogData(EnigmailCore.version, Prefs);
         cb.value = logFileData;
 
         let cfb = document.getElementById("logFileBox");

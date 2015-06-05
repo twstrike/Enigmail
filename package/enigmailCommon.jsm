@@ -289,8 +289,6 @@ var EnigmailCommon = {
     return this.enigmailSvc.initialized ? this.enigmailSvc : null;
   },
 
-  getAppName: EnigmailCore.getAppName.bind(EnigmailCore),
-
   /**
    * get the Enigmail version
    *
