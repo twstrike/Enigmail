@@ -55,7 +55,6 @@ Components.utils.import("resource://enigmail/enigmailProtocolHandler.jsm");
 Components.utils.import("resource://enigmail/enigmailGpg.jsm");
 Components.utils.import("resource://enigmail/rules.jsm");
 Components.utils.import("resource://enigmail/filters.jsm");
-Components.utils.import("resource://enigmail/keyManagement.jsm");
 
 try {
   // TB with omnijar
@@ -1351,7 +1350,59 @@ Enigmail.prototype = {
   },
 
   importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj) {
-      EnigmailKeyMgmt.importKeyFromFile(parent,inputFile,errorMsgObj,importedKeysObj);
+    EC.DEBUG_LOG("enigmail.js: Enigmail.importKeyFromFile: fileName="+inputFile.path+"\n");
+    importedKeysObj.value="";
+
+    if (!this.initialized) {
+      EC.ERROR_LOG("enigmail.js: Enigmail.importKeyFromFile: not yet initialized\n");
+      errorMsgObj.value = EC.getString("notInit");
+      return 1;
+    }
+
+    var fileName=Ec.getEscapedFilename(getFilePath(inputFile.QueryInterface(Ci.nsIFile)));
+
+    var args = Ec.getAgentArgs(true);
+    args.push("--import");
+    args.push(fileName);
+
+    var statusFlagsObj = {};
+    var statusMsgObj   = {};
+    var exitCodeObj    = {};
+
+    var output = this.execCmd(this.agentPath, args, null, "",
+                        exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+
+    var statusMsg = statusMsgObj.value;
+
+    var keyList = [];
+
+    if (exitCodeObj.value === 0) {
+      // Normal return
+      this.invalidateUserIdList();
+
+      var statusLines = statusMsg.split(/\r?\n/);
+
+      // Discard last null string, if any
+
+      for (var j=0; j<statusLines.length; j++) {
+        var matches = statusLines[j].match(/IMPORT_OK ([0-9]+) (\w+)/);
+        if (matches && (matches.length > 2)) {
+          if (typeof (keyList[matches[2]]) != "undefined") {
+            keyList[matches[2]] |= Number(matches[1]);
+          }
+          else
+            keyList[matches[2]] = Number(matches[1]);
+
+          EC.DEBUG_LOG("enigmail.js: Enigmail.importKey: imported "+matches[2]+":"+matches[1]+"\n");
+        }
+      }
+
+      for (j in keyList) {
+        importedKeysObj.value += j+":"+keyList[j]+";";
+      }
+    }
+
+    return exitCodeObj.value;
   },
 
   createMessageURI: function (originalUrl, contentType, contentCharset, contentData, persist) {
