@@ -1,4 +1,4 @@
-/*global Components EnigmailCommon */
+/*global Components EnigmailCommon EnigmailCore */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -387,69 +387,6 @@ var EnigmailKeyMgmt = {
         callbackFunc);
   },
 
-  importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj){
-
-    var enigmailSvc = Ec.getService(parent);
-    if (!enigmailSvc) {
-      Ec.ERROR_LOG("keyManagmenent.jsm: Enigmail.readKey: not yet initialized\n");
-      return -1;
-    }
-
-    var command= enigmailSvc.agentPath;
-    var args = Ec.getAgentArgs(false);
-    Ec.DEBUG_LOG("enigmail.js: Enigmail.importKeyFromFile: fileName="+inputFile.path+"\n");
-    importedKeysObj.value="";
-
-    if (!this.initialized) {
-      Ec.ERROR_LOG("enigmail.js: Enigmail.importKeyFromFile: not yet initialized\n");
-      errorMsgObj.value = Ec.getString("notInit");
-      return 1;
-    }
-
-    var fileName=Ec.getEscapedFilename(getFilePath(inputFile.QueryInterface(Ci.nsIFile)));
-
-    args.push("--import");
-    args.push(fileName);
-
-    var statusFlagsObj = {};
-    var statusMsgObj   = {};
-    var exitCodeObj    = {};
-
-    var output = enigmailSvc.execCmd(command, args, null, "",
-        exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
-
-    var statusMsg = statusMsgObj.value;
-
-    var keyList = [];
-
-    if (exitCodeObj.value === 0) {
-      // Normal return
-      this.invalidateUserIdList();
-
-      var statusLines = statusMsg.split(/\r?\n/);
-
-      // Discard last null string, if any
-
-      for (var j=0; j<statusLines.length; j++) {
-        var matches = statusLines[j].match(/IMPORT_OK ([0-9]+) (\w+)/);
-        if (matches && (matches.length > 2)) {
-          if (typeof (keyList[matches[2]]) != "undefined") {
-            keyList[matches[2]] |= Number(matches[1]);
-          }
-          else
-            keyList[matches[2]] = Number(matches[1]);
-
-          Ec.DEBUG_LOG("enigmail.js: Enigmail.importKey: imported "+matches[2]+":"+matches[1]+"\n");
-        }
-      }
-
-      for (j in keyList) {
-        importedKeysObj.value += j+":"+keyList[j]+";";
-      }
-    }
-
-    return exitCodeObj.value;
-  },
   setKeyTrust: function (parent, keyId, trustLevel, callbackFunc) {
     Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.setKeyTrust: trustLevel="+trustLevel+", keyId="+keyId+"\n");
 
