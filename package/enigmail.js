@@ -1,6 +1,6 @@
 /*global Components: false, EnigmailCore: false, EnigmailCommon: false, XPCOMUtils: false, EnigmailGpgAgent: false, EnigmailGPG: false, Encryption: false, Decryption: false */
-/*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, enigmailDecryptPermanently: false, dump: false */
-/*global Rules: false */
+/*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, dump: false */
+/*global Rules: false, Filters: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -49,12 +49,12 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/gpgAgentHandler.jsm");
 Components.utils.import("resource://gre/modules/ctypes.jsm");
 Components.utils.import("resource://gre/modules/Timer.jsm");
-Components.utils.import("resource://enigmail/enigmailConvert.jsm");
 Components.utils.import("resource://enigmail/encryption.jsm");
 Components.utils.import("resource://enigmail/decryption.jsm");
 Components.utils.import("resource://enigmail/enigmailProtocolHandler.jsm");
 Components.utils.import("resource://enigmail/enigmailGpg.jsm");
 Components.utils.import("resource://enigmail/rules.jsm");
+Components.utils.import("resource://enigmail/filters.jsm");
 
 try {
   // TB with omnijar
@@ -245,10 +245,7 @@ function cloneOrNull(v) {
 
 function Enigmail() {
     Components.utils.import("resource://enigmail/commonFuncs.jsm");
-    Ec = EC.ensuredEnigmailCommon(function() {
-        Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-        return EnigmailCommon;
-    });
+    Ec = EC.ensuredEnigmailCommon();
     EnigmailGpgAgent.setEnigmailCommon(Ec);
 }
 
@@ -2130,162 +2127,8 @@ function getEnigmailString(aStr) {
   }
 }
 
-/********************************************************************************
-  Filter actions for decrypting messages permanently
- ********************************************************************************/
-
-/***
- *  dispatchMessages
- *
- *  Because thunderbird throws all messages at once at us thus we have to rate limit the dispatching
- *  of the message processing. Because there is only a negligible performance gain when dispatching
- *  several message at once we serialize to not overwhelm low power devices.
- *
- *  The function is implemented such that the 1st call (requireSync == true) is a synchronous function,
- *  while any other call is asynchronous. This is required to make the filters work correctly in case
- *  there are other filters that work on the message. (see bug 374).
- *
- *  Parameters
- *   aMsgHdrs:     Array of nsIMsgDBHdr
- *   targetFolder: String; target folder URI
- *   move:         Boolean: type of action; true = "move" / false = "copy"
- *   requireSync:  Boolean: true = require  function to behave synchronously
- *                          false = async function (no useful return value)
- *
- **/
-
-function dispatchMessages(aMsgHdrs, targetFolder, move, requireSync) {
-  var inspector = Cc["@mozilla.org/jsinspector;1"].getService(Ci.nsIJSInspector);
-
-  var promise = enigmailDecryptPermanently(aMsgHdrs[0], targetFolder, move);
-  var done = false;
-
-  var processNext = function (data) {
-    aMsgHdrs.splice(0,1);
-    if (aMsgHdrs.length > 0) {
-      dispatchMessages(aMsgHdrs, targetFolder, move, false);
-    }
-    else {
-      // last message was finished processing
-      done = true;
-      EC.DEBUG_LOG("enigmail.js: dispatchMessage: exit nested loop\n");
-      inspector.exitNestedEventLoop();
-    }
-  };
-
-  promise.then(processNext);
-
-  promise.catch(function(err) {
-    EC.ERROR_LOG("enigmail.js: dispatchMessage: caught error: "+err+"\n");
-    processNext(null);
-  });
-
-  if (requireSync && ! done) {
-    // wait here until all messages processed, such that the function returns
-    // synchronously
-    EC.DEBUG_LOG("enigmail.js: dispatchMessage: enter nested loop\n");
-    inspector.enterNestedEventLoop({value : 0});
-  }
-}
-
-/**
- * filter action for creating a decrypted version of the mail and
- * deleting the original mail at the same time
- */
-
-var filterActionMoveDecrypt = {
-  id: "enigmail@enigmail.net#filterActionMoveDecrypt",
-  name: EC.getString("filter.decryptMove.label"),
-  value: "movemessage",
-  apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
-
-    EC.DEBUG_LOG("enigmail.js: filterActionMoveDecrypt: Move to: " + aActionValue + "\n");
-
-    var msgHdrs = [];
-
-    for(var i=0; i < aMsgHdrs.length; i++) {
-      msgHdrs.push(aMsgHdrs.queryElementAt(i, Ci.nsIMsgDBHdr));
-    }
-
-    dispatchMessages(msgHdrs, aActionValue, true, true);
-
-    return;
-  },
-
-  isValidForType: function (type, scope) {
-    return true;
-  },
-
-  validateActionValue: function (value, folder, type) {
-
-    if (Ec === null) {
-      new Enigmail();
-      Ec.getService();
-    }
-
-    Ec.alert(null, EC.getString("filter.decryptMove.warnExperimental"));
-
-    if (value === "") {
-      return EC.getString("filter.folderRequired");
-    }
-
-    return null;
-  },
-
-  allowDuplicates: false,
-  isAsync: false,
-  needsBody: true
-};
-
-/**
- * filter action for creating a decrypted copy of the mail, leaving the original
- * message untouched
- */
-var filterActionCopyDecrypt = {
-  id: "enigmail@enigmail.net#filterActionCopyDecrypt",
-  name: EC.getString("filter.decryptCopy.label"),
-  value: "copymessage",
-  apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
-    if (Ec === null) {
-      new Enigmail();
-      Ec.getService();
-    }
-
-    Ec.DEBUG_LOG("enigmail.js: filterActionCopyDecrypt: Copy to: " + aActionValue + "\n");
-
-    var msgHdrs = [];
-
-    for(var i=0; i < aMsgHdrs.length; i++) {
-      msgHdrs.push(aMsgHdrs.queryElementAt(i, Ci.nsIMsgDBHdr));
-    }
-
-    dispatchMessages(msgHdrs, aActionValue, false, true);
-    return;
-  },
-
-  isValidForType: function (type, scope) {
-    return true;
-  },
-
-  validateActionValue: function (value, folder, type) {
-    if( value === "") {
-      return EC.getString("filter.folderRequired");
-    }
-
-    return null;
-  },
-
-  allowDuplicates: false,
-  isAsync: false,
-  needsBody: true
-};
-
-///////////////////////////////////////////////////////////////////////////////
-
 var NSGetFactory = XPCOMUtils.generateNSGetFactory([Enigmail, EnigmailProtocolHandler, EnigCmdLineHandler]);
 
-var filterService = Cc["@mozilla.org/messenger/services/filters;1"].getService(Ci.nsIMsgFilterService);
-filterService.addCustomAction(filterActionMoveDecrypt);
-filterService.addCustomAction(filterActionCopyDecrypt);
+Filters.registerAll();
 
 dump("enigmail.js: Registered components\n");

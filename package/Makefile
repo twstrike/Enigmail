@@ -41,6 +41,7 @@ MODFILES = \
            enigmailProtocolHandler.jsm \
            passwordCheck.jsm \
            rules.jsm \
+           filters.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \
            mimeVerify.jsm

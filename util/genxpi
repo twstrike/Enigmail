@@ -114,6 +114,7 @@ zip --must-match\
     modules/enigmailGpg.jsm \
     modules/passwordCheck.jsm \
     modules/rules.jsm \
+    modules/filters.jsm \
     modules/commonFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \

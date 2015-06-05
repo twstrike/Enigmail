@@ -1,3 +1,4 @@
+/*global Components: false, EnigmailCommon: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -516,10 +517,18 @@ var EnigmailCore = {
     },
 
     ensuredEnigmailCommon: function(f) {
-        if(gEnigmailCommon === null) {
+        if(!f) {
+            f = EnigmailCore.defaultEnigmailCommonCreation;
+        }
+        if(!gEnigmailCommon) {
             gEnigmailCommon = f();
         }
         return gEnigmailCommon;
+    },
+
+    defaultEnigmailCommonCreation: function() {
+        Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+        return EnigmailCommon;
     },
 
     // Read the contents of a file into a string
