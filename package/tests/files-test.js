@@ -42,36 +42,23 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
-testing("enigmailCore.jsm");
-component("enigmail/files.jsm");
-component("enigmail/prefs.jsm");
+testing("files.jsm");
 
-test(shouldReadProperty);
-test(shouldSetGetPreference);
-test(shouldCreateLogFile);
+// testing: readFile
+test(function readFileReturnsContentOfExistingFile() {
+    var md = do_get_cwd().clone();
+    md.append("..");
+    md.append("..");
+    md.append("uuid_enig.txt");
+    var result = Files.readFile(md);
+    Assert.assertContains(result, "847b3a00-7ab1-11d4-8f02-006008948af5");
+});
 
-function shouldReadProperty() {
-    var importBtnProp = "enigHeader";
-    var importBtnValue = EnigmailCore.getString(importBtnProp);
-    Assert.equal("Enigmail:", importBtnValue);
-}
-
-function shouldSetGetPreference() {
-    var prefName = "mypref";
-    Prefs.setPref(prefName, "yourpref");
-    Assert.equal("yourpref", Prefs.getPref(prefName));
-}
-
-function shouldCreateLogFile() {
-    Log.setLogDirectory(do_get_cwd().path);
-    Log.setLogLevel(5);
-    Log.createLogFiles();
-    var filePath = Log.directory + "enigdbug.txt";
-    var localFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
-    Files.initPath(localFile, filePath);
-
-    Assert.equal(localFile.exists(), true);
-    if (localFile.exists()) {
-        localFile.remove(false);
-    }
-}
+test(function readFileReturnsEmptyStringForNonExistingFile() {
+    var md = do_get_cwd().clone();
+    md.append("..");
+    md.append("..");
+    md.append("THIS_FILE_DOESNT_EXIST");
+    var result = Files.readFile(md);
+    Assert.equal("", result);
+});

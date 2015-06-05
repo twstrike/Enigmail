@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, EnigmailFuncs: false, Log: false, OS: false */
+/*global Components: false, EnigmailCore: false, EnigmailFuncs: false, Log: false, OS: false, Files: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -43,6 +43,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
+Components.utils.import("resource://enigmail/files.jsm");
 
 var EXPORTED_SYMBOLS = [ "Rules" ];
 
@@ -77,7 +78,7 @@ const Rules = {
         var flags = NS_RDONLY;
         var rulesFile = this.getRulesFile();
         if (rulesFile.exists()) {
-            var fileContents = EC.readFile(rulesFile);
+            var fileContents = Files.readFile(rulesFile);
 
             if (fileContents.length===0 || fileContents.search(/^\s*$/)===0) {
                 return false;

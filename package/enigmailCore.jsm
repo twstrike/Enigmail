@@ -60,13 +60,7 @@ const nsIEnigmail = Ci.nsIEnigmail;
 const XPCOM_APPINFO = "@mozilla.org/xre/app-info;1";
 const ENIG_EXTENSION_GUID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
 
-const THUNDERBIRD_ID = "{3550f703-e582-4d05-9a08-453d09bdfdc6}";
-const SEAMONKEY_ID   = "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}";
-
-
-const NS_IOSERVICE_CONTRACTID       = "@mozilla.org/network/io-service;1";
 const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
-const NS_SCRIPTABLEINPUTSTREAM_CONTRACTID = "@mozilla.org/scriptableinputstream;1";
 
 var gEnigmailSvc = null;      // Global Enigmail Service
 var gEnigmailCommon = null;      // Global Enigmail Common instance, to avoid circular dependencies
@@ -193,29 +187,5 @@ var EnigmailCore = {
     defaultEnigmailCommonCreation: function() {
         Components.utils.import("resource://enigmail/enigmailCommon.jsm");
         return EnigmailCommon;
-    },
-
-    // Read the contents of a file into a string
-    readFile: function(filePath) {
-        // @filePath: nsIFile
-        if (filePath.exists()) {
-
-            var ioServ = Cc[NS_IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
-            if (!ioServ)
-                throw Components.results.NS_ERROR_FAILURE;
-
-            var fileURI = ioServ.newFileURI(filePath);
-            var fileChannel = ioServ.newChannel(fileURI.asciiSpec, null, null);
-
-            var rawInStream = fileChannel.open();
-
-            var scriptableInStream = Cc[NS_SCRIPTABLEINPUTSTREAM_CONTRACTID].createInstance(Ci.nsIScriptableInputStream);
-            scriptableInStream.init(rawInStream);
-            var available = scriptableInStream.available();
-            var fileContents = scriptableInStream.read(available);
-            scriptableInStream.close();
-            return fileContents;
-        }
-        return "";
     }
 };

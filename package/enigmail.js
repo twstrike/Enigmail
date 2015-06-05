@@ -752,7 +752,7 @@ Enigmail.prototype = {
             Log.ERROR("enigmail.js: detectGpgAgent no temp file created\n");
           }
           else {
-            outStr = EC.readFile(tmpFile);
+            outStr = Files.readFile(tmpFile);
             tmpFile.remove(false);
             exitCode = 0;
           }

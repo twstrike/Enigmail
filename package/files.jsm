@@ -48,6 +48,8 @@ const NS_FILE_CONTRACTID = "@mozilla.org/file/local;1";
 const NS_LOCAL_FILE_CONTRACTID = "@mozilla.org/file/local;1";
 const NS_LOCALFILEOUTPUTSTREAM_CONTRACTID =
                               "@mozilla.org/network/file-output-stream;1";
+const NS_IOSERVICE_CONTRACTID       = "@mozilla.org/network/io-service;1";
+const NS_SCRIPTABLEINPUTSTREAM_CONTRACTID = "@mozilla.org/scriptableinputstream;1";
 
 const NS_RDONLY      = 0x01;
 const NS_WRONLY      = 0x02;
@@ -159,5 +161,28 @@ const Files = {
         if (! localFileObj.exists()) {
             localFileObj.persistentDescriptor = pathStr;
         }
+    },
+
+    // Read the contents of a file into a string
+    readFile: function(filePath) {
+        // @filePath: nsIFile
+        if (filePath.exists()) {
+            var ioServ = Cc[NS_IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
+            if (!ioServ)
+                throw Components.results.NS_ERROR_FAILURE;
+
+            var fileURI = ioServ.newFileURI(filePath);
+            var fileChannel = ioServ.newChannel(fileURI.asciiSpec, null, null);
+
+            var rawInStream = fileChannel.open();
+
+            var scriptableInStream = Cc[NS_SCRIPTABLEINPUTSTREAM_CONTRACTID].createInstance(Ci.nsIScriptableInputStream);
+            scriptableInStream.init(rawInStream);
+            var available = scriptableInStream.available();
+            var fileContents = scriptableInStream.read(available);
+            scriptableInStream.close();
+            return fileContents;
+        }
+        return "";
     }
 };
