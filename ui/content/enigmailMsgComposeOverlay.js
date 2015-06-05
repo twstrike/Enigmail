@@ -2644,11 +2644,7 @@ Enigmail.msg = {
       return true;
     }
 
-    let sendFlags = nsIEnigmail.SEND_PGP_MIME | nsIEnigmail.SEND_ENCRYPTED | nsIEnigmail.SAVE_MESSAGE;
-
-    if (this.trustAllKeys) {
-      sendFlags |= nsIEnigmail.SEND_ALWAYS_TRUST;
-    }
+    let sendFlags = nsIEnigmail.SEND_PGP_MIME | nsIEnigmail.SEND_ENCRYPTED | nsIEnigmail.SAVE_MESSAGE | nsIEnigmail.SEND_ALWAYS_TRUST;
 
     let fromAddr = this.identity.email;
     let userIdValue = this.getSenderUserId();
@@ -3198,12 +3194,13 @@ Enigmail.msg = {
        //   - although encryption was
        //     - the recent processed resulting encryption status or
        //     - was signaled in the status bar but is not the outcome now
-       if ((sendFlags&ENCRYPT) === 0 &&
-           (this.statusEncrypted == EnigmailCommon.ENIG_FINAL_YES ||
-            this.statusEncrypted == EnigmailCommon.ENIG_FINAL_FORCEYES ||
-            this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_YES ||
-            this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_FORCEYES)) {
+       if ((sendFlags&ENCRYPT) == 0
+           && (this.statusEncrypted == EnigmailCommon.ENIG_FINAL_YES
+               || this.statusEncrypted == EnigmailCommon.ENIG_FINAL_FORCEYES
+               || this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_YES
+               || this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_FORCEYES)) {
          Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: promised encryption did not succeed\n");
+         EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: promised encryption did not succeed\n");
          if (!EnigmailCommon.confirmDlg(window,
                                         EnigmailCommon.getString("msgCompose.internalEncryptionError"),
                                         EnigmailCommon.getString("msgCompose.button.sendAnyway"))) {

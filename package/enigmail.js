@@ -1352,7 +1352,7 @@ Enigmail.prototype = {
   {
     var args = Ec.getAgentArgs(true);
     var keyIdList = keyId.split(" ");
-    args=args.concat([ "--fixed-list-mode", "--with-colons", "--list-keys"]);
+    args=args.concat([ "--fixed-list-mode", "--with-fingerprint", "--with-colons", "--list-keys"]);
     args=args.concat(keyIdList);
 
     var statusMsgObj   = {};

@@ -7,7 +7,6 @@
  */
 
 "use strict";
-
 do_subtest("mimeDecrypt-test.js");
 do_subtest("enigmailCommon-test.js");
 do_subtest("enigmailCore-test.js");
