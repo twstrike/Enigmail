@@ -118,6 +118,7 @@ zip --must-match\
     modules/armor.jsm \
     modules/files.jsm \
     modules/log.jsm \
+    modules/prefs.jsm \
     modules/commonFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, subprocess: false, Files: false, Log: false */
+/*global Components: false, EnigmailCore: false, subprocess: false, Files: false, Log: false, Prefs: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -40,6 +40,7 @@ Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailGpgAgent" ];
 
@@ -261,7 +262,7 @@ var EnigmailGpgAgent = {
   },
 
   getMaxIdlePref: function(win) {
-    let maxIdle = Ec.getPref("maxIdleMinutes");
+    let maxIdle = Prefs.getPref("maxIdleMinutes");
 
     try {
       var svc = Ec.getService(win);
@@ -283,7 +284,7 @@ var EnigmailGpgAgent = {
   },
 
   setMaxIdlePref: function(minutes) {
-    Ec.setPref("maxIdleMinutes", minutes);
+    Prefs.setPref("maxIdleMinutes", minutes);
 
     if (this.isAgentTypeGpgAgent()) {
       try {

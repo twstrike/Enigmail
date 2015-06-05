@@ -40,6 +40,7 @@ Components.utils.import("resource://enigmail/installGnuPG.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/passwordCheck.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 // const Ec is already defined in enigmailKeygen.js
 
@@ -746,8 +747,7 @@ function enigGetSvc(resetCheck) {
     // Try to initialize enigmail
 
     if (! gPrefEnigmail) {
-      EnigmailCore.initPrefService();
-      gPrefEnigmail = EnigmailCore.prefBranch;
+      gPrefEnigmail = Prefs.getPrefBranch();
     }
 
     try {
@@ -1069,7 +1069,7 @@ function applyWizardSettings() {
 
   loadLastPage();
 
-  Ec.setPref("encryptionModel", 0);
+  Prefs.setPref("encryptionModel", 0);
 
   if (document.getElementById("activateId").value == "1") {
     // activate all identities
@@ -1103,13 +1103,13 @@ function applyWizardSettings() {
 function applyMozSetting(preference, newVal)
 {
   if (typeof(newVal)=="boolean") {
-    EnigmailCore.prefRoot.setBoolPref(preference, newVal);
+    Prefs.getPrefRoot().setBoolPref(preference, newVal);
   }
   else if (typeof(newVal)=="number") {
-    EnigmailCore.prefRoot.setIntPref(preference, newVal);
+    Prefs.getPrefRoot().setIntPref(preference, newVal);
   }
   else if (typeof(newVal)=="string") {
-    EnigmailCore.prefRoot.setCharPref(preference, newVal);
+    Prefs.getPrefRoot().setCharPref(preference, newVal);
   }
 }
 

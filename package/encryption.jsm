@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -44,6 +44,7 @@ const EXPORTED_SYMBOLS = [ "Encryption" ];
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -105,12 +106,12 @@ var Encryption = {
 
         var useDefaultComment = false;
         try {
-            useDefaultComment = EnigmailCore.getPref("useDefaultComment");
+            useDefaultComment = Prefs.getPref("useDefaultComment");
         } catch(ex) { }
 
         var hushMailSupport = false;
         try {
-            hushMailSupport = EnigmailCore.getPref("hushMailSupport");
+            hushMailSupport = Prefs.getPref("hushMailSupport");
         } catch(ex) { }
 
         var detachedSig = (usePgpMime || (sendFlags & nsIEnigmail.SEND_ATTACHMENT)) && signMsg && !encryptMsg;
@@ -206,7 +207,7 @@ var Encryption = {
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
 
-        var hashAlgo = gMimeHashAlgorithms[EnigmailCore.getPref("mimeHashAlgorithm")];
+        var hashAlgo = gMimeHashAlgorithms[Prefs.getPref("mimeHashAlgorithm")];
 
         if (hashAlgorithm) {
             hashAlgo = hashAlgorithm;

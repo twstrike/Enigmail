@@ -39,6 +39,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/gpgAgentHandler.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 // Initialize enigmailCommon
 EnigInitCommon("pref-enigmail");
@@ -60,14 +61,14 @@ function displayPrefs(showDefault, showPrefs, setPrefs) {
   var s = gEnigmailSvc;
 
   var obj = {};
-  var prefList = EnigmailCore.prefBranch.getChildList("",obj);
+  var prefList = Prefs.getPrefBranch().getChildList("",obj);
 
   for (var prefItem in prefList) {
     var prefName=prefList[prefItem];
     var prefElement = document.getElementById("enigmail_"+prefName);
 
     if (prefElement) {
-      var prefType = EnigmailCore.prefBranch.getPrefType(prefName);
+      var prefType = Prefs.getPrefBranch().getPrefType(prefName);
       var prefValue;
       if (showDefault) {
         prefValue = EnigGetDefaultPref(prefName);
@@ -79,7 +80,7 @@ function displayPrefs(showDefault, showPrefs, setPrefs) {
       Log.DEBUG("pref-enigmail.js displayPrefs: "+prefName+"="+prefValue+"\n");
 
       switch (prefType) {
-      case EnigmailCore.prefBranch.PREF_BOOL:
+      case Prefs.getPrefBranch().PREF_BOOL:
         if (showPrefs) {
           if (prefElement.getAttribute("invert") == "true") {
             prefValue = ! prefValue;
@@ -108,7 +109,7 @@ function displayPrefs(showDefault, showPrefs, setPrefs) {
         }
         break;
 
-      case EnigmailCore.prefBranch.PREF_INT:
+      case Prefs.getPrefBranch().PREF_INT:
         if (showPrefs) {
           prefElement.value = prefValue;
         }
@@ -119,7 +120,7 @@ function displayPrefs(showDefault, showPrefs, setPrefs) {
         }
         break;
 
-      case EnigmailCore.prefBranch.PREF_STRING:
+      case Prefs.getPrefBranch().PREF_STRING:
         if (showPrefs) {
           prefElement.value = prefValue;
         }
@@ -146,7 +147,7 @@ function prefOnLoad()
 
   var maxIdle = -1;
   if (! gEnigmailSvc) {
-    maxIdle = EnigmailCommon.getPref("maxIdleMinutes");
+    maxIdle = Prefs.getPref("maxIdleMinutes");
   }
   else {
     maxIdle = EnigmailGpgAgent.getMaxIdlePref(window);
@@ -204,7 +205,7 @@ function prefOnLoad()
   gMimePartsElement = document.getElementById("mime_parts_on_demand");
 
   try {
-    gMimePartsValue = EnigmailCore.prefRoot.getBoolPref("mail.server.default.mime_parts_on_demand");
+    gMimePartsValue = Prefs.getPrefRoot().getBoolPref("mail.server.default.mime_parts_on_demand");
   } catch (ex) {
     gMimePartsValue = true;
   }
@@ -432,7 +433,7 @@ function prefOnAccept() {
   if (gMimePartsElement &&
       (gMimePartsElement.checked != gMimePartsValue) ) {
 
-    EnigmailCore.prefRoot.setBoolPref("mail.server.default.mime_parts_on_demand", (gMimePartsElement.checked ? true : false));
+    Prefs.getPrefRoot().setBoolPref("mail.server.default.mime_parts_on_demand", (gMimePartsElement.checked ? true : false));
   }
 
   EnigSetPref("configuredVersion", EnigGetVersion());

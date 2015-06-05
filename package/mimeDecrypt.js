@@ -204,7 +204,7 @@ PgpMimeDecrypt.prototype = {
       try {
         var messenger = Cc["@mozilla.org/messenger;1"].getService(Ci.nsIMessenger);
 
-        if (! Ec.getPref("autoDecrypt")) {
+        if (! Prefs.getPref("autoDecrypt")) {
           // "decrypt manually" mode
           let manUrl= {};
 

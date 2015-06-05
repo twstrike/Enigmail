@@ -45,6 +45,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 const EC = EnigmailCore;
 
@@ -323,20 +324,20 @@ function EnigSetRadioPref(prefName, optionElementIds) {
 }
 
 function EnigSavePrefs() {
-  return EnigmailCommon.savePrefs();
+  return Prefs.savePrefs();
 }
 
 function EnigGetPref(prefName) {
-  return EnigmailCommon.getPref(prefName);
+  return Prefs.getPref(prefName);
 }
 
 function EnigGetDefaultPref(prefName) {
   Log.DEBUG("enigmailCommon.js: EnigGetDefaultPref: prefName="+prefName+"\n");
   var prefValue=null;
   try {
-    EnigmailCore.prefBranch.lockPref(prefName);
+    Prefs.getPrefBranch().lockPref(prefName);
     prefValue = EnigGetPref(prefName);
-    EnigmailCore.prefBranch.unlockPref(prefName);
+    Prefs.getPrefBranch().unlockPref(prefName);
   }
   catch (ex) {}
 
@@ -344,7 +345,7 @@ function EnigGetDefaultPref(prefName) {
 }
 
 function EnigSetPref(prefName, value) {
-  return EnigmailCommon.setPref(prefName, value);
+  return Prefs.setPref(prefName, value);
 }
 
 function EnigGetSignMsg(identity) {

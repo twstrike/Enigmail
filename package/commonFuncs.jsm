@@ -247,7 +247,7 @@ var EnigmailFuncs = {
   {
     Log.DEBUG("commonFuncs.jsm: collapseAdvanced:\n");
 
-    var advancedUser = EnigmailCommon.getPref("advancedUser");
+    var advancedUser = Prefs.getPref("advancedUser");
 
     obj = obj.firstChild;
     while (obj) {
@@ -908,9 +908,9 @@ var EnigmailFuncs = {
     Log.DEBUG("enigmailFuncs.jsm: getSignMsg: identity.key="+identity.key+"\n");
     var sign = null;
 
-    EnigmailCommon.getPref("configuredVersion"); // dummy call to getPref to ensure initialization
+    Prefs.getPref("configuredVersion"); // dummy call to getPref to ensure initialization
 
-    var prefRoot = EnigmailCore.prefRoot;
+    var prefRoot = Prefs.getPrefRoot();
 
     if (prefRoot.getPrefType("mail.identity."+identity.key+".pgpSignPlain")===0) {
       if (prefRoot.getPrefType("mail.identity."+identity.key+".pgpSignMsg")===0) {
@@ -942,10 +942,7 @@ var EnigmailFuncs = {
     if (! gTxtConverter)
       gTxtConverter = Cc["@mozilla.org/txttohtmlconv;1"].createInstance(Ci.mozITXTToHTMLConv);
 
-    if (! EnigmailCore.prefRoot)
-      EnigmailCore.getPref("configuredVersion");
-
-    var prefRoot = EnigmailCore.prefRoot;
+    var prefRoot = Prefs.getPrefRoot();
     var fontStyle = "";
 
     // set the style stuff according to perferences

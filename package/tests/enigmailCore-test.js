@@ -1,5 +1,5 @@
 /*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false, component: false */
-/*global EnigmailCore: false, Cc: false, Ci: false, Files: false, Log: false */
+/*global EnigmailCore: false, Cc: false, Ci: false, Files: false, Log: false, Prefs: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -44,6 +44,7 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("enigmailCore.jsm");
 component("enigmail/files.jsm");
+component("enigmail/prefs.jsm");
 
 test(shouldReadProperty);
 test(shouldSetGetPreference);
@@ -57,8 +58,8 @@ function shouldReadProperty() {
 
 function shouldSetGetPreference() {
     var prefName = "mypref";
-    EnigmailCore.setPref(prefName, "yourpref");
-    Assert.equal("yourpref", EnigmailCore.getPref(prefName));
+    Prefs.setPref(prefName, "yourpref");
+    Assert.equal("yourpref", Prefs.getPref(prefName));
 }
 
 function shouldCreateLogFile() {

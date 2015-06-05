@@ -41,6 +41,7 @@
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 if (! Enigmail) var Enigmail = {};
 
@@ -295,7 +296,7 @@ Enigmail.hlp = {
 
     // check which keys are accepted
     var minTrustLevel;
-    var acceptedKeys = EnigmailCommon.getPref("acceptedKeys");
+    var acceptedKeys = Prefs.getPref("acceptedKeys");
     switch (acceptedKeys) {
       case 0: // accept valid/authenticated keys only
         minTrustLevel = "f";  // first value for trusted keys
@@ -602,8 +603,8 @@ Enigmail.hlp = {
     var msg = "";
     msg += "\n"+"- " + EnigmailCommon.getString(encrypt ? "encryptYes" : "encryptNo");
     msg += "\n"+"- " + EnigmailCommon.getString(sign ? "signYes" : "signNo");
-    if (EnigmailCommon.getPref("warnOnRulesConflict")==2) {
-      EnigmailCommon.setPref("warnOnRulesConflict", 0);
+    if (Prefs.getPref("warnOnRulesConflict")==2) {
+      Prefs.setPref("warnOnRulesConflict", 0);
     }
     if (!EnigmailCommon.confirmPref(window, EnigmailCommon.getString("rulesConflict", [ msg ]), "warnOnRulesConflict")) {
       return false;

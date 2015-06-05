@@ -39,6 +39,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/mimeVerify.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 if (! Enigmail) var Enigmail = {};
 
@@ -199,7 +200,7 @@ Enigmail.hdrView = {
         statusFlags |= nsIEnigmail.DECRYPTION_INCOMPLETE;
     }
 
-    if (! EnigmailCommon.getPref("displayPartiallySigned")) {
+    if (! Prefs.getPref("displayPartiallySigned")) {
       if ((statusFlags & (nsIEnigmail.PARTIALLY_PGP)) &&
           (statusFlags & (nsIEnigmail.BAD_SIGNATURE))) {
         statusFlags &= ~(nsIEnigmail.BAD_SIGNATURE | nsIEnigmail.PARTIALLY_PGP);
@@ -346,7 +347,7 @@ Enigmail.hdrView = {
       }
     }
 
-    if (EnigmailCommon.getPref("displayPartiallySigned")) {
+    if (Prefs.getPref("displayPartiallySigned")) {
       if (statusFlags & nsIEnigmail.PARTIALLY_PGP) {
         if (msgSigned && msgEncrypted) {
           statusLine = EnigmailCommon.getString("msgPart", [ EnigmailCommon.getString("msgSignedAndEnc") ]);

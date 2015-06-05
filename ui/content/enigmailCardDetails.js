@@ -36,6 +36,7 @@
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 const Ec = EnigmailCommon;
 
@@ -52,7 +53,7 @@ function onLoad() {
 
   var dryRun=false;
   try {
-    dryRun = Ec.getPref("dryRun");
+    dryRun = Prefs.getPref("dryRun");
   }
   catch(ex) {}
 

@@ -51,6 +51,7 @@ Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/mimeVerify.jsm");
 Components.utils.import("resource://enigmail/fixExchangeMsg.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 const EC = EnigmailCore;
 
@@ -174,9 +175,8 @@ Enigmail.msg = {
 
     top.controllers.appendController(treeController);
 
-    EnigmailCommon.initPrefService();
-    if (EnigmailCommon.getPref("configuredVersion") === "") {
-      EnigmailCommon.setPref("configuredVersion", EnigmailCommon.getVersion());
+    if (Prefs.getPref("configuredVersion") === "") {
+      Prefs.setPref("configuredVersion", EnigmailCommon.getVersion());
       EnigmailFuncs.openSetupWizard(window);
     }
   },
@@ -395,11 +395,11 @@ Enigmail.msg = {
 
     for (var j=0; j<optList.length; j++) {
       let menuElement = document.getElementById("enigmail_"+optList[j]);
-      menuElement.setAttribute("checked", EnigmailCommon.getPref(optList[j]) ? "true" : "false");
+      menuElement.setAttribute("checked", Prefs.getPref(optList[j]) ? "true" : "false");
 
       menuElement = document.getElementById("enigmail_"+optList[j]+"2");
       if (menuElement)
-        menuElement.setAttribute("checked", EnigmailCommon.getPref(optList[j]) ? "true" : "false");
+        menuElement.setAttribute("checked", Prefs.getPref(optList[j]) ? "true" : "false");
     }
 
     optList = ["decryptverify" ];
@@ -466,8 +466,8 @@ Enigmail.msg = {
 
     var menuElement = document.getElementById("enigmail_"+attrName);
 
-    var oldValue = EnigmailCommon.getPref(attrName);
-    EnigmailCommon.setPref(attrName, !oldValue);
+    var oldValue = Prefs.getPref(attrName);
+    Prefs.setPref(attrName, !oldValue);
 
     this.updateOptionsDisplay();
 
@@ -697,7 +697,7 @@ Enigmail.msg = {
         xEnigmailVersion = Enigmail.msg.savedHeaders["x-enigmail-version"];
       }
 
-      if (isAuto && (! EnigmailCommon.getPref("autoDecrypt"))) {
+      if (isAuto && (! Prefs.getPref("autoDecrypt"))) {
         var signedMsg = ((contentType.search(/^multipart\/signed(;|$)/i) === 0) && (contentType.search(/application\/pgp-signature/i)>0));
         encrypedMsg = ((contentType.search(/^multipart\/encrypted(;|$)/i) === 0) && (contentType.search(/application\/pgp-encrypted/i)>0));
         if (embeddedSigned || embeddedEncrypted ||

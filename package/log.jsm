@@ -91,7 +91,7 @@ const Log = {
         Log.fileStream = null;
     },
 
-    getLogData: function(core) {
+    getLogData: function(version, prefs) {
         let ioServ = Cc[NS_IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
 
         let oscpu = "";
@@ -106,16 +106,16 @@ const Log = {
         catch (ex) {
         }
 
-        let data = "Enigmail version "+core.version+"\n" +
+        let data = "Enigmail version "+version+"\n" +
                 "OS/CPU="+oscpu+"\n" +
                 "Platform="+platform+"\n" +
                 "Non-default preference values:\n";
 
-        let p = core.prefBranch.getChildList("");
+        let p = prefs.getPrefBranch().getChildList("");
 
         for (let i in p) {
-            if (core.prefBranch.prefHasUserValue(p[i])) {
-                data += p[i] +": "+ core.getPref(p[i])+"\n";
+            if (prefs.getPrefBranch().prefHasUserValue(p[i])) {
+                data += p[i] +": "+ prefs.getPref(p[i])+"\n";
             }
         }
 

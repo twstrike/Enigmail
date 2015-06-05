@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -44,6 +44,7 @@ var EXPORTED_SYMBOLS = [ "Decryption" ];
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 const Ci = Components.interfaces;
 const nsIEnigmail = Ci.nsIEnigmail;
@@ -70,7 +71,7 @@ var Decryption = {
 
         var args = ecom.getAgentArgs(true);
 
-        var keyserver = ecom.getPref("autoKeyRetrieve");
+        var keyserver = Prefs.getPref("autoKeyRetrieve");
         if (keyserver && keyserver !== "") {
             args.push("--keyserver-options");
             var keySrvArgs="auto-key-retrieve";
@@ -304,7 +305,7 @@ var Decryption = {
             }
         }
 
-        if (sigUserId && sigKeyId && EnigmailCore.getPref("displaySecondaryUid")) {
+        if (sigUserId && sigKeyId && Prefs.getPref("displaySecondaryUid")) {
             let uids = ecom.enigmailSvc.getKeyDetails(sigKeyId, true, true);
             if (uids) {
                 sigUserId = uids;

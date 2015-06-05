@@ -37,6 +37,7 @@
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 const Ec = EnigmailCommon;
 
 const INPUT = 0;
@@ -104,7 +105,7 @@ function onLoad () {
     port: port,
     protocol: protocol,
     keyList: [],
-    requestType: (Ec.getPref("useGpgKeysTool") ? ENIG_CONN_TYPE_GPGKEYS : ENIG_CONN_TYPE_HTTP),
+    requestType: (Prefs.getPref("useGpgKeysTool") ? ENIG_CONN_TYPE_GPGKEYS : ENIG_CONN_TYPE_HTTP),
     gpgkeysRequest: null,
     progressMeter: document.getElementById("dialog.progress"),
     httpInProgress: false
@@ -347,7 +348,7 @@ function enigNewHttpRequest(requestType, requestCallbackFunc) {
     break;
   default:
     var msg=Ec.getString("protocolNotSupported", gEnigRequest.protocol);
-    if (! Ec.getPref("useGpgKeysTool"))
+    if (! Prefs.getPref("useGpgKeysTool"))
       msg += " "+Ec.getString("gpgkeysDisabled");
     Ec.alert(window, msg);
     enigCloseDialog();

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Log: false */
+/*global Components: false, EnigmailCommon: false, Log: false, Prefs: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -48,6 +48,7 @@
  */
 
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/prefs.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCore" ];
 
@@ -66,16 +67,11 @@ const NS_IOSERVICE_CONTRACTID       = "@mozilla.org/network/io-service;1";
 const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
 const NS_SCRIPTABLEINPUTSTREAM_CONTRACTID = "@mozilla.org/scriptableinputstream;1";
 
-const ENIGMAIL_PREFS_ROOT = "extensions.enigmail.";
-
 var gEnigmailSvc = null;      // Global Enigmail Service
 var gEnigmailCommon = null;      // Global Enigmail Common instance, to avoid circular dependencies
 
 var EnigmailCore = {
   enigStringBundle: null,
-  prefService: null,
-  prefBranch: null,
-  prefRoot: null,
   version: "",
 
   init: function(enigmailVersion) {
@@ -95,7 +91,7 @@ var EnigmailCore = {
   },
 
   getLogData: function() {
-      return Log.getLogData(EnigmailCore);
+      return Log.getLogData(EnigmailCore.version, Prefs);
   },
 
   // retrieves a localized string from the enigmail.properties stringbundle
@@ -156,130 +152,6 @@ var EnigmailCore = {
       return nsFileObj.persistentDescriptor;
     else
       return nsFileObj.path;
-  },
-
-  initPrefService: function() {
-    if (this.prefBranch) return;
-
-    try {
-      this.prefService = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService);
-
-      this.prefRoot        = this.prefService.getBranch(null);
-      this.prefBranch      = this.prefService.getBranch(ENIGMAIL_PREFS_ROOT);
-
-      if (this.prefBranch.getCharPref("logDirectory"))
-        Log.setLogLevel = 5;
-
-    }
-    catch (ex) {
-      Log.ERROR("enigmailCore.jsm: Error in instantiating PrefService\n");
-      Log.ERROR(ex.toString());
-    }
-  },
-
-  getPrefRoot: function() {
-    if (! this.prefRoot)
-      this.initPrefService();
-
-    return this.prefRoot;
-  },
-
-  getPref: function (prefName)
-  {
-    if (! this.prefBranch)
-      this.initPrefService();
-
-    var prefValue = null;
-    try {
-      var prefType = this.prefBranch.getPrefType(prefName);
-      // Get pref value
-      switch (prefType) {
-      case this.prefBranch.PREF_BOOL:
-         prefValue = this.prefBranch.getBoolPref(prefName);
-         break;
-
-      case this.prefBranch.PREF_INT:
-         prefValue = this.prefBranch.getIntPref(prefName);
-         break;
-
-      case this.prefBranch.PREF_STRING:
-         prefValue = this.prefBranch.getCharPref(prefName);
-         break;
-
-      default:
-         prefValue = undefined;
-         break;
-     }
-
-   } catch (ex) {
-      // Failed to get pref value
-      Log.ERROR("enigmailCommon.jsm: getPref: unknown prefName:"+prefName+" \n");
-   }
-
-   return prefValue;
-  },
-
-  /**
-   * Store a user preference.
-   *
-   * @param  String  prefName  An identifier.
-   * @param  any     value     The value to be stored. Allowed types: Boolean OR Integer OR String.
-   *
-   * @return Boolean Was the value stored successfully?
-   */
-  setPref: function (prefName, value)
-  {
-     Log.DEBUG("enigmailCommon.jsm: setPref: "+prefName+", "+value+"\n");
-
-     if (! this.prefBranch) {
-       this.initPrefService();
-     }
-
-     // Discover the type of the preference, as stored in the user preferences.
-     // If the preference identifier doesn't exist yet, it returns 0. In that
-     // case the type depends on the argument "value".
-     var prefType;
-     prefType = this.prefBranch.getPrefType(prefName);
-     if (prefType === 0) {
-       switch (typeof value) {
-         case "boolean":
-           prefType = this.prefBranch.PREF_BOOL;
-           break;
-         case "number":
-           prefType = this.prefBranch.PREF_INT;
-           break;
-         case "string":
-           prefType = this.prefBranch.PREF_STRING;
-           break;
-         default:
-           prefType = 0;
-           break;
-       }
-     }
-     var retVal = false;
-
-     // Save the preference only and if only the type is bool, int or string.
-     switch (prefType) {
-        case this.prefBranch.PREF_BOOL:
-           this.prefBranch.setBoolPref(prefName, value);
-           retVal = true;
-           break;
-
-        case this.prefBranch.PREF_INT:
-           this.prefBranch.setIntPref(prefName, value);
-           retVal = true;
-           break;
-
-        case this.prefBranch.PREF_STRING:
-           this.prefBranch.setCharPref(prefName, value);
-           retVal = true;
-           break;
-
-        default:
-           break;
-     }
-
-     return retVal;
   },
 
   /**
