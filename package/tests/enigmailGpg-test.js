@@ -62,6 +62,7 @@ test(function determineGpgHomeDirReturnsGNUPGHOMEIfExists() {
 
 test(function determineGpgHomeDirReturnsHomePlusGnupgForNonWindowsIfNoGNUPGHOMESpecificed() {
     withEnvironment({"HOME": "/my/little/home"}, function(e) {
+        e.set("GNUPGHOME",null);
         var enigmail = {environment: e};
         Assert.equal("/my/little/home/.gnupg", EnigmailGPG.determineGpgHomeDir(enigmail));
     });
@@ -69,6 +70,7 @@ test(function determineGpgHomeDirReturnsHomePlusGnupgForNonWindowsIfNoGNUPGHOMES
 
 test(function determineGpgHomeDirReturnsRegistryValueForWindowsIfExists() {
     withEnvironment({}, function(e) {
+        e.set("GNUPGHOME",null);
         resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {
             if(a === "Software\\GNU\\GNUPG" && b === "HomeDir" && c === "foo bar") {
                 return "\\foo\\bar\\gnupg";
@@ -85,6 +87,7 @@ test(function determineGpgHomeDirReturnsRegistryValueForWindowsIfExists() {
 
 test(function determineGpgHomeDirReturnsUserprofileIfItExists() {
     withEnvironment({"USERPROFILE": "\\bahamas"}, function(e) {
+        e.set("GNUPGHOME",null);
         resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {}, function() {
             var enigmail = {environment: e, isWin32: true};
             nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
@@ -95,6 +98,7 @@ test(function determineGpgHomeDirReturnsUserprofileIfItExists() {
 
 test(function determineGpgHomeDirReturnsSystemrootIfItExists() {
     withEnvironment({"SystemRoot": "\\tahiti"}, function(e) {
+        e.set("GNUPGHOME",null);
         resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {}, function() {
             var enigmail = {environment: e, isWin32: true};
             nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
@@ -105,6 +109,7 @@ test(function determineGpgHomeDirReturnsSystemrootIfItExists() {
 
 test(function determineGpgHomeDirReturnsDefaultForWin32() {
     withEnvironment({}, function(e) {
+        e.set("GNUPGHOME",null);
         resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {}, function() {
             var enigmail = {environment: e, isWin32: true};
             nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
