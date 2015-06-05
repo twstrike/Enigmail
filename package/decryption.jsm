@@ -1,3 +1,5 @@
+/*global Components: false, EnigmailCore: false, Data: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -34,6 +36,8 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
+
+"use strict";
 
 var EXPORTED_SYMBOLS = [ "Decryption" ];
 

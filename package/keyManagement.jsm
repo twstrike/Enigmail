@@ -1,4 +1,5 @@
-/*global Components EnigmailCommon EnigmailCore */
+/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,6 +36,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/subprocess.jsm");
@@ -50,6 +52,7 @@ const GET_BOOL = "GET_BOOL";
 const GET_LINE = "GET_LINE";
 const GET_HIDDEN = "GET_HIDDEN";
 
+const NS_PROMPTSERVICE_CONTRACTID = "@mozilla.org/embedcomp/prompt-service;1";
 
 function KeyEditor(reqObserver, callbackFunc, inputData) {
   this._reqObserver = reqObserver;
@@ -433,15 +436,15 @@ var EnigmailKeyMgmt = {
       }
     }
 
-    r = this.editKey(parent,
-                     true,
-                     null,
-                     keyId,
-                     "",    /* "expire", */
-                     {expiryLength: expiryLength, subKeys: subKeys, currentSubKey: false},
-                     keyExpiryCallback, /* contains the gpg communication logic */
-                     null,
-                     callbackFunc);
+    let r = this.editKey(parent,
+                         true,
+                         null,
+                         keyId,
+                         "",    /* "expire", */
+                         {expiryLength: expiryLength, subKeys: subKeys, currentSubKey: false},
+                         keyExpiryCallback, /* contains the gpg communication logic */
+                         null,
+                         callbackFunc);
     return r;
   },
 
@@ -584,7 +587,7 @@ var EnigmailKeyMgmt = {
 
   genCardKey: function (parent, name, email, comment, expiry, backupPasswd, requestObserver, callbackFunc) {
     Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.genCardKey: \n");
-    var generateObserver = new enigCardAdminObserver(requestObserver, Ec.isDosLike());
+    var generateObserver = new EnigCardAdminObserver(requestObserver, Ec.isDosLike());
     var r = this.editKey(parent, false, null, "", ["--with-colons", "--card-edit"] ,
                         { step: 0,
                           name: Ec.convertFromUnicode(name),
@@ -603,7 +606,7 @@ var EnigmailKeyMgmt = {
 
   cardAdminData: function (parent, name, firstname, lang, sex, url, login, forcepin, callbackFunc) {
     Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.cardAdminData: parent="+parent+", name="+name+", firstname="+firstname+", lang="+lang+", sex="+sex+", url="+url+", login="+login+", forcepin="+forcepin+"\n");
-    var adminObserver = new enigCardAdminObserver(null, Ec.isDosLike());
+    var adminObserver = new EnigCardAdminObserver(null, Ec.isDosLike());
     var r = this.editKey(parent, false, null, "", ["--with-colons", "--card-edit"],
             { step: 0,
               name: name,
@@ -622,7 +625,7 @@ var EnigmailKeyMgmt = {
 
   cardChangePin: function (parent, action, oldPin, newPin, adminPin, pinObserver, callbackFunc) {
     Ec.DEBUG_LOG("keyManagmenent.jsm: Enigmail.cardChangePin: parent="+parent+", action="+action+"\n");
-    var adminObserver = new enigCardAdminObserver(pinObserver, Ec.isDosLike());
+    var adminObserver = new EnigCardAdminObserver(pinObserver, Ec.isDosLike());
     var enigmailSvc = Ec.getService(parent);
 
     var r = this.editKey(parent, enigmailSvc.useGpgAgent(), null, "", ["--with-colons", "--card-edit"],
@@ -688,10 +691,10 @@ function signKeyCallback(inputData, keyEdit, ret) {
     ret.writeTxt = String(inputData.trustLevel);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else if (keyEdit.doCheck(GET_LINE, "keyedit.prompt")) {
     ret.exitCode = 0;
@@ -721,10 +724,10 @@ function keyTrustCallback(inputData, keyEdit, ret) {
     ret.quitNow = true;
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -783,10 +786,10 @@ function keyExpiryCallback(inputData, keyEdit, ret) {
     }
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow = true;
@@ -837,10 +840,10 @@ function addUidCallback(inputData, keyEdit, ret) {
     ret.quitNow = true;
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -875,10 +878,10 @@ function revokeCertCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y";
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else if (keyEdit.doCheck(GET_LINE, "keyedit.prompt")) {
     ret.exitCode = 0;
@@ -995,10 +998,10 @@ function deleteUidCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y";
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -1053,10 +1056,10 @@ function revokeUidCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y";
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -1083,10 +1086,10 @@ function deleteKeyCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y";
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -1095,8 +1098,8 @@ function deleteKeyCallback(inputData, keyEdit, ret) {
   }
 }
 
-function GetPin(domWindow, promptMsg, ret) {
-  Ec.DEBUG_LOG("keyManagmenent.jsm: GetPin: \n");
+function getPin(domWindow, promptMsg, ret) {
+  Ec.DEBUG_LOG("keyManagmenent.jsm: getPin: \n");
 
   var passwdObj = {value: ""};
   var dummyObj = {};
@@ -1117,7 +1120,7 @@ function GetPin(domWindow, promptMsg, ret) {
     return false;
   }
 
-  Ec.DEBUG_LOG("keyManagmenent.jsm: GetPin: got pin\n");
+  Ec.DEBUG_LOG("keyManagmenent.jsm: getPin: got pin\n");
   ret.writeTxt = passwdObj.value;
 
   return true;
@@ -1155,10 +1158,10 @@ function genCardKeyCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y";
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.enter")) {
     ret.exitCode = 0;
@@ -1241,10 +1244,10 @@ function cardAdminDataCallback(inputData, keyEdit, ret) {
     }
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else if (keyEdit.doCheck(GET_LINE, "keygen.smartcard.surname")) {
     ret.exitCode = 0;
@@ -1356,10 +1359,10 @@ function addPhotoCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y"; // add large file
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    GetPin(inputData.parent, Ec.getString("enterCardPin"), ret);
+    getPin(inputData.parent, Ec.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -1368,12 +1371,12 @@ function addPhotoCallback(inputData, keyEdit, ret) {
   }
 }
 
-function enigCardAdminObserver(guiObserver, isDosLike) {
+function EnigCardAdminObserver(guiObserver, isDosLike) {
   this._guiObserver = guiObserver;
   this._isDosLike = isDosLike;
 }
 
-enigCardAdminObserver.prototype =
+EnigCardAdminObserver.prototype =
 {
   _guiObserver: null,
   _failureCode: 0,

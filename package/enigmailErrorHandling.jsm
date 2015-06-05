@@ -1,4 +1,5 @@
-/*global Components EnigmailCommon */
+/*global Components: false, EnigmailCommon: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,6 +36,8 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
+
+"use strict";
 
 var EXPORTED_SYMBOLS = [ "EnigmailErrorHandling" ];
 
@@ -233,7 +236,7 @@ function detectForgedInsets(c) {
   }
 }
 
-function buildErrorMessageForCardCtrl(errCode, detectedCard) {
+function buildErrorMessageForCardCtrl(c, errCode, detectedCard) {
     var errorMsg = "";
     switch (errCode) {
     case 1:
@@ -279,7 +282,7 @@ function parseErrorOutputWith(c) {
   }
 
   if ((c.statusFlags & Ci.nsIEnigmail.CARDCTRL) && c.errCode >0) {
-      c.errorMsg = buildErrorMessageForCardCtrl(c.errCode, c.detectedCard);
+      c.errorMsg = buildErrorMessageForCardCtrl(c, c.errCode, c.detectedCard);
       c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   }
 

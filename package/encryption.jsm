@@ -1,3 +1,5 @@
+/*global Components: false, EnigmailCore: false, Data: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,7 +37,9 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-var EXPORTED_SYMBOLS = [ "Encryption" ];
+"use strict";
+
+const EXPORTED_SYMBOLS = [ "Encryption" ];
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
@@ -56,13 +60,13 @@ const GPG_COMMENT_OPT = "Using GnuPG with %s - http://www.enigmail.net/";
 
 // Remove all quoted strings (and angle brackets) from a list of email
 // addresses, returning a list of pure email address
-function stripEmailAdr(mailAddrs) {
+function stripEmailAdr(ecom, mailAddrs) {
 
     var qStart, qEnd;
     while ((qStart = mailAddrs.indexOf('"')) != -1) {
         qEnd = mailAddrs.indexOf('"', qStart+1);
         if (qEnd == -1) {
-            this.ERROR_LOG("enigmailCommon.jsm:: stripEmailAdr: Unmatched quote in mail address: "+mailAddrs+"\n");
+            ecom.ERROR_LOG("enigmailCommon.jsm:: stripEmailAdr: Unmatched quote in mail address: "+mailAddrs+"\n");
             mailAddrs=mailAddrs.replace(/\"/g, "");
             break;
         }
@@ -84,9 +88,9 @@ var Encryption = {
         ecom.DEBUG_LOG("enigmailCommon.jsm: getEncryptCommand: hashAlgorithm="+hashAlgorithm+"\n");
 
         try {
-            fromMailAddr = stripEmailAdr(fromMailAddr);
-            toMailAddr = stripEmailAdr(toMailAddr);
-            bccMailAddr = stripEmailAdr(bccMailAddr);
+            fromMailAddr = stripEmailAdr(ecom, fromMailAddr);
+            toMailAddr = stripEmailAdr(ecom, toMailAddr);
+            bccMailAddr = stripEmailAdr(ecom, bccMailAddr);
 
         } catch (ex) {
             errorMsgObj.value = ecom.getString("invalidEmail");

@@ -1,4 +1,5 @@
-/*global Components EnigmailCore XPCOMUtils Data */
+/*global Components: false, EnigmailCore: false, XPCOMUtils: false, Data: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,6 +36,8 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
+
+"use strict";
 
 var EXPORTED_SYMBOLS = [ "EnigmailProtocolHandler" ];
 
@@ -138,7 +141,8 @@ EnigmailProtocolHandler.prototype = {
         var winName, spec;
         if (aURI.spec == "about:"+aURI.scheme) {
             // About Enigmail
-            winName = "about:"+enigmail;
+            //            winName = "about:"+enigmail;
+            winName = "about:enigmail";
             spec = "chrome://enigmail/content/enigmailAbout.xul";
 
         } else if (aURI.spec == aURI.scheme+":console") {
@@ -181,7 +185,8 @@ EnigmailProtocolHandler.prototype = {
     },
 
     handleMimeMessage: function (messageId) {
-        EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
+        //        EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
+        EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL=, content length=, , \n");
     },
 
     allowPort: function (port, scheme) {

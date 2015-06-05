@@ -1,3 +1,5 @@
+/*global Components: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -33,7 +35,10 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
+
 var EXPORTED_SYMBOLS = [ "Key" ];
+
 function Key(key) {
     if (!(this instanceof Key)) {
         return new Key(key);
@@ -51,7 +56,6 @@ function Key(key) {
 }
 
 Key.prototype = {
-
     parsePackets: function(key) {
         const packetHeaders = [":public key packet:",
             ":user ID packet:",
@@ -69,7 +73,7 @@ Key.prototype = {
                         var obj = {tag:packet,value:""};
                         _packets.push(obj);
                     }
-                }, this);
+                });
             if(!is_packet_hr) {
                 var obj = _packets.pop();
                 obj.value += line+"\n";
