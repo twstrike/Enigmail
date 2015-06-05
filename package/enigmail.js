@@ -169,18 +169,6 @@ var gKeyAlgorithms = [];
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// path initialization function
-// uses persistentDescriptor in case that initWithPath fails
-// (seems to happen frequently with UTF-8 characters in path names)
-function initPath(localFileObj, pathStr) {
-  localFileObj.initWithPath(pathStr);
-
-  if (! localFileObj.exists()) {
-    localFileObj.persistentDescriptor = pathStr;
-  }
-}
-
-
 // return the useable path (for gpg) of a file object
 function getFilePath (nsFileObj, creationMode) {
   if (creationMode === null) creationMode = NS_RDONLY;
@@ -525,7 +513,7 @@ Enigmail.prototype = {
         }
         else {
           // absolute path
-          initPath(pathDir, agentPath);
+          EC.initPath(pathDir, agentPath);
         }
         if (! (pathDir.isFile() /* && pathDir.isExecutable()*/))
           throw Components.results.NS_ERROR_FAILURE;
@@ -828,7 +816,7 @@ Enigmail.prototype = {
       else {
         this.gpgAgentInfo.envStr = DUMMY_AGENT_INFO;
         var envFile = Components.classes[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-        initPath(envFile, this.determineGpgHomeDir());
+        EC.initPath(envFile, this.determineGpgHomeDir());
         envFile.append("gpg-agent.conf");
 
         var data="default-cache-ttl " + (Ec.getMaxIdleMinutes()*60)+"\n";

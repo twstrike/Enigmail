@@ -102,14 +102,6 @@ var EnigmailGpgAgent = {
     }
   },
 
-  initPath: function (localFileObj, pathStr) {
-    localFileObj.initWithPath(pathStr);
-
-    if (! localFileObj.exists()) {
-      localFileObj.persistentDescriptor = pathStr;
-    }
-  },
-
   resolvePath: function (filePath, envPath, isDosLike) {
     DEBUG_LOG("gpgAgentHandler.jsm: resolvePath: filePath="+filePath+"\n");
 
@@ -130,7 +122,7 @@ var EnigmailGpgAgent = {
 
             DEBUG_LOG("gpgAgentHandler.jsm: resolvePath: checking for "+pathDirs[j]+"/"+fileNames[i]+"\n");
 
-            this.initPath(pathDir, pathDirs[j]);
+            EC.initPath(pathDir, pathDirs[j]);
 
             try {
               if (pathDir.exists() && pathDir.isDirectory()) {

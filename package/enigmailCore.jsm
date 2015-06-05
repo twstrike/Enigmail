@@ -288,7 +288,7 @@ var EnigmailCore = {
       var localFile;
       if (typeof filePath == "string") {
         localFile = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-        initPath(localFile, filePath);
+        EnigmailCore.initPath(localFile, filePath);
       }
       else {
         localFile = filePath.QueryInterface(Ci.nsIFile);
@@ -553,13 +553,16 @@ var EnigmailCore = {
             return fileContents;
         }
         return "";
+    },
+
+    // path initialization function
+    // uses persistentDescriptor in case that initWithPath fails
+    // (seems to happen frequently with UTF-8 characters in path names)
+    initPath: function(localFileObj, pathStr) {
+        localFileObj.initWithPath(pathStr);
+
+        if (! localFileObj.exists()) {
+            localFileObj.persistentDescriptor = pathStr;
+        }
     }
 };
-
-function initPath(localFileObj, pathStr) {
-  localFileObj.initWithPath(pathStr);
-
-  if (! localFileObj.exists()) {
-    localFileObj.persistentDescriptor = pathStr;
-  }
-}
