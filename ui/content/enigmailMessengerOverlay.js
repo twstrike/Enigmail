@@ -52,6 +52,7 @@ Components.utils.import("resource://enigmail/mimeVerify.jsm");
 Components.utils.import("resource://enigmail/fixExchangeMsg.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 const EC = EnigmailCore;
 
@@ -1627,7 +1628,7 @@ Enigmail.msg = {
         contentData += "\r\n"+Enigmail.msg.decryptedMessage.plainText;
       }
 
-      if (!(EnigmailCommon.isDosLike())) {
+      if (!(OS.isDosLike())) {
         contentData = contentData.replace(/\r\n/g, "\n");
       }
     }

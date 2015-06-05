@@ -1,5 +1,5 @@
 /*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false */
-/*global EnigmailCore: false, Enigmail: false, EnigmailCommon: false, component: false, Cc: false, Ci: false, withEnvironment: false, nsIEnigmail: false, nsIEnvironment: false, Ec: false, Prefs: false */
+/*global EnigmailCore: false, Enigmail: false, EnigmailCommon: false, component: false, Cc: false, Ci: false, withEnvironment: false, nsIEnigmail: false, nsIEnvironment: false, Ec: false, Prefs: false, OS: false */
 /*jshint -W120 */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
@@ -46,6 +46,7 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 testing("enigmail.js");
 component("enigmail/enigmailCommon.jsm");
 component("enigmail/prefs.jsm");
+component("enigmail/os.jsm");
 
 test(shouldLocateArmoredBlock);
 test(shouldExtractSignaturePart);
@@ -304,18 +305,18 @@ test(function initializeWillNotSetEmptyEnvironmentValue() {
 
 // testing: useGpgAgent
 // useGpgAgent depends on several values:
-//   EnigmailCore.isDosLike()
+//   OS.isDosLike()
 //   EnigmailCommon.getGpgFeature("supports-gpg-agent")
 //   EnigmailCommon.getGpgFeature("autostart-gpg-agent")
 //   this.gpgAgentInfo.envStr.length>0
 //   Prefs.getPrefBranch().getBoolPref("useGpgAgent")
 
 function asDosLike(f) {
-    resetting(EnigmailCore, 'isDosLikeVal', true, f);
+    resetting(OS, 'isDosLikeVal', true, f);
 }
 
 function notDosLike(f) {
-    resetting(EnigmailCore, 'isDosLikeVal', false, f);
+    resetting(OS, 'isDosLikeVal', false, f);
 }
 
 function withGpgFeatures(features, f) {

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, EnigmailFuncs: false, Log: false */
+/*global Components: false, EnigmailCore: false, EnigmailFuncs: false, Log: false, OS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -42,6 +42,7 @@
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 var EXPORTED_SYMBOLS = [ "Rules" ];
 
@@ -151,11 +152,11 @@ const Rules = {
 
         if (origFirstChild && (! appendToEnd)) {
             rulesListHolder.rulesList.firstChild.insertBefore(rule, origFirstChild);
-            rulesListHolder.rulesList.firstChild.insertBefore(rulesListHolder.rulesList.createTextNode(EC.isDosLike() ? "\r\n" : "\n"), origFirstChild);
+            rulesListHolder.rulesList.firstChild.insertBefore(rulesListHolder.rulesList.createTextNode(OS.isDosLike() ? "\r\n" : "\n"), origFirstChild);
         }
         else {
             rulesListHolder.rulesList.firstChild.appendChild(rule);
-            rulesListHolder.rulesList.firstChild.appendChild(rulesListHolder.rulesList.createTextNode(EC.isDosLike() ? "\r\n" : "\n"));
+            rulesListHolder.rulesList.firstChild.appendChild(rulesListHolder.rulesList.createTextNode(OS.isDosLike() ? "\r\n" : "\n"));
         }
     },
 

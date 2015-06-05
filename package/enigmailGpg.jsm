@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Files: false */
+/*global Components: false, EnigmailCore: false, Files: false, OS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -43,6 +43,7 @@ var EXPORTED_SYMBOLS = [ "EnigmailGPG" ];
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -107,7 +108,7 @@ const EnigmailGPG = {
 
     // resolve the path for GnuPG helper tools
     resolveToolPath: function(fileName) {
-        if (EC.isDosLike()) {
+        if (OS.isDosLike()) {
             fileName += ".exe";
         }
 
@@ -122,7 +123,7 @@ const EnigmailGPG = {
             }
         }
 
-        var foundPath = Files.resolvePath(fileName, EC.getEnigmailService().environment.get("PATH"), EC.isDosLike());
+        var foundPath = Files.resolvePath(fileName, EC.getEnigmailService().environment.get("PATH"), OS.isDosLike());
         if (foundPath !== null) { foundPath.normalize(); }
         return foundPath;
     }

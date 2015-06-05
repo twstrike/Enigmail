@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, subprocess: false, Files: false, Log: false, Prefs: false */
+/*global Components: false, EnigmailCore: false, subprocess: false, Files: false, Log: false, Prefs: false, OS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -41,6 +41,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailGpgAgent" ];
 
@@ -61,7 +62,7 @@ var EnigmailGpgAgent = {
         var useAgent = false;
 
         try {
-            if (EC.isDosLike() && !Ec.getGpgFeature("supports-gpg-agent")) {
+            if (OS.isDosLike() && !Ec.getGpgFeature("supports-gpg-agent")) {
                 useAgent = false;
             } else {
                 // gpg version >= 2.0.16 launches gpg-agent automatically
@@ -134,7 +135,7 @@ var EnigmailGpgAgent = {
     Log.DEBUG("gpgAgentHandler.jsm: isAgentTypeGpgAgent:\n");
 
     // to my knowledge there is no other agent than gpg-agent on Windows
-    if (Ec.getOS() == "WINNT") return true;
+    if (OS.getOS() == "WINNT") return true;
 
     if (gIsGpgAgent >= 0)
       return gIsGpgAgent == 1;

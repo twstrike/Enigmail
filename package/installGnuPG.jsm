@@ -1,4 +1,4 @@
-/*global Components EnigmailCommon EnigmailCore */
+/*global Components: false, EnigmailCommon: false, EnigmailCore: false, OS: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -56,6 +56,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 // Import promise API
 try {
@@ -427,7 +428,7 @@ installer.prototype = {
     try {
       var xulRuntime = Cc[XPCOM_APPINFO].getService(Ci.nsIXULRuntime);
       var platform = xulRuntime.XPCOMABI.toLowerCase();
-      var os = Ec.getOS().toLowerCase();
+      var os = OS.getOS().toLowerCase();
 
       // create a  XMLHttpRequest object
       var oReq = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance();
@@ -506,7 +507,7 @@ installer.prototype = {
         var fileOutStream = Cc[NS_LOCALFILEOUTPUTSTREAM_CONTRACTID].createInstance(Ci.nsIFileOutputStream);
         self.installerFile = getTempDir();
 
-        switch (Ec.getOS()) {
+        switch (OS.getOS()) {
         case "Darwin":
           self.installerFile.append("gpgtools.dmg");
           self.performCleanup = self.cleanupMacOs;
@@ -549,7 +550,7 @@ installer.prototype = {
 
         }
 
-        switch (Ec.getOS()) {
+        switch (OS.getOS()) {
         case "Darwin":
           self.installMacOs(deferred);
           break;
@@ -625,7 +626,7 @@ var InstallGnuPG = {
   // check if there is a downloadable item for the given platform
   // returns true if item available
   checkAvailability: function() {
-    switch (Ec.getOS()) {
+    switch (OS.getOS()) {
     case "Darwin":
     case "WINNT":
       return true;

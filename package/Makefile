@@ -45,6 +45,7 @@ MODFILES = \
            files.jsm \
            armor.jsm \
            log.jsm \
+           os.jsm \
            prefs.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \

@@ -50,6 +50,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
@@ -428,7 +429,7 @@ Enigmail.msg = {
     this.disableSmime = false;
 
     var toobarElem = document.getElementById("composeToolbar2");
-    if (toobarElem && (EnigmailCommon.getOS() == "Darwin")) {
+    if (toobarElem && (OS.getOS() == "Darwin")) {
       toobarElem.setAttribute("platform", "macos");
     }
 

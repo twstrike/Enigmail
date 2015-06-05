@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailConsole: false, dump: false, Files: false */
+/*global Components: false, EnigmailConsole: false, dump: false, Files: false, OS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -41,6 +41,7 @@
 
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 const EXPORTED_SYMBOLS = [ "Log" ];
 
@@ -65,16 +66,8 @@ const Log = {
         return Log.level;
     },
 
-    isDosLike: function() {
-        if (Log.isDosLikeVal === undefined) {
-            let os = Cc[XPCOM_APPINFO].getService(Ci.nsIXULRuntime).OS;
-            Log.isDosLikeVal = os == "WINNT" || os == "OS2";
-        }
-        return Log.isDosLikeVal;
-    },
-
     setLogDirectory: function(newLogDirectory) {
-        Log.directory = newLogDirectory + (Log.isDosLike() ? "\\" : "/");
+        Log.directory = newLogDirectory + (OS.isDosLike() ? "\\" : "/");
         Log.createLogFiles();
     },
 

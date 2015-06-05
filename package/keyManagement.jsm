@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false, Log: false */
+/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false, Log: false, OS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -42,6 +42,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/key.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailKeyMgmt" ];
 
@@ -588,7 +589,7 @@ var EnigmailKeyMgmt = {
 
   genCardKey: function (parent, name, email, comment, expiry, backupPasswd, requestObserver, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.genCardKey: \n");
-    var generateObserver = new EnigCardAdminObserver(requestObserver, Ec.isDosLike());
+    var generateObserver = new EnigCardAdminObserver(requestObserver, OS.isDosLike());
     var r = this.editKey(parent, false, null, "", ["--with-colons", "--card-edit"] ,
                         { step: 0,
                           name: Ec.convertFromUnicode(name),
@@ -607,7 +608,7 @@ var EnigmailKeyMgmt = {
 
   cardAdminData: function (parent, name, firstname, lang, sex, url, login, forcepin, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.cardAdminData: parent="+parent+", name="+name+", firstname="+firstname+", lang="+lang+", sex="+sex+", url="+url+", login="+login+", forcepin="+forcepin+"\n");
-    var adminObserver = new EnigCardAdminObserver(null, Ec.isDosLike());
+    var adminObserver = new EnigCardAdminObserver(null, OS.isDosLike());
     var r = this.editKey(parent, false, null, "", ["--with-colons", "--card-edit"],
             { step: 0,
               name: name,
@@ -626,7 +627,7 @@ var EnigmailKeyMgmt = {
 
   cardChangePin: function (parent, action, oldPin, newPin, adminPin, pinObserver, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.cardChangePin: parent="+parent+", action="+action+"\n");
-    var adminObserver = new EnigCardAdminObserver(pinObserver, Ec.isDosLike());
+    var adminObserver = new EnigCardAdminObserver(pinObserver, OS.isDosLike());
     var enigmailSvc = Ec.getService(parent);
 
     var r = this.editKey(parent, enigmailSvc.useGpgAgent(), null, "", ["--with-colons", "--card-edit"],

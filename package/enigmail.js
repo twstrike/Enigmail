@@ -1,5 +1,5 @@
 /*global Components: false, EnigmailCore: false, EnigmailCommon: false, XPCOMUtils: false, EnigmailGpgAgent: false, EnigmailGPG: false, Encryption: false, Decryption: false */
-/*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, dump: false */
+/*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, dump: false, OS: false */
 /*global Rules: false, Filters: false, Armor: false, Files: false, Log: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
@@ -58,6 +58,7 @@ Components.utils.import("resource://enigmail/filters.jsm");
 Components.utils.import("resource://enigmail/armor.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 try {
   // TB with omnijar
@@ -323,7 +324,7 @@ Enigmail.prototype = {
     var ioServ = Cc[NS_IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
 
 
-    this.isWin32 = (EC.getOS() == "WINNT");
+    this.isWin32 = (OS.getOS() == "WINNT");
 
     var prefix = this.getLogDirectoryPrefix();
     if (prefix) {
@@ -408,7 +409,7 @@ Enigmail.prototype = {
 
     this.detectGpgAgent(domWindow);
 
-    if (this.useGpgAgent() && (! EC.isDosLike())) {
+    if (this.useGpgAgent() && (! OS.isDosLike())) {
       if (this.gpgAgentInfo.envStr != DUMMY_AGENT_INFO)
         Ec.envList.push("GPG_AGENT_INFO="+this.gpgAgentInfo.envStr);
     }
@@ -456,7 +457,7 @@ Enigmail.prototype = {
 
     EnigmailGpgAgent.resetGpgAgent();
 
-    if (EC.isDosLike()) {
+    if (OS.isDosLike()) {
       agentName = "gpg2.exe;gpg.exe;gpg1.exe";
     }
     else {
@@ -468,19 +469,19 @@ Enigmail.prototype = {
       // Locate GnuPG executable
 
       // Append default .exe extension for DOS-Like systems, if needed
-      if (EC.isDosLike() && (agentPath.search(/\.\w+$/) < 0))
+      if (OS.isDosLike() && (agentPath.search(/\.\w+$/) < 0))
         agentPath += ".exe";
 
       try {
         var pathDir = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
 
-        if (! Files.isAbsolutePath(agentPath, EC.isDosLike())) {
+        if (! Files.isAbsolutePath(agentPath, OS.isDosLike())) {
           // path relative to Mozilla installation dir
           var ds = Cc[DIR_SERV_CONTRACTID].getService();
           var dsprops = ds.QueryInterface(Ci.nsIProperties);
           pathDir = dsprops.get("CurProcD", Ci.nsIFile);
 
-          var dirs=agentPath.split(new RegExp(EC.isDosLike() ? "\\\\" : "/"));
+          var dirs=agentPath.split(new RegExp(OS.isDosLike() ? "\\\\" : "/"));
           for (var i=0; i< dirs.length; i++) {
             if (dirs[i]!=".") {
               pathDir.append(dirs[i]);
@@ -506,32 +507,32 @@ Enigmail.prototype = {
       // Resolve relative path using PATH environment variable
       var envPath = this.environment.get("PATH");
 
-      agentPath = Files.resolvePath(agentName, envPath, EC.isDosLike());
+      agentPath = Files.resolvePath(agentName, envPath, OS.isDosLike());
 
-      if (!agentPath && EC.isDosLike()) {
+      if (!agentPath && OS.isDosLike()) {
         // DOS-like systems: search for GPG in c:\gnupg, c:\gnupg\bin, d:\gnupg, d:\gnupg\bin
         let gpgPath = "c:\\gnupg;c:\\gnupg\\bin;d:\\gnupg;d:\\gnupg\\bin";
-        agentPath = Files.resolvePath(agentName, gpgPath, EC.isDosLike());
+        agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
       }
 
       if ((! agentPath) && this.isWin32) {
         // Look up in Windows Registry
         try {
           let gpgPath = getWinRegistryString("Software\\GNU\\GNUPG", "Install Directory", nsIWindowsRegKey.ROOT_KEY_LOCAL_MACHINE);
-          agentPath = Files.resolvePath(agentName, gpgPath, EC.isDosLike());
+          agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
         }
         catch (ex) {}
 
         if (! agentPath) {
           let gpgPath = gpgPath + "\\pub";
-          agentPath = Files.resolvePath(agentName, gpgPath, EC.isDosLike());
+          agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
         }
       }
 
-      if (!agentPath && !EC.isDosLike()) {
+      if (!agentPath && !OS.isDosLike()) {
         // Unix-like systems: check /usr/bin and /usr/local/bin
         let gpgPath = "/usr/bin:/usr/local/bin";
-        agentPath = Files.resolvePath(agentName, gpgPath, EC.isDosLike());
+        agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
       }
 
       if (!agentPath) {
@@ -724,7 +725,7 @@ Enigmail.prototype = {
         }
       }
 
-      if ((! EC.isDosLike()) && (! Ec.getGpgFeature("autostart-gpg-agent"))) {
+      if ((! OS.isDosLike()) && (! Ec.getGpgFeature("autostart-gpg-agent"))) {
 
         // create unique tmp file
         var ds = Cc[DIR_SERV_CONTRACTID].getService();
@@ -1780,7 +1781,7 @@ Enigmail.prototype = {
       return "";
     }
 
-    if (EC.isDosLike() && Ec.getGpgFeature("windows-photoid-bug")) {
+    if (OS.isDosLike() && Ec.getGpgFeature("windows-photoid-bug")) {
       // workaround for error in gpg
       photoDataObj.value=photoDataObj.value.replace(/\r\n/g, "\n");
     }

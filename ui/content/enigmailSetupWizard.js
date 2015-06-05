@@ -41,6 +41,7 @@ Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/passwordCheck.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 // const Ec is already defined in enigmailKeygen.js
 
@@ -778,7 +779,7 @@ function enigGetSvc(resetCheck) {
 function wizardLocateGpg() {
   var fileName = "gpg";
   var ext = "";
-  if (Ec.isDosLike()) {
+  if (OS.isDosLike()) {
     ext = ".exe";
   }
   var filePath = EnigFilePicker(EnigGetString("locateGpg"),

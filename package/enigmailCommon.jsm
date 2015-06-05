@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Prefs: false */
+/*global Components: false, EnigmailCore: false, Prefs: false, OS: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -52,6 +52,7 @@ Components.utils.import("resource://enigmail/encryption.jsm");
 Components.utils.import("resource://enigmail/decryption.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -832,13 +833,11 @@ var EnigmailCommon = {
 
   getFilePath: function (nsFileObj)
   {
-    if (this.getOS() == "WINNT")
+    if (OS.getOS() == "WINNT")
       return this.convertToUnicode(nsFileObj.persistentDescriptor, "utf-8");
 
     return this.convertFromUnicode(nsFileObj.path, "utf-8");
   },
-
-  isDosLike: EnigmailCore.isDosLike.bind(EnigmailCore),
 
   /**
    * Get an escaped version of a file system path specification
@@ -848,12 +847,12 @@ var EnigmailCommon = {
    * @return: String - the escaped path
    */
   getEscapedFilename: function (fileNameStr) {
-    if (this.isDosLike()) {
+    if (OS.isDosLike()) {
       // escape the backslashes and the " character (for Windows and OS/2)
       fileNameStr = fileNameStr.replace(/([\\\"])/g, "\\$1");
     }
 
-    if (this.getOS() == "WINNT") {
+    if (OS.getOS() == "WINNT") {
       // replace leading "\\" with "//"
       fileNameStr = fileNameStr.replace(/^\\\\*/, "//");
     }
@@ -878,7 +877,7 @@ var EnigmailCommon = {
     catch (ex) {
       // let's guess ...
       tmpDirObj = Cc[this.LOCAL_FILE_CONTRACTID].createInstance(this.getLocalFileApi());
-      if (this.getOS() == "WINNT") {
+      if (OS.getOS() == "WINNT") {
         tmpDirObj.initWithPath("C:/TEMP");
       } else {
         tmpDirObj.initWithPath("/tmp");
@@ -1006,8 +1005,6 @@ var EnigmailCommon = {
   },
 
   getString: EnigmailCore.getString.bind(EnigmailCore),
-
-  getOS: EnigmailCore.getOS.bind(EnigmailCore),
 
   isSuite: function () {
     // return true if Seamonkey, false otherwise
@@ -1421,7 +1418,7 @@ var EnigmailCommon = {
       }
     }
 
-    if ((this.enigmailSvc.agentType == "gpg") && (exitCode == 256) && (this.getOS() == "WINNT")) {
+    if ((this.enigmailSvc.agentType == "gpg") && (exitCode == 256) && (OS.getOS() == "WINNT")) {
       Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Using gpg and exit code is 256. You seem to use cygwin-gpg, activating countermeasures.\n");
       if (statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) {
         Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->2\n");

@@ -119,6 +119,7 @@ zip --must-match\
     modules/files.jsm \
     modules/log.jsm \
     modules/prefs.jsm \
+    modules/os.jsm \
     modules/commonFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \

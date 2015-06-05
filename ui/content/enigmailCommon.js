@@ -46,6 +46,7 @@ Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 const EC = EnigmailCore;
 
@@ -460,7 +461,7 @@ function EnigGetTempDir() {
 
 // get the OS platform
 function EnigGetOS () {
-  return EnigmailCommon.getOS();
+  return OS.getOS();
 }
 
 function EnigGetVersion() {

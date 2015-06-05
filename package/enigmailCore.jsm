@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Log: false, Prefs: false */
+/*global Components: false, EnigmailCommon: false, Log: false, Prefs: false, OS: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -49,6 +49,7 @@
 
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCore" ];
 
@@ -76,18 +77,6 @@ var EnigmailCore = {
 
   init: function(enigmailVersion) {
     this.version = enigmailVersion;
-  },
-
-  getOS: function () {
-    var xulRuntime = Cc[XPCOM_APPINFO].getService(Ci.nsIXULRuntime);
-    return xulRuntime.OS;
-  },
-
-  isDosLike: function() {
-    if (this.isDosLikeVal === undefined) {
-      this.isDosLikeVal = (this.getOS() == "WINNT" || this.getOS() == "OS2");
-    }
-    return this.isDosLikeVal;
   },
 
   getLogData: function() {
@@ -148,7 +137,7 @@ var EnigmailCore = {
   },
 
   getFilePathDesc: function (nsFileObj) {
-    if (this.getOS() == "WINNT")
+    if (OS.getOS() == "WINNT")
       return nsFileObj.persistentDescriptor;
     else
       return nsFileObj.path;

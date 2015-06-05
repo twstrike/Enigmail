@@ -40,6 +40,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/gpgAgentHandler.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/os.jsm");
 
 // Initialize enigmailCommon
 EnigInitCommon("pref-enigmail");
@@ -567,7 +568,7 @@ function enigLocateGpg() {
                            "", false, ext,
                            fileName+ext, null);
   if (filePath) {
-//     if (EnigmailCommon.getOS() == "WINNT") {
+//     if (OS.getOS() == "WINNT") {
 //       document.getElementById("enigmail_agentPath").value = EnigGetFilePath(filePath);
 //     }
     document.getElementById("enigmail_agentPath").value = filePath.path;
