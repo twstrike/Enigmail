@@ -1,6 +1,6 @@
 /*global Components: false, EnigmailCore: false, EnigmailCommon: false, XPCOMUtils: false, EnigmailGpgAgent: false, EnigmailGPG: false, Encryption: false, Decryption: false */
 /*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, dump: false */
-/*global Rules: false, Filters: false, Armor: false */
+/*global Rules: false, Filters: false, Armor: false, Files: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -56,6 +56,7 @@ Components.utils.import("resource://enigmail/enigmailGpg.jsm");
 Components.utils.import("resource://enigmail/rules.jsm");
 Components.utils.import("resource://enigmail/filters.jsm");
 Components.utils.import("resource://enigmail/armor.jsm");
+Components.utils.import("resource://enigmail/files.jsm");
 
 try {
   // TB with omnijar
@@ -205,14 +206,6 @@ function getWinRegistryString(keyPath, keyName, rootKey) {
 // Enigmail encryption/decryption service
 ///////////////////////////////////////////////////////////////////////////////
 
-
-function cloneOrNull(v) {
-  if(v !== null && typeof v.clone === "function") {
-    return v.clone();
-  } else {
-    return v;
-  }
-}
 
 function Enigmail() {
     Components.utils.import("resource://enigmail/commonFuncs.jsm");
@@ -480,7 +473,7 @@ Enigmail.prototype = {
       try {
         var pathDir = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
 
-        if (! EnigmailGpgAgent.isAbsolutePath(agentPath, EC.isDosLike())) {
+        if (! Files.isAbsolutePath(agentPath, EC.isDosLike())) {
           // path relative to Mozilla installation dir
           var ds = Cc[DIR_SERV_CONTRACTID].getService();
           var dsprops = ds.QueryInterface(Ci.nsIProperties);
@@ -512,32 +505,32 @@ Enigmail.prototype = {
       // Resolve relative path using PATH environment variable
       var envPath = this.environment.get("PATH");
 
-      agentPath = EnigmailGpgAgent.resolvePath(agentName, envPath, EC.isDosLike());
+      agentPath = Files.resolvePath(agentName, envPath, EC.isDosLike());
 
       if (!agentPath && EC.isDosLike()) {
         // DOS-like systems: search for GPG in c:\gnupg, c:\gnupg\bin, d:\gnupg, d:\gnupg\bin
         let gpgPath = "c:\\gnupg;c:\\gnupg\\bin;d:\\gnupg;d:\\gnupg\\bin";
-        agentPath = EnigmailGpgAgent.resolvePath(agentName, gpgPath, EC.isDosLike());
+        agentPath = Files.resolvePath(agentName, gpgPath, EC.isDosLike());
       }
 
       if ((! agentPath) && this.isWin32) {
         // Look up in Windows Registry
         try {
           let gpgPath = getWinRegistryString("Software\\GNU\\GNUPG", "Install Directory", nsIWindowsRegKey.ROOT_KEY_LOCAL_MACHINE);
-          agentPath = EnigmailGpgAgent.resolvePath(agentName, gpgPath, EC.isDosLike());
+          agentPath = Files.resolvePath(agentName, gpgPath, EC.isDosLike());
         }
         catch (ex) {}
 
         if (! agentPath) {
           let gpgPath = gpgPath + "\\pub";
-          agentPath = EnigmailGpgAgent.resolvePath(agentName, gpgPath, EC.isDosLike());
+          agentPath = Files.resolvePath(agentName, gpgPath, EC.isDosLike());
         }
       }
 
       if (!agentPath && !EC.isDosLike()) {
         // Unix-like systems: check /usr/bin and /usr/local/bin
         let gpgPath = "/usr/bin:/usr/local/bin";
-        agentPath = EnigmailGpgAgent.resolvePath(agentName, gpgPath, EC.isDosLike());
+        agentPath = Files.resolvePath(agentName, gpgPath, EC.isDosLike());
       }
 
       if (!agentPath) {
@@ -627,27 +620,8 @@ Enigmail.prototype = {
 
   },
 
-
-  // resolve the path for GnuPG helper tools
   resolveToolPath: function(fileName) {
-    if (EC.isDosLike()) {
-      fileName += ".exe";
-    }
-
-    var filePath = cloneOrNull(EC.getEnigmailService().agentPath);
-
-    if (filePath) filePath = filePath.parent;
-    if (filePath) {
-      filePath.append(fileName);
-      if (filePath.exists()) {
-        filePath.normalize();
-        return filePath;
-      }
-    }
-
-    var foundPath = EnigmailGpgAgent.resolvePath(fileName, EC.getEnigmailService().environment.get("PATH"), EC.isDosLike());
-    if (foundPath !== null) { foundPath.normalize(); }
-    return foundPath;
+      return EnigmailGPG.resolveToolPath(fileName);
   },
 
   detectGpgAgent: function (domWindow) {

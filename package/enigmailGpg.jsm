@@ -1,4 +1,4 @@
-/*global Components: false */
+/*global Components: false, EnigmailCore: false, Files: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -41,12 +41,24 @@
 
 var EXPORTED_SYMBOLS = [ "EnigmailGPG" ];
 
+Components.utils.import("resource://enigmail/enigmailCore.jsm");
+Components.utils.import("resource://enigmail/files.jsm");
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 // Making this a var makes it possible to test windows things on linux
 var nsIWindowsRegKey       = Ci.nsIWindowsRegKey;
 
+var EC = EnigmailCore;
+
+function cloneOrNull(v) {
+  if(v !== null && typeof v.clone === "function") {
+    return v.clone();
+  } else {
+    return v;
+  }
+}
 
 const EnigmailGPG = {
     // get a Windows registry value (string)
@@ -91,5 +103,27 @@ const EnigmailGPG = {
         if (! homeDir) homeDir = esvc.environment.get("HOME")+"/.gnupg";
 
         return homeDir;
+    },
+
+    // resolve the path for GnuPG helper tools
+    resolveToolPath: function(fileName) {
+        if (EC.isDosLike()) {
+            fileName += ".exe";
+        }
+
+        var filePath = cloneOrNull(EC.getEnigmailService().agentPath);
+
+        if (filePath) filePath = filePath.parent;
+        if (filePath) {
+            filePath.append(fileName);
+            if (filePath.exists()) {
+                filePath.normalize();
+                return filePath;
+            }
+        }
+
+        var foundPath = Files.resolvePath(fileName, EC.getEnigmailService().environment.get("PATH"), EC.isDosLike());
+        if (foundPath !== null) { foundPath.normalize(); }
+        return foundPath;
     }
 };

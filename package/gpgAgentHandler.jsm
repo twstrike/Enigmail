@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, subprocess: false */
+/*global Components: false, EnigmailCore: false, subprocess: false, Files: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -38,25 +38,21 @@
 
 Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
+Components.utils.import("resource://enigmail/files.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailGpgAgent" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
-const NS_FILE_CONTRACTID = "@mozilla.org/file/local;1";
-
 var gIsGpgAgent = -1;
 
 var Ec = null;
 const EC = EnigmailCore;
 
-var DEBUG_LOG = function() {};
-
 var EnigmailGpgAgent = {
     setEnigmailCommon: function(enigCommon) {
         Ec = enigCommon;
-        DEBUG_LOG = function(str) { Ec.DEBUG_LOG(str); };
     },
 
     useGpgAgent: function(ecom) {
@@ -82,7 +78,7 @@ var EnigmailGpgAgent = {
 
 
   resetGpgAgent: function() {
-    DEBUG_LOG("gpgAgentHandler.jsm: resetGpgAgent\n");
+    EC.DEBUG_LOG("gpgAgentHandler.jsm: resetGpgAgent\n");
     gIsGpgAgent = -1;
   },
 
@@ -95,57 +91,8 @@ var EnigmailGpgAgent = {
     return r;
   },
 
-  isAbsolutePath: function (filePath, isDosLike) {
-    // Check if absolute path
-    if (isDosLike) {
-        return ((filePath.search(/^\w+:\\/) === 0) || (filePath.search(/^\\\\/) === 0) ||
-                (filePath.search(/^\/\//) === 0));
-    } else {
-      return (filePath.search(/^\//) === 0);
-    }
-  },
-
-  resolvePath: function (filePath, envPath, isDosLike) {
-    DEBUG_LOG("gpgAgentHandler.jsm: resolvePath: filePath="+filePath+"\n");
-
-    if (this.isAbsolutePath(filePath, isDosLike))
-      return filePath;
-
-    if (!envPath)
-       return null;
-
-    var fileNames = filePath.split(";");
-
-    var pathDirs = envPath.split(isDosLike ? ";" : ":");
-
-    for (var i=0; i < fileNames.length; i++) {
-      for (var j=0; j<pathDirs.length; j++) {
-         try {
-            var pathDir = Cc[NS_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-
-            DEBUG_LOG("gpgAgentHandler.jsm: resolvePath: checking for "+pathDirs[j]+"/"+fileNames[i]+"\n");
-
-            EC.initPath(pathDir, pathDirs[j]);
-
-            try {
-              if (pathDir.exists() && pathDir.isDirectory()) {
-                 pathDir.appendRelativePath(fileNames[i]);
-
-                 if (pathDir.exists() && !pathDir.isDirectory()) {
-                    return pathDir;
-                 }
-              }
-            }
-            catch (ex) {}
-         }
-         catch (ex) {}
-      }
-    }
-    return null;
-  },
-
   isCmdGpgAgent: function(pid) {
-    DEBUG_LOG("gpgAgentHandler.jsm: isCmdGpgAgent:\n");
+    EC.DEBUG_LOG("gpgAgentHandler.jsm: isCmdGpgAgent:\n");
 
     var environment = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
     var ret = false;
@@ -155,7 +102,7 @@ var EnigmailGpgAgent = {
       path = "/bin:/usr/bin:/usr/local/bin";
     }
 
-    var psCmd = this.resolvePath("ps", path, false);
+    var psCmd = Files.resolvePath("ps", path, false);
 
     var proc = {
       command:     psCmd,
@@ -163,7 +110,7 @@ var EnigmailGpgAgent = {
       environment: Ec.envList,
       charset: null,
       done: function(result) {
-        DEBUG_LOG("gpgAgentHandler.jsm: isCmdGpgAgent: got data: '"+result.stdout+"'\n");
+        EC.DEBUG_LOG("gpgAgentHandler.jsm: isCmdGpgAgent: got data: '"+result.stdout+"'\n");
         var data = result.stdout.replace(/[\r\n]/g, " ");
         if (data.search(/gpg-agent/) >= 0)
           ret = true;
@@ -182,7 +129,7 @@ var EnigmailGpgAgent = {
   isAgentTypeGpgAgent: function() {
     // determine if the used agent is a gpg-agent
 
-    DEBUG_LOG("gpgAgentHandler.jsm: isAgentTypeGpgAgent:\n");
+    EC.DEBUG_LOG("gpgAgentHandler.jsm: isAgentTypeGpgAgent:\n");
 
     // to my knowledge there is no other agent than gpg-agent on Windows
     if (Ec.getOS() == "WINNT") return true;
@@ -222,7 +169,7 @@ var EnigmailGpgAgent = {
     }
     catch (ex) {}
 
-    DEBUG_LOG("gpgAgentHandler.jsm: isAgentTypeGpgAgent: pid="+pid+"\n");
+    EC.DEBUG_LOG("gpgAgentHandler.jsm: isAgentTypeGpgAgent: pid="+pid+"\n");
 
     this.isCmdGpgAgent(pid);
     var isAgent = false;
@@ -237,7 +184,7 @@ var EnigmailGpgAgent = {
   },
 
   getAgentMaxIdle: function() {
-    DEBUG_LOG("gpgAgentHandler.jsm: getAgentMaxIdle:\n");
+    EC.DEBUG_LOG("gpgAgentHandler.jsm: getAgentMaxIdle:\n");
     var svc = Ec.getService();
     var maxIdle = -1;
 
@@ -256,7 +203,7 @@ var EnigmailGpgAgent = {
         var i;
 
         for (i=0; i < lines.length; i++) {
-          DEBUG_LOG("gpgAgentHandler.jsm: getAgentMaxIdle: line: "+lines[i]+"\n");
+          EC.DEBUG_LOG("gpgAgentHandler.jsm: getAgentMaxIdle: line: "+lines[i]+"\n");
 
           if (lines[i].search(/^default-cache-ttl:/) === 0) {
             var m = lines[i].split(/:/);
@@ -278,7 +225,7 @@ var EnigmailGpgAgent = {
   },
 
   setAgentMaxIdle: function(idleMinutes) {
-    DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle:\n");
+    EC.DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle:\n");
     var svc = Ec.getService();
 
     if (! svc) return;
@@ -297,10 +244,10 @@ var EnigmailGpgAgent = {
         pipe.close();
       },
       stdout: function (data) {
-        DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle.stdout: "+data+"\n");
+        EC.DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle.stdout: "+data+"\n");
       },
       done: function(result) {
-        DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle.stdout: gpgconf exitCode="+result.exitCode+"\n");
+        EC.DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle.stdout: gpgconf exitCode="+result.exitCode+"\n");
       }
     };
 
@@ -308,7 +255,7 @@ var EnigmailGpgAgent = {
       subprocess.call(proc);
     }
     catch (ex) {
-      DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle: exception: "+ex.toString()+"\n");
+      EC.DEBUG_LOG("gpgAgentHandler.jsm: setAgentMaxIdle: exception: "+ex.toString()+"\n");
     }
   },
 
