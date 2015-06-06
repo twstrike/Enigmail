@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false, Log: false, OS: false, Files: false, Locale: false, Data: false, Execution: false */
+/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, Log: false, OS: false, Files: false, Locale: false, Data: false, Execution: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,7 +39,6 @@
 "use strict";
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/key.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/os.jsm");

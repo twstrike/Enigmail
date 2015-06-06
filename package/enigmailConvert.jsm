@@ -41,7 +41,6 @@
 
 Components.utils.import("resource://gre/modules/AddonManager.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/armor.jsm");
