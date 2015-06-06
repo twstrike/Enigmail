@@ -399,7 +399,7 @@ var EnigmailKeyMgmt = {
     var enigmailSvc = Ec.getService(parent);
     if (!enigmailSvc) {
       Log.ERROR("keyManagmenent.jsm: Enigmail.importKeyFromFile: not yet initialized\n");
-      errorMsgObj.value = Ec.getString("notInit");
+      errorMsgObj.value = Locale.getString("notInit");
       return 1;
     }
 
