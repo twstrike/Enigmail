@@ -38,7 +38,7 @@
 
 "use strict";
 
-var CustomAssert = {
+const CustomAssert = {
     registerExtraAssertionsOn: function(assertModule) {
         assertModule.assertContains = CustomAssert.assertContains;
         assertModule.assertArrayContains = CustomAssert.assertArrayContains;
