@@ -1857,38 +1857,6 @@ var EnigmailCommon = {
   },
 
 
-  /**
-   * simple listener for using with execStart
-   *
-   * stdinFunc: optional function to write to stdin
-   * doneFunc : optional function that is called when the process is terminated
-   */
-  newSimpleListener: function(stdinFunc, doneFunc) {
-      // TODO: MOVE
-    var simpleListener = {
-      stdoutData: "",
-      stderrData: "",
-      exitCode: -1,
-      stdin: function(pipe) {
-          pipe.close();
-      },
-      stdout: function(data) {
-        this.stdoutData += data;
-      },
-      stderr: function (data) {
-        this.stderrData += data;
-      },
-      done: function(exitCode) {
-        this.exitCode = exitCode;
-        if (doneFunc) {
-          doneFunc(exitCode);
-        }
-      }
-    };
-
-    if (stdinFunc) simpleListener.stdin = stdinFunc;
-    return simpleListener;
-  },
 
 
   getAttachmentFileName: function (parent, byteData) {
@@ -1898,7 +1866,8 @@ var EnigmailCommon = {
     args = args.concat(this.passwdCommand());
     args.push("--list-packets");
 
-    var listener = this.newSimpleListener(
+
+    var listener = Execution.newSimpleListener(
       function _stdin (pipe) {
           Log.DEBUG("enigmailCommon.jsm: getAttachmentFileName: _stdin\n");
           pipe.write(byteData);

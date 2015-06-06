@@ -163,5 +163,40 @@ const Execution = {
         Log.CONSOLE(Data.convertFromUnicode(errorMsgObj.value)+"\n");
 
         return exitCode;
+    },
+
+    /**
+     * simple listener for using with execStart
+     *
+     * stdinFunc: optional function to write to stdin
+     * doneFunc : optional function that is called when the process is terminated
+     */
+    newSimpleListener: function(stdinFunc, doneFunc) {
+        let simpleListener = {
+            stdoutData: "",
+            stderrData: "",
+            exitCode: -1,
+            stdin: function(pipe) {
+                if(stdinFunc) {
+                    stdinFunc(pipe);
+                } else {
+                    pipe.close();
+                }
+            },
+            stdout: function(data) {
+                simpleListener.stdoutData += data;
+            },
+            stderr: function (data) {
+                simpleListener.stderrData += data;
+            },
+            done: function(exitCode) {
+                simpleListener.exitCode = exitCode;
+                if(doneFunc) {
+                    doneFunc(exitCode);
+                }
+            }
+        };
+
+        return simpleListener;
     }
 };

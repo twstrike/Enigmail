@@ -503,7 +503,7 @@ var Decryption = {
         var startErrorMsgObj = {};
         var noOutput = false;
 
-        var listener = ec.newSimpleListener(
+        var listener = Execution.newSimpleListener(
             function _stdin (pipe) {
                 pipe.write(pgpBlock);
                 pipe.close();

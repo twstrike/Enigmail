@@ -389,7 +389,7 @@ decryptAttachment = function(attachment, strippedName) {
           var errorMsgObj = {};
           statusFlagsObj.value = 0;
 
-          var listener = Ec.newSimpleListener(
+          var listener = Execution.newSimpleListener(
             function _stdin(pipe) {
 
               // try to get original file name if file does not contain suffix

@@ -1593,7 +1593,7 @@ Enigmail.prototype = {
     args.push(sigFilePath);
     args.push(verifyFilePath);
 
-    var listener = Ec.newSimpleListener();
+    var listener = Execution.newSimpleListener();
 
     var proc = Execution.execStart(this.agentPath, args, false, parent,
                                    listener, statusFlagsObj);
@@ -1653,7 +1653,7 @@ Enigmail.prototype = {
 
     statusFlagsObj.value = 0;
 
-    var listener = Ec.newSimpleListener(
+    var listener = Execution.newSimpleListener(
       function _stdin(pipe) {
         pipe.write(byteData);
         pipe.close();

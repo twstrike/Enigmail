@@ -363,7 +363,7 @@ var Encryption = {
 
         var inspector = Cc["@mozilla.org/jsinspector;1"].createInstance(Ci.nsIJSInspector);
 
-        var listener = ec.newSimpleListener(
+        var listener = Execution.newSimpleListener(
             function _stdin (pipe) {
                 pipe.write(plainText);
                 pipe.close();
