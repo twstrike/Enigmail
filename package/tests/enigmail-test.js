@@ -47,6 +47,7 @@ testing("enigmail.js");
 component("enigmail/enigmailCommon.jsm");
 component("enigmail/prefs.jsm");
 component("enigmail/os.jsm");
+component("enigmail/armor.jsm");
 
 test(shouldLocateArmoredBlock);
 test(shouldExtractSignaturePart);
@@ -87,7 +88,7 @@ function shouldLocateArmoredBlock() {
     var endIndexObj = {};
     var indentStrObj = {};
     var indentStr = "";
-    var blockType = enigmail.locateArmoredBlock(text, 0, indentStr, beginIndexObj, endIndexObj, indentStrObj);
+    var blockType = Armor.locateArmoredBlock(text, 0, indentStr, beginIndexObj, endIndexObj, indentStrObj);
     Assert.equal(0, beginIndexObj.value);
     Assert.equal("    ", indentStrObj.value);
     Assert.equal("SIGNATURE", blockType);
@@ -123,9 +124,9 @@ function shouldExtractSignaturePart() {
             "\n" +
             "-----END PGP SIGNATURE-----";
 
-    var signature_text = enigmail.extractSignaturePart(signature_block, Ci.nsIEnigmail.SIGNATURE_TEXT);
-    var signature_headers = enigmail.extractSignaturePart(signature_block, Ci.nsIEnigmail.SIGNATURE_HEADERS);
-    var signature_armor = enigmail.extractSignaturePart(signature_block, Ci.nsIEnigmail.SIGNATURE_ARMOR);
+    var signature_text = Armor.extractSignaturePart(signature_block, Ci.nsIEnigmail.SIGNATURE_TEXT);
+    var signature_headers = Armor.extractSignaturePart(signature_block, Ci.nsIEnigmail.SIGNATURE_HEADERS);
+    var signature_armor = Armor.extractSignaturePart(signature_block, Ci.nsIEnigmail.SIGNATURE_ARMOR);
     Assert.equal(signature.text, signature_text);
     Assert.equal(signature.header, signature_headers);
     Assert.equal(signature.armor.replace(/\s*/g, ""), signature_armor);
@@ -172,7 +173,7 @@ function shouldSignMessage() {
     Assert.equal(0, exitCodeObj.value);
     Assert.equal(0, errorMsgObj.value);
     Assert.equal(true, (statusFlagObj.value == nsIEnigmail.SIG_CREATED));
-    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, "", {}, {}, {});
+    var blockType = Armor.locateArmoredBlock(encryptResult, 0, "", {}, {}, {});
     Assert.equal("SIGNED MESSAGE", blockType);
 }
 
@@ -204,7 +205,7 @@ function shouldEncryptMessage() {
     Assert.equal(0, exitCodeObj.value);
     Assert.equal(0, errorMsgObj.value);
     Assert.equal(true, (statusFlagObj.value == nsIEnigmail.END_ENCRYPTION));
-    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, "", {}, {}, {});
+    var blockType = Armor.locateArmoredBlock(encryptResult, 0, "", {}, {}, {});
     Assert.equal("MESSAGE", blockType);
 }
 
@@ -256,7 +257,7 @@ function shouldDecryptMessage() {
     Assert.equal(0, errorMsgObj.value);
     Assert.equal("Hello there!", decryptResult);
     Assert.equal(true, (statusFlagObj.value == (nsIEnigmail.DISPLAY_MESSAGE | nsIEnigmail.DECRYPTION_OKAY)));
-    var blockType = enigmail.locateArmoredBlock(encryptResult, 0, "", {}, {}, {});
+    var blockType = Armor.locateArmoredBlock(encryptResult, 0, "", {}, {}, {});
     Assert.equal("MESSAGE", blockType);
 }
 

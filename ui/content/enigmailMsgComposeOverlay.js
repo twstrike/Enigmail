@@ -51,6 +51,7 @@ Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
+Components.utils.import("resource://enigmail/armor.jsm");
 
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
@@ -3883,10 +3884,7 @@ Enigmail.msg = {
     var beginIndexObj = {};
     var endIndexObj = {};
     var indentStrObj = {};
-    var blockType = enigmailSvc.locateArmoredBlock(docText, 0, indentStr,
-                                            beginIndexObj, endIndexObj,
-                                            indentStrObj);
-
+    var blockType = Armor.locateArmoredBlock(docText, 0, indentStr, beginIndexObj, endIndexObj, indentStrObj);
     if ((blockType != "MESSAGE") && (blockType != "SIGNED MESSAGE"))
       return;
 
@@ -4016,8 +4014,7 @@ Enigmail.msg = {
         return;
 
       // Extract text portion of clearsign block
-      plainText = enigmailSvc.extractSignaturePart(pgpBlock,
-                                                    nsIEnigmail.SIGNATURE_TEXT);
+      plainText = Armor.extractSignaturePart(pgpBlock, nsIEnigmail.SIGNATURE_TEXT);
     }
 
     var doubleDashSeparator = Prefs.getPref("doubleDashSeparator");

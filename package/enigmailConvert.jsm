@@ -44,6 +44,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/armor.jsm");
 
 try {
   // TB with omnijar
@@ -714,7 +715,7 @@ decryptINLINE = function (mime) {
     var uiFlags = nsIEnigmail.UI_INTERACTIVE | nsIEnigmail.UI_UNVERIFIED_ENC_OK;
 
     var plaintexts = [];
-    var blocks = enigmailSvc.locateArmoredBlocks(mime.body);
+    var blocks = Armor.locateArmoredBlocks(mime.body);
     var tmp = [];
 
     for (let i = 0; i < blocks.length; i++) {

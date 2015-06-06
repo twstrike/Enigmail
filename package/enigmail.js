@@ -916,18 +916,6 @@ Enigmail.prototype = {
       return Encryption.encryptMessage(this, Ec, parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, exitCodeObj, statusFlagsObj, errorMsgObj, passphrase);
   },
 
-  locateArmoredBlock: function (text, offset, indentStr, beginIndexObj, endIndexObj, indentStrObj) {
-      return Armor.locateArmoredBlock(text, offset, indentStr, beginIndexObj, endIndexObj, indentStrObj);
-  },
-
-  locateArmoredBlocks: function(text) {
-      return Armor.locateArmoredBlocks(text);
-  },
-
-  extractSignaturePart: function (signatureBlock, part) {
-      return Armor.extractSignaturePart(signatureBlock, part);
-  },
-
   statusObjectFrom: function (signatureObj, exitCodeObj, statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj, blockSeparationObj, encToDetailsObj) {
     return {
       signature: signatureObj,
@@ -1089,10 +1077,7 @@ Enigmail.prototype = {
     var beginIndexObj = {};
     var endIndexObj   = {};
     var indentStrObj   = {};
-    var blockType = this.locateArmoredBlock(msgText, 0, "",
-                                            beginIndexObj, endIndexObj,
-                                            indentStrObj);
-
+    var blockType = Armor.locateArmoredBlock(msgText, 0, "", beginIndexObj, endIndexObj, indentStrObj);
     if (!blockType) {
       errorMsgObj.value = EC.getString("noPGPblock");
       return 1;

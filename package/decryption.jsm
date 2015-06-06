@@ -45,6 +45,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/armor.jsm");
 
 const Ci = Components.interfaces;
 const nsIEnigmail = Ci.nsIEnigmail;
@@ -425,9 +426,7 @@ var Decryption = {
         var beginIndexObj = {};
         var endIndexObj = {};
         var indentStrObj = {};
-        var blockType = esvc.locateArmoredBlock(cipherText, 0, "",
-                                                beginIndexObj, endIndexObj, indentStrObj);
-
+        var blockType = Armor.locateArmoredBlock(cipherText, 0, "", beginIndexObj, endIndexObj, indentStrObj);
         if (!blockType || blockType == "SIGNATURE") {
             errorMsgObj.value = EC.getString("noPGPblock");
             statusFlagsObj.value |= nsIEnigmail.DISPLAY_MESSAGE;
@@ -485,9 +484,7 @@ var Decryption = {
         var newSignature = "";
 
         if (verifyOnly) {
-            newSignature = esvc.extractSignaturePart(pgpBlock,
-                                                     nsIEnigmail.SIGNATURE_ARMOR);
-
+            newSignature = Armor.extractSignaturePart(pgpBlock, nsIEnigmail.SIGNATURE_ARMOR);
             if (oldSignature && (newSignature != oldSignature)) {
                 Log.ERROR("enigmail.js: Enigmail.decryptMessage: Error - signature mismatch "+newSignature+"\n");
                 errorMsgObj.value = EC.getString("sigMismatch");
@@ -590,10 +587,7 @@ var Decryption = {
             var innerKeyBlock;
             if (verifyOnly) {
                 // Search for indented public key block in signed message
-                var innerBlockType = esvc.locateArmoredBlock(pgpBlock, 0, "- ",
-                                                             beginIndexObj, endIndexObj,
-                                                             indentStrObj);
-
+                var innerBlockType = Armor.locateArmoredBlock(pgpBlock, 0, "- ", beginIndexObj, endIndexObj, indentStrObj);
                 if (innerBlockType == "PUBLIC KEY BLOCK") {
 
                     innerKeyBlock = pgpBlock.substr(beginIndexObj.value,
