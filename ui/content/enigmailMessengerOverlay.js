@@ -1,4 +1,4 @@
-/*global Components: false, Data: false */
+/*global Components: false, Data: false, App: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -56,6 +56,7 @@ Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/app.jsm");
 
 const EC = EnigmailCore;
 
@@ -2266,7 +2267,7 @@ Enigmail.msg = {
   },
 
   loadExternalURL: function (url) {
-    if (EnigmailCommon.isSuite()) {
+    if (App.isSuite()) {
       Enigmail.msg.loadURLInNavigatorWindow(url, true);
     }
     else {

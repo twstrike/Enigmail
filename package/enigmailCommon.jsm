@@ -75,7 +75,6 @@ const XPCOM_APPINFO = "@mozilla.org/xre/app-info;1";
 const ENIG_EXTENSION_GUID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
 
 const THUNDERBIRD_ID = "{3550f703-e582-4d05-9a08-453d09bdfdc6}";
-const SEAMONKEY_ID   = "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}";
 
 const BUTTON_POS_0           = 1;
 const BUTTON_POS_1           = 1 << 8;
@@ -898,13 +897,6 @@ var EnigmailCommon = {
                    "File:    "+ex.fileName+"\n" +
                    "Line:    "+ex.lineNumber+"\n" +
                    "Stack:   "+ex.stack+"\n");
-  },
-
-  isSuite: function () {
-      // TODO: MOVE
-    // return true if Seamonkey, false otherwise
-    var xulAppinfo = Cc[XPCOM_APPINFO].getService(Ci.nsIXULAppInfo);
-    return (xulAppinfo.ID == SEAMONKEY_ID);
   },
 
   /**

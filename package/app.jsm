@@ -47,6 +47,7 @@ const Ci = Components.interfaces;
 const XPCOM_APPINFO = "@mozilla.org/xre/app-info;1";
 
 const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
+const SEAMONKEY_ID   = "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}";
 
 const App = {
 
@@ -63,6 +64,10 @@ const App = {
     getProfileDirectory: function() {
         let ds = Cc[DIR_SERV_CONTRACTID].getService(Ci.nsIProperties);
         return ds.get("ProfD", Ci.nsIFile);
-    }
+    },
 
+    isSuite: function () {
+        // return true if Seamonkey, false otherwise
+        return Cc[XPCOM_APPINFO].getService(Ci.nsIXULAppInfo).ID == SEAMONKEY_ID;
+    }
 };
