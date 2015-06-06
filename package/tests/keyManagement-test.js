@@ -44,6 +44,8 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("keyManagement.jsm");
 component("enigmail/prefs.jsm");
+component("enigmail/enigmailCore.jsm");
+component("enigmail/enigmailCommon.jsm");
 
 initializeEnigmail();
 test(importKeyForEdit);
@@ -373,8 +375,6 @@ function importKeyForEdit() {
 }
 
 function initializeEnigmail() {
-    Components.utils.import("resource://enigmail/enigmailCore.jsm");
-    Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     var window = JSUnit.createStubWindow();
     enigmail.initialize(window, "", Prefs.getPrefBranch());

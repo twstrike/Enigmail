@@ -48,6 +48,7 @@ component("enigmail/enigmailCommon.jsm");
 component("enigmail/prefs.jsm");
 component("enigmail/os.jsm");
 component("enigmail/armor.jsm");
+component("enigmail/keyManagement.jsm");
 
 test(shouldLocateArmoredBlock);
 test(shouldExtractSignaturePart);
@@ -138,7 +139,6 @@ function shouldGetKeyDetails() {
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-    component("enigmail/keyManagement.jsm");
     var importResult = EnigmailKeyMgmt.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
     Assert.equal(importResult, 0, errorMsgObj);
     var keyDetails = enigmail.getKeyDetails("0xD535623BB60E9E71", false, true);
@@ -151,7 +151,6 @@ function shouldSignMessage() {
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-    component("enigmail/keyManagement.jsm");
     EnigmailKeyMgmt.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
     var parentWindow = JSUnit.createStubWindow();
     var plainText = "Hello there!";
@@ -183,7 +182,6 @@ function shouldEncryptMessage() {
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-    component("enigmail/keyManagement.jsm");
     EnigmailKeyMgmt.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
     var parentWindow = JSUnit.createStubWindow();
     var plainText = "Hello there!";
@@ -215,7 +213,6 @@ function shouldDecryptMessage() {
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-    component("enigmail/keyManagement.jsm");
     EnigmailKeyMgmt.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
     var encryptResult = "-----BEGIN PGP MESSAGE-----\n"+
         "Version: GnuPG v2.0.22 (GNU/Linux)\n"+
