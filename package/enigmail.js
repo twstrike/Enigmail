@@ -798,123 +798,6 @@ Enigmail.prototype = {
     Log.DEBUG("enigmail.js: detectGpgAgent: GPG_AGENT_INFO='"+this.gpgAgentInfo.envStr+"'\n");
   },
 
-
-  simpleExecCmd: function (command, args, exitCodeObj, errorMsgObj)
-  {
-      // TODO: MOVE
-    Log.WRITE("enigmail.js: Enigmail.simpleExecCmd: command = "+command+" "+args.join(" ")+"\n");
-
-    var envList = [];
-    envList = envList.concat(Ec.envList);
-
-    var outputData = "";
-    var errOutput  = "";
-
-    Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
-
-    try {
-      subprocess.call({
-        command: command,
-        arguments: args,
-        charset: null,
-        environment: envList,
-        done: function(result) {
-          exitCodeObj.value = result.exitCode;
-          outputData = result.stdout;
-          errOutput = result.stderr;
-        },
-        mergeStderr: false
-      }).wait();
-    }
-    catch (ex) {
-      Log.ERROR("enigmail.js: simpleExecCmd: "+command.path+" failed\n");
-      Log.DEBUG("  enigmail> DONE with FAILURE\n");
-      exitCodeObj.value = -1;
-    }
-    Log.DEBUG("  enigmail> DONE\n");
-
-    if (errOutput)
-       errorMsgObj.value  = errOutput;
-
-    Log.DEBUG("enigmail.js: Enigmail.simpleExecCmd: exitCode = "+exitCodeObj.value+"\n");
-    Log.DEBUG("enigmail.js: Enigmail.simpleExecCmd: errOutput = "+errOutput+"\n");
-
-    return outputData;
-  },
-
-
-  execCmd: function (command, args, passphrase, input, exitCodeObj, statusFlagsObj,
-            statusMsgObj, errorMsgObj, retStatusObj)
-  {
-      // TODO: MOVE
-    Log.WRITE("enigmail.js: Enigmail.execCmd: subprocess = '"+command.path+"'\n");
-
-    if ((typeof input) != "string") input = "";
-
-    var envList = [];
-    envList = envList.concat(Ec.envList);
-
-    var preInput = "";
-    var outputData = "";
-    var errOutput  = "";
-    Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
-    var procBuilder = new subprocess.ProcessBuilder();
-    procBuilder.setCommand(command);
-    procBuilder.setArguments(args);
-    procBuilder.setEnvironment(envList);
-    procBuilder.setStdin(
-        function (pipe) {
-            if (input.length > 0 || preInput.length > 0) {
-                pipe.write(preInput + input);
-            }
-            pipe.close();
-        }
-    );
-    procBuilder.setDone(
-        function (result) {
-            if (result.stdout) outputData = result.stdout;
-            if (result.stderr) errOutput = result.stderr;
-            exitCodeObj.value = result.exitCode;
-        }
-    );
-
-    var proc = procBuilder.build();
-    try {
-      subprocess.call(proc).wait();
-    } catch (ex) {
-      Log.ERROR("enigmail.js: Enigmail.execCmd: subprocess.call failed with '"+ex.toString()+"'\n");
-      Log.DEBUG("  enigmail> DONE with FAILURE\n");
-      exitCodeObj.value = -1;
-    }
-    Log.DEBUG("  enigmail> DONE\n");
-
-    if (proc.resultData) outputData = proc.resultData;
-    if (proc.errorData) errOutput  = proc.errorData;
-
-    Log.DEBUG("enigmail.js: Enigmail.execCmd: exitCode = "+exitCodeObj.value+"\n");
-    Log.DEBUG("enigmail.js: Enigmail.execCmd: errOutput = "+errOutput+"\n");
-
-
-    if (! retStatusObj) {
-      retStatusObj = {};
-    }
-
-    errorMsgObj.value = Ec.parseErrorOutput(errOutput, retStatusObj);
-    statusFlagsObj.value = retStatusObj.statusFlags;
-    statusMsgObj.value = retStatusObj.statusMsg;
-    var blockSeparation = retStatusObj.blockSeparation;
-
-    exitCodeObj.value = Ec.fixExitCode(exitCodeObj.value, statusFlagsObj.value);
-
-    if (blockSeparation.indexOf(" ") > 0) {
-      exitCodeObj.value = 2;
-    }
-
-    Log.CONSOLE(errorMsgObj.value+"\n");
-
-    return outputData;
-  },
-
   encryptMessage: function (parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags,
                             exitCodeObj, statusFlagsObj, errorMsgObj, passphrase) {
       return Encryption.encryptMessage(this, Ec, parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, exitCodeObj, statusFlagsObj, errorMsgObj, passphrase);
@@ -1012,8 +895,8 @@ Enigmail.prototype = {
     var statusMsgObj   = {};
     var cmdErrorMsgObj = {};
 
-    var keyBlock = this.execCmd(this.agentPath, args, null, "",
-                      exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+    var keyBlock = Execution.execCmd(this.agentPath, args, null, "",
+                                     exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
     if ((exitCodeObj.value === 0) && !keyBlock)
       exitCodeObj.value = -1;
@@ -1034,8 +917,8 @@ Enigmail.prototype = {
       args = args.concat(["-a", "--export-secret-keys"]);
       args = args.concat(uidList);
 
-      var secKeyBlock = this.execCmd(this.agentPath, args, null, "",
-                      exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+      var secKeyBlock = Execution.execCmd(this.agentPath, args, null, "",
+                                          exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
       if ((exitCodeObj.value === 0) && !secKeyBlock)
         exitCodeObj.value = -1;
@@ -1111,8 +994,8 @@ Enigmail.prototype = {
     var statusFlagsObj = {};
     var statusMsgObj   = {};
 
-    var output = this.execCmd(this.agentPath, args, null, pgpBlock,
-                        exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+    var output = Execution.execCmd(this.agentPath, args, null, pgpBlock,
+                                   exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
 
     var statusMsg = statusMsgObj.value;
 
@@ -1193,8 +1076,8 @@ Enigmail.prototype = {
       var statusMsgObj   = {};
       var cmdErrorMsgObj = {};
 
-      var listText = this.execCmd(this.agentPath, args, null, "",
-                        exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+      var listText = Execution.execCmd(this.agentPath, args, null, "",
+                                       exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
       if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
         // ignore exit code as recommended by GnuPG authors
@@ -1249,8 +1132,8 @@ Enigmail.prototype = {
     var statusMsgObj   = {};
     var cmdErrorMsgObj = {};
 
-    var listText = this.execCmd(this.agentPath, args, null, "",
-                      exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+    var listText = Execution.execCmd(this.agentPath, args, null, "",
+                                     exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
     if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
       // ignore exit code as recommended by GnuPG authors
@@ -1294,8 +1177,8 @@ Enigmail.prototype = {
     var statusFlagsObj = {};
     var exitCodeObj = {};
 
-    var listText = this.execCmd(this.agentPath, args, null, "",
-                                exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+    var listText = Execution.execCmd(this.agentPath, args, null, "",
+                                     exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
     if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
       // ignore exit code as recommended by GnuPG authors
@@ -1504,8 +1387,8 @@ Enigmail.prototype = {
     var cmdErrorMsgObj = {};
     var statusFlagsObj = {};
 
-    var listText = this.execCmd(this.agentPath, args, null, "",
-                      exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+    var listText = Execution.execCmd(this.agentPath, args, null, "",
+                                     exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
     if (exitCodeObj.value !== 0) {
       errorMsgObj.value = Locale.getString("badCommand");
@@ -1560,8 +1443,8 @@ Enigmail.prototype = {
     var statusMsgObj   = {};
     var cmdErrorMsgObj = {};
 
-    var msg = this.execCmd(this.agentPath, args, null, "",
-                      exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+    var msg = Execution.execCmd(this.agentPath, args, null, "",
+                                exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
     if (exitCodeObj.value !== 0) {
 
@@ -1687,7 +1570,7 @@ Enigmail.prototype = {
     var statusMsgObj = {};
     var statusFlagsObj = {};
 
-    var outputTxt = this.execCmd(this.agentPath, args, null, "",
+    var outputTxt = Execution.execCmd(this.agentPath, args, null, "",
                   exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
 
     if ((exitCodeObj.value === 0) && !outputTxt) {
@@ -1707,7 +1590,7 @@ Enigmail.prototype = {
 
     var photoDataObj = {};
 
-    var outputTxt = this.simpleExecCmd(this.agentPath, args, exitCodeObj, photoDataObj);
+    var outputTxt = Execution.simpleExecCmd(this.agentPath, args, exitCodeObj, photoDataObj);
 
     if (!outputTxt) {
       exitCodeObj.value = -1;

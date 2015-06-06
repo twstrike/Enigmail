@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false, Log: false, OS: false, Files: false, Locale: false, Data: false */
+/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false, Log: false, OS: false, Files: false, Locale: false, Data: false, Execution: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -46,6 +46,7 @@ Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/execution.jsm");
 
 const EXPORTED_SYMBOLS = [ "EnigmailKeyMgmt" ];
 
@@ -419,8 +420,8 @@ var EnigmailKeyMgmt = {
     var statusMsgObj   = {};
     var exitCodeObj    = {};
 
-    var output = enigmailSvc.execCmd(command, args, null, "",
-        exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+    var output = Execution.execCmd(command, args, null, "",
+                                   exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
 
     var statusMsg = statusMsgObj.value;
 
