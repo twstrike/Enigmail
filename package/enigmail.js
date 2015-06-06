@@ -1,6 +1,6 @@
 /*global Components: false, EnigmailCore: false, EnigmailCommon: false, XPCOMUtils: false, EnigmailGpgAgent: false, EnigmailGPG: false, Encryption: false, Decryption: false */
 /*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, dump: false, OS: false */
-/*global Rules: false, Filters: false, Armor: false, Files: false, Log: false, Locale: false */
+/*global Rules: false, Filters: false, Armor: false, Files: false, Log: false, Locale: false, Execution: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -60,6 +60,7 @@ Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/execution.jsm");
 
 try {
   // TB with omnijar
@@ -800,6 +801,7 @@ Enigmail.prototype = {
 
   simpleExecCmd: function (command, args, exitCodeObj, errorMsgObj)
   {
+      // TODO: MOVE
     Log.WRITE("enigmail.js: Enigmail.simpleExecCmd: command = "+command+" "+args.join(" ")+"\n");
 
     var envList = [];
@@ -844,6 +846,7 @@ Enigmail.prototype = {
   execCmd: function (command, args, passphrase, input, exitCodeObj, statusFlagsObj,
             statusMsgObj, errorMsgObj, retStatusObj)
   {
+      // TODO: MOVE
     Log.WRITE("enigmail.js: Enigmail.execCmd: subprocess = '"+command.path+"'\n");
 
     if ((typeof input) != "string") input = "";
@@ -1592,8 +1595,8 @@ Enigmail.prototype = {
 
     var listener = Ec.newSimpleListener();
 
-    var proc = Ec.execStart(this.agentPath, args, false, parent,
-                              listener, statusFlagsObj);
+    var proc = Execution.execStart(this.agentPath, args, false, parent,
+                                   listener, statusFlagsObj);
 
     if (!proc) {
       return -1;
@@ -1657,8 +1660,8 @@ Enigmail.prototype = {
       });
 
 
-    var proc = Ec.execStart(this.agentPath, args, false, parent,
-                            listener, statusFlagsObj);
+    var proc = Execution.execStart(this.agentPath, args, false, parent,
+                                   listener, statusFlagsObj);
 
     if (!proc) {
       return false;
@@ -1670,7 +1673,7 @@ Enigmail.prototype = {
     var statusMsgObj = {};
     var cmdLineObj   = {};
 
-    exitCodeObj.value = Ec.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
+    exitCodeObj.value = Execution.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
 
     return true;
 

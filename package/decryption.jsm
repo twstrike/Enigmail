@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, Locale: false, Armor: false, Data: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, Locale: false, Armor: false, Data: false, Execution: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -51,6 +51,7 @@ Cu.import("resource://enigmail/prefs.jsm");
 Cu.import("resource://enigmail/armor.jsm");
 Cu.import("resource://enigmail/locale.jsm");
 Cu.import("resource://enigmail/data.jsm");
+Cu.import("resource://enigmail/execution.jsm");
 
 const nsIEnigmail = Ci.nsIEnigmail;
 
@@ -111,8 +112,9 @@ var Decryption = {
             args.push(passphrase);
         }
 
-        var proc = ecom.execStart(ecom.enigmailSvc.agentPath, args, !verifyOnly, win,
-                                  listener, statusFlagsObj);
+        var proc = Execution.execStart(ecom.enigmailSvc.agentPath,
+                                       args, !verifyOnly, win,
+                                       listener, statusFlagsObj);
 
         if (statusFlagsObj.value & nsIEnigmail.MISSING_PASSPHRASE) {
             Log.ERROR("enigmailCommon.jsm: decryptMessageStart: Error - no passphrase supplied\n");

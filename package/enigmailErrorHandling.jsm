@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, Locale: false, Data: false */
+/*global Components: false, Log: false, Locale: false, Data: false, EnigmailCore: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -45,6 +45,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/log.jsm");
 Cu.import("resource://enigmail/locale.jsm");
 Cu.import("resource://enigmail/data.jsm");
+Cu.import("resource://enigmail/enigmailCore.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailErrorHandling" ];
 
@@ -92,7 +93,7 @@ function importOk(c) {
 
   let importFlag = Number(lineSplit[1]);
   if (importFlag & (1 | 2 | 8)) {
-    c.ec.enigmailSvc.invalidateUserIdList();
+    EnigmailCore.getEnigmailService().invalidateUserIdList();
   }
 }
 
@@ -152,13 +153,12 @@ function handleFailure(c, errorFlag) {
   }
 }
 
-function newContext(ecom, statusFlagLookup, errOutput, retStatusObj) {
+function newContext(statusFlagLookup, errOutput, retStatusObj) {
   retStatusObj.statusMsg = "";
   retStatusObj.extendedStatus = "";
   retStatusObj.blockSeparation = "";
 
   return {
-    ec: ecom,
     statusFlagLookup: statusFlagLookup,
     errOutput: errOutput,
     retStatusObj: retStatusObj,
@@ -299,8 +299,8 @@ function parseErrorOutputWith(c) {
 }
 
 var EnigmailErrorHandling = {
-  parseErrorOutput: function(ecom, statusFlagLookup, errOutput, retStatusObj) {
-    var context = newContext(ecom, statusFlagLookup, errOutput, retStatusObj);
-    return parseErrorOutputWith(context);
-  }
+    parseErrorOutput: function(errOutput, retStatusObj) {
+        var context = newContext(EnigmailCore.ensuredEnigmailCommon().statusFlags, errOutput, retStatusObj);
+        return parseErrorOutputWith(context);
+    }
 };

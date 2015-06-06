@@ -1,4 +1,4 @@
-/*global Components: false, XPCOMUtils: false, EnigmailCommon: false, Locale: false */
+/*global Components: false, XPCOMUtils: false, EnigmailCommon: false, Locale: false, Execution: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -46,6 +46,7 @@ Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/armor.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/execution.jsm");
 
 try {
   // TB with omnijar
@@ -406,14 +407,14 @@ decryptAttachment = function(attachment, strippedName) {
 
           do {
 
-            var proc = Ec.execStart(enigmailSvc.agentPath, args, false, null, listener, statusFlagsObj);
+            var proc = Execution.execStart(enigmailSvc.agentPath, args, false, null, listener, statusFlagsObj);
             if (!proc) {
               resolve(o);
               return;
             }
             // Wait for child STDOUT to close
             proc.wait();
-            Ec.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
+            Execution.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
 
             if ((listener.stdoutData && listener.stdoutData.length > 0) ||
                 (statusFlagsObj.value & nsIEnigmail.DECRYPTION_OKAY)) {

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false */
+/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false, Execution: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -56,6 +56,7 @@ Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/execution.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -896,7 +897,7 @@ var EnigmailCommon = {
    * @return: human readable error message from GnuPG
    */
   parseErrorOutput: function (errOutput, retStatusObj) {
-    return EnigmailErrorHandling.parseErrorOutput(this, gStatusFlags, errOutput, retStatusObj);
+    return EnigmailErrorHandling.parseErrorOutput(errOutput, retStatusObj);
   },
 
   /**
@@ -1710,118 +1711,6 @@ var EnigmailCommon = {
     return keyId;
   },
 
-
-  /**
-   * execStart Listener Object
-   *
-   * The listener object must implement at least the following methods:
-   *
-   *  stdin(pipe)    - OPTIONAL - write data to subprocess stdin via |pipe| hanlde
-   *  stdout(data)   - receive |data| from subprocess stdout
-   *  stderr(data)   - receive |data| from subprocess stderr
-   *  done(exitCode) - receive signal when subprocess has terminated
-   */
-
-  /**
-   *  start a subprocess (usually gpg) that gets and/or receives data via stdin/stdout/stderr.
-   *
-   * @command:        either: String - full path to executable
-   *                  or:     nsIFile object referencing executable
-   * @args:           Array of Strings: command line parameters for executable
-   * @needPassphrase: Boolean - is a passphrase required for the action?
-   *                    if true, the password may be promted using a dialog
-   *                    (unless alreday cached or gpg-agent is used)
-   * @domWindow:      nsIWindow - window on top of which password dialog is shown
-   * @listener:       Object - Listener to interact with subprocess; see spec. above
-   * @statusflagsObj: Object - .value will hold status Flags
-   *
-   * @return:         handle to suprocess
-   */
-  execStart: function (command, args, needPassphrase, domWindow, listener, statusFlagsObj) {
-      // TODO: MOVE
-    Log.WRITE("enigmailCommon.jsm: execStart: command = "+Files.formatCmdLine(command, args)+", needPassphrase="+needPassphrase+", domWindow="+domWindow+", listener="+listener+"\n");
-
-    if (! listener) listener = {};
-
-    statusFlagsObj.value = 0;
-
-    var proc = null;
-
-    listener.command = command;
-
-    Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
-
-    try {
-      proc = subprocess.call({
-        command:     command,
-        arguments:   args,
-        environment: this.getEnvList(),
-        charset: null,
-        bufferedOutput: true,
-        stdin: function (pipe) {
-          if (listener.stdin) listener.stdin(pipe);
-        },
-        stdout: function(data) { listener.stdout(data); },
-        stderr: function(data) { listener.stderr(data); },
-        done: function(result) {
-          try {
-            listener.done(result.exitCode);
-          }
-          catch (ex) {
-            Log.writeException("enigmailCommon.jsm", ex);
-          }
-        },
-        mergeStderr: false
-      });
-    } catch (ex) {
-      Log.ERROR("enigmailCommon.jsm: execStart: subprocess.call failed with '"+ex.toString()+"'\n");
-      Log.DEBUG("  enigmail> DONE with FAILURE\n");
-      return null;
-    }
-    Log.DEBUG("  enigmail> DONE\n");
-
-    return proc;
-  },
-
-  /*
-     requirements for listener object:
-      exitCode
-      stderrData
-    */
-  execEnd: function (listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj, blockSeparationObj) {
-      // TODO: MOVE
-
-    Log.DEBUG("enigmailCommon.jsm: execEnd:\n");
-
-    cmdLineObj.value = listener.command;
-
-    var exitCode = listener.exitCode;
-    var errOutput = listener.stderrData;
-
-
-    Log.DEBUG("enigmailCommon.jsm: execEnd: exitCode = "+exitCode+"\n");
-    Log.DEBUG("enigmailCommon.jsm: execEnd: errOutput = "+errOutput+"\n");
-
-    var retObj = {};
-    errorMsgObj.value = this.parseErrorOutput(errOutput, retObj);
-    statusFlagsObj.value = retObj.statusFlags;
-    statusMsgObj.value = retObj.statusMsg;
-    if (! blockSeparationObj) blockSeparationObj = {};
-    blockSeparationObj.value = retObj.blockSeparation;
-
-    if (errOutput.search(/jpeg image of size \d+/)>-1) {
-      statusFlagsObj.value |= nsIEnigmail.PHOTO_AVAILABLE;
-    }
-    if (blockSeparationObj && blockSeparationObj.value.indexOf(" ") > 0) {
-      exitCode = 2;
-    }
-
-    Log.CONSOLE(Data.convertFromUnicode(errorMsgObj.value)+"\n");
-
-    return exitCode;
-  },
-
-
   /***
    * Start decryption by launching gpg
    * win:               window object for password prompt
@@ -2018,8 +1907,8 @@ var EnigmailCommon = {
       });
 
     var statusFlagsObj = {};
-    var proc = this.execStart(this.enigmailSvc.agentPath, args, false, parent,
-                              listener, statusFlagsObj);
+    var proc = Execution.execStart(this.enigmailSvc.agentPath, args, false, parent,
+                                   listener, statusFlagsObj);
 
     if (!proc) {
       return null;

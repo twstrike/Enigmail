@@ -254,6 +254,7 @@ KeyEditor.prototype = {
 var EnigmailKeyMgmt = {
 
   execCmd: function (command, args, stdinFunc, stdoutFunc, doneFunc) {
+      // TODO: MOVE
     var procBuilder = new subprocess.ProcessBuilder();
     procBuilder.setCommand(command);
     procBuilder.setArguments(args);

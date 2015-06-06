@@ -49,6 +49,7 @@ MODFILES = \
            os.jsm \
            prefs.jsm \
            locale.jsm \
+           execution.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \
            mimeVerify.jsm
