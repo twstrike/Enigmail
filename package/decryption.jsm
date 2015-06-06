@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, Armor: fales */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
