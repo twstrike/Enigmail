@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, OS: false */
+/*global Components: false, Log: false, OS: false, Data: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -41,10 +41,12 @@
 
 var EXPORTED_SYMBOLS = [ "Files" ];
 
-Components.utils.import("resource://enigmail/os.jsm");
-
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const Cu = Components.utils;
+
+Cu.import("resource://enigmail/os.jsm");
+Cu.import("resource://enigmail/data.jsm");
 
 const NS_FILE_CONTRACTID = "@mozilla.org/file/local;1";
 const NS_LOCAL_FILE_CONTRACTID = "@mozilla.org/file/local;1";
@@ -52,6 +54,7 @@ const NS_LOCALFILEOUTPUTSTREAM_CONTRACTID =
                               "@mozilla.org/network/file-output-stream;1";
 const NS_IOSERVICE_CONTRACTID       = "@mozilla.org/network/io-service;1";
 const NS_SCRIPTABLEINPUTSTREAM_CONTRACTID = "@mozilla.org/scriptableinputstream;1";
+const DIRSERVICE_CONTRACTID = "@mozilla.org/file/directory_service;1";
 
 const NS_RDONLY      = 0x01;
 const NS_WRONLY      = 0x02;
@@ -209,5 +212,45 @@ const Files = {
         } else {
             return nsFileObj.path;
         }
+    },
+
+    getFilePath: function (nsFileObj) {
+        return Data.convertToUnicode(Files.getFilePathDesc(nsFileObj), "utf-8");
+    },
+
+    getEscapedFilename: function (fileNameStr) {
+        if (OS.isDosLike()) {
+            // escape the backslashes and the " character (for Windows and OS/2)
+            fileNameStr = fileNameStr.replace(/([\\\"])/g, "\\$1");
+        }
+
+        if (OS.getOS() == "WINNT") {
+            // replace leading "\\" with "//"
+            fileNameStr = fileNameStr.replace(/^\\\\*/, "//");
+        }
+        return fileNameStr;
+    },
+
+    getTempDirObj: function () {
+        const TEMPDIR_PROP = "TmpD";
+
+        try {
+            let dsprops = Cc[DIRSERVICE_CONTRACTID].getService().
+                    QueryInterface(Ci.nsIProperties);
+            return dsprops.get(TEMPDIR_PROP, Ci.nsIFile);
+        } catch (ex) {
+            // let's guess ...
+            let tmpDirObj = Cc[NS_FILE_CONTRACTID].createInstance(Ci.nsIFile);
+            if (OS.getOS() == "WINNT") {
+                tmpDirObj.initWithPath("C:/TEMP");
+            } else {
+                tmpDirObj.initWithPath("/tmp");
+            }
+            return tmpDirObj;
+        }
+    },
+
+    getTempDir: function () {
+        return Files.getTempDirObj().path;
     }
 };

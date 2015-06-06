@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false */
+/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -55,6 +55,7 @@ Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -63,9 +64,7 @@ const Ci = Components.interfaces;
 const nsIEnigmail = Ci.nsIEnigmail;
 
 const DATE_FORMAT_CONTRACTID = "@mozilla.org/intl/scriptabledateformat;1";
-const DIRSERVICE_CONTRACTID = "@mozilla.org/file/directory_service;1";
 const LOCALE_SVC_CONTRACTID = "@mozilla.org/intl/nslocaleservice;1";
-const SCRIPTABLEUNICODECONVERTER_CONTRACTID = "@mozilla.org/intl/scriptableunicodeconverter";
 const NS_PREFS_SERVICE_CID = "@mozilla.org/preferences-service;1";
 const NS_STRING_INPUT_STREAM_CONTRACTID = "@mozilla.org/io/string-input-stream;1";
 const NS_INPUT_STREAM_CHNL_CONTRACTID = "@mozilla.org/network/input-stream-channel;1";
@@ -77,9 +76,6 @@ const ENIG_EXTENSION_GUID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
 
 const THUNDERBIRD_ID = "{3550f703-e582-4d05-9a08-453d09bdfdc6}";
 const SEAMONKEY_ID   = "{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}";
-
-
-const hexTable = "0123456789abcdef";
 
 const BUTTON_POS_0           = 1;
 const BUTTON_POS_1           = 1 << 8;
@@ -716,23 +712,9 @@ var EnigmailCommon = {
    *
    * @return: String - Unicode string
    */
-  convertGpgToUnicode: function (text)
-  {
-    if (typeof(text)=="string") {
-      text = text.replace(/\\x3a/ig, "\\e3A");
-      var a=text.search(/\\x[0-9a-fA-F]{2}/);
-      while (a>=0) {
-          var ch = unescape('%'+text.substr(a+2,2));
-          var r = new RegExp("\\"+text.substr(a,4));
-          text=text.replace(r, ch);
-
-          a=text.search(/\\x[0-9a-fA-F]{2}/);
-      }
-
-      text = this.convertToUnicode(text, "utf-8").replace(/\\e3A/g, ":");
-    }
-
-    return text;
+  convertGpgToUnicode: function (text) {
+    // TODO: remove
+    return Data.convertGpgToUnicode(text);
   },
 
   /**
@@ -830,13 +812,9 @@ var EnigmailCommon = {
    *
    * @return: String - the path encoded with UTF-8
    */
-
-  getFilePath: function (nsFileObj)
-  {
-    if (OS.getOS() == "WINNT")
-      return this.convertToUnicode(nsFileObj.persistentDescriptor, "utf-8");
-
-    return this.convertFromUnicode(nsFileObj.path, "utf-8");
+  getFilePath: function (nsFileObj) {
+    // TODO: REMOVE
+    return Files.getFilePath(nsFileObj);
   },
 
   /**
@@ -847,16 +825,8 @@ var EnigmailCommon = {
    * @return: String - the escaped path
    */
   getEscapedFilename: function (fileNameStr) {
-    if (OS.isDosLike()) {
-      // escape the backslashes and the " character (for Windows and OS/2)
-      fileNameStr = fileNameStr.replace(/([\\\"])/g, "\\$1");
-    }
-
-    if (OS.getOS() == "WINNT") {
-      // replace leading "\\" with "//"
-      fileNameStr = fileNameStr.replace(/^\\\\*/, "//");
-    }
-    return fileNameStr;
+    // TODO: REMOVE
+    return Files.getEscapedFilename(fileNameStr);
   },
 
   /**
@@ -864,37 +834,18 @@ var EnigmailCommon = {
    *
    *  @return nsIFile object to the temporary directory
    */
-  getTempDirObj: function ()
-  {
-    const TEMPDIR_PROP = "TmpD";
-    var tmpDirObj;
-
-    try {
-      var ds = Cc[DIRSERVICE_CONTRACTID].getService();
-      var dsprops = ds.QueryInterface(Ci.nsIProperties);
-      tmpDirObj = dsprops.get(TEMPDIR_PROP, this.getLocalFileApi());
-    }
-    catch (ex) {
-      // let's guess ...
-      tmpDirObj = Cc[this.LOCAL_FILE_CONTRACTID].createInstance(this.getLocalFileApi());
-      if (OS.getOS() == "WINNT") {
-        tmpDirObj.initWithPath("C:/TEMP");
-      } else {
-        tmpDirObj.initWithPath("/tmp");
-      }
-    }
-    return tmpDirObj;
+  getTempDirObj: function () {
+    // TODO: REMOVE
+    return Files.getTempDirObj();
   },
 
   /**
    *  Get the temp directory as string
    *  @return |String| containing the temporary directory name
    */
-
-  getTempDir: function ()
-  {
-    let tmpDir = this.getTempDirObj();
-    return tmpDir.path;
+  getTempDir: function () {
+    // TODO: REMOVE
+    return Files.getTempDir();
   },
 
   /**
@@ -1017,9 +968,9 @@ var EnigmailCommon = {
     *
     * @return: String - decoded output data
     */
-
   decodeQuotedPrintable: function(str) {
-    return unescape(str.replace(/%/g, "=25").replace(/=/g,'%'));
+    // TODO: remove
+    return Data.decodeQuotedPrintable(str);
   },
 
   /**
@@ -1031,26 +982,9 @@ var EnigmailCommon = {
    *
    * @return: Unicode form of text
    */
-
-  convertToUnicode: function (text, charset)
-  {
-    //Log.DEBUG("enigmailCommon.jsm: convertToUnicode: "+charset+"\n");
-
-    if (!text || (charset && (charset.toLowerCase() == "iso-8859-1")))
-      return text;
-
-    if (! charset) charset = "utf-8";
-
-    // Encode plaintext
-    try {
-      var unicodeConv = Cc[SCRIPTABLEUNICODECONVERTER_CONTRACTID].getService(Ci.nsIScriptableUnicodeConverter);
-
-      unicodeConv.charset = charset;
-      return unicodeConv.ConvertToUnicode(text);
-
-    } catch (ex) {
-      return text;
-    }
+  convertToUnicode: function (text, charset) {
+    // TODO: remove
+    return Data.convertToUnicode(text, charset);
   },
 
   /**
@@ -1063,25 +997,8 @@ var EnigmailCommon = {
    * @return: converted text
    */
   convertFromUnicode: function (text, charset) {
-    //Log.DEBUG("enigmailCommon.jsm: convertFromUnicode: "+charset+"\n");
-
-    if (!text)
-      return "";
-
-    if (! charset) charset="utf-8";
-
-    // Encode plaintext
-    try {
-      var unicodeConv = Cc[SCRIPTABLEUNICODECONVERTER_CONTRACTID].getService(Ci.nsIScriptableUnicodeConverter);
-
-      unicodeConv.charset = charset;
-      return unicodeConv.ConvertFromUnicode(text);
-
-    } catch (ex) {
-      Log.DEBUG("enigmailCommon.jsm: convertFromUnicode: caught an exception\n");
-
-      return text;
-    }
+    // TODO: remove
+    return Data.convertFromUnicode(text, charset);
   },
 
   /**
@@ -1097,8 +1014,7 @@ var EnigmailCommon = {
    *
    * @return: human readable error message from GnuPG
    */
-  parseErrorOutput: function (errOutput, retStatusObj)
-  {
+  parseErrorOutput: function (errOutput, retStatusObj) {
     return EnigmailErrorHandling.parseErrorOutput(this, gStatusFlags, errOutput, retStatusObj);
   },
 
@@ -1111,16 +1027,9 @@ var EnigmailCommon = {
    *
    * @return: String - packed bytes
    */
-  pack: function (value, bytes)
-  {
-    var str = '';
-    var mask = 0xff;
-    for (var j=0; j < bytes; j++) {
-      str = String.fromCharCode( (value & mask) >> j*8 ) + str;
-      mask <<= 8;
-    }
-
-    return str;
+  pack: function (value, bytes) {
+    // TODO: remove
+    return Data.pack(value, bytes);
   },
 
   /**
@@ -1130,17 +1039,9 @@ var EnigmailCommon = {
    *
    * @return: Number (Long int)
    */
-  unpack: function (str)
-  {
-    var len = str.length;
-    var value = 0;
-
-    for (var j=0; j < len; j++) {
-      value <<= 8;
-      value  |= str.charCodeAt(j);
-    }
-
-    return value;
+  unpack: function (str) {
+    // TODO: remove
+    return Data.unpack(str);
   },
 
 
@@ -1152,18 +1053,9 @@ var EnigmailCommon = {
    *
    * @return - hexadecimal string
    */
-  bytesToHex: function (str)
-  {
-    var len = str.length;
-
-    var hex = '';
-    for (var j=0; j < len; j++) {
-      var charCode = str.charCodeAt(j);
-      hex += hexTable.charAt((charCode & 0xf0) >> 4) +
-             hexTable.charAt((charCode & 0x0f));
-    }
-
-    return hex;
+  bytesToHex: function (str) {
+    // TODO: remove
+    return Data.bytesToHex(str);
   },
 
   /**
