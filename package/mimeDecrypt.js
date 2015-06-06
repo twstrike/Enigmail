@@ -250,7 +250,7 @@ PgpMimeDecrypt.prototype = {
         }
       }
       catch(ex) {
-        Ec.writeException("mimeDecrypt.js", ex);
+        Log.writeException("mimeDecrypt.js", ex);
         Log.DEBUG("mimeDecrypt.js: error while processing "+this.msgUriSpec+"\n");
       }
     }
@@ -332,7 +332,7 @@ PgpMimeDecrypt.prototype = {
       this.statusDisplayed = true;
     }
     catch(ex) {
-      Ec.writeException("mimeDecrypt.js", ex);
+      Log.writeException("mimeDecrypt.js", ex);
     }
     LOCAL_DEBUG("mimeDecrypt.js: displayStatus done\n");
   },

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false */
+/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -335,7 +335,7 @@ var EnigmailCommon = {
         gPromptSvc.alert(win, Locale.getString("enigAlert"), mesg);
       }
       catch(ex) {
-        this.writeException("alert" , ex);
+        Log.writeException("alert" , ex);
       }
     }
   },
@@ -880,23 +880,6 @@ var EnigmailCommon = {
     };
 
     return new requestObserver(terminateFunc, terminateArg);
-  },
-
-  /**
-   *  Log an exception including the stack trace
-   *
-   *  referenceInfo: String - arbitraty text to write before the exception is logged
-   *  ex:            exception object
-   */
-  writeException: function (referenceInfo, ex)
-  {
-      // TODO: MOVE
-      Log.ERROR(referenceInfo+": caught exception: " +
-                   ex.name+"\n" +
-                   "Message: '"+ex.message+"'\n" +
-                   "File:    "+ex.fileName+"\n" +
-                   "Line:    "+ex.lineNumber+"\n" +
-                   "Stack:   "+ex.stack+"\n");
   },
 
   /**
@@ -1785,7 +1768,7 @@ var EnigmailCommon = {
             listener.done(result.exitCode);
           }
           catch (ex) {
-            EnigmailCommon.writeException("enigmailCommon.jsm", ex);
+            Log.writeException("enigmailCommon.jsm", ex);
           }
         },
         mergeStderr: false

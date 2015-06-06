@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, EnigmailCore: false, OS: false */
+/*global Components: false, EnigmailCommon: false, EnigmailCore: false, OS: false, Log: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -446,7 +446,7 @@ installer.prototype = {
     }
     catch(ex) {
       deferred.reject(ex);
-      Ec.writeException("installGnuPG.jsm", ex);
+      Log.writeException("installGnuPG.jsm", ex);
 
       if (self.progressListener)
         self.progressListener.onError("installGnuPG.downloadFailed");
@@ -491,7 +491,7 @@ installer.prototype = {
         performInstall(this.response).then(function _f() { performCleanup(); });
       }
       catch (ex) {
-        Ec.writeException("installGnuPG.jsm", ex);
+        Log.writeException("installGnuPG.jsm", ex);
 
         if (self.progressListener)
           self.progressListener.onError("installGnuPG.installFailed");
@@ -564,7 +564,7 @@ installer.prototype = {
       }
       catch(ex) {
         deferred.reject(ex);
-        Ec.writeException("installGnuPG.jsm", ex);
+        Log.writeException("installGnuPG.jsm", ex);
 
         if (self.progressListener)
           self.progressListener.onError("installGnuPG.installFailed");
@@ -611,7 +611,7 @@ installer.prototype = {
     }
     catch(ex) {
       deferred.reject(ex);
-      Ec.writeException("installGnuPG.jsm", ex);
+      Log.writeException("installGnuPG.jsm", ex);
 
       if (self.progressListener)
         self.progressListener.onError("installGnuPG.downloadFailed");

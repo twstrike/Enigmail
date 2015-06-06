@@ -796,7 +796,7 @@ Enigmail.msg = {
       this.messageParse(!event, false, contentEncoding, msgUriSpec);
     }
     catch (ex) {
-      EnigmailCommon.writeException("enigmailMessengerOverlay.js: messageDecryptCb", ex);
+      Log.writeException("enigmailMessengerOverlay.js: messageDecryptCb", ex);
     }
   },
 
@@ -888,7 +888,7 @@ Enigmail.msg = {
         try {
           msgText = window.atob(msgText);
         } catch (ex) {
-          EnigmailCommon.writeException("enigmailMessengerOverlay.js: calling atob() ", ex);
+          Log.writeException("enigmailMessengerOverlay.js: calling atob() ", ex);
         }
         //Log.DEBUG("nach base64 decode: \n" + msgText + "\n");
       }

@@ -766,7 +766,7 @@ Enigmail.msg = {
       }
     }
     catch (ex) {
-      EnigmailCommon.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.extractAndAttachKey", ex);
+      Log.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.extractAndAttachKey", ex);
     }
     tmpFile.append("key.asc");
     tmpFile.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
@@ -2715,7 +2715,7 @@ Enigmail.msg = {
         }
       }
       catch (ex2) {
-        EnigmailCommon.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.saveDraftMessage", ex);
+        Log.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.saveDraftMessage", ex);
         return false;
       }
     }
@@ -2813,7 +2813,7 @@ Enigmail.msg = {
           }
         }
         catch (ex2) {
-          EnigmailCommon.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.attachKey", ex);
+          Log.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.attachKey", ex);
         }
       }
     }
@@ -3255,7 +3255,7 @@ Enigmail.msg = {
         }
       }
     } catch (ex) {
-       EnigmailCommon.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg", ex);
+       Log.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg", ex);
        msg=Locale.getString("signFailed");
        if (EnigmailCommon.enigmailSvc && EnigmailCommon.enigmailSvc.initializationError) {
           msg += "\n"+EnigmailCommon.enigmailSvc.initializationError;
@@ -3297,7 +3297,7 @@ Enigmail.msg = {
         }
       }
     } catch (ex) {
-       EnigmailCommon.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptInline", ex);
+       Log.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptInline", ex);
     }
 
     try {
@@ -3637,7 +3637,7 @@ Enigmail.msg = {
       }
     }
     catch (ex) {
-      EnigmailCommon.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.modifyCompFields", ex);
+      Log.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.modifyCompFields", ex);
     }
   },
 

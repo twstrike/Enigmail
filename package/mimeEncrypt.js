@@ -1,4 +1,4 @@
-/*global Components EnigmailCommon */
+/*global Components: false, EnigmailCommon: false, Log: false */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -113,7 +113,7 @@ PgpMimeEncrypt.prototype = {
       }
     }
     catch(ex) {
-      Ec.writeException("mimeEncrypt.js", ex);
+      Log.writeException("mimeEncrypt.js", ex);
       throw(ex);
     }
   },
@@ -190,7 +190,7 @@ PgpMimeEncrypt.prototype = {
 
     }
     catch(ex) {
-      Ec.writeException("mimeEncrypt.js", ex);
+      Log.writeException("mimeEncrypt.js", ex);
       throw(ex);
     }
   },
@@ -284,7 +284,7 @@ PgpMimeEncrypt.prototype = {
       this.flushOutput();
     }
     catch(ex) {
-      Ec.writeException("mimeEncrypt.js", ex);
+      Log.writeException("mimeEncrypt.js", ex);
       throw(ex);
     }
 
@@ -342,7 +342,7 @@ PgpMimeEncrypt.prototype = {
       }
     }
     catch(ex) {
-      Ec.writeException("mimeEncrypt.js", ex);
+      Log.writeException("mimeEncrypt.js", ex);
       throw(ex);
     }
   },

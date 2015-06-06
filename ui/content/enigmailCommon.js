@@ -243,7 +243,7 @@ function EnigReadFileContents(localFile, maxBytes) {
 
 // write exception information
 function EnigWriteException(referenceInfo, ex) {
-  EnigmailCommon.writeException(referenceInfo, ex);
+  Log.writeException(referenceInfo, ex);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

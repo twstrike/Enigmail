@@ -170,5 +170,20 @@ const Log = {
         }
 
         EnigmailConsole.write(str);
+    },
+
+    /**
+     *  Log an exception including the stack trace
+     *
+     *  referenceInfo: String - arbitraty text to write before the exception is logged
+     *  ex:            exception object
+     */
+    writeException: function (referenceInfo, ex) {
+        Log.ERROR(referenceInfo+": caught exception: " +
+                  ex.name+"\n" +
+                  "Message: '"+ex.message+"'\n" +
+                  "File:    "+ex.fileName+"\n" +
+                  "Line:    "+ex.lineNumber+"\n" +
+                  "Stack:   "+ex.stack+"\n");
     }
 };

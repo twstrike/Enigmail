@@ -397,7 +397,7 @@ MimeVerify.prototype = {
       this.statusDisplayed = true;
     }
     catch(ex) {
-      Ec.writeException("mimeVerify.jsm", ex);
+      Log.writeException("mimeVerify.jsm", ex);
     }
   }
 };
