@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, App: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, App: false, Locale: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -46,6 +46,7 @@ Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -96,7 +97,7 @@ var Encryption = {
             bccMailAddr = stripEmailAdr(ecom, bccMailAddr);
 
         } catch (ex) {
-            errorMsgObj.value = ecom.getString("invalidEmail");
+            errorMsgObj.value = Locale.getString("invalidEmail");
             return null;
         }
 
@@ -218,19 +219,19 @@ var Encryption = {
 
         if (!sendFlags) {
             Log.DEBUG("enigmailCommon.jsm: encryptMessageStart: NO ENCRYPTION!\n");
-            errorMsgObj.value = ecom.getString("notRequired");
+            errorMsgObj.value = Locale.getString("notRequired");
             return null;
         }
 
         ecom.getService(win);
         if (! (ecom.enigmailSvc)) {
             Log.ERROR("enigmailCommon.jsm: encryptMessageStart: not yet initialized\n");
-            errorMsgObj.value = ecom.getString("notInit");
+            errorMsgObj.value = Locale.getString("notInit");
             return null;
         }
 
         if (ecom.keygenProcess) {
-            errorMsgObj.value = ecom.getString("notComplete");
+            errorMsgObj.value = Locale.getString("notComplete");
             return null;
         }
 
@@ -275,7 +276,7 @@ var Encryption = {
 
         if (!ecom.enigmailSvc.initialized) {
             Log.ERROR("enigmailCommon.jsm: encryptMessageEnd: not yet initialized\n");
-            retStatusObj.errorMsg = ecom.getString("notInit");
+            retStatusObj.errorMsg = Locale.getString("notInit");
             return -1;
         }
 
@@ -310,7 +311,7 @@ var Encryption = {
 
 
         if (retStatusObj.statusFlags & nsIEnigmail.BAD_PASSPHRASE) {
-            retStatusObj.errorMsg = ecom.getString("badPhrase");
+            retStatusObj.errorMsg = Locale.getString("badPhrase");
         }
         else if (retStatusObj.statusFlags & nsIEnigmail.INVALID_RECIPIENT) {
             retStatusObj.errorMsg = retStatusObj.statusMsg;
@@ -319,7 +320,7 @@ var Encryption = {
             retStatusObj.errorMsg = retStatusObj.statusMsg;
         }
         else {
-            retStatusObj.errorMsg = ecom.getString("badCommand");
+            retStatusObj.errorMsg = Locale.getString("badCommand");
         }
 
         return exitCode;
@@ -342,7 +343,7 @@ var Encryption = {
 
         if (!esvc.initialized) {
             Log.ERROR("enigmail.js: Enigmail.encryptMessage: not yet initialized\n");
-            errorMsgObj.value = ec.getString("notInit");
+            errorMsgObj.value = Locale.getString("notInit");
             return "";
         }
 

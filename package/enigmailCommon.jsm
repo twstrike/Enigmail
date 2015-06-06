@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false */
+/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -54,6 +54,7 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -244,15 +245,15 @@ var EnigmailCommon = {
 
         if (firstInitialization) {
           // Display initialization error alert
-          var errMsg = this.enigmailSvc.initializationError ? this.enigmailSvc.initializationError : this.getString("accessError");
+          var errMsg = this.enigmailSvc.initializationError ? this.enigmailSvc.initializationError : Locale.getString("accessError");
 
-          errMsg += "\n\n"+this.getString("initErr.howToFixIt");
+          errMsg += "\n\n"+Locale.getString("initErr.howToFixIt");
 
           var checkedObj = {value: false};
           if (Prefs.getPref("initAlert")) {
             var r = this.longAlert(win, "Enigmail: "+errMsg,
-                                   this.getString("dlgNoPrompt"),
-                                   null, this.getString("initErr.setupWizard.button"),
+                                   Locale.getString("dlgNoPrompt"),
+                                   null, Locale.getString("initErr.setupWizard.button"),
                                    null, checkedObj);
             if (r >= 0 && checkedObj.value) {
               Prefs.setPref("initAlert", false);
@@ -278,7 +279,7 @@ var EnigmailCommon = {
 
       if (firstInitialization && this.enigmailSvc.initialized &&
           this.enigmailSvc.agentType && this.enigmailSvc.agentType == "pgp") {
-        this.alert(win, this.getString("pgpNotSupported"));
+        this.alert(win, Locale.getString("pgpNotSupported"));
       }
 
       if (this.enigmailSvc.initialized && (this.getVersion() != configuredVersion)) {
@@ -332,11 +333,11 @@ var EnigmailCommon = {
   alert: function (win, mesg)
   {
     if (mesg.length > 1000) {
-      this.longAlert(win, mesg, null, this.getString("dlg.button.close"));
+      this.longAlert(win, mesg, null, Locale.getString("dlg.button.close"));
     }
     else {
       try {
-        gPromptSvc.alert(win, this.getString("enigAlert"), mesg);
+        gPromptSvc.alert(win, Locale.getString("enigAlert"), mesg);
       }
       catch(ex) {
         this.writeException("alert" , ex);
@@ -424,7 +425,7 @@ var EnigmailCommon = {
     }
 
     var buttonPressed = gPromptSvc.confirmEx(win,
-                          this.getString("enigConfirm"),
+                          Locale.getString("enigConfirm"),
                           mesg,
                           buttonTitles,
                           okLabel, cancelLabel, null,
@@ -491,11 +492,11 @@ var EnigmailCommon = {
       case notSet:
         let checkBoxObj = { value: false} ;
         let buttonPressed = gPromptSvc.confirmEx(win,
-                              this.getString("enigConfirm"),
+                              Locale.getString("enigConfirm"),
                               mesg,
                               buttonTitles,
                               okLabel, cancelLabel, null,
-                              this.getString("dlgKeepSetting"), checkBoxObj);
+                              Locale.getString("dlgKeepSetting"), checkBoxObj);
         if (checkBoxObj.value) {
           Prefs.setPref(prefText, (buttonPressed===0 ? yes : no));
         }
@@ -517,11 +518,11 @@ var EnigmailCommon = {
       case display:
         let checkBoxObj = { value: false} ;
         let buttonPressed = gPromptSvc.confirmEx(win,
-                              this.getString("enigConfirm"),
+                              Locale.getString("enigConfirm"),
                               mesg,
                               buttonTitles,
                               okLabel, cancelLabel, null,
-                              this.getString("dlgNoPrompt"), checkBoxObj);
+                              Locale.getString("dlgNoPrompt"), checkBoxObj);
         if (checkBoxObj.value) {
           Prefs.setPref(prefText, false);
         }
@@ -550,7 +551,7 @@ var EnigmailCommon = {
   promptValue: function (win, mesg, valueObj)
   {
     var checkObj = {};
-    return gPromptSvc.prompt(win, this.getString("enigPrompt"),
+    return gPromptSvc.prompt(win, Locale.getString("enigPrompt"),
                                  mesg, valueObj, "", checkObj);
   },
 
@@ -572,11 +573,11 @@ var EnigmailCommon = {
     if (prefValue == display) {
       var checkBoxObj = { value: false } ;
       var buttonPressed = gPromptSvc.confirmEx(win,
-                            this.getString("enigAlert"),
+                            Locale.getString("enigAlert"),
                             mesg,
                             (gPromptSvc.BUTTON_TITLE_OK * BUTTON_POS_0),
                             null, null, null,
-                            this.getString("dlgNoPrompt"), checkBoxObj);
+                            Locale.getString("dlgNoPrompt"), checkBoxObj);
       if (checkBoxObj.value && buttonPressed===0) {
         Prefs.setPref(prefText, dontDisplay);
       }
@@ -606,10 +607,10 @@ var EnigmailCommon = {
     Prefs.setPref(countPrefName, alertCount);
 
     if (alertCount > 0) {
-      mesg += this.getString("repeatPrefix", [ alertCount ]) + " ";
-      mesg += (alertCount == 1) ? this.getString("repeatSuffixSingular") : this.getString("repeatSuffixPlural");
+      mesg += Locale.getString("repeatPrefix", [ alertCount ]) + " ";
+      mesg += (alertCount == 1) ? Locale.getString("repeatSuffixSingular") : Locale.getString("repeatSuffixPlural");
     } else {
-      mesg += this.getString("noRepeat");
+      mesg += Locale.getString("noRepeat");
     }
 
     this.alert(win, mesg);
@@ -1002,8 +1003,6 @@ var EnigmailCommon = {
                    "Line:    "+ex.lineNumber+"\n" +
                    "Stack:   "+ex.stack+"\n");
   },
-
-  getString: EnigmailCore.getString.bind(EnigmailCore),
 
   isSuite: function () {
     // return true if Seamonkey, false otherwise
@@ -1766,17 +1765,17 @@ var EnigmailCommon = {
 
     if (! (this.enigmailSvc && this.enigmailSvc.initialized)) {
       Log.ERROR("enigmailCommon.jsm: keyserverAccess: not yet initialized\n");
-      errorMsgObj.value = this.getString("notInit");
+      errorMsgObj.value = Locale.getString("notInit");
       return null;
     }
 
     if (!keyserver) {
-      errorMsgObj.value = this.getString("failNoServer");
+      errorMsgObj.value = Locale.getString("failNoServer");
       return null;
     }
 
     if (!searchTerms && ! (actionFlags & nsIEnigmail.REFRESH_KEY)) {
-      errorMsgObj.value = this.getString("failNoID");
+      errorMsgObj.value = Locale.getString("failNoID");
       return null;
     }
 
@@ -2128,7 +2127,7 @@ var EnigmailCommon = {
     this.getService(win);
     if (! (this.enigmailSvc)) {
       Log.ERROR("enigmailCommon.jsm: determineHashAlgorithm: not yet initialized\n");
-      errorMsgObj.value = this.getString("notInit");
+      errorMsgObj.value = Locale.getString("notInit");
       return 2;
     }
 
@@ -2187,7 +2186,7 @@ var EnigmailCommon = {
         // Abormal return
         if (retStatusObj.statusFlags & nsIEnigmail.BAD_PASSPHRASE) {
           // "Unremember" passphrase on error return
-          retStatusObj.errorMsg = this.getString("badPhrase");
+          retStatusObj.errorMsg = Locale.getString("badPhrase");
         }
         this.alert(win, retStatusObj.errorMsg);
         return exitCode;
@@ -2568,9 +2567,9 @@ function ConfigureEnigmail(win, startingPreferences) {
         EnigmailCommon.setTimeout(
           function _cb() {
             var doIt = EnigmailCommon.confirmDlg(win,
-                                   EnigmailCommon.getString("enigmailCommon.versionSignificantlyChanged"),
-                                   EnigmailCommon.getString("enigmailCommon.checkPreferences"),
-                                   EnigmailCommon.getString("dlg.button.close"));
+                                   Locale.getString("enigmailCommon.versionSignificantlyChanged"),
+                                   Locale.getString("enigmailCommon.checkPreferences"),
+                                   Locale.getString("dlg.button.close"));
             if (!startingPreferences && doIt) {
                 // same as:
                 // - EnigmailFuncs.openPrefWindow(window, true, 'sendingTab');

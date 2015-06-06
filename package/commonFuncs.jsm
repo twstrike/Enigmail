@@ -1,3 +1,4 @@
+/*global Components: false, Locale: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -45,6 +46,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailFuncs" ];
 
@@ -133,7 +135,7 @@ var EnigmailFuncs = {
 
     var ioService = Cc[IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
     if (ioService && ioService.offline) {
-      EnigmailCommon.alert(win, EnigmailCommon.getString("needOnline"));
+      EnigmailCommon.alert(win, Locale.getString("needOnline"));
       return;
     }
 
@@ -400,7 +402,7 @@ var EnigmailFuncs = {
 
 
     var opts="viewLog=1&title=" +
-          escape(EnigmailCommon.getString("debugLog.title"));
+          escape(Locale.getString("debugLog.title"));
 
     EnigmailCommon.openWin("enigmail:logFile",
                            "chrome://enigmail/content/enigmailViewFile.xul?"+opts,
@@ -553,7 +555,7 @@ var EnigmailFuncs = {
           createInstance(Ci.nsIFile);
         photoFile.initWithPath(photoPath);
         if (! (photoFile.isFile() && photoFile.isReadable())) {
-          EnigmailCommon.alert(win, EnigmailCommon.getString("error.photoPathNotReadable", photoPath));
+          EnigmailCommon.alert(win, Locale.getString("error.photoPathNotReadable", photoPath));
         }
         else {
           var ioServ = Cc[EnigmailCommon.IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
@@ -576,7 +578,7 @@ var EnigmailFuncs = {
        }
       }
       else {
-        EnigmailCommon.alert(win, EnigmailCommon.getString("noPhotoAvailable"));
+        EnigmailCommon.alert(win, Locale.getString("noPhotoAvailable"));
       }
     }
   },
@@ -716,7 +718,7 @@ var EnigmailFuncs = {
           break;
         case "uat":
           if (listRow[USERID_ID].indexOf("1 ")===0) {
-            var userId=EnigmailCommon.getString("userAtt.photo");
+            var userId=Locale.getString("userAtt.photo");
             keyObj.SubUserIds.push({userId: userId,
                                     keyTrust:listRow[KEY_TRUST_ID],
                                     type: "uat",
@@ -786,9 +788,9 @@ var EnigmailFuncs = {
 
     var aGpgSecretsList = this.obtainKeyList(win, true, refresh);
     if (!aGpgSecretsList && !refresh) {
-      if (EnigmailCommon.confirmDlg(EnigmailCommon.getString("noSecretKeys"),
-            EnigmailCommon.getString("keyMan.button.generateKey"),
-            EnigmailCommon.getString("keyMan.button.skip"))) {
+      if (EnigmailCommon.confirmDlg(Locale.getString("noSecretKeys"),
+            Locale.getString("keyMan.button.generateKey"),
+            Locale.getString("keyMan.button.skip"))) {
         this.openKeyGen();
         this.loadKeyList(win, true, keyListObj);
       }

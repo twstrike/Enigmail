@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, Armor: fales */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, Locale: false, Armor: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -46,6 +46,7 @@ Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/armor.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 const Ci = Components.interfaces;
 const nsIEnigmail = Ci.nsIEnigmail;
@@ -61,12 +62,12 @@ var Decryption = {
         ecom.getService(win);
         if (! (ecom.enigmailSvc)) {
             Log.ERROR("enigmailCommon.jsm: decryptMessageStart: not yet initialized\n");
-            errorMsgObj.value = ecom.getString("notInit");
+            errorMsgObj.value = Locale.getString("notInit");
             return null;
         }
 
         if (ecom.isGeneratingKey()) {
-            errorMsgObj.value = ecom.getString("notComplete");
+            errorMsgObj.value = Locale.getString("notComplete");
             return null;
         }
 
@@ -113,7 +114,7 @@ var Decryption = {
         if (statusFlagsObj.value & nsIEnigmail.MISSING_PASSPHRASE) {
             Log.ERROR("enigmailCommon.jsm: decryptMessageStart: Error - no passphrase supplied\n");
 
-            errorMsgObj.value = ecom.getString("noPassphrase");
+            errorMsgObj.value = Locale.getString("noPassphrase");
             return null;
         }
 
@@ -344,7 +345,7 @@ var Decryption = {
                     }
                 }
                 else {
-                    encToArray[encIdx] = ecom.getString("hiddenKey");
+                    encToArray[encIdx] = Locale.getString("hiddenKey");
                 }
             }
             encToDetails = "\n  " + encToArray.join(",\n  ") + "\n";
@@ -359,26 +360,26 @@ var Decryption = {
             var trustPrefix = "";
 
             if (retStatusObj.statusFlags & nsIEnigmail.UNTRUSTED_IDENTITY) {
-                trustPrefix += ecom.getString("prefUntrusted")+" ";
+                trustPrefix += Locale.getString("prefUntrusted")+" ";
             }
 
             if (retStatusObj.statusFlags & nsIEnigmail.REVOKED_KEY) {
-                trustPrefix += ecom.getString("prefRevoked")+" ";
+                trustPrefix += Locale.getString("prefRevoked")+" ";
             }
 
             if (retStatusObj.statusFlags & nsIEnigmail.EXPIRED_KEY_SIGNATURE) {
-                trustPrefix += ecom.getString("prefExpiredKey")+" ";
+                trustPrefix += Locale.getString("prefExpiredKey")+" ";
 
             } else if (retStatusObj.statusFlags & nsIEnigmail.EXPIRED_SIGNATURE) {
-                trustPrefix += ecom.getString("prefExpired")+" ";
+                trustPrefix += Locale.getString("prefExpired")+" ";
             }
 
             if (goodOrExpOrRevSignature) {
-                retStatusObj.errorMsg = trustPrefix + ecom.getString("prefGood", [sigUserId]); /* + ", " +
-                                                                                                ecom.getString("keyId") + " 0x" + sigKeyId.substring(8,16); */
+                retStatusObj.errorMsg = trustPrefix + Locale.getString("prefGood", [sigUserId]); /* + ", " +
+                                                                                                Locale.getString("keyId") + " 0x" + sigKeyId.substring(8,16); */
             } else {
-                retStatusObj.errorMsg = trustPrefix + ecom.getString("prefBad", [sigUserId]); /*+ ", " +
-                                                                                               ecom.getString("keyId") + " 0x" + sigKeyId.substring(8,16); */
+                retStatusObj.errorMsg = trustPrefix + Locale.getString("prefBad", [sigUserId]); /*+ ", " +
+                                                                                               Locale.getString("keyId") + " 0x" + sigKeyId.substring(8,16); */
                 if (!exitCode)
                     exitCode = 1;
             }
@@ -428,7 +429,7 @@ var Decryption = {
         var indentStrObj = {};
         var blockType = Armor.locateArmoredBlock(cipherText, 0, "", beginIndexObj, endIndexObj, indentStrObj);
         if (!blockType || blockType == "SIGNATURE") {
-            errorMsgObj.value = EC.getString("noPGPblock");
+            errorMsgObj.value = Locale.getString("noPGPblock");
             statusFlagsObj.value |= nsIEnigmail.DISPLAY_MESSAGE;
             return "";
         }
@@ -464,7 +465,7 @@ var Decryption = {
 
         if (publicKey) {
             if (!allowImport) {
-                errorMsgObj.value = EC.getString("decryptToImport");
+                errorMsgObj.value = Locale.getString("decryptToImport");
                 statusFlagsObj.value |= nsIEnigmail.DISPLAY_MESSAGE;
                 statusFlagsObj.value |= nsIEnigmail.INLINE_KEY;
 
@@ -487,7 +488,7 @@ var Decryption = {
             newSignature = Armor.extractSignaturePart(pgpBlock, nsIEnigmail.SIGNATURE_ARMOR);
             if (oldSignature && (newSignature != oldSignature)) {
                 Log.ERROR("enigmail.js: Enigmail.decryptMessage: Error - signature mismatch "+newSignature+"\n");
-                errorMsgObj.value = EC.getString("sigMismatch");
+                errorMsgObj.value = Locale.getString("sigMismatch");
                 statusFlagsObj.value |= nsIEnigmail.DISPLAY_MESSAGE;
 
                 return "";
@@ -574,7 +575,7 @@ var Decryption = {
         if (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE) {
             if (verifyOnly && indentStrObj.value) {
                 // Probably replied message that could not be verified
-                errorMsgObj.value = EC.getString("unverifiedReply")+"\n\n"+errorMsgObj.value;
+                errorMsgObj.value = Locale.getString("unverifiedReply")+"\n\n"+errorMsgObj.value;
                 return "";
             }
 
@@ -613,7 +614,7 @@ var Decryption = {
                     importedKey = (exitStatus === 0);
 
                     if (exitStatus > 0) {
-                        ec.alert(parent, EC.getString("cantImport")+importErrorMsgObj.value);
+                        ec.alert(parent, Locale.getString("cantImport")+importErrorMsgObj.value);
                     }
                 }
 

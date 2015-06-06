@@ -1,4 +1,4 @@
-/*global Components */
+/*global Components: false, Locale: false, EnigmailCommon: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -37,6 +37,7 @@ Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 const Ec = EnigmailCommon;
 
@@ -45,7 +46,7 @@ var gCardData = {};
 function onLoad() {
   var enigmailSvc = Ec.getService(window);
   if (!enigmailSvc) {
-    Ec.dispatchEvent(failWithError, 0, Ec.getString("accessError"));
+    Ec.dispatchEvent(failWithError, 0, Locale.getString("accessError"));
     return;
   }
   var exitCodeObj = {};
@@ -156,7 +157,7 @@ function doSaveChanges() {
 
   var enigmailSvc = Ec.getService(window);
   if (!enigmailSvc) {
-    Ec.alert(window, Ec.getString("accessError"));
+    Ec.alert(window, Locale.getString("accessError"));
     window.close();
     return;
   }
@@ -165,7 +166,7 @@ function doSaveChanges() {
   var dialogname = getValue("name");
   var dialogfirstname = getValue("firstname");
   if ((dialogname.search(/^[A-Za-z0-9\.\-,\?_ ]*$/) !== 0) || (dialogfirstname.search(/^[A-Za-z0-9\.\-,\?_ ]*$/) !== 0)) {
-    Ec.alert(window, Ec.getString("Carddetails.NoASCII"));
+    Ec.alert(window, Locale.getString("Carddetails.NoASCII"));
     onLoad();
     doEditData();
   }

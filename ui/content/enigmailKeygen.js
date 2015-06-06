@@ -40,6 +40,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 try {
   Components.utils.import("resource://gre/modules/Promise.jsm");
@@ -281,8 +282,8 @@ function enigmailCheckPassphrase() {
   }
 
   if (passphrase.search(/[^\x20-\x7E]/)>=0) {
-    if (! Ec.confirmDlg(window, Ec.getString("keygen.passCharProblem"),
-        Ec.getString("dlg.button.ignore"), Ec.getString("dlg.button.cancel"))) {
+    if (! Ec.confirmDlg(window, Locale.getString("keygen.passCharProblem"),
+        Locale.getString("dlg.button.ignore"), Locale.getString("dlg.button.cancel"))) {
       return null;
     }
   }

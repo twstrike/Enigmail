@@ -13,6 +13,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/mimeVerify.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 
 const Cc = Components.classes;
@@ -424,7 +425,7 @@ PgpMimeDecrypt.prototype = {
             "",
             "",
             "",
-            EnigmailCommon.getString("possiblyPgpMime"),
+            Locale.getString("possiblyPgpMime"),
             "",
             this.uri,
             null);

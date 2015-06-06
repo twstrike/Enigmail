@@ -121,6 +121,7 @@ zip --must-match\
     modules/prefs.jsm \
     modules/os.jsm \
     modules/app.jsm \
+    modules/locale.jsm \
     modules/commonFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \

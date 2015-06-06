@@ -37,6 +37,7 @@
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 const Ec = EnigmailCommon;
 
@@ -135,12 +136,12 @@ function onLoad() {
 
   var statTxt=document.getElementById("dialog.status2");
   if (inArg.accessType == nsIEnigmail.UPLOAD_KEY) {
-    statTxt.value=Ec.getString("keyserverProgress.uploading");
-    subject = Ec.getString("keyserverTitle.uploading");
+    statTxt.value=Locale.getString("keyserverProgress.uploading");
+    subject = Locale.getString("keyserverTitle.uploading");
   }
   else {
-    statTxt.value=Ec.getString("keyserverProgress.refreshing");
-    subject = Ec.getString("keyserverTitle.refreshing");
+    statTxt.value=Locale.getString("keyserverProgress.refreshing");
+    subject = Locale.getString("keyserverTitle.refreshing");
   }
 
   msgProgress = Components.classes["@mozilla.org/messenger/progress;1"].createInstance(Components.interfaces.nsIMsgProgress);
@@ -166,7 +167,7 @@ function onLoad() {
   var errorMsgObj={};
   gProcess = Ec.keyserverAccess(inArg.accessType, inArg.keyServer, inArg.keyList, procListener, errorMsgObj);
   if (gProcess === null) {
-    EnigAlert(Ec.getString("sendKeysFailed")+"\n"+EnigConvertGpgToUnicode(errorMsgObj.value));
+    EnigAlert(Locale.getString("sendKeysFailed")+"\n"+EnigConvertGpgToUnicode(errorMsgObj.value));
   }
 
   window.title = subject;

@@ -1,4 +1,4 @@
-/*global Components EnigmailCommon */
+/*global Components: false, EnigmailCommon: false, Log: false, Locale: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -36,6 +36,7 @@
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 const Ec = EnigmailCommon;
 
 var gAlertPopUpIsOpen = false;
@@ -125,7 +126,7 @@ function processKey(subKeys) {
     function(exitCode, errorMsg) {
       if (exitCode !== 0) {
         Ec.setTimeout(function () {
-          Ec.alert(window, Ec.getString("setKeyExpirationDateFailed")+"\n\n"+errorMsg);
+          Ec.alert(window, Locale.getString("setKeyExpirationDateFailed")+"\n\n"+errorMsg);
         }, 10);
       }
       else {
@@ -176,7 +177,7 @@ function onAccept() {
       processKey(subkeys);
     } else {
       Ec.setTimeout(function () {
-        Ec.alert(window, Ec.getString("noKeySelected")+"\n");
+        Ec.alert(window, Locale.getString("noKeySelected")+"\n");
       }, 10);
     }
   }
@@ -199,7 +200,7 @@ function checkExpirationDate() {
       if (gAlertPopUpIsOpen !== true) {
         gAlertPopUpIsOpen = true;
         Ec.setTimeout(function () {
-          Ec.alert(window, Ec.getString("expiryTooLongShorter")+"\n");
+          Ec.alert(window, Locale.getString("expiryTooLongShorter")+"\n");
           gAlertPopUpIsOpen = false;
         }, 10);
       }
@@ -210,7 +211,7 @@ function checkExpirationDate() {
       if (gAlertPopUpIsOpen !== true) {
         gAlertPopUpIsOpen = true;
         Ec.setTimeout(function () {
-          Ec.alert(window, Ec.getString("expiryTooShort")+"\n");
+          Ec.alert(window, Locale.getString("expiryTooShort")+"\n");
           gAlertPopUpIsOpen = false;
         }, 10);
       }

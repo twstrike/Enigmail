@@ -1,4 +1,4 @@
-/*global Components XPCOMUtils EnigmailCommon */
+/*global Components: false, XPCOMUtils: false, EnigmailCommon: false, Locale: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -45,6 +45,7 @@ Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/armor.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 try {
   // TB with omnijar
@@ -139,7 +140,7 @@ messageParseCallback = function (hdr, mime) {
   var self = this;
 
   try {
-    var enigmailSvc = Ec.getService();
+    var enigmailSvc = Locale.getService();
 
     if (mime === null) {
       Log.DEBUG("enigmailConvert.jsm: messageParseCallback: MimeMessage is null\n");
@@ -424,10 +425,10 @@ decryptAttachment = function(attachment, strippedName) {
               if (enigmailSvc.useGpgAgent()) {
                 // since we cannot find out if the user wants to cancel
                 // we should ask
-                let msg = Ec.getString("converter.decryptAtt.failed", [ attachment.name , self.subject ]);
+                let msg = Locale.getString("converter.decryptAtt.failed", [ attachment.name , self.subject ]);
 
                 if (!Ec.confirmDlg(null, msg,
-                    Ec.getString("dlg.button.retry"), Ec.getString("dlg.button.skip"))) {
+                    Locale.getString("dlg.button.retry"), Locale.getString("dlg.button.skip"))) {
                   o.status = STATUS_FAILURE;
                   resolve(o);
                   return;
@@ -763,10 +764,10 @@ decryptINLINE = function (mime) {
             if (enigmailSvc.useGpgAgent()) {
               // since we cannot find out if the user wants to cancel
               // we should ask
-              let msg = Ec.getString("converter.decryptBody.failed", this.subject);
+              let msg = Locale.getString("converter.decryptBody.failed", this.subject);
 
               if (!Ec.confirmDlg(null, msg,
-                  Ec.getString("dlg.button.retry"), Ec.getString("dlg.button.skip"))) {
+                  Locale.getString("dlg.button.retry"), Locale.getString("dlg.button.skip"))) {
                 this.foundPGP = -1;
                 return -1;
               }

@@ -36,6 +36,7 @@
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 const Ec = EnigmailCommon;
 
 
@@ -50,13 +51,13 @@ function onLoad() {
 
   var enigmailSvc = Ec.getService(window);
   if (!enigmailSvc) {
-    Ec.alert(null, Ec.getString("accessError"));
+    Ec.alert(null, Locale.getString("accessError"));
     window.close();
     return;
   }
   var keys = Ec.getSecretKeys(window);
   if (keys.length === 0) {
-    Ec.alert(null, Ec.getString("noTrustedOwnKeys"));
+    Ec.alert(null, Locale.getString("noTrustedOwnKeys"));
     window.close();
     return;
   }
@@ -146,7 +147,7 @@ function onAccept() {
 
   var enigmailSvc = Ec.getService(window);
   if (!enigmailSvc) {
-    Ec.alert(window, Ec.getString("accessError"));
+    Ec.alert(window, Locale.getString("accessError"));
     return true;
   }
 
@@ -157,7 +158,7 @@ function onAccept() {
     trustLevel.selectedItem.value,
     function (exitCode, errorMsg) {
       if (exitCode !== 0) {
-        Ec.alert(window, Ec.getString("signKeyFailed")+"\n\n"+errorMsg);
+        Ec.alert(window, Locale.getString("signKeyFailed")+"\n\n"+errorMsg);
       }
       else {
         window.arguments[1].refresh = true;
@@ -185,14 +186,14 @@ function enigKeySelCb() {
   else if (gSignatureList[signWithKeyId]==gUidCount[KeyToBeSigned]) {
     // Signature count == UID count, so key is already fully signed and another signing operation makes no more sense
     // Here, we display a hint and DISable the OK button
-    alreadySigned.setAttribute("value", Ec.getString("alreadySigned.label", "0x"+ KeyToBeSigned32));
+    alreadySigned.setAttribute("value", Locale.getString("alreadySigned.label", "0x"+ KeyToBeSigned32));
     alreadySigned.removeAttribute("collapsed");
     acceptButton.disabled = true;
   }
   else if (gSignatureList[signWithKeyId] > 0) {
     // Signature count != UID count, so key is partly signed and another sign operation makes sense
     // Here, we display a hint and ENable the OK button
-    alreadySigned.setAttribute("value", Ec.getString("partlySigned.label", "0x"+ KeyToBeSigned32));
+    alreadySigned.setAttribute("value", Locale.getString("partlySigned.label", "0x"+ KeyToBeSigned32));
     alreadySigned.removeAttribute("collapsed");
     acceptButton.disabled = false;
   }

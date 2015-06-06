@@ -35,54 +35,15 @@
 
 const EXPORTED_SYMBOLS = [ "EnigmailCore" ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
 var gEnigmailSvc = null;      // Global Enigmail Service
 var gEnigmailCommon = null;      // Global Enigmail Common instance, to avoid circular dependencies
 
 const EnigmailCore = {
-  enigStringBundle: null,
-  version: "",
+    version: "",
 
-  init: function(enigmailVersion) {
-    this.version = enigmailVersion;
-  },
-
-  // retrieves a localized string from the enigmail.properties stringbundle
-  getString: function (aStr, subPhrases)
-  {
-
-    if (!this.enigStringBundle) {
-      try {
-        var strBundleService = Cc["@mozilla.org/intl/stringbundle;1"].getService();
-        strBundleService = strBundleService.QueryInterface(Ci.nsIStringBundleService);
-        this.enigStringBundle = strBundleService.createBundle("chrome://enigmail/locale/enigmail.properties");
-      }
-      catch (ex) {
-        Log.ERROR("enigmailCore.jsm: Error in instantiating stringBundleService\n");
-      }
-    }
-
-    if (this.enigStringBundle) {
-      try {
-        if (subPhrases) {
-          if (typeof(subPhrases) == "string") {
-            return this.enigStringBundle.formatStringFromName(aStr, [ subPhrases ], 1);
-          }
-          else
-            return this.enigStringBundle.formatStringFromName(aStr, subPhrases, subPhrases.length);
-        }
-        else {
-          return this.enigStringBundle.GetStringFromName(aStr);
-        }
-      }
-      catch (ex) {
-        Log.ERROR("enigmailCore.jsm: Error in querying stringBundleService for string '"+aStr+"'\n");
-      }
-    }
-    return aStr;
-  },
+    init: function(enigmailVersion) {
+        this.version = enigmailVersion;
+    },
 
     getEnigmailService: function() {
         return gEnigmailSvc;

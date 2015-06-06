@@ -38,6 +38,7 @@
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 // Initialize enigmailCommon
 const Ec = EnigmailCommon;
@@ -54,16 +55,16 @@ function enigAboutLoad() {
   var enigVersion=Ec.getVersion()+" ("+EnigBuildDate+")";
   var versionElement = contentFrame.document.getElementById('version');
   if (versionElement)
-    versionElement.firstChild.data = Ec.getString("usingVersion", enigVersion);
+    versionElement.firstChild.data = Locale.getString("usingVersion", enigVersion);
 
   var enigmailSvc = Ec.getService();
 
   var agentStr;
   if (enigmailSvc) {
-    agentStr = Ec.getString("usingAgent", [enigmailSvc.agentType, enigmailSvc.agentPath.path]);
+    agentStr = Locale.getString("usingAgent", [enigmailSvc.agentType, enigmailSvc.agentPath.path]);
 
   } else {
-    agentStr = Ec.getString("agentError");
+    agentStr = Locale.getString("agentError");
 
     if (enigmailSvc && enigmailSvc.initializationError)
       agentStr += "\n" + enigmailSvc.initializationError;

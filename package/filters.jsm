@@ -1,4 +1,4 @@
-/*global Components: false, enigmailDecryptPermanently: false, EnigmailCore: false, Log: false  */
+/*global Components: false, enigmailDecryptPermanently: false, EnigmailCore: false, Log: false, Locale: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -44,6 +44,7 @@ var EXPORTED_SYMBOLS = [ "Filters" ];
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/enigmailConvert.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -119,7 +120,7 @@ function dispatchMessages(aMsgHdrs, targetFolder, move, requireSync) {
 
 const filterActionMoveDecrypt = {
     id: "enigmail@enigmail.net#filterActionMoveDecrypt",
-    name: EC.getString("filter.decryptMove.label"),
+    name: Locale.getString("filter.decryptMove.label"),
     value: "movemessage",
     apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
 
@@ -141,10 +142,10 @@ const filterActionMoveDecrypt = {
     },
 
     validateActionValue: function (value, folder, type) {
-        ensuredEc().alert(null, EC.getString("filter.decryptMove.warnExperimental"));
+        ensuredEc().alert(null, Locale.getString("filter.decryptMove.warnExperimental"));
 
         if (value === "") {
-            return EC.getString("filter.folderRequired");
+            return Locale.getString("filter.folderRequired");
         }
 
         return null;
@@ -161,7 +162,7 @@ const filterActionMoveDecrypt = {
  */
 const filterActionCopyDecrypt = {
     id: "enigmail@enigmail.net#filterActionCopyDecrypt",
-    name: EC.getString("filter.decryptCopy.label"),
+    name: Locale.getString("filter.decryptCopy.label"),
     value: "copymessage",
     apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
         Log.DEBUG("enigmail.js: filterActionCopyDecrypt: Copy to: " + aActionValue + "\n");
@@ -182,7 +183,7 @@ const filterActionCopyDecrypt = {
 
     validateActionValue: function (value, folder, type) {
         if( value === "") {
-            return EC.getString("filter.folderRequired");
+            return Locale.getString("filter.folderRequired");
         }
 
         return null;

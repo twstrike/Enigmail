@@ -47,6 +47,7 @@ Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 const EC = EnigmailCore;
 
@@ -444,7 +445,7 @@ function EnigGetString(aStr) {
     for (var i=1; i<arguments.length; i++) {
         argList.push(arguments[i]);
     }
-  return EnigmailCommon.getString(aStr, (arguments.length > 1 ? argList : null));
+  return Locale.getString(aStr, (arguments.length > 1 ? argList : null));
 }
 
 // Remove all quoted strings (and angle brackets) from a list of email

@@ -60,6 +60,7 @@
     Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     Components.utils.import("resource://enigmail/keyManagement.jsm");
     Components.utils.import("resource://enigmail/log.jsm");
+    Components.utils.import("resource://enigmail/locale.jsm");
     const Ec = EnigmailCommon;
 
     function onLoad() {
@@ -111,7 +112,7 @@
         Number(t.selectedItem.value),
         function(exitCode, errorMsg) {
           if (exitCode != 0) {
-            Ec.alert(window, Ec.getString("setKeyTrustFailed")+"\n\n"+errorMsg);
+            Ec.alert(window, Locale.getString("setKeyTrustFailed")+"\n\n"+errorMsg);
             window.close();
             return;
           }

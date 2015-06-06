@@ -166,6 +166,7 @@
     Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     Components.utils.import("resource://enigmail/keyManagement.jsm");
     Components.utils.import("resource://enigmail/log.jsm");
+    Components.utils.import("resource://enigmail/locale.jsm");
 
     // Ec is predefined by enigmailCommon.js
 
@@ -234,7 +235,7 @@
         var aLine = data.split(/ +/);
         if (aLine[0] == "[GNUPG:]") {
          if (aLine[1]=="GET_LINE" && aLine[2]=="keygen.comment") {
-            txt=Ec.getString("keygen.started")+"\n";
+            txt=Locale.getString("keygen.started")+"\n";
             this._state=1;
           }
           else if (aLine[1]=="PROGRESS" && aLine[2]=="primegen") {
@@ -268,7 +269,7 @@
 
       var enigmailSvc = Ec.getService(window);
       if (!enigmailSvc) {
-        Ec.alert(window,Ec.getString("accessError"));
+        Ec.alert(window,Locale.getString("accessError"));
         return;
       }
 
@@ -283,19 +284,19 @@
       }
       else {
         if (passphrase != passphrase2Element.value) {
-          Ec.alert(window,Ec.getString("passNoMatch"));
+          Ec.alert(window,Locale.getString("passNoMatch"));
           return;
         }
 
         if (passphrase.search(/[^\x20-\x7E]/)>=0) {
-          if (! Ec.confirmDlg(window, Ec.getString("keygen.passCharProblem"),
-              Ec.getString("dlg.button.ignore"), Ec.getString("dlg.button.cancel"))) {
+          if (! Ec.confirmDlg(window, Locale.getString("keygen.passCharProblem"),
+              Locale.getString("dlg.button.ignore"), Locale.getString("dlg.button.cancel"))) {
             return null;
           }
         }
 
         if (!passphrase) {
-          Ec.alert(window,Ec.getString("keygen.passRequired"));
+          Ec.alert(window,Locale.getString("keygen.passRequired"));
           return;
         }
       }
@@ -312,11 +313,11 @@
       if (! noExpiry.checked) {
         expiryTime = Number(expireInput.value) * (timeScale.value == "y" ? 365 : (timeScale.value == "m" ? 30 : 1));
         if (expiryTime > 36500) {
-          Ec.alert(window,Ec.getString("expiryTooLong"));
+          Ec.alert(window,Locale.getString("expiryTooLong"));
           return;
         }
         if (! (expiryTime > 0)) {
-          Ec.alert(window,Ec.getString("expiryTooShort"));
+          Ec.alert(window,Locale.getString("expiryTooShort"));
           return;
         }
         valid = String(Number(expireInput.value));
@@ -329,7 +330,7 @@
       var userEmail = curId.email;
 
       if (!userName) {
-        Ec.alert(window,Ec.getString("passUserName"));
+        Ec.alert(window,Locale.getString("passUserName"));
         return;
       }
 
@@ -340,9 +341,9 @@
 
       idString += " <" + userEmail + ">";
 
-      var confirmMsg = Ec.getString("keyConfirm",idString);
+      var confirmMsg = Locale.getString("keyConfirm",idString);
 
-      if (!EnigConfirm(confirmMsg, Ec.getString("keyMan.button.generateKey"))) {
+      if (!EnigConfirm(confirmMsg, Locale.getString("keyMan.button.generateKey"))) {
        return;
       }
       var contentFrame = Ec.getFrame(window, "keygenConsole");
@@ -366,11 +367,11 @@
               gUsedId.setIntAttribute("pgpKeyMode", 1);
               gUsedId.setCharAttribute("pgpkeyId", "0x"+generateObserver.keyId.substr(-8,8));
             }
-            var msg=Ec.getString("keygen.completed", generateObserver.keyId);
+            var msg=Locale.getString("keygen.completed", generateObserver.keyId);
             if (generateObserver.backupLocation) {
-              msg += "\n"+Ec.getString("keygen.keyBackup", generateObserver.backupLocation);
+              msg += "\n"+Locale.getString("keygen.keyBackup", generateObserver.backupLocation);
             }
-            if (Ec.confirmDlg(window, msg+"\n\n"+Ec.getString("revokeCertRecommended"), Ec.getString("keyMan.button.generateCert"))) {
+            if (Ec.confirmDlg(window, msg+"\n\n"+Locale.getString("revokeCertRecommended"), Locale.getString("keyMan.button.generateCert"))) {
               EnigCreateRevokeCert(generateObserver.keyId, curId.email, closeWin);
             }
             else

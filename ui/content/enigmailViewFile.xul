@@ -85,6 +85,7 @@
     Components.utils.import("resource://enigmail/commonFuncs.jsm");
     Components.utils.import("resource://enigmail/log.jsm");
     Components.utils.import("resource://enigmail/prefs.jsm");
+    Components.utils.import("resource://enigmail/locale.jsm");
 
     const Ec = EnigmailCommon;
 
@@ -94,7 +95,7 @@
                      // same data as displayed
 
     function saveLogFile() {
-      let fileObj = Ec.filePicker(window, Ec.getString("saveLogFile.title"), null,
+      let fileObj = Ec.filePicker(window, Locale.getString("saveLogFile.title"), null,
         true, "txt");
 
       EnigmailFuncs.writeFileContents(fileObj, logFileData, null);

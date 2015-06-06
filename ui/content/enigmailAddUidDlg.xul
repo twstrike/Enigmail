@@ -76,6 +76,7 @@
   <![CDATA[
     Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     Components.utils.import("resource://enigmail/keyManagement.jsm");
+    Components.utils.import("resource://enigmail/locale.jsm");
 
     const Ec = EnigmailCommon;
 
@@ -85,24 +86,24 @@
       var comment = document.getElementById("addUid_comment");
 
       if ((email.value.search(/^ *$/) == 0) || (name.value.search(/^ *$/) == 0)) {
-        Ec.alert(window, Ec.getString ("addUidDlg.nameOrEmailError"));
+        Ec.alert(window, Locale.getString ("addUidDlg.nameOrEmailError"));
         return false;
       }
       if (name.value.replace(/ *$/, "").length <5) {
-        Ec.alert(window, Ec.getString ("addUidDlg.nameMinLengthError"));
+        Ec.alert(window, Locale.getString ("addUidDlg.nameMinLengthError"));
         return false;
       }
       if (email.value.search(/.@./)<0) {
-        Ec.alert(window, Ec.getString ("addUidDlg.invalidEmailError"));
+        Ec.alert(window, Locale.getString ("addUidDlg.invalidEmailError"));
         return false;
       }
       if (comment.value.search(/[()]/) >= 0) {
-        Ec.alert(window, Ec.getString ("addUidDlg.commentError"));
+        Ec.alert(window, Locale.getString ("addUidDlg.commentError"));
         return false;
       }
       var enigmailSvc = Ec.getService();
       if (!enigmailSvc) {
-        Ec.alert(window, Ec.getString ("accessError"));
+        Ec.alert(window, Locale.getString ("accessError"));
         return true;
       }
 
@@ -113,11 +114,11 @@
         Ec.convertFromUnicode(comment.value),
         function _addUidCb(exitCode, errorMsg) {
            if (exitCode != 0) {
-              Ec.alert(window, Ec.getString ("addUidFailed")+"\n\n"+errorMsg);
+              Ec.alert(window, Locale.getString("addUidFailed")+"\n\n"+errorMsg);
             }
             else {
               window.arguments[1].refresh = true;
-              Ec.alert(window, Ec.getString ("addUidOK"));
+              Ec.alert(window, Locale.getString("addUidOK"));
             }
             window.close();
         });
@@ -128,4 +129,3 @@
   </script>
 
 </dialog>
-
