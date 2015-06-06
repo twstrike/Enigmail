@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, Locale: false */
+/*global Components: false, Log: false, Locale: false, Data: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,12 +39,15 @@
 
 "use strict";
 
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+
+Cu.import("resource://enigmail/log.jsm");
+Cu.import("resource://enigmail/locale.jsm");
+Cu.import("resource://enigmail/data.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailErrorHandling" ];
 
-const Ci = Components.interfaces;
 
 const STATUS_INV_SGNR  = 0x100000000;
 const STATUS_IMPORT_OK = 0x200000000;
@@ -281,7 +284,7 @@ function parseErrorOutputWith(c) {
   c.retStatusObj.statusFlags = c.statusFlags;
   if (c.retStatusObj.statusMsg.length === 0) c.retStatusObj.statusMsg = c.statusArray.join("\n");
   if (c.errorMsg.length === 0) {
-    c.errorMsg = c.errArray.map(c.ec.convertGpgToUnicode, c.ec).join("\n");
+    c.errorMsg = c.errArray.map(Data.convertGpgToUnicode, Data).join("\n");
   }
 
   if ((c.statusFlags & Ci.nsIEnigmail.CARDCTRL) && c.errCode >0) {
@@ -289,7 +292,7 @@ function parseErrorOutputWith(c) {
       c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   }
 
-  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+c.ec.bytesToHex(c.ec.pack(c.statusFlags,4))+"\n");
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+Data.bytesToHex(Data.pack(c.statusFlags,4))+"\n");
 
   Log.DEBUG("enigmailCommon.jsm: parseErrorOutput(): return with c.errorMsg = "+c.errorMsg+"\n");
   return c.errorMsg;

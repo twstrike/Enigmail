@@ -1,4 +1,4 @@
-/*global Components */
+/*global Components: false, Locale: false, Data: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -41,6 +41,7 @@ Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
 
 try {
   Components.utils.import("resource://gre/modules/Promise.jsm");
@@ -413,13 +414,13 @@ function enigmailKeygenStart() {
 
    try {
       gKeygenRequest = Ec.generateKey(window,
-                         Ec.convertFromUnicode(userName),
-                         Ec.convertFromUnicode(comment),
-                         Ec.convertFromUnicode(userEmail),
+                         Data.convertFromUnicode(userName),
+                         Data.convertFromUnicode(comment),
+                         Data.convertFromUnicode(userEmail),
                          expiryTime,
                          keySize,
                          keyType,
-                         Ec.convertFromUnicode(passphrase),
+                         Data.convertFromUnicode(passphrase),
                          listener);
    } catch (ex) {
       Log.DEBUG("enigmailKeygen.js: generateKey() failed with "+ex.toString()+"\n"+ex.stack+"\n");

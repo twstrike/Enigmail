@@ -1,4 +1,4 @@
-/*global Components EnigmailCommon XPCOMUtils */
+/*global Components: false, EnigmailCommon: false, XPCOMUtils: false, Data: false */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -17,6 +17,8 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/files.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailVerify" ];
 
@@ -218,7 +220,7 @@ MimeVerify.prototype = {
       else if (xferEnc.search(/quoted-printable/i) >= 0) {
         let bound = this.getBodyPart();
         let qp = this.keepData.substring(bound.start, bound.end);
-        this.keepData = EnigmailCommon.decodeQuotedPrintable(qp)+"\n";
+        this.keepData = Data.decodeQuotedPrintable(qp)+"\n";
       }
 
 
@@ -289,7 +291,7 @@ MimeVerify.prototype = {
     var win = windowManager.getMostRecentWindow(null);
 
     // create temp file holding signature data
-    this.sigFile = Ec.getTempDirObj();
+    this.sigFile = Files.getTempDirObj();
     this.sigFile.append("data.sig");
     this.sigFile.createUnique(this.sigFile.NORMAL_FILE_TYPE, 0x180);
     EnigmailFuncs.writeFileContents(this.sigFile, this.sigData, 0x180);
@@ -299,7 +301,7 @@ MimeVerify.prototype = {
 
     this.proc = Ec.decryptMessageStart(win, true, true, this,
                 statusFlagsObj, errorMsgObj,
-                Ec.getEscapedFilename(Ec.getFilePath(this.sigFile)));
+                Files.getEscapedFilename(Files.getFilePath(this.sigFile)));
 
     if (this.pipe) {
       Log.DEBUG("Closing pipe\n"); // always log this one

@@ -77,6 +77,7 @@
     Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     Components.utils.import("resource://enigmail/keyManagement.jsm");
     Components.utils.import("resource://enigmail/locale.jsm");
+    Components.utils.import("resource://enigmail/data.jsm");
 
     const Ec = EnigmailCommon;
 
@@ -109,9 +110,9 @@
 
       EnigmailKeyMgmt.addUid(window,
         window.arguments[0].keyId,
-        Ec.convertFromUnicode(name.value),
-        Ec.convertFromUnicode(email.value),
-        Ec.convertFromUnicode(comment.value),
+        Data.convertFromUnicode(name.value),
+        Data.convertFromUnicode(email.value),
+        Data.convertFromUnicode(comment.value),
         function _addUidCb(exitCode, errorMsg) {
            if (exitCode != 0) {
               Ec.alert(window, Locale.getString("addUidFailed")+"\n\n"+errorMsg);

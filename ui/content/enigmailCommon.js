@@ -1,4 +1,4 @@
-/*global Components */
+/*global Components: false, Data: false, Files: false, EnigmailCommon: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -48,6 +48,8 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/files.jsm");
 
 const EC = EnigmailCore;
 
@@ -398,7 +400,7 @@ function EnigConvertToUnicode(text, charset) {
 }
 
 function EnigConvertGpgToUnicode(text) {
-  return EnigmailCommon.convertGpgToUnicode(text);
+  return Data.convertGpgToUnicode(text);
 }
 
 function EnigFormatFpr(fingerprint) {
@@ -457,7 +459,7 @@ function EnigStripEmail(mailAddrs) {
 
 //get path for temporary directory (e.g. /tmp, C:\TEMP)
 function EnigGetTempDir() {
-  return EnigmailCommon.getTempDir();
+  return Files.getTempDir();
 }
 
 // get the OS platform
@@ -596,7 +598,7 @@ function EnigShowPhoto (keyId, userId, photoNumber) {
 }
 
 function EnigGetFilePath (nsFileObj) {
-  return EnigmailCommon.getFilePath(nsFileObj);
+  return Files.getFilePath(nsFileObj);
 }
 
 function EnigCreateRevokeCert(keyId, userId, callbackFunc) {

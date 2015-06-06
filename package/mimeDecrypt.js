@@ -1,4 +1,4 @@
-/*global Components EnigmailCommon */
+/*global Components: false, EnigmailCommon: false, Data: false */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -14,6 +14,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/mimeVerify.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
 
 
 const Cc = Components.classes;
@@ -154,7 +155,7 @@ PgpMimeDecrypt.prototype = {
         else {
           // PGP/MIME main part body
           if (this.xferEncoding == ENCODING_QP) {
-            this.cacheData(EnigmailCommon.decodeQuotedPrintable(data));
+            this.cacheData(Data.decodeQuotedPrintable(data));
           }
           else {
             this.cacheData(data);

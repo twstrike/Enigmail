@@ -87,6 +87,7 @@
     Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     Components.utils.import("resource://enigmail/keyManagement.jsm");
     Components.utils.import("resource://enigmail/locale.jsm");
+    Components.utils.import("resource://enigmail/data.jsm");
 
     const Ec = EnigmailCommon;
 
@@ -125,7 +126,7 @@
         case "uat":
           ++uidNum;
           if (uidStr[0]=="uid") {
-            uidTxt=Ec.convertGpgToUnicode(uidStr[9]).replace(/\\e3A/g, ":");
+            uidTxt=Data.convertGpgToUnicode(uidStr[9]).replace(/\\e3A/g, ":");
             if (!window.enigmailUid) {
               window.enigmailUid = uidTxt;
             }

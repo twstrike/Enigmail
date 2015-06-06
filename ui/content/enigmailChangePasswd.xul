@@ -83,6 +83,7 @@
   Components.utils.import("resource://enigmail/enigmailCommon.jsm");
   Components.utils.import("resource://enigmail/keyManagement.jsm");
   Components.utils.import("resource://enigmail/locale.jsm");
+  Components.utils.import("resource://enigmail/data.jsm");
 
   const Ec = EnigmailCommon;
 
@@ -124,8 +125,8 @@
     }
 
     EnigmailKeyMgmt.changePassphrase(window, window.arguments[0].keyId,
-        Ec.convertFromUnicode(currPasswd),
-        Ec.convertFromUnicode(newPasswd),
+        Data.convertFromUnicode(currPasswd),
+        Data.convertFromUnicode(newPasswd),
       function _changePwdCb(exitCode, errorMsg) {
         if (exitCode != 0) {
           Ec.alert(window, Locale.getString("changePassFailed")+"\n\n"+errorMsg);

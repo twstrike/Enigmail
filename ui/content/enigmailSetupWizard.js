@@ -1,4 +1,4 @@
-/*global Components */
+/*global Components: false, Data: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -42,6 +42,7 @@ Components.utils.import("resource://enigmail/passwordCheck.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
 
 // const Ec is already defined in enigmailKeygen.js
 
@@ -864,13 +865,13 @@ function wizardGenKey() {
 
   try {
     gKeygenRequest = Ec.generateKey(window,
-                       Ec.convertFromUnicode(userName),
+                       Data.convertFromUnicode(userName),
                        "",
-                       Ec.convertFromUnicode(userEmail),
+                       Data.convertFromUnicode(userEmail),
                        365*5 /* 5 years */,
                        4096,
                        ENIG_KEYTYPE_RSA,
-                       Ec.convertFromUnicode(passphrase),
+                       Data.convertFromUnicode(passphrase),
                        listener);
   } catch (ex) {
     Log.DEBUG("enigmailSetupWizard.js: genKey - generateKey() failed with "+ex.toString()+"\n"+ex.stack+"\n");

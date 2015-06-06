@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false, Log: false, OS: false, Files: false, Locale: false */
+/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, subprocess: false, Log: false, OS: false, Files: false, Locale: false, Data: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -45,8 +45,9 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
 
-var EXPORTED_SYMBOLS = [ "EnigmailKeyMgmt" ];
+const EXPORTED_SYMBOLS = [ "EnigmailKeyMgmt" ];
 
 const Ec = EnigmailCommon;
 const Cc = Components.classes;
@@ -352,7 +353,7 @@ var EnigmailKeyMgmt = {
     if (editCmdArr[0] == "revoke") {
       // escape backslashes and ' characters
       args=args.concat(["-a", "-o"]);
-      args.push(Ec.getEscapedFilename(inputData.outFile.path));
+      args.push(Files.getEscapedFilename(inputData.outFile.path));
       args.push("--gen-revoke");
       args=args.concat(keyIdList);
     }
@@ -408,7 +409,7 @@ var EnigmailKeyMgmt = {
     Log.DEBUG("enigmail.js: Enigmail.importKeyFromFile: fileName="+inputFile.path+"\n");
     importedKeysObj.value="";
 
-    var fileName=Ec.getEscapedFilename((inputFile.QueryInterface(Ci.nsIFile)).path);
+    var fileName=Files.getEscapedFilename((inputFile.QueryInterface(Ci.nsIFile)).path);
 
     args.push("--import");
     args.push(fileName);
@@ -529,7 +530,7 @@ var EnigmailKeyMgmt = {
     var r= this.editKey(parent, true, null, keyId, "revoke",
                         { outFile: outFile,
                           reasonCode: reasonCode,
-                          reasonText: Ec.convertFromUnicode(reasonText),
+                          reasonText: Data.convertFromUnicode(reasonText),
                           usePassphrase: true },
                         revokeCertCallback,
                         null,
@@ -635,7 +636,7 @@ var EnigmailKeyMgmt = {
   addPhoto: function (parent, keyId, photoFile, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.addPhoto: keyId="+keyId+"\n");
 
-    var photoFileName = Ec.getEscapedFilename(Ec.getFilePath(photoFile.QueryInterface(Ec.getLocalFileApi())));
+    var photoFileName = Files.getEscapedFilename(Files.getFilePath(photoFile.QueryInterface(Ec.getLocalFileApi())));
 
     var r = this.editKey(parent, true, null, keyId, "addphoto",
                         { file: photoFileName,
@@ -653,9 +654,9 @@ var EnigmailKeyMgmt = {
     var generateObserver = new EnigCardAdminObserver(requestObserver, OS.isDosLike());
     var r = this.editKey(parent, false, null, "", ["--with-colons", "--card-edit"] ,
                         { step: 0,
-                          name: Ec.convertFromUnicode(name),
+                          name: Data.convertFromUnicode(name),
                           email: email,
-                          comment: Ec.convertFromUnicode(comment),
+                          comment: Data.convertFromUnicode(comment),
                           expiry: expiry,
                           backupPasswd: backupPasswd,
                           cardAdmin: true,

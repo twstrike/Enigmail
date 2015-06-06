@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false */
+/*global Components: false, Locale: false, Data: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -42,16 +42,19 @@
  * 'Components.utils.import("resource://enigmail/commonFuncs.jsm");'
  */
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/files.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+
+Cu.import("resource://enigmail/enigmailCore.jsm");
+Cu.import("resource://enigmail/enigmailCommon.jsm");
+Cu.import("resource://enigmail/log.jsm");
+Cu.import("resource://enigmail/files.jsm");
+Cu.import("resource://enigmail/locale.jsm");
+Cu.import("resource://enigmail/data.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailFuncs" ];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
 
 
 const IOSERVICE_CONTRACTID = "@mozilla.org/network/io-service;1";
@@ -688,7 +691,7 @@ var EnigmailFuncs = {
             listRow[USERID_ID] = "-";
           }
           if (typeof(keyObj.userId) != "string") {
-            keyObj.userId=EnigmailCommon.convertGpgToUnicode(listRow[USERID_ID]);
+            keyObj.userId=Data.convertGpgToUnicode(listRow[USERID_ID]);
             keyListObj.keySortList.push({
               userId: keyObj.userId.toLowerCase(),
               keyId: keyObj.keyId
@@ -700,7 +703,7 @@ var EnigmailFuncs = {
           }
           else {
             var subUserId = {
-              userId: EnigmailCommon.convertGpgToUnicode(listRow[USERID_ID]),
+              userId: Data.convertGpgToUnicode(listRow[USERID_ID]),
               keyTrust: listRow[KEY_TRUST_ID],
               type: "uid"
             };

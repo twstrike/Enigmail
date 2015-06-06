@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false */
+/*global Components: false, Locale: false, Data: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -53,6 +53,8 @@ Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/armor.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/files.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
 
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
@@ -753,7 +755,7 @@ Enigmail.msg = {
     if (!enigmailSvc)
       return null;
 
-    var tmpDir=EnigmailCommon.getTempDir();
+    var tmpDir=Files.getTempDir();
     var tmpFile;
     try {
       tmpFile = Components.classes[EnigmailCommon.LOCAL_FILE_CONTRACTID].createInstance(EnigmailCommon.getLocalFileApi());
@@ -3399,8 +3401,8 @@ Enigmail.msg = {
 
       // Encode plaintext to charset from unicode
       var plainText = (sendInfo.sendFlags & ENCRYPT) ?
-              EnigmailCommon.convertFromUnicode(origText, charset) :
-              EnigmailCommon.convertFromUnicode(escText, charset);
+              Data.convertFromUnicode(origText, charset) :
+              Data.convertFromUnicode(escText, charset);
 
       var cipherText = enigmailSvc.encryptMessage(window, sendInfo.uiFlags, plainText,
                                                   sendInfo.fromAddr, sendInfo.toAddr, sendInfo.bccAddr,
@@ -3428,7 +3430,7 @@ Enigmail.msg = {
         }
 
         // Decode ciphertext from charset to unicode and overwrite
-        this.replaceEditorText( EnigmailCommon.convertToUnicode(cipherText, charset) );
+        this.replaceEditorText( Data.convertToUnicode(cipherText, charset) );
 
         // Save original text (for undo)
         this.processed = {"origText":origText, "charset":charset};
@@ -3719,7 +3721,7 @@ Enigmail.msg = {
       return -1;
     }
 
-    var tmpDir=EnigmailCommon.getTempDir();
+    var tmpDir=Files.getTempDir();
     var extAppLauncher = Components.classes["@mozilla.org/mime;1"].
       getService(Components.interfaces.nsPIExternalAppLauncher);
 
@@ -3943,7 +3945,7 @@ Enigmail.msg = {
     Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.decryptQuote: charset="+charset+"\n");
 
     // Encode ciphertext from unicode to charset
-    var cipherText = EnigmailCommon.convertFromUnicode(pgpBlock, charset);
+    var cipherText = Data.convertFromUnicode(pgpBlock, charset);
 
     if ((! this.getMailPref("mailnews.reply_in_default_charset")) && (blockType == "MESSAGE")) {
       // set charset according to PGP block, if available (encrypted messages only)
@@ -3979,7 +3981,7 @@ Enigmail.msg = {
                                                errorMsgObj, blockSeparationObj, encToDetailsObj);
 
     // Decode plaintext from charset to unicode
-    plainText = EnigmailCommon.convertToUnicode(plainText, charset);
+    plainText = Data.convertToUnicode(plainText, charset);
     if (Prefs.getPref("keepSettingsForReply")) {
       if (statusFlagsObj.value & nsIEnigmail.DECRYPTION_OKAY)
         this.setSendMode('encrypt');

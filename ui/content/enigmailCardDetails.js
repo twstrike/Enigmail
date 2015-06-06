@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, EnigmailCommon: false */
+/*global Components: false, Locale: false, EnigmailCommon: false, Data: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -38,6 +38,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
 
 const Ec = EnigmailCommon;
 
@@ -65,11 +66,11 @@ function onLoad() {
       var l=statusList[i].split(/:/);
       switch (l[0]) {
       case "name":
-        setValue("firstname", Ec.convertGpgToUnicode(l[1]));
-        setValue(l[0], Ec.convertGpgToUnicode(l[2]));
+        setValue("firstname", Data.convertGpgToUnicode(l[1]));
+        setValue(l[0], Data.convertGpgToUnicode(l[2]));
         break;
       case "vendor":
-        setValue(l[0], Ec.convertGpgToUnicode(l[2].replace(/\\x3a/ig, ":")));
+        setValue(l[0], Data.convertGpgToUnicode(l[2].replace(/\\x3a/ig, ":")));
         break;
       case "sex":
       case "forcepin":
@@ -93,7 +94,7 @@ function onLoad() {
         break;
       default:
         if (l[0]) {
-          setValue(l[0], Ec.convertGpgToUnicode(l[1].replace(/\\x3a/ig, ":")));
+          setValue(l[0], Data.convertGpgToUnicode(l[1].replace(/\\x3a/ig, ":")));
         }
       }
     }
@@ -172,11 +173,11 @@ function doSaveChanges() {
   }
   else {
     EnigmailKeyMgmt.cardAdminData(window,
-                                  Ec.convertFromUnicode(dialogname),
-                                  Ec.convertFromUnicode(dialogfirstname),
+                                  Data.convertFromUnicode(dialogname),
+                                  Data.convertFromUnicode(dialogfirstname),
                                   getValue("lang"),
                                   getSelection("sex"),
-                                  Ec.convertFromUnicode(getValue("url")),
+                                  Data.convertFromUnicode(getValue("url")),
                                   getValue("login"),
                                   forcepin,
     function _cardAdminCb(exitCode, errorMsg) {

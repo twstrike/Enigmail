@@ -1549,8 +1549,8 @@ Enigmail.prototype = {
       args = args.concat(Ec.passwdCommand());
     }
 
-    var inFilePath  = Ec.getEscapedFilename(getFilePath(inFile.QueryInterface(Ci.nsIFile)));
-    var outFilePath = Ec.getEscapedFilename(getFilePath(outFile.QueryInterface(Ci.nsIFile)));
+    var inFilePath  = Files.getEscapedFilename(getFilePath(inFile.QueryInterface(Ci.nsIFile)));
+    var outFilePath = Files.getEscapedFilename(getFilePath(outFile.QueryInterface(Ci.nsIFile)));
 
     args = args.concat(["--yes", "-o", outFilePath, inFilePath ]);
 
@@ -1582,8 +1582,8 @@ Enigmail.prototype = {
     Log.DEBUG("enigmail.js: Enigmail.verifyAttachment:\n");
 
     var exitCode        = -1;
-    var verifyFilePath  = Ec.getEscapedFilename(getFilePath(verifyFile.QueryInterface(Ci.nsIFile)));
-    var sigFilePath     = Ec.getEscapedFilename(getFilePath(sigFile.QueryInterface(Ci.nsIFile)));
+    var verifyFilePath  = Files.getEscapedFilename(getFilePath(verifyFile.QueryInterface(Ci.nsIFile)));
+    var sigFilePath     = Files.getEscapedFilename(getFilePath(sigFile.QueryInterface(Ci.nsIFile)));
 
     var args = Ec.getAgentArgs(true);
     args.push("--verify");
@@ -1640,7 +1640,7 @@ Enigmail.prototype = {
       return true;
     }
 
-    var outFileName = Ec.getEscapedFilename(getFilePath(outFile.QueryInterface(Ci.nsIFile), NS_WRONLY));
+    var outFileName = Files.getEscapedFilename(getFilePath(outFile.QueryInterface(Ci.nsIFile), NS_WRONLY));
 
     var args = Ec.getAgentArgs(true);
     args = args.concat(["-o", outFileName, "--yes"]);

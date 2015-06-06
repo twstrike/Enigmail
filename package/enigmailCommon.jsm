@@ -704,19 +704,6 @@ var EnigmailCommon = {
     return null;
   },
 
-
-  /**
-   * Convert GnuPG list output encoded in UTF-8 to Mozilla's representation in Unicode.
-   *
-   * @text:   String - UTF-8 encoded list text
-   *
-   * @return: String - Unicode string
-   */
-  convertGpgToUnicode: function (text) {
-    // TODO: remove
-    return Data.convertGpgToUnicode(text);
-  },
-
   /**
    * Transform a Unix-Timestamp to a human-readable date/time string
    *
@@ -803,49 +790,6 @@ var EnigmailCommon = {
     var file = filePicker.file.QueryInterface(this.getLocalFileApi());
 
     return file;
-  },
-
-  /**
-   * Get the OS-dependent path as UTF-8 string for a given file object
-   *
-   * @nsFileObj: nsIFile
-   *
-   * @return: String - the path encoded with UTF-8
-   */
-  getFilePath: function (nsFileObj) {
-    // TODO: REMOVE
-    return Files.getFilePath(nsFileObj);
-  },
-
-  /**
-   * Get an escaped version of a file system path specification
-   *
-   * @fileNameStr: String - the file path
-   *
-   * @return: String - the escaped path
-   */
-  getEscapedFilename: function (fileNameStr) {
-    // TODO: REMOVE
-    return Files.getEscapedFilename(fileNameStr);
-  },
-
-  /**
-   *  Get the temp directory as nsIFile Object
-   *
-   *  @return nsIFile object to the temporary directory
-   */
-  getTempDirObj: function () {
-    // TODO: REMOVE
-    return Files.getTempDirObj();
-  },
-
-  /**
-   *  Get the temp directory as string
-   *  @return |String| containing the temporary directory name
-   */
-  getTempDir: function () {
-    // TODO: REMOVE
-    return Files.getTempDir();
   },
 
   /**
@@ -947,7 +891,8 @@ var EnigmailCommon = {
    */
   writeException: function (referenceInfo, ex)
   {
-    Log.ERROR(referenceInfo+": caught exception: " +
+      // TODO: MOVE
+      Log.ERROR(referenceInfo+": caught exception: " +
                    ex.name+"\n" +
                    "Message: '"+ex.message+"'\n" +
                    "File:    "+ex.fileName+"\n" +
@@ -956,49 +901,10 @@ var EnigmailCommon = {
   },
 
   isSuite: function () {
+      // TODO: MOVE
     // return true if Seamonkey, false otherwise
     var xulAppinfo = Cc[XPCOM_APPINFO].getService(Ci.nsIXULAppInfo);
     return (xulAppinfo.ID == SEAMONKEY_ID);
-  },
-
-
-  /***
-    * decode text encoded with quoted-printable
-    * @str: String - encoded input data
-    *
-    * @return: String - decoded output data
-    */
-  decodeQuotedPrintable: function(str) {
-    // TODO: remove
-    return Data.decodeQuotedPrintable(str);
-  },
-
-  /**
-   * Convert string data from a given charset to Unicode (Mozilla's internal
-   * representation)
-   *
-   * @text    String - text to convert
-   * @charset String - optional charset. If not specified, UTF-8 is assumed
-   *
-   * @return: Unicode form of text
-   */
-  convertToUnicode: function (text, charset) {
-    // TODO: remove
-    return Data.convertToUnicode(text, charset);
-  },
-
-  /**
-   * Convert string data from Unicode (Mozilla's internal representation) to a given
-   * character set.
-   *
-   * @text    String - text to convert
-   * @charset String - optional charset. If not specified, UTF-8 is assumed
-   *
-   * @return: converted text
-   */
-  convertFromUnicode: function (text, charset) {
-    // TODO: remove
-    return Data.convertFromUnicode(text, charset);
   },
 
   /**
@@ -1016,46 +922,6 @@ var EnigmailCommon = {
    */
   parseErrorOutput: function (errOutput, retStatusObj) {
     return EnigmailErrorHandling.parseErrorOutput(this, gStatusFlags, errOutput, retStatusObj);
-  },
-
-
-  /**
-   * pack Network (big-endian) byte order
-   *
-   * @value: Number - value to pack
-   * @bytes: Number - number of bytes to use
-   *
-   * @return: String - packed bytes
-   */
-  pack: function (value, bytes) {
-    // TODO: remove
-    return Data.pack(value, bytes);
-  },
-
-  /**
-   * unpack Network (big-endian) byte order
-   *
-   * @str: String to unpack
-   *
-   * @return: Number (Long int)
-   */
-  unpack: function (str) {
-    // TODO: remove
-    return Data.unpack(str);
-  },
-
-
-  /**
-   * convert a string to hexadecimal character, interperting each character
-   * of the string as byte
-   *
-   * @str - String holding the bytes to convert
-   *
-   * @return - hexadecimal string
-   */
-  bytesToHex: function (str) {
-    // TODO: remove
-    return Data.bytesToHex(str);
   },
 
   /**
@@ -1628,7 +1494,7 @@ var EnigmailCommon = {
       case "uid":
         if ((keyId !== null) && (aLine[1].search(/[muf]/) === 0)) {
           // UID is valid
-          keys.push({ name: this.convertGpgToUnicode(aLine[9]),
+          keys.push({ name: Data.convertGpgToUnicode(aLine[9]),
                       id: keyId,
                       created: secretKeyCreated[keyId]});
           keyId = null;
@@ -1897,6 +1763,7 @@ var EnigmailCommon = {
    * @return:         handle to suprocess
    */
   execStart: function (command, args, needPassphrase, domWindow, listener, statusFlagsObj) {
+      // TODO: MOVE
     Log.WRITE("enigmailCommon.jsm: execStart: command = "+Files.formatCmdLine(command, args)+", needPassphrase="+needPassphrase+", domWindow="+domWindow+", listener="+listener+"\n");
 
     if (! listener) listener = {};
@@ -1947,6 +1814,7 @@ var EnigmailCommon = {
       stderrData
     */
   execEnd: function (listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj, blockSeparationObj) {
+      // TODO: MOVE
 
     Log.DEBUG("enigmailCommon.jsm: execEnd:\n");
 
@@ -1973,7 +1841,7 @@ var EnigmailCommon = {
       exitCode = 2;
     }
 
-    Log.CONSOLE(this.convertFromUnicode(errorMsgObj.value)+"\n");
+    Log.CONSOLE(Data.convertFromUnicode(errorMsgObj.value)+"\n");
 
     return exitCode;
   },
@@ -2132,6 +2000,7 @@ var EnigmailCommon = {
    * doneFunc : optional function that is called when the process is terminated
    */
   newSimpleListener: function(stdinFunc, doneFunc) {
+      // TODO: MOVE
     var simpleListener = {
       stdoutData: "",
       stderrData: "",
@@ -2186,7 +2055,7 @@ var EnigmailCommon = {
     var matches = listener.stdoutData.match(/:literal data packet:\r?\n.*name="(.*)",/m);
     if (matches && (matches.length > 1)) {
       var filename = escape(matches[1]).replace(/%5Cx/g, "%");
-      return this.convertToUnicode(unescape(filename), "utf-8");
+      return Data.convertToUnicode(unescape(filename), "utf-8");
     }
     else
       return null;

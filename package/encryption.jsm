@@ -205,7 +205,7 @@ var Encryption = {
 
     encryptMessageStart: function(ecom, win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
                                   hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj, passphrase) {
-        Log.DEBUG("enigmailCommon.jsm: encryptMessageStart: uiFlags="+uiFlags+", from "+fromMailAddr+" to "+toMailAddr+", hashAlgorithm="+hashAlgorithm+" ("+ecom.bytesToHex(ecom.pack(sendFlags,4))+")\n");
+        Log.DEBUG("enigmailCommon.jsm: encryptMessageStart: uiFlags="+uiFlags+", from "+fromMailAddr+" to "+toMailAddr+", hashAlgorithm="+hashAlgorithm+" ("+Data.bytesToHex(Data.pack(sendFlags,4))+")\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
 
@@ -263,7 +263,7 @@ var Encryption = {
 
     encryptMessageEnd: function (ecom, stderrStr, exitCode, uiFlags, sendFlags, outputLen, retStatusObj)
     {
-        Log.DEBUG("enigmailCommon.jsm: encryptMessageEnd: uiFlags="+uiFlags+", sendFlags="+ecom.bytesToHex(ecom.pack(sendFlags,4))+", outputLen="+outputLen+"\n");
+        Log.DEBUG("enigmailCommon.jsm: encryptMessageEnd: uiFlags="+uiFlags+", sendFlags="+Data.bytesToHex(Data.pack(sendFlags,4))+", outputLen="+outputLen+"\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
         var defaultSend = sendFlags & nsIEnigmail.SEND_DEFAULT;

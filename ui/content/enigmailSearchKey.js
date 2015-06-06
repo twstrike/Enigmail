@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Locale: false */
+/*global Components: false, EnigmailCommon: false, Locale: false, Data: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -39,6 +39,8 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/data.jsm");
+
 const Ec = EnigmailCommon;
 
 const INPUT = 0;
@@ -305,7 +307,7 @@ function enigImportKeys (connType, txt, errorTxt) {
     return;
   }
   else if (gEnigRequest.errorTxt) {
-    Ec.longAlert(window, Ec.convertGpgToUnicode(gEnigRequest.errorTxt));
+    Ec.longAlert(window, Data.convertGpgToUnicode(gEnigRequest.errorTxt));
   }
 
   gEnigRequest.httpInProgress=false;
@@ -403,7 +405,7 @@ function enigScanKeys(connType, htmlTxt) {
       enigScanHtmlKeys(htmlNode.firstChild.firstChild.data);
       break;
     case ENIG_CONN_TYPE_GPGKEYS:
-      enigScanGpgKeys(Ec.convertGpgToUnicode(htmlTxt));
+      enigScanGpgKeys(Data.convertGpgToUnicode(htmlTxt));
       break;
     default:
       Log.ERROR("Unkonwn connType: "+connType+"\n");
@@ -490,7 +492,7 @@ function enigScanHtmlKeys (txt) {
  * @return - Unicode representation
  */
 function unescapeAndConvert(txt) {
-  return Ec.convertToUnicode(unescape(txt), "utf-8");
+  return Data.convertToUnicode(unescape(txt), "utf-8");
 }
 
 function enigScanGpgKeys(txt) {

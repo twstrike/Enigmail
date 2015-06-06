@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, Locale: false, Armor: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, Locale: false, Armor: false, Data: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,16 +39,19 @@
 
 "use strict";
 
-var EXPORTED_SYMBOLS = [ "Decryption" ];
-
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/prefs.jsm");
-Components.utils.import("resource://enigmail/armor.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
+const EXPORTED_SYMBOLS = [ "Decryption" ];
 
 const Ci = Components.interfaces;
+const Cu = Components.utils;
+
+Cu.import("resource://enigmail/enigmailCore.jsm");
+Cu.import("resource://enigmail/data.jsm");
+Cu.import("resource://enigmail/log.jsm");
+Cu.import("resource://enigmail/prefs.jsm");
+Cu.import("resource://enigmail/armor.jsm");
+Cu.import("resource://enigmail/locale.jsm");
+Cu.import("resource://enigmail/data.jsm");
+
 const nsIEnigmail = Ci.nsIEnigmail;
 
 var EC = EnigmailCore;
@@ -318,7 +321,7 @@ var Decryption = {
         }
 
         if (sigUserId) {
-            sigUserId = ecom.convertToUnicode(sigUserId, "UTF-8");
+            sigUserId = Data.convertToUnicode(sigUserId, "UTF-8");
         }
 
         // add list of keys used for encryption if known (and their user IDs) if known
@@ -340,7 +343,7 @@ var Decryption = {
                 if (localKeyId != "0x0000000000000000") {
                     var localUserId = ecom.enigmailSvc.getFirstUserIdOfKey(localKeyId);
                     if (localUserId) {
-                        localUserId = ecom.convertToUnicode(localUserId, "UTF-8");
+                        localUserId = Data.convertToUnicode(localUserId, "UTF-8");
                         encToArray[encIdx] += " (" + localUserId + ")";
                     }
                 }
