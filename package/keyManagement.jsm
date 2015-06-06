@@ -253,20 +253,6 @@ KeyEditor.prototype = {
 */
 
 var EnigmailKeyMgmt = {
-
-  execCmd: function (command, args, stdinFunc, stdoutFunc, doneFunc) {
-      // TODO: MOVE
-    var procBuilder = new subprocess.ProcessBuilder();
-    procBuilder.setCommand(command);
-    procBuilder.setArguments(args);
-    procBuilder.setEnvironment(Ec.getEnvList());
-    procBuilder.setStdin(stdinFunc);
-    procBuilder.setStdout(stdoutFunc);
-    procBuilder.setDone(doneFunc);
-    var proc = procBuilder.build();
-    subprocess.call(proc).wait();
-  },
-
   readKey: function (parent, inputData, outputData, callbackFunc, requestObserver, parentCallback){
     Log.DEBUG("keyManagmenent.jsm: readKey: parent="+parent+"\n");
 
@@ -286,18 +272,18 @@ var EnigmailKeyMgmt = {
     if (inputData.path) {//read key from file
       args=args.concat(["--list-packets", inputData.path]);
       Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
-      EnigmailKeyMgmt.execCmd(command, args,
-          function(pipe) {
-          },
-          function (stdout) {
-            outputData.key+=stdout;
-          },
-          function (result) {
-            Log.DEBUG(result);
-            if(callbackFunc) callbackFunc(outputData,result);
-            if(parentCallback) parentCallback(outputData,result);
-          }
-      );
+      Execution.execCmd2(command, args,
+                         function(pipe) {
+                         },
+                         function (stdout) {
+                             outputData.key+=stdout;
+                         },
+                         function (result) {
+                             Log.DEBUG(result);
+                             if(callbackFunc) callbackFunc(outputData,result);
+                             if(parentCallback) parentCallback(outputData,result);
+                         }
+                        );
     }
     else if (inputData.keytext){//read key from text
       args=args.concat(["--list-packets"]);
@@ -308,22 +294,22 @@ var EnigmailKeyMgmt = {
 
       var preInput = "";
 
-      EnigmailKeyMgmt.execCmd(command, args,
-          function(pipe) {
-            if (input.length > 0 || preInput.length > 0) {
-              pipe.write(preInput + input);
-            }
-            pipe.close();
-          },
-          function (stdout) {
-            outputData.key+=stdout;
-          },
-          function (result) {
-            Log.DEBUG(result);
-            if(callbackFunc) callbackFunc(outputData,result);
-            if(parentCallback) parentCallback(outputData,result);
-          }
-      );
+      Execution.execCmd2(command, args,
+                        function(pipe) {
+                            if (input.length > 0 || preInput.length > 0) {
+                                pipe.write(preInput + input);
+                            }
+                            pipe.close();
+                        },
+                        function (stdout) {
+                            outputData.key+=stdout;
+                        },
+                        function (result) {
+                            Log.DEBUG(result);
+                            if(callbackFunc) callbackFunc(outputData,result);
+                            if(parentCallback) parentCallback(outputData,result);
+                        }
+                       );
     }
   },
 
@@ -375,13 +361,13 @@ var EnigmailKeyMgmt = {
     var keyEdit = new KeyEditor(requestObserver, callbackFunc, inputData);
 
     try {
-      this.execCmd(command, args,
-          keyEdit.setStdin.bind(keyEdit),
-          keyEdit.gotData.bind(keyEdit),
-          function (result) {
-            keyEdit.done(parentCallback, result.exitCode);
-          }
-      );
+      Execution.execCmd2(command, args,
+                         keyEdit.setStdin.bind(keyEdit),
+                         keyEdit.gotData.bind(keyEdit),
+                         function (result) {
+                             keyEdit.done(parentCallback, result.exitCode);
+                         }
+                        );
     } catch (ex) {
       Log.ERROR("keyManagement.jsm: editKey: "+command.path+" failed\n");
       parentCallback(-1, "");

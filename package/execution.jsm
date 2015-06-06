@@ -279,6 +279,19 @@ const Execution = {
         return outputData;
     },
 
+    execCmd2: function (command, args, stdinFunc, stdoutFunc, doneFunc) {
+        var procBuilder = new subprocess.ProcessBuilder();
+        procBuilder.setCommand(command);
+        procBuilder.setArguments(args);
+        procBuilder.setEnvironment(envList());
+        procBuilder.setStdin(stdinFunc);
+        procBuilder.setStdout(stdoutFunc);
+        procBuilder.setDone(doneFunc);
+        var proc = procBuilder.build();
+        subprocess.call(proc).wait();
+    },
+
+
     /**
      * simple listener for using with execStart
      *
