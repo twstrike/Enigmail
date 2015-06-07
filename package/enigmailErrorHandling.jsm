@@ -47,11 +47,43 @@ Cu.import("resource://enigmail/locale.jsm");
 Cu.import("resource://enigmail/data.jsm");
 Cu.import("resource://enigmail/enigmailCore.jsm");
 
-var EXPORTED_SYMBOLS = [ "EnigmailErrorHandling" ];
+const EXPORTED_SYMBOLS = [ "EnigmailErrorHandling" ];
 
+const nsIEnigmail = Ci.nsIEnigmail;
 
-const STATUS_INV_SGNR  = 0x100000000;
-const STATUS_IMPORT_OK = 0x200000000;
+const gStatusFlags = {
+    GOODSIG:         nsIEnigmail.GOOD_SIGNATURE,
+    BADSIG:          nsIEnigmail.BAD_SIGNATURE,
+    ERRSIG:          nsIEnigmail.UNVERIFIED_SIGNATURE,
+    EXPSIG:          nsIEnigmail.EXPIRED_SIGNATURE,
+    REVKEYSIG:       nsIEnigmail.GOOD_SIGNATURE,
+    EXPKEYSIG:       nsIEnigmail.EXPIRED_KEY_SIGNATURE,
+    KEYEXPIRED:      nsIEnigmail.EXPIRED_KEY,
+    KEYREVOKED:      nsIEnigmail.REVOKED_KEY,
+    NO_PUBKEY:       nsIEnigmail.NO_PUBKEY,
+    NO_SECKEY:       nsIEnigmail.NO_SECKEY,
+    IMPORTED:        nsIEnigmail.IMPORTED_KEY,
+    INV_RECP:        nsIEnigmail.INVALID_RECIPIENT,
+    MISSING_PASSPHRASE: nsIEnigmail.MISSING_PASSPHRASE,
+    BAD_PASSPHRASE:  nsIEnigmail.BAD_PASSPHRASE,
+    BADARMOR:        nsIEnigmail.BAD_ARMOR,
+    NODATA:          nsIEnigmail.NODATA,
+    ERROR:           nsIEnigmail.BAD_SIGNATURE | nsIEnigmail.DECRYPTION_FAILED,
+    DECRYPTION_FAILED: nsIEnigmail.DECRYPTION_FAILED,
+    DECRYPTION_OKAY: nsIEnigmail.DECRYPTION_OKAY,
+    TRUST_UNDEFINED: nsIEnigmail.UNTRUSTED_IDENTITY,
+    TRUST_NEVER:     nsIEnigmail.UNTRUSTED_IDENTITY,
+    TRUST_MARGINAL:  nsIEnigmail.UNTRUSTED_IDENTITY,
+    TRUST_FULLY:     nsIEnigmail.TRUSTED_IDENTITY,
+    TRUST_ULTIMATE:  nsIEnigmail.TRUSTED_IDENTITY,
+    CARDCTRL:        nsIEnigmail.CARDCTRL,
+    SC_OP_FAILURE:   nsIEnigmail.SC_OP_FAILURE,
+    UNKNOWN_ALGO:    nsIEnigmail.UNKNOWN_ALGO,
+    SIG_CREATED:     nsIEnigmail.SIG_CREATED,
+    END_ENCRYPTION:  nsIEnigmail.END_ENCRYPTION,
+    INV_SGNR:        0x100000000,
+    IMPORT_OK:       0x200000000
+};
 
 function handleError(c) {
   // special treatment for some ERROR messages (currently only check_hijacking)
@@ -133,8 +165,8 @@ function setupFailureLookup() {
   result[Ci.nsIEnigmail.CARDCTRL]             = cardControl;
   result[Ci.nsIEnigmail.UNVERIFIED_SIGNATURE] = unverifiedSignature;
   result[Ci.nsIEnigmail.MISSING_PASSPHRASE]   = missingPassphrase;
-  result[STATUS_INV_SGNR]                     = invalidSignature;
-  result[STATUS_IMPORT_OK]                    = importOk;
+  result[gStatusFlags.INV_SGNR]               = invalidSignature;
+  result[gStatusFlags.IMPORT_OK]              = importOk;
   return result;
 }
 
@@ -143,7 +175,7 @@ function ignore() {}
 const failureLookup = setupFailureLookup();
 
 function handleFailure(c, errorFlag) {
-  c.flag = c.statusFlagLookup[errorFlag];  // yields known flag or undefined
+  c.flag = gStatusFlags[errorFlag];  // yields known flag or undefined
 
   (failureLookup[c.flag] || ignore)(c);
 
@@ -153,13 +185,12 @@ function handleFailure(c, errorFlag) {
   }
 }
 
-function newContext(statusFlagLookup, errOutput, retStatusObj) {
+function newContext(errOutput, retStatusObj) {
   retStatusObj.statusMsg = "";
   retStatusObj.extendedStatus = "";
   retStatusObj.blockSeparation = "";
 
   return {
-    statusFlagLookup: statusFlagLookup,
     errOutput: errOutput,
     retStatusObj: retStatusObj,
     errArray: [],
@@ -300,7 +331,7 @@ function parseErrorOutputWith(c) {
 
 var EnigmailErrorHandling = {
     parseErrorOutput: function(errOutput, retStatusObj) {
-        var context = newContext(EnigmailCore.ensuredEnigmailCommon().statusFlags, errOutput, retStatusObj);
+        var context = newContext(errOutput, retStatusObj);
         return parseErrorOutputWith(context);
     }
 };

@@ -71,7 +71,6 @@ const NS_STRING_INPUT_STREAM_CONTRACTID = "@mozilla.org/io/string-input-stream;1
 const NS_INPUT_STREAM_CHNL_CONTRACTID = "@mozilla.org/network/input-stream-channel;1";
 const NS_TIMER_CONTRACTID       = "@mozilla.org/timer;1";
 
-
 const XPCOM_APPINFO = "@mozilla.org/xre/app-info;1";
 const ENIG_EXTENSION_GUID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
 
@@ -97,42 +96,6 @@ var gCachedPassphrase = null;
 var gEncryptedUris = [];
 
 var gKeyAlgorithms = [];
-
-
-
-var gStatusFlags = {
-  GOODSIG:         nsIEnigmail.GOOD_SIGNATURE,
-  BADSIG:          nsIEnigmail.BAD_SIGNATURE,
-  ERRSIG:          nsIEnigmail.UNVERIFIED_SIGNATURE,
-  EXPSIG:          nsIEnigmail.EXPIRED_SIGNATURE,
-  REVKEYSIG:       nsIEnigmail.GOOD_SIGNATURE,
-  EXPKEYSIG:       nsIEnigmail.EXPIRED_KEY_SIGNATURE,
-  KEYEXPIRED:      nsIEnigmail.EXPIRED_KEY,
-  KEYREVOKED:      nsIEnigmail.REVOKED_KEY,
-  NO_PUBKEY:       nsIEnigmail.NO_PUBKEY,
-  NO_SECKEY:       nsIEnigmail.NO_SECKEY,
-  IMPORTED:        nsIEnigmail.IMPORTED_KEY,
-  INV_RECP:        nsIEnigmail.INVALID_RECIPIENT,
-  MISSING_PASSPHRASE: nsIEnigmail.MISSING_PASSPHRASE,
-  BAD_PASSPHRASE:  nsIEnigmail.BAD_PASSPHRASE,
-  BADARMOR:        nsIEnigmail.BAD_ARMOR,
-  NODATA:          nsIEnigmail.NODATA,
-  ERROR:           nsIEnigmail.BAD_SIGNATURE | nsIEnigmail.DECRYPTION_FAILED,
-  DECRYPTION_FAILED: nsIEnigmail.DECRYPTION_FAILED,
-  DECRYPTION_OKAY: nsIEnigmail.DECRYPTION_OKAY,
-  TRUST_UNDEFINED: nsIEnigmail.UNTRUSTED_IDENTITY,
-  TRUST_NEVER:     nsIEnigmail.UNTRUSTED_IDENTITY,
-  TRUST_MARGINAL:  nsIEnigmail.UNTRUSTED_IDENTITY,
-  TRUST_FULLY:     nsIEnigmail.TRUSTED_IDENTITY,
-  TRUST_ULTIMATE:  nsIEnigmail.TRUSTED_IDENTITY,
-  CARDCTRL:        nsIEnigmail.CARDCTRL,
-  SC_OP_FAILURE:   nsIEnigmail.SC_OP_FAILURE,
-  UNKNOWN_ALGO:    nsIEnigmail.UNKNOWN_ALGO,
-  SIG_CREATED:     nsIEnigmail.SIG_CREATED,
-  END_ENCRYPTION : nsIEnigmail.END_ENCRYPTION,
-  INV_SGNR:        0x100000000,
-  IMPORT_OK:       0x200000000
-};
 
 const gMimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha512", "sha224", "md5" ];
 
@@ -181,7 +144,6 @@ var EnigmailCommon = {
 
   // variables
   enigmailSvc: null,
-  statusFlags: gStatusFlags,
   envList: null, // currently filled from enigmail.js
   gpgAgentIsOptional: true,
 

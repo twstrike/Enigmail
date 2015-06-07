@@ -117,42 +117,6 @@ var Ec = null;
 var EC = EnigmailCore;
 
 ///////////////////////////////////////////////////////////////////////////////
-// Global variables
-
-// GPG status flags mapping (see doc/DETAILS file in the GnuPG distribution)
-var gStatusFlags = {GOODSIG:         nsIEnigmail.GOOD_SIGNATURE,
-                    BADSIG:          nsIEnigmail.BAD_SIGNATURE,
-                    ERRSIG:          nsIEnigmail.UNVERIFIED_SIGNATURE,
-                    EXPSIG:          nsIEnigmail.EXPIRED_SIGNATURE,
-                    REVKEYSIG:       nsIEnigmail.GOOD_SIGNATURE,
-                    EXPKEYSIG:       nsIEnigmail.EXPIRED_KEY_SIGNATURE,
-                    KEYEXPIRED:      nsIEnigmail.EXPIRED_KEY,
-                    KEYREVOKED:      nsIEnigmail.REVOKED_KEY,
-                    NO_PUBKEY:       nsIEnigmail.NO_PUBKEY,
-                    NO_SECKEY:       nsIEnigmail.NO_SECKEY,
-                    IMPORTED:        nsIEnigmail.IMPORTED_KEY,
-                    INV_RECP:        nsIEnigmail.INVALID_RECIPIENT,
-                    MISSING_PASSPHRASE: nsIEnigmail.MISSING_PASSPHRASE,
-                    BAD_PASSPHRASE:  nsIEnigmail.BAD_PASSPHRASE,
-                    BADARMOR:        nsIEnigmail.BAD_ARMOR,
-                    NODATA:          nsIEnigmail.NODATA,
-                    ERROR:           nsIEnigmail.BAD_SIGNATURE | nsIEnigmail.DECRYPTION_FAILED,
-                    DECRYPTION_FAILED: nsIEnigmail.DECRYPTION_FAILED,
-                    DECRYPTION_OKAY: nsIEnigmail.DECRYPTION_OKAY,
-                    TRUST_UNDEFINED: nsIEnigmail.UNTRUSTED_IDENTITY,
-                    TRUST_NEVER:     nsIEnigmail.UNTRUSTED_IDENTITY,
-                    TRUST_MARGINAL:  nsIEnigmail.UNTRUSTED_IDENTITY,
-                    TRUST_FULLY:     nsIEnigmail.TRUSTED_IDENTITY,
-                    TRUST_ULTIMATE:  nsIEnigmail.TRUSTED_IDENTITY,
-                    CARDCTRL:        nsIEnigmail.CARDCTRL,
-                    SC_OP_FAILURE:   nsIEnigmail.SC_OP_FAILURE,
-                    UNKNOWN_ALGO:    nsIEnigmail.UNKNOWN_ALGO,
-                    SIG_CREATED:     nsIEnigmail.SIG_CREATED,
-                    END_ENCRYPTION:  nsIEnigmail.END_ENCRYPTION,
-                    INV_SGNR:        0x100000000
-};
-
-///////////////////////////////////////////////////////////////////////////////
 // File read/write operations
 
 const NS_LOCAL_FILE_CONTRACTID = "@mozilla.org/file/local;1";
@@ -1509,7 +1473,7 @@ Enigmail.prototype = {
       if (Ec.confirmDlg(parent, Locale.getString("attachmentPgpKey", [ displayName ]),
             Locale.getString("keyMan.button.import"), Locale.getString("dlg.button.view"))) {
         exitCodeObj.value = this.importKey(parent, 0, byteData, "", errorMsgObj);
-        statusFlagsObj.value = gStatusFlags.IMPORTED;
+        statusFlagsObj.value = nsIEnigmail.IMPORTED_KEY;
       }
       else {
         exitCodeObj.value = 0;

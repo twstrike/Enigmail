@@ -54,8 +54,11 @@ Cu.import("resource://enigmail/data.jsm");
 Cu.import("resource://enigmail/execution.jsm");
 
 const nsIEnigmail = Ci.nsIEnigmail;
+const EC = EnigmailCore;
 
-var EC = EnigmailCore;
+const STATUS_ERROR = nsIEnigmail.BAD_SIGNATURE | nsIEnigmail.DECRYPTION_FAILED;
+const STATUS_DECRYPTION_OK = nsIEnigmail.DECRYPTION_OKAY;
+const STATUS_GOODSIG = nsIEnigmail.GOOD_SIGNATURE;
 
 var Decryption = {
     decryptMessageStart: function (ecom, win, verifyOnly, noOutput, listener,
@@ -139,7 +142,7 @@ var Decryption = {
         retStatusObj.blockSeparation  = "";
 
         var errorMsg = ecom.parseErrorOutput(stderrStr, retStatusObj);
-        if (retStatusObj.statusFlags & ecom.statusFlags.ERROR) {
+        if (retStatusObj.statusFlags & STATUS_ERROR) {
             retStatusObj.errorMsg = errorMsg;
         }
         else {
@@ -154,7 +157,7 @@ var Decryption = {
         var statusMsg = retStatusObj.statusMsg;
         exitCode = ecom.fixExitCode(exitCode, retStatusObj.statusFlags);
         if ((exitCode === 0) && !noOutput && !outputLen &&
-            ((retStatusObj.statusFlags & (ecom.statusFlags.DECRYPTION_OKAY | ecom.statusFlags.GOODSIG)) === 0)) {
+            ((retStatusObj.statusFlags & (STATUS_DECRYPTION_OK | STATUS_GOODSIG)) === 0)) {
             exitCode = -1;
         }
 
