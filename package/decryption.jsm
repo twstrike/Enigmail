@@ -60,7 +60,7 @@ var EC = EnigmailCore;
 var Decryption = {
     decryptMessageStart: function (ecom, win, verifyOnly, noOutput, listener,
                                    statusFlagsObj, errorMsgObj, mimeSignatureFile,
-                                   maxOutputLength, passphrase) {
+                                   maxOutputLength) {
         Log.DEBUG("enigmailCommon.jsm: decryptMessageStart: verifyOnly="+verifyOnly+"\n");
 
         ecom.getService(win);
@@ -105,11 +105,6 @@ var Decryption = {
             }
 
             args.push("--decrypt");
-        }
-
-        if(passphrase){
-            args.push("--passphrase");
-            args.push(passphrase);
         }
 
         var proc = Execution.execStart(ecom.enigmailSvc.agentPath,
@@ -409,7 +404,7 @@ var Decryption = {
     decryptMessage: function (esvc, ec, parent, uiFlags, cipherText,
                               signatureObj, exitCodeObj,
                               statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
-                              blockSeparationObj, encToDetailsObj, passphrase) {
+                              blockSeparationObj, encToDetailsObj) {
         Log.DEBUG("enigmail.js: Enigmail.decryptMessage: "+cipherText.length+" bytes, "+uiFlags+"\n");
 
         if (! cipherText)
@@ -513,7 +508,7 @@ var Decryption = {
         // to avoid DoS attack
         var proc = ec.decryptMessageStart(parent, verifyOnly, noOutput, listener,
                                           statusFlagsObj, startErrorMsgObj,
-                                          null, maxOutput, passphrase);
+                                          null, maxOutput);
 
         if (!proc) {
             errorMsgObj.value = startErrorMsgObj.value;

@@ -212,8 +212,8 @@ const Execution = {
         return outputData;
     },
 
-    execCmd: function (command, args, passphrase, input, exitCodeObj, statusFlagsObj,
-                       statusMsgObj, errorMsgObj, retStatusObj) {
+    execCmd: function (command, args, input, exitCodeObj, statusFlagsObj, statusMsgObj,
+                       errorMsgObj, retStatusObj) {
         Log.WRITE("execution.jsm: Execution.execCmd: subprocess = '"+command.path+"'\n");
 
         if ((typeof input) != "string") input = "";

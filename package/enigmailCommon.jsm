@@ -1724,10 +1724,10 @@ var EnigmailCommon = {
    */
   decryptMessageStart: function (win, verifyOnly, noOutput, listener,
                                  statusFlagsObj, errorMsgObj, mimeSignatureFile,
-                                 maxOutputLength, passphrase) {
+                                 maxOutputLength) {
       return Decryption.decryptMessageStart(this, win, verifyOnly, noOutput, listener,
                                             statusFlagsObj, errorMsgObj, mimeSignatureFile,
-                                            maxOutputLength, passphrase);
+                                            maxOutputLength);
   },
 
 
@@ -1847,8 +1847,8 @@ var EnigmailCommon = {
 
   // returns subprocess object
   encryptMessageStart: function (win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
-            hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj, passphrase) {
-      return Encryption.encryptMessageStart(this, win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj, passphrase);
+            hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj) {
+      return Encryption.encryptMessageStart(this, win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj);
   },
 
   // returns exitCode

@@ -166,8 +166,7 @@ function shouldSignMessage() {
         nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_SIGNED,
         exitCodeObj,
         statusFlagObj,
-        errorMsgObj,
-        "STRIKEfreedom@Qu1to"
+        errorMsgObj
     );
     Assert.equal(0, exitCodeObj.value);
     Assert.equal(0, errorMsgObj.value);
@@ -197,8 +196,7 @@ function shouldEncryptMessage() {
         nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_ENCRYPTED | nsIEnigmail.SEND_ALWAYS_TRUST,
         exitCodeObj,
         statusFlagObj,
-        errorMsgObj,
-        "STRIKEfreedom@Qu1to"
+        errorMsgObj
     );
     Assert.equal(0, exitCodeObj.value);
     Assert.equal(0, errorMsgObj.value);

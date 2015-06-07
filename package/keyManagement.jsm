@@ -405,8 +405,7 @@ var EnigmailKeyMgmt = {
     var statusMsgObj   = {};
     var exitCodeObj    = {};
 
-    var output = Execution.execCmd(command, args, null, "",
-                                   exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+    var output = Execution.execCmd(command, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
 
     var statusMsg = statusMsgObj.value;
 

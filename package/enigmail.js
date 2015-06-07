@@ -799,8 +799,8 @@ Enigmail.prototype = {
   },
 
   encryptMessage: function (parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags,
-                            exitCodeObj, statusFlagsObj, errorMsgObj, passphrase) {
-      return Encryption.encryptMessage(this, Ec, parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, exitCodeObj, statusFlagsObj, errorMsgObj, passphrase);
+                            exitCodeObj, statusFlagsObj, errorMsgObj) {
+      return Encryption.encryptMessage(this, Ec, parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, exitCodeObj, statusFlagsObj, errorMsgObj);
   },
 
   statusObjectFrom: function (signatureObj, exitCodeObj, statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj, blockSeparationObj, encToDetailsObj) {
@@ -869,11 +869,11 @@ Enigmail.prototype = {
   decryptMessage: function (parent, uiFlags, cipherText,
                             signatureObj, exitCodeObj,
                             statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
-                            blockSeparationObj, encToDetailsObj, passphrase) {
+                            blockSeparationObj, encToDetailsObj) {
       return Decryption.decryptMessage(this, Ec, parent, uiFlags, cipherText,
                                        signatureObj, exitCodeObj,
                                        statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
-                                       blockSeparationObj, encToDetailsObj, passphrase);
+                                       blockSeparationObj, encToDetailsObj);
   },
 
   extractKey: function (parent, exportFlags, userId, outputFile, exitCodeObj, errorMsgObj) {
@@ -895,8 +895,7 @@ Enigmail.prototype = {
     var statusMsgObj   = {};
     var cmdErrorMsgObj = {};
 
-    var keyBlock = Execution.execCmd(this.agentPath, args, null, "",
-                                     exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+    var keyBlock = Execution.execCmd(this.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
     if ((exitCodeObj.value === 0) && !keyBlock)
       exitCodeObj.value = -1;
@@ -917,8 +916,7 @@ Enigmail.prototype = {
       args = args.concat(["-a", "--export-secret-keys"]);
       args = args.concat(uidList);
 
-      var secKeyBlock = Execution.execCmd(this.agentPath, args, null, "",
-                                          exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+      var secKeyBlock = Execution.execCmd(this.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
       if ((exitCodeObj.value === 0) && !secKeyBlock)
         exitCodeObj.value = -1;
@@ -994,8 +992,7 @@ Enigmail.prototype = {
     var statusFlagsObj = {};
     var statusMsgObj   = {};
 
-    var output = Execution.execCmd(this.agentPath, args, null, pgpBlock,
-                                   exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+    var output = Execution.execCmd(this.agentPath, args, pgpBlock, exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
 
     var statusMsg = statusMsgObj.value;
 
@@ -1076,8 +1073,7 @@ Enigmail.prototype = {
       var statusMsgObj   = {};
       var cmdErrorMsgObj = {};
 
-      var listText = Execution.execCmd(this.agentPath, args, null, "",
-                                       exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+      var listText = Execution.execCmd(this.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
       if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
         // ignore exit code as recommended by GnuPG authors
@@ -1132,8 +1128,7 @@ Enigmail.prototype = {
     var statusMsgObj   = {};
     var cmdErrorMsgObj = {};
 
-    var listText = Execution.execCmd(this.agentPath, args, null, "",
-                                     exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+    var listText = Execution.execCmd(this.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
     if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
       // ignore exit code as recommended by GnuPG authors
@@ -1177,8 +1172,7 @@ Enigmail.prototype = {
     var statusFlagsObj = {};
     var exitCodeObj = {};
 
-    var listText = Execution.execCmd(this.agentPath, args, null, "",
-                                     exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+    var listText = Execution.execCmd(this.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
     if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
       // ignore exit code as recommended by GnuPG authors
@@ -1387,8 +1381,7 @@ Enigmail.prototype = {
     var cmdErrorMsgObj = {};
     var statusFlagsObj = {};
 
-    var listText = Execution.execCmd(this.agentPath, args, null, "",
-                                     exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+    var listText = Execution.execCmd(this.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
     if (exitCodeObj.value !== 0) {
       errorMsgObj.value = Locale.getString("badCommand");
@@ -1443,8 +1436,7 @@ Enigmail.prototype = {
     var statusMsgObj   = {};
     var cmdErrorMsgObj = {};
 
-    var msg = Execution.execCmd(this.agentPath, args, null, "",
-                                exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+    var msg = Execution.execCmd(this.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
     if (exitCodeObj.value !== 0) {
 
@@ -1570,8 +1562,7 @@ Enigmail.prototype = {
     var statusMsgObj = {};
     var statusFlagsObj = {};
 
-    var outputTxt = Execution.execCmd(this.agentPath, args, null, "",
-                  exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+    var outputTxt = Execution.execCmd(this.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
 
     if ((exitCodeObj.value === 0) && !outputTxt) {
       exitCodeObj.value = -1;

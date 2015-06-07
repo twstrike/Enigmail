@@ -111,8 +111,7 @@ interface nsIEnigmail : nsISupports
                         in unsigned long sendFlags,
                         out long exitCode,
                         out unsigned long statusFlags,
-                        out wstring errorMsg,
-                        in string  passphrase);
+                        out wstring errorMsg);
 
   /* Status flags */
   const unsigned long GOOD_SIGNATURE        = 0x00000001;
@@ -159,8 +158,7 @@ interface nsIEnigmail : nsISupports
                         out wstring sigDetails,
                         out wstring errorMsg,
                         out wstring blockSeparation,
-                        out wstring encToDetails,
-                        in string passphrase);
+                        out wstring encToDetails);
 
   boolean deleteMessageURI(in string uri);
 

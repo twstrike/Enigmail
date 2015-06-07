@@ -205,7 +205,7 @@ var Encryption = {
     },
 
     encryptMessageStart: function(ecom, win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
-                                  hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj, passphrase) {
+                                  hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj) {
         Log.DEBUG("enigmailCommon.jsm: encryptMessageStart: uiFlags="+uiFlags+", from "+fromMailAddr+" to "+toMailAddr+", hashAlgorithm="+hashAlgorithm+" ("+Data.bytesToHex(Data.pack(sendFlags,4))+")\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
@@ -241,11 +241,6 @@ var Encryption = {
             return null;
 
         var signMsg     = sendFlags & nsIEnigmail.SEND_SIGNED;
-
-        if(passphrase){
-            encryptArgs.push("--passphrase");
-            encryptArgs.push(passphrase);
-        }
 
         var proc = Execution.execStart(ecom.enigmailSvc.agentPath, encryptArgs, signMsg, win, listener, statusFlagsObj);
 
@@ -328,7 +323,7 @@ var Encryption = {
     },
 
     encryptMessage: function (esvc, ec, parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags,
-                              exitCodeObj, statusFlagsObj, errorMsgObj, passphrase) {
+                              exitCodeObj, statusFlagsObj, errorMsgObj) {
         Log.DEBUG("enigmail.js: Enigmail.encryptMessage: "+plainText.length+" bytes from "+fromMailAddr+" to "+toMailAddr+" ("+sendFlags+")\n");
 
         exitCodeObj.value    = -1;
@@ -379,7 +374,7 @@ var Encryption = {
         var proc = ec.encryptMessageStart(parent, uiFlags,
                                           fromMailAddr, toMailAddr, bccMailAddr,
                                           null, sendFlags,
-                                          listener, statusFlagsObj, errorMsgObj, passphrase);
+                                          listener, statusFlagsObj, errorMsgObj);
         if (! proc) {
             exitCodeObj.value = -1;
             Log.DEBUG("  <=== encryptMessage()\n");
