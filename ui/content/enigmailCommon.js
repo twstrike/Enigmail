@@ -1,4 +1,4 @@
-/*global Components: false, Data: false, Files: false, EnigmailCommon: false */
+/*global Components: false, Data: false, Files: false, EnigmailCommon: false, EnigmailCore: false, App: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -50,6 +50,7 @@ Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
+Components.utils.import("resource://enigmail/app.jsm");
 
 const EC = EnigmailCore;
 
@@ -468,7 +469,7 @@ function EnigGetOS () {
 }
 
 function EnigGetVersion() {
-  return EnigmailCommon.getVersion();
+  return App.getVersion();
 }
 
 function EnigFilePicker(title, displayDir, save, defaultExtension, defaultName, filterPairs) {

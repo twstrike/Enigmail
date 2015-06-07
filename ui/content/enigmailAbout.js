@@ -1,3 +1,4 @@
+/*global Components: false, EnigmailCommon: false, App: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -39,6 +40,7 @@
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/app.jsm");
 
 // Initialize enigmailCommon
 const Ec = EnigmailCommon;
@@ -52,7 +54,7 @@ function enigAboutLoad() {
   if (!contentFrame)
     return;
 
-  var enigVersion=Ec.getVersion()+" ("+EnigBuildDate+")";
+  var enigVersion=App.getVersion()+" ("+EnigBuildDate+")";
   var versionElement = contentFrame.document.getElementById('version');
   if (versionElement)
     versionElement.firstChild.data = Locale.getString("usingVersion", enigVersion);

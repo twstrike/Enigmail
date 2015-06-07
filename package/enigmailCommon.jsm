@@ -1,4 +1,5 @@
-/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false, Execution: false */
+/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false, Execution: false, App: false */
+/*global XPCOMUtils: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -42,7 +43,6 @@
 
 
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
-Components.utils.import("resource://gre/modules/AddonManager.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/subprocess.jsm");
@@ -57,6 +57,7 @@ Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/execution.jsm");
+Components.utils.import("resource://enigmail/app.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -70,9 +71,6 @@ const NS_PREFS_SERVICE_CID = "@mozilla.org/preferences-service;1";
 const NS_STRING_INPUT_STREAM_CONTRACTID = "@mozilla.org/io/string-input-stream;1";
 const NS_INPUT_STREAM_CHNL_CONTRACTID = "@mozilla.org/network/input-stream-channel;1";
 const NS_TIMER_CONTRACTID       = "@mozilla.org/timer;1";
-
-const XPCOM_APPINFO = "@mozilla.org/xre/app-info;1";
-const ENIG_EXTENSION_GUID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
 
 const THUNDERBIRD_ID = "{3550f703-e582-4d05-9a08-453d09bdfdc6}";
 
@@ -88,9 +86,6 @@ const KEYTYPE_RSA = 2;
 var gPromptSvc = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 var gDispatchThread = null;
 
-
-var gEnigExtensionVersion;
-var gEnigInstallLocation;
 var gCachedPassphrase = null;
 
 var gEncryptedUris = [];
@@ -189,8 +184,8 @@ var EnigmailCommon = {
 
       try {
         // Initialize enigmail
-        EnigmailCore.init(this.getVersion());
-        this.enigmailSvc.initialize(win, this.getVersion(), Prefs.getPrefBranch());
+        EnigmailCore.init(App.getVersion());
+        this.enigmailSvc.initialize(win, App.getVersion(), Prefs.getPrefBranch());
 
         try {
           // Reset alert count to default value
@@ -240,27 +235,12 @@ var EnigmailCommon = {
         this.alert(win, Locale.getString("pgpNotSupported"));
       }
 
-      if (this.enigmailSvc.initialized && (this.getVersion() != configuredVersion)) {
+      if (this.enigmailSvc.initialized && (App.getVersion() != configuredVersion)) {
         ConfigureEnigmail(win, startingPreferences);
       }
     }
 
     return this.enigmailSvc.initialized ? this.enigmailSvc : null;
-  },
-
-  /**
-   * get the Enigmail version
-   *
-   * @return: String - Enigmail version
-   */
-  getVersion: function()
-  {
-    Log.DEBUG("enigmailCommon.jsm: getVersion\n");
-
-    var addonVersion = gEnigExtensionVersion;
-
-    Log.DEBUG("enigmailCommon.jsm: installed version: "+addonVersion+"\n");
-    return addonVersion;
   },
 
   /**
@@ -1856,10 +1836,6 @@ var EnigmailCommon = {
       return null;
   },
 
-  getInstallLocation: function() {
-    return gEnigInstallLocation;
-  },
-
   /***
    * create a string of random characters suitable to use for a boundary in a
    * MIME message following RFC 2045
@@ -1874,10 +1850,7 @@ var EnigmailCommon = {
       b += String.fromCharCode((r < 10 ? 48 : (r < 34 ? 55 :  63)) + r);
     }
     return b;
-  },
-
-
-
+  }
 };
 
 
@@ -2145,32 +2118,8 @@ function ConfigureEnigmail(win, startingPreferences) {
   }
   catch(ex) {}
 
-  Prefs.setPref("configuredVersion", EnigmailCommon.getVersion());
+  Prefs.setPref("configuredVersion", App.getVersion());
   Prefs.savePrefs();
 }
 
-
-function initSubprocess(aFile) {
-  var xulRuntime = Cc[XPCOM_APPINFO].getService(Ci.nsIXULRuntime);
-  var dllSuffix = xulRuntime.OS == "Darwin" ? ".dylib" : ".so";
-
-  var installLocation = aFile.clone();
-  installLocation.append("platform");
-  installLocation.append(xulRuntime.OS+"_"+xulRuntime.XPCOMABI);
-  installLocation.append("lib");
-  installLocation.append("libsubprocess-"+xulRuntime.XPCOMABI+dllSuffix);
-}
-
-try {
-  AddonManager.getAddonByID(ENIG_EXTENSION_GUID,
-    function (addon) {
-      gEnigExtensionVersion = addon.version;
-      gEnigInstallLocation = addon.getResourceURI("").QueryInterface(Ci.nsIFileURL).file;
-      initSubprocess(gEnigInstallLocation);
-    }
-  );
-
-}
-catch (ex) {
-  dump("enigmailCommon.jsm: init error: "+ex+"\n");
-}
+App.initAddon();

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, EnigmailCore: false, OS: false, Log: false */
+/*global Components: false, EnigmailCommon: false, EnigmailCore: false, OS: false, Log: false, App: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -57,6 +57,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/subprocess.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
+Components.utils.import("resource://enigmail/app.jsm");
 
 // Import promise API
 try {
@@ -440,7 +441,7 @@ installer.prototype = {
                        },
                        false);
 
-      oReq.open("get", queryUrl + "?vEnigmail="+escape(Ec.getVersion())+ "&os=" + escape(os) + "&platform=" +
+      oReq.open("get", queryUrl + "?vEnigmail="+escape(App.getVersion())+ "&os=" + escape(os) + "&platform=" +
                 escape(platform), true);
       oReq.send();
     }

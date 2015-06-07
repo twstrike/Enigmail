@@ -181,7 +181,7 @@ Enigmail.msg = {
     top.controllers.appendController(treeController);
 
     if (Prefs.getPref("configuredVersion") === "") {
-      Prefs.setPref("configuredVersion", EnigmailCommon.getVersion());
+      Prefs.setPref("configuredVersion", App.getVersion());
       EnigmailFuncs.openSetupWizard(window);
     }
   },

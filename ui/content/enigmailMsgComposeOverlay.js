@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, Data: false */
+/*global Components: false, Locale: false, Data: false, App: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -55,6 +55,7 @@ Components.utils.import("resource://enigmail/armor.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/app.jsm");
 
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
@@ -3615,7 +3616,7 @@ Enigmail.msg = {
 
       if (this.identity.getBoolAttribute("enablePgp")) {
         if (Prefs.getPref("addHeaders")) {
-          this.setAdditionalHeader("X-Enigmail-Version: ", EnigmailCommon.getVersion());
+          this.setAdditionalHeader("X-Enigmail-Version: ", App.getVersion());
         }
         var pgpHeader="";
         var openPgpHeaderMode = this.identity.getIntAttribute("openPgpHeaderMode");
