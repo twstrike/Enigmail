@@ -1,6 +1,4 @@
-/*global Components: false, EnigmailCore: false, EnigmailCommon: false, XPCOMUtils: false, EnigmailGpgAgent: false, EnigmailGPG: false, Encryption: false, Decryption: false */
-/*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, dump: false, OS: false */
-/*global Rules: false, Filters: false, Armor: false, Files: false, Log: false, Locale: false, Execution: false, App: false, Dialog: false, Windows: false, Time: false */
+/*global Components: false, dump: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -40,42 +38,32 @@
 
 "use strict";
 
-Components.utils.import("resource:///modules/iteratorUtils.jsm");
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://gre/modules/AddonManager.jsm");
-Components.utils.import("resource://enigmail/subprocess.jsm");
-Components.utils.import("resource://enigmail/pipeConsole.jsm");
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/gpgAgentHandler.jsm");
-Components.utils.import("resource://gre/modules/ctypes.jsm");
-Components.utils.import("resource://gre/modules/Timer.jsm");
-Components.utils.import("resource://enigmail/encryption.jsm");
-Components.utils.import("resource://enigmail/decryption.jsm");
-Components.utils.import("resource://enigmail/enigmailProtocolHandler.jsm");
-Components.utils.import("resource://enigmail/enigmailGpg.jsm");
-Components.utils.import("resource://enigmail/rules.jsm");
-Components.utils.import("resource://enigmail/filters.jsm");
-Components.utils.import("resource://enigmail/armor.jsm");
-Components.utils.import("resource://enigmail/files.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/os.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/execution.jsm");
-Components.utils.import("resource://enigmail/app.jsm");
-Components.utils.import("resource://enigmail/dialog.jsm");
-Components.utils.import("resource://enigmail/windows.jsm");
-Components.utils.import("resource://enigmail/time.jsm");
+const Cu = Components.utils;
 
-try {
-  // TB with omnijar
-  Components.utils.import("resource:///modules/gloda/mimemsg.js");
-}
-catch (ex) {
-  // "old style" TB
-  Components.utils.import("resource://app/modules/gloda/mimemsg.js");
-}
-
-Components.utils.import("resource:///modules/MailUtils.js");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false */
+Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
+Cu.import("resource://enigmail/pipeConsole.jsm"); /*global EnigmailConsole: false */
+Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://gre/modules/ctypes.jsm"); /*global ctypes: false */
+Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
+Cu.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
+Cu.import("resource://enigmail/enigmailProtocolHandler.jsm"); /*global EnigmailProtocolHandler: false */
+Cu.import("resource://enigmail/enigmailGpg.jsm"); /*global EnigmailGPG: false */
+Cu.import("resource://enigmail/rules.jsm"); /*global Rules: false */
+Cu.import("resource://enigmail/filters.jsm"); /*global Filters: false */
+Cu.import("resource://enigmail/armor.jsm"); /*global Armor: false */
+Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/app.jsm"); /*global App: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
+Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
+Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
+Cu.import("resource://enigmail/commonFuncs.jsm"); /*global EnigmailFuncs: false */
 
 /* Implementations supplied by this module */
 const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";
@@ -180,7 +168,6 @@ function getWinRegistryString(keyPath, keyName, rootKey) {
 
 
 function Enigmail() {
-    Components.utils.import("resource://enigmail/commonFuncs.jsm");
     Ec = EC.ensuredEnigmailCommon();
     EnigmailGpgAgent.setEnigmailCommon(Ec);
 }

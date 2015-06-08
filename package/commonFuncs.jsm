@@ -133,6 +133,7 @@ const EnigmailFuncs = {
 
   downloadKeys: function (win, inputObj, resultObj)
   {
+    // TODO: move [keys]
     Log.DEBUG("commonFuncs.jsm: downloadKeys: searchList="+inputObj.searchList+"\n");
 
     resultObj.importedKeys=0;
@@ -288,6 +289,7 @@ const EnigmailFuncs = {
 
   openHelpWindow: function (source)
   {
+    // TODO: move [windows]
     Windows.openWin("enigmail:help",
                     "chrome://enigmail/content/enigmailHelp.xul?src="+source,
                     "centerscreen,resizable");
@@ -301,6 +303,7 @@ const EnigmailFuncs = {
 
   openAboutWindow: function ()
   {
+    // TODO: move [windows]
     Windows.openWin("about:enigmail",
                     "chrome://enigmail/content/enigmailAbout.xul",
                     "resizable,centerscreen");
@@ -314,6 +317,7 @@ const EnigmailFuncs = {
 
   openRulesEditor: function ()
   {
+    // TODO: move [windows]
     Windows.openWin("enigmail:rulesEditor",
                     "chrome://enigmail/content/enigmailRulesEditor.xul",
                     "dialog,centerscreen,resizable");
@@ -328,6 +332,7 @@ const EnigmailFuncs = {
 
   openKeyManager: function (win)
   {
+    // TODO: move [windows]
     EnigmailCommon.getService(win);
 
     Windows.openWin("enigmail:KeyManager",
@@ -343,6 +348,7 @@ const EnigmailFuncs = {
 
   openKeyGen: function ()
   {
+    // TODO: move [windows]
     Windows.openWin("enigmail:generateKey",
                     "chrome://enigmail/content/enigmailKeygen.xul",
                     "chrome,modal,resizable=yes");
@@ -356,6 +362,7 @@ const EnigmailFuncs = {
 
   openCardDetails: function ()
   {
+    // TODO: move [windows]
     Windows.openWin("enigmail:cardDetails",
                     "chrome://enigmail/content/enigmailCardDetails.xul",
                     "centerscreen");
@@ -370,6 +377,7 @@ const EnigmailFuncs = {
    */
   openConsoleWindow: function ()
   {
+    // TODO: move [windows]
      Windows.openWin("enigmail:console",
                      "chrome://enigmail/content/enigmailConsole.xul",
                      "resizable,centerscreen");
@@ -384,6 +392,7 @@ const EnigmailFuncs = {
    */
   openDebugLog: function(win)
   {
+    // TODO: move [windows]
 
 
     var opts="viewLog=1&title=" +
@@ -406,6 +415,7 @@ const EnigmailFuncs = {
    */
   openPrefWindow: function (win, showBasic, selectTab)
   {
+    // TODO: move [windows]
     Log.DEBUG("enigmailCommon.js: prefWindow\n");
 
     EnigmailCommon.getService(win,true);  // true: starting preferences dialog
@@ -428,6 +438,7 @@ const EnigmailFuncs = {
 
   createNewRule: function (win, emailAddress)
   {
+    // TODO: move [windows]
     // make sure the rules database is loaded
     var enigmailSvc = EnigmailCommon.getService(win);
     if (!enigmailSvc) return false;
@@ -457,6 +468,7 @@ const EnigmailFuncs = {
 
   editKeyExpiry: function (win, userIdArr, keyIdArr)
   {
+    // TODO: move [windows]
     var inputObj = {
       keyId: keyIdArr,
       userId: userIdArr
@@ -478,6 +490,7 @@ const EnigmailFuncs = {
 
   editKeyTrust: function (win, userIdArr, keyIdArr)
   {
+    // TODO: move [windows]
     var inputObj = {
       keyId: keyIdArr,
       userId: userIdArr
@@ -499,6 +512,7 @@ const EnigmailFuncs = {
 
   signKey: function (win, userId, keyId)
   {
+    // TODO: move [windows]
     var inputObj = {
       keyId: keyId,
       userId: userId
@@ -521,6 +535,7 @@ const EnigmailFuncs = {
 
   showPhoto: function (win, keyId, userId, photoNumber)
   {
+    // TODO: move [windows]
     var enigmailSvc = EnigmailCommon.getService(win);
     if (enigmailSvc) {
 
@@ -580,6 +595,7 @@ const EnigmailFuncs = {
 
   openKeyDetails: function (win, keyId, refresh)
   {
+    // TODO: move [windows]
     var keyListObj = {};
 
     keyId = keyId.replace(/^0x/, "");
@@ -609,6 +625,7 @@ const EnigmailFuncs = {
    * @return: String containing the fingerprint or null if key not found
    */
   getFingerprintForKey: function(keyId) {
+    // TODO: move [keys]
 
     let enigmailSvc = EnigmailCommon.getService();
     let keyList = enigmailSvc.getKeyListEntryOfKey(keyId);
@@ -635,6 +652,7 @@ const EnigmailFuncs = {
    * no return value
    */
   createKeyObjects: function (keyListString, keyListObj) {
+    // TODO: move [keys]
 
     keyListObj.keyList = [];
     keyListObj.keySortList = [];
@@ -732,6 +750,7 @@ const EnigmailFuncs = {
    */
   loadKeyList: function (win, refresh, keyListObj, sortColumn, sortDirection)
   {
+    // TODO: move [keys]
     Log.DEBUG("enigmailFuncs.jsm: loadKeyList\n");
 
     if (! sortColumn) sortColumn = "userid";
@@ -852,6 +871,7 @@ const EnigmailFuncs = {
    */
   obtainKeyList: function (win, secretOnly, refresh)
   {
+    // TODO: move [keys]
     Log.DEBUG("enigmailFuncs.jsm: obtainKeyList\n");
 
     var userList = null;
@@ -1053,6 +1073,7 @@ const EnigmailFuncs = {
    */
 
   writeFileContents: function(filePath, data, permissions) {
+    // TODO: move [files]
 
     // Log.DEBUG("enigmailFuncs.jsm: WriteFileContents: file="+filePath.toString()+"\n");
 
