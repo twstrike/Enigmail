@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, Data: false, Dialog: false, Windows: false, Log: false */
+/*global Components: false, Locale: false, Data: false, Dialog: false, Windows: false, Log: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -54,6 +54,7 @@ Cu.import("resource://enigmail/locale.jsm");
 Cu.import("resource://enigmail/data.jsm");
 Cu.import("resource://enigmail/dialog.jsm");
 Cu.import("resource://enigmail/windows.jsm");
+Cu.import("resource://enigmail/time.jsm");
 
 const EXPORTED_SYMBOLS = [ "EnigmailFuncs" ];
 
@@ -649,9 +650,9 @@ var EnigmailFuncs = {
         case "pub":
           keyObj = {};
           uatNum = 0;
-          keyObj.expiry=EnigmailCommon.getDateTime(listRow[EXPIRY_ID], true, false);
+          keyObj.expiry=Time.getDateTime(listRow[EXPIRY_ID], true, false);
           keyObj.expiryTime = Number(listRow[EXPIRY_ID]);
-          keyObj.created=EnigmailCommon.getDateTime(listRow[CREATED_ID], true, false);
+          keyObj.created=Time.getDateTime(listRow[CREATED_ID], true, false);
           keyObj.keyId=listRow[KEY_ID];
           keyObj.keyTrust=listRow[KEY_TRUST_ID];
           keyObj.keyUseFor=listRow[KEY_USE_FOR_ID];

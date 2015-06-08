@@ -53,6 +53,7 @@ MODFILES = \
            configure.jsm \
            dialog.jsm \
            timer.jsm \
+           time.jsm \
            windows.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \

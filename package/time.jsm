@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, OS: false */
+/*global Components: false, Locale: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,51 +39,41 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Locale" ];
-
-Components.utils.import("resource://enigmail/log.jsm");
+const EXPORTED_SYMBOLS = [ "Time" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const Cu = Components.utils;
 
-var enigStringBundle = null;
+Cu.import("resource://enigmail/locale.jsm");
 
-const LOCALE_SVC_CONTRACTID = "@mozilla.org/intl/nslocaleservice;1";
+const DATE_FORMAT_CONTRACTID = "@mozilla.org/intl/scriptabledateformat;1";
 
-const Locale = {
-    get: function() {
-        return Cc[LOCALE_SVC_CONTRACTID].getService(Ci.nsILocaleService).getApplicationLocale();
-    },
+const Time = {
+    /**
+     * Transform a Unix-Timestamp to a human-readable date/time string
+     *
+     * @dateNum:  Number  - Unix timestamp
+     * @withDate: Boolean - if true, include the date in the output
+     * @withTime: Boolean - if true, include the time in the output
+     *
+     * @return: String - formatted date/time string
+     */
+    getDateTime: function (dateNum, withDate, withTime) {
+        if(dateNum && dateNum !== 0) {
+            let dat = new Date(dateNum * 1000);
+            let appLocale = Locale.get();
+            let dateTimeFormat = Cc[DATE_FORMAT_CONTRACTID].getService(Ci.nsIScriptableDateFormat);
 
-    // retrieves a localized string from the enigmail.properties stringbundle
-    getString: function (aStr, subPhrases) {
-        if (!enigStringBundle) {
-            try {
-                var strBundleService = Cc["@mozilla.org/intl/stringbundle;1"].getService();
-                strBundleService = strBundleService.QueryInterface(Ci.nsIStringBundleService);
-                enigStringBundle = strBundleService.createBundle("chrome://enigmail/locale/enigmail.properties");
-            }
-            catch (ex) {
-                Log.ERROR("enigmailCore.jsm: Error in instantiating stringBundleService\n");
-            }
+            let dateFormat = (withDate ? dateTimeFormat.dateFormatShort : dateTimeFormat.dateFormatNone);
+            let timeFormat = (withTime ? dateTimeFormat.timeFormatNoSeconds : dateTimeFormat.timeFormatNone);
+            return dateTimeFormat.FormatDateTime(appLocale.getCategory("NSILOCALE_TIME"),
+                                                 dateFormat,
+                                                 timeFormat,
+                                                 dat.getFullYear(), dat.getMonth()+1, dat.getDate(),
+                                                 dat.getHours(), dat.getMinutes(), 0);
+        } else {
+            return "";
         }
-
-        if (enigStringBundle) {
-            try {
-                if (subPhrases) {
-                    if (typeof(subPhrases) == "string") {
-                        return enigStringBundle.formatStringFromName(aStr, [ subPhrases ], 1);
-                    } else {
-                        return enigStringBundle.formatStringFromName(aStr, subPhrases, subPhrases.length);
-                    }
-                } else {
-                    return enigStringBundle.GetStringFromName(aStr);
-                }
-            }
-            catch (ex) {
-                Log.ERROR("enigmailCore.jsm: Error in querying stringBundleService for string '"+aStr+"'\n");
-            }
-        }
-        return aStr;
     }
 };

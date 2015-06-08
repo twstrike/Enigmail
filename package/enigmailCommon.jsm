@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false, Execution: false, App: false */
+/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false, Execution: false, App: false, Time: false */
 /*global XPCOMUtils: false, Timer: false, Windows: false, Dialog: false, Configure: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -59,6 +59,7 @@ Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/execution.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
+Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/configure.jsm");
@@ -69,18 +70,9 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const nsIEnigmail = Ci.nsIEnigmail;
 
-const DATE_FORMAT_CONTRACTID = "@mozilla.org/intl/scriptabledateformat;1";
-const LOCALE_SVC_CONTRACTID = "@mozilla.org/intl/nslocaleservice;1";
 const NS_PREFS_SERVICE_CID = "@mozilla.org/preferences-service;1";
 const NS_STRING_INPUT_STREAM_CONTRACTID = "@mozilla.org/io/string-input-stream;1";
 const NS_INPUT_STREAM_CHNL_CONTRACTID = "@mozilla.org/network/input-stream-channel;1";
-const NS_TIMER_CONTRACTID       = "@mozilla.org/timer;1";
-
-const THUNDERBIRD_ID = "{3550f703-e582-4d05-9a08-453d09bdfdc6}";
-
-const BUTTON_POS_0           = 1;
-const BUTTON_POS_1           = 1 << 8;
-const BUTTON_POS_2           = 1 << 16;
 
 const GPG_BATCH_OPT_LIST = [ "--batch", "--no-tty", "--status-fd", "2" ];
 
@@ -88,9 +80,6 @@ const KEYTYPE_DSA = 1;
 const KEYTYPE_RSA = 2;
 
 var gPromptSvc = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
-var gDispatchThread = null;
-
-var gCachedPassphrase = null;
 
 var gEncryptedUris = [];
 
@@ -98,14 +87,10 @@ var gKeyAlgorithms = [];
 
 const gMimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha512", "sha224", "md5" ];
 
-
 // various global variables
 var gKeygenProcess = null;
 
-const EC = EnigmailCore;
-
 var EnigmailCommon = {
-
   // "constants"
   POSSIBLE_PGPMIME: -2081,
   PGP_DESKTOP_ATT : -2082,
@@ -261,36 +246,6 @@ var EnigmailCommon = {
   getEnvList: function() {
     return this.envList;
   },
-
-  /**
-   * Transform a Unix-Timestamp to a human-readable date/time string
-   *
-   * @dateNum:  Number  - Unix timestamp
-   * @withDate: Boolean - if true, include the date in the output
-   * @withTime: Boolean - if true, include the time in the output
-   *
-   * @return: String - formatted date/time string
-   */
-  getDateTime: function (dateNum, withDate, withTime)
-  {
-    if (dateNum && dateNum !== 0) {
-      var dat=new Date(dateNum * 1000);
-      var appLocale = Cc[LOCALE_SVC_CONTRACTID].getService(Ci.nsILocaleService).getApplicationLocale();
-      var dateTimeFormat = Cc[DATE_FORMAT_CONTRACTID].getService(Ci.nsIScriptableDateFormat);
-
-      var dateFormat = (withDate ? dateTimeFormat.dateFormatShort : dateTimeFormat.dateFormatNone);
-      var timeFormat = (withTime ? dateTimeFormat.timeFormatNoSeconds : dateTimeFormat.timeFormatNone);
-      return dateTimeFormat.FormatDateTime(appLocale.getCategory("NSILOCALE_TIME"),
-                dateFormat,
-                timeFormat,
-                dat.getFullYear(), dat.getMonth()+1, dat.getDate(),
-                dat.getHours(), dat.getMinutes(), 0);
-    }
-    else {
-      return "";
-    }
-  },
-
 
   /**
    * create an nsIStreamListener object to read String data from an nsIInputStream
@@ -936,7 +891,7 @@ var EnigmailCommon = {
       if (userList[i].substr(0,4) == "sec:") {
         let aLine=userList[i].split(/:/);
         keyId = aLine[4];
-        secretKeyCreated[keyId] = this.getDateTime(aLine[5], true, false);
+        secretKeyCreated[keyId] = Time.getDateTime(aLine[5], true, false);
         secretKeyList.push(keyId);
       }
     }

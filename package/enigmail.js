@@ -1,6 +1,6 @@
 /*global Components: false, EnigmailCore: false, EnigmailCommon: false, XPCOMUtils: false, EnigmailGpgAgent: false, EnigmailGPG: false, Encryption: false, Decryption: false */
 /*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, dump: false, OS: false */
-/*global Rules: false, Filters: false, Armor: false, Files: false, Log: false, Locale: false, Execution: false, App: false, Dialog: false, Windows: false */
+/*global Rules: false, Filters: false, Armor: false, Files: false, Log: false, Locale: false, Execution: false, App: false, Dialog: false, Windows: false, Time: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -64,6 +64,7 @@ Components.utils.import("resource://enigmail/execution.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
+Components.utils.import("resource://enigmail/time.jsm");
 
 try {
   // TB with omnijar
@@ -1451,7 +1452,7 @@ Enigmail.prototype = {
 
     if (listener.exitCode === 0) {
       var detailArr = retObj.sigDetails.split(/ /);
-      var dateTime = Ec.getDateTime(detailArr[2], true, true);
+      var dateTime = Time.getDateTime(detailArr[2], true, true);
       var msg1 = retObj.errorMsg.split(/\n/)[0];
 
       var msg2 = Locale.getString("keyAndSigDate", ["0x"+retObj.keyId.substr(-8, 8), dateTime ]);

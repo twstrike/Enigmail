@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Windows: false */
+/*global Components: false, EnigmailCommon: false, Windows: false, Locale: false, Prefs: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -43,6 +43,7 @@ Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/time.jsm");
 
 if (! Enigmail) var Enigmail = {};
 
@@ -244,7 +245,7 @@ Enigmail.hdrView = {
       if (sigDetails) {
         var detailArr=sigDetails.split(/ /);
 
-        let dateTime = EnigmailCommon.getDateTime(detailArr[2], true, true);
+        let dateTime = Time.getDateTime(detailArr[2], true, true);
         var txt = Locale.getString("keyAndSigDate", [ keyId.substr(-8, 8), dateTime ] );
         statusArr.push(txt);
         statusInfo += "\n" + txt;

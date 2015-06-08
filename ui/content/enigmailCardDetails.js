@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, EnigmailCommon: false, Data: false, Dialog: false */
+/*global Components: false, Locale: false, EnigmailCommon: false, Data: false, Dialog: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -40,6 +40,7 @@ Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/time.jsm");
 
 const Ec = EnigmailCommon;
 
@@ -89,9 +90,9 @@ function onLoad() {
         setValue("key_fpr_3", EnigmailFuncs.formatFpr(l[3]));
         break;
       case "fprtime":
-        setValue("key_created_1", Ec.getDateTime(l[1], true, false));
-        setValue("key_created_2", Ec.getDateTime(l[2], true, false));
-        setValue("key_created_3", Ec.getDateTime(l[3], true, false));
+        setValue("key_created_1", Time.getDateTime(l[1], true, false));
+        setValue("key_created_2", Time.getDateTime(l[2], true, false));
+        setValue("key_created_3", Time.getDateTime(l[3], true, false));
         break;
       default:
         if (l[0]) {

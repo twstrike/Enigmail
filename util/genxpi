@@ -126,6 +126,7 @@ zip --must-match\
     modules/configure.jsm \
     modules/dialog.jsm \
     modules/timer.jsm \
+    modules/time.jsm \
     modules/windows.jsm \
     modules/commonFuncs.jsm \
     modules/fixExchangeMsg.jsm \

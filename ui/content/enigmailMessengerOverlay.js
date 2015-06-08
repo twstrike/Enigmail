@@ -1,4 +1,4 @@
-/*global Components: false, Data: false, App: false, Dialog: false, Timer: false, Windows: false */
+/*global Components: false, Data: false, App: false, Dialog: false, Timer: false, Windows: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -60,6 +60,7 @@ Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
+Components.utils.import("resource://enigmail/time.jsm");
 
 const EC = EnigmailCore;
 
@@ -1551,7 +1552,7 @@ Enigmail.msg = {
                        "Subject": msg.subject,
                        "To": msg.recipients,
                        "Cc": msg.ccList,
-                       "Date": EnigmailCommon.getDateTime(msg.dateInSeconds, true, true) };
+                       "Date": Time.getDateTime(msg.dateInSeconds, true, true) };
 
 
             if(gFolderDisplay.selectedMessageIsNews) {
