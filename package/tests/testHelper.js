@@ -79,10 +79,9 @@ var TestHelper = {
             for(var i=0; i < TestHelper.allTests.length; i++) {
                 var homedir = this.initalizeGpgHome();
                 try{ TestHelper.allTests[i]();}
-                catch(ex){
-                    //if runtime error will remain the homedir
+                finally{
+                    this.removeGpgHome(homedir);
                 }
-                this.removeGpgHome(homedir);
             }
         }
     },
