@@ -360,7 +360,7 @@ function shouldSignKey() {
         5,
         function (exitCode, errorMsg) {
             Assert.equal(exitCode, 0);
-            //Assert.equal("The key is already signed, you cannot sign it twice.",errorMsg);
+            Assert.equal("The key is already signed, you cannot sign it twice.",errorMsg);
             do_test_finished();
         }
     );

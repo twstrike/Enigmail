@@ -406,6 +406,7 @@ var EnigmailKeyMgmt = {
     var exitCodeObj    = {};
 
     var output = Execution.execCmd(command, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+    Log.ERROR("enigmail.js: Enigmail.importKeyFromFile: error="+errorMsgObj.value+"\n");
 
     var statusMsg = statusMsgObj.value;
 

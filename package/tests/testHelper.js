@@ -72,16 +72,19 @@ var TestHelper = {
     },
 
     runTests: function() {
-        var homedir = this.initalizeGpgHome();
         if(TestHelper.currentlyTesting) {
             TestHelper.loadDirectly(TestHelper.currentlyTesting);
         }
         if(TestHelper.allTests) {
             for(var i=0; i < TestHelper.allTests.length; i++) {
-                TestHelper.allTests[i]();
+                var homedir = this.initalizeGpgHome();
+                try{ TestHelper.allTests[i]();}
+                catch(ex){
+                    //if runtime error will remain the homedir
+                }
+                this.removeGpgHome(homedir);
             }
         }
-        this.removeGpgHome(homedir);
     },
 
     initalizeGpgHome: function() {
@@ -113,7 +116,7 @@ var TestHelper = {
 
     removeGpgHome: function(homedir){
         var working_directory = new osUtils.FileUtils.File(homedir);
-        working_directory.remove(true);
+        if(working_directory.exists()) working_directory.remove(true);
     }
 };
 
