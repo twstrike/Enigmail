@@ -2700,15 +2700,9 @@ Enigmail.msg = {
       // check if own key is invalid
       let s = new RegExp("^INV_RECP [0-9]+ \\<?" + fromAddr + "\\>?", "m");
       if (testErrorMsgObj.value.search(s) >= 0)  {
-<<<<<<< HEAD
         Dialog.alert(window,
           Locale.getString("saveDraftError")+ "\n\n" +
-          Locale.getString("errorKeyUnusable", [ fromAddr ]));
-=======
-        EnigmailCommon.alert(window,
-          EnigmailCommon.getString("saveDraftError")+ "\n\n" +
-          EnigmailCommon.getString("errorOwnKeyUnusable", [ fromAddr ]));
->>>>>>> org/master
+          Locale.getString("errorOwnKeyUnusable", [ fromAddr ]));
         return false;
       }
     }
