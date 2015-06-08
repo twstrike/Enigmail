@@ -1,5 +1,7 @@
 /*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false, Execution: false, App: false, Time: false */
-/*global XPCOMUtils: false, Timer: false, Windows: false, Dialog: false, Configure: false */
+/*global XPCOMUtils: false, Timer: false, Windows: false, Dialog: false, Configure: false, Encryption: false, Decryption: false */
+/*global EnigmailErrorHandling: false, subprocess: false, escape: false, unescape: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,12 +37,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-
-/*
- * Import into a JS component using
- * 'Components.utils.import("resource://enigmail/enigmailCommon.jsm");'
- */
-
+"use strict";
 
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -305,13 +302,13 @@ var EnigmailCommon = {
    */
   newRequestObserver: function (terminateFunc, terminateArg)
   {
-    var requestObserver = function (terminateFunc, terminateArg)
+    var RequestObserver = function (terminateFunc, terminateArg)
     {
       this._terminateFunc = terminateFunc;
       this._terminateArg = terminateArg;
     };
 
-    requestObserver.prototype = {
+    RequestObserver.prototype = {
 
       _terminateFunc: null,
       _terminateArg: null,
@@ -335,7 +332,7 @@ var EnigmailCommon = {
       }
     };
 
-    return new requestObserver(terminateFunc, terminateArg);
+    return new RequestObserver(terminateFunc, terminateArg);
   },
 
   /**
@@ -377,12 +374,12 @@ var EnigmailCommon = {
     Log.DEBUG("enigmailCommon.jsm: dispatchEvent f="+callbackFunction.name+"\n");
 
     // object for dispatching callback back to main thread
-    var mainEvent = function(cbFunc, arrayOfArgs) {
+    var MainEvent = function(cbFunc, arrayOfArgs) {
       this.cbFunc = cbFunc;
       this.args   = arrayOfArgs;
     };
 
-    mainEvent.prototype = {
+    MainEvent.prototype = {
       QueryInterface: function(iid) {
         if (iid.equals(Ci.nsIRunnable) ||
             iid.equals(Ci.nsISupports)) {
@@ -405,7 +402,7 @@ var EnigmailCommon = {
 
     };
 
-    var event = new mainEvent(callbackFunction, arrayOfArgs);
+    var event = new MainEvent(callbackFunction, arrayOfArgs);
     if (sleepTimeMs > 0) {
       return Timer.setTimeout(event, sleepTimeMs);
     }
@@ -797,7 +794,7 @@ var EnigmailCommon = {
    */
   getHttpProxy: function (hostName) {
 
-    function GetPasswdForHost(hostname, userObj, passwdObj) {
+    function getPasswdForHost(hostname, userObj, passwdObj) {
       var loginmgr = Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
       // search HTTP password 1st
@@ -841,7 +838,7 @@ var EnigmailCommon = {
         if (proxyHostName) {
           var userObj = {};
           var passwdObj = {};
-          if (GetPasswdForHost(proxyHostName, userObj, passwdObj)) {
+          if (getPasswdForHost(proxyHostName, userObj, passwdObj)) {
             proxyHostName = userObj.value+":"+passwdObj.value+"@"+proxyHostName;
           }
         }
