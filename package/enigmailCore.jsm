@@ -1,4 +1,5 @@
-/*global Components: false, EnigmailCommon: false */
+/*global Components: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -32,6 +33,8 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
+
+"use strict";
 
 const EXPORTED_SYMBOLS = [ "EnigmailCore" ];
 
@@ -75,7 +78,7 @@ const EnigmailCore = {
     },
 
     defaultEnigmailCommonCreation: function() {
-        Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+        Components.utils.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
         return EnigmailCommon;
     }
 };

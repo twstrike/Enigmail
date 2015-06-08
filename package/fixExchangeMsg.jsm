@@ -1,4 +1,5 @@
-/*global Components EnigmailCommon EnigmailCore */
+/*global Components: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -33,40 +34,21 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-/*
- * Import into a JS component using
- * 'Components.utils.import("resource://enigmail/fixExchangeMsg.jsm");'
- */
+"use strict";
 
-try {
-  // TB with omnijar
-  Components.utils.import("resource:///modules/gloda/mimemsg.js");
-  Components.utils.import("resource:///modules/gloda/utils.js");
-}
-catch (ex) {
-  // "old style" TB
-  Components.utils.import("resource://app/modules/gloda/mimemsg.js");
-  Components.utils.import("resource://app/modules/gloda/utils.js");
-}
+const Cu = Components.utils;
 
-try {
-  Components.utils.import("resource://gre/modules/Promise.jsm");
-} catch (ex) {
-  Components.utils.import("resource://gre/modules/commonjs/sdk/core/promise.js");
-}
-
-
-Components.utils.import("resource:///modules/MailUtils.js");
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/commonFuncs.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
+Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
+Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
+Cu.import("resource://enigmail/commonFuncs.jsm"); /*global EnigmailFuncs: false */
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 
 const Ec = EnigmailCommon;
 const EC = EnigmailCore;
 
-
-var EXPORTED_SYMBOLS = ["EnigmailFixExchangeMsg"];
+const EXPORTED_SYMBOLS = ["EnigmailFixExchangeMsg"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -82,9 +64,7 @@ const nsIEnigmail = Components.interfaces.nsIEnigmail;
  *
  * @return Promise; upon success, the promise returns the messageKey
  */
-
-// TODO: change to creating new object
-EnigmailFixExchangeMsg = {
+const EnigmailFixExchangeMsg = {
   fixExchangeMessage: function (hdr, brokenByApp, destFolderUri) {
     var self = this;
     return new Promise(
@@ -258,7 +238,7 @@ EnigmailFixExchangeMsg = {
    */
   getCorrectedExchangeBodyData: function(bodyData, boundary) {
     Log.DEBUG("fixExchangeMsg.jsm: getCorrectedExchangeBodyData: boundary='"+ boundary +"'\n");
-    let boundRx = RegExp("^--" + boundary, "ym");
+    let boundRx = new RegExp("^--" + boundary, "ym");
     let match = boundRx.exec(bodyData);
 
     if (match.index < 0) {
@@ -315,7 +295,7 @@ EnigmailFixExchangeMsg = {
    */
   getCorrectediPGMailBodyData: function(bodyData, boundary) {
     Log.DEBUG("fixExchangeMsg.jsm: getCorrectediPGMailBodyData: boundary='"+ boundary +"'\n");
-    let boundRx = RegExp("^--" + boundary, "ym");
+    let boundRx = new RegExp("^--" + boundary, "ym");
     let match = boundRx.exec(bodyData);
 
     if (match.index < 0) {
@@ -342,7 +322,7 @@ EnigmailFixExchangeMsg = {
     let mimeHdr = Cc["@mozilla.org/messenger/mimeheaders;1"].createInstance(Ci.nsIMimeHeaders);
 
     mimeHdr.initialize(bodyData.substr(encData, 500));
-    ct = mimeHdr.extractHeader("content-type", false);
+    let ct = mimeHdr.extractHeader("content-type", false);
     if (!ct || ct.search(/application\/pgp-encrypted/i) < 0) {
       Log.DEBUG("fixExchangeMsg.jsm: getCorrectediPGMailBodyData: wrong content-type of PGP/MIME data\n");
       Log.DEBUG("   ct = '"+ct+"'\n");
@@ -363,7 +343,7 @@ EnigmailFixExchangeMsg = {
     var self = this;
     var tempFile = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("TmpD", Ci.nsIFile);
     tempFile.append("message.eml");
-    tempFile.createUnique(0, 0600);
+    tempFile.createUnique(0, 384); // octal 0600 - since octal is deprected in JS
 
     // ensure that file gets deleted on exit, if something goes wrong ...
     var extAppLauncher = Cc["@mozilla.org/mime;1"].getService(Ci.nsPIExternalAppLauncher);

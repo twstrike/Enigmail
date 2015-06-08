@@ -43,12 +43,7 @@ Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
-
-try {
-  Components.utils.import("resource://gre/modules/Promise.jsm");
-} catch (ex) {
-  Components.utils.import("resource://gre/modules/commonjs/sdk/core/promise.js");
-}
+Components.utils.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 
 const Ec = EnigmailCommon;
 

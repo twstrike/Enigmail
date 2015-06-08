@@ -1,3 +1,4 @@
+/*global Components: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -16,9 +17,12 @@
  *
  * The Initial Developer of the Original Code is Patrick Brunschwig.
  * Portions created by Patrick Brunschwig <patrick@enigmail.net> are
- * Copyright (C) 2012 Patrick Brunschwig. All Rights Reserved.
+ * Copyright (C) 2010 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
+ *  Fan Jiang <fanjiang@thoughtworks.com>
+ *  Iván Pazmiño <iapamino@thoughtworks.com>
+ *  Ola Bini <obini@thoughtworks.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -33,29 +37,32 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
+/*
+ This module is a shim module to make it easier to load
+ the Gloda Mime utilities from the various potential sources
+*/
+
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "EnigmailConsole" ];
+const EXPORTED_SYMBOLS = [ "msgHdrToMimeMessage",
+                           "MimeMessage", "MimeContainer",
+                           "MimeBody", "MimeUnknown",
+                           "MimeMessageAttachment" ];
 
-const MAX_SIZE = 32768;
-var dataCache = "";
-var gotNewData = false;
+const Cu = Components.utils;
 
-const EnigmailConsole = {
-  write: function(data) {
-    dataCache += data;
-    if (dataCache.length > MAX_SIZE) {
-      dataCache = dataCache.substr(-MAX_SIZE, MAX_SIZE);
-    }
-    gotNewData = true;
-  },
+/*global MsgHdrToMimeMessage: false */
+try {
+    // TB with omnijar
+    Cu.import("resource:///modules/gloda/mimemsg.js");
+} catch (ex) {
+    // "old style" TB
+    Cu.import("resource://app/modules/gloda/mimemsg.js");
+}
 
-  hasNewData: function() {
-    return gotNewData;
-  },
+// The original naming is inconsistent with JS standards for classes vs functions
+// Thus we rename it here.
+const msgHdrToMimeMessage   = MsgHdrToMimeMessage;
 
-  getData: function() {
-    gotNewData = false;
-    return dataCache;
-  }
-};
+// We don't need to explicitly create the other variables, since they will be
+// imported into the current namespace anyway

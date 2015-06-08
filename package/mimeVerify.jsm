@@ -1,8 +1,10 @@
-/*global Components: false, EnigmailCommon: false, XPCOMUtils: false, Data: false */
+/*global Components: false, EnigmailCommon: false, XPCOMUtils: false, Data: false, Log: false, Files: false, EnigmailFuncs: false, dump: false, atob: false */
+/*jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+"use strict";
 
 /**
  *  Module for handling PGP/MIME signed messages
@@ -20,7 +22,7 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 
-var EXPORTED_SYMBOLS = [ "EnigmailVerify" ];
+const EXPORTED_SYMBOLS = [ "EnigmailVerify" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -402,7 +404,7 @@ MimeVerify.prototype = {
   }
 };
 
-var EnigmailVerify = {
+const EnigmailVerify = {
   lastMsgWindow: null,
   lastMsgUri: null,
   manualMsgUri: null,

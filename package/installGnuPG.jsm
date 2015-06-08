@@ -1,4 +1,5 @@
-/*global Components: false, EnigmailCommon: false, EnigmailCore: false, OS: false, Log: false, App: false */
+/*global Components: false, escape: false, unescape: false, Uint8Array: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -33,6 +34,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
 
  /* Usage:
   InstallGnuPG.start(progressListener).
@@ -52,26 +54,15 @@
 
 */
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/subprocess.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/os.jsm");
-Components.utils.import("resource://enigmail/app.jsm");
+const Cu = Components.utils;
 
-// Import promise API
-try {
-  Components.utils.import("resource://gre/modules/commonjs/promise/core.js");     // Gecko 17 to 20
-}
-catch (ex) {
-  try {
-    Components.utils.import("resource://gre/modules/commonjs/sdk/core/promise.js"); // Gecko 21 to 24
-  }
-  catch(ex2) {
-    Components.utils.import("resource://gre/modules/Promise.jsm"); // Gecko >= 25
-  }
-}
-
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
+Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
+Cu.import("resource://enigmail/app.jsm"); /*global App: false */
+Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -225,11 +216,11 @@ function createTCPErrorFromFailedXHR(xhr) {
   return {name: errName, type: errType};
 }
 
-function installer(progressListener) {
+function Installer(progressListener) {
   this.progressListener = progressListener;
 }
 
-installer.prototype = {
+Installer.prototype = {
 
   installMacOs: function(deferred) {
     Log.DEBUG("installGnuPG.jsm: installMacOs\n");
@@ -311,7 +302,7 @@ installer.prototype = {
       arguments:   args,
       charset: null,
       done: function(result) {
-        if (exitCode) Log.ERROR("Installer failed with exit code "+result.exitCode);
+        if (result.exitCode) Log.ERROR("Installer failed with exit code "+result.exitCode);
       }
     };
 
@@ -370,7 +361,7 @@ installer.prototype = {
     var istream = Components.classes["@mozilla.org/network/file-input-stream;1"]
                             .createInstance(Components.interfaces.nsIFileInputStream);
     // open for reading
-    istream.init(this.installerFile, 0x01, 0444, 0);
+    istream.init(this.installerFile, 0x01, 292, 0); // octal 0444 - octal literals are deprecated
 
     var ch = Components.classes["@mozilla.org/security/hash;1"]
                        .createInstance(Components.interfaces.nsICryptoHash);
@@ -392,18 +383,18 @@ installer.prototype = {
     return this.hash == hashStr;
   },
 
-  getDownloadUrl: function() {
+  getDownloadUrl: function(on) {
 
     let deferred = Promise.defer();
 
     function reqListener () {
-      if (typeof(this.responseXML) == "object") {
-        Log.DEBUG("installGnuPG.jsm: getDownloadUrl.reqListener: got: "+this.responseText+"\n");
-        if (! this.responseXML) {
+      if (typeof(on.responseXML) == "object") {
+        Log.DEBUG("installGnuPG.jsm: getDownloadUrl.reqListener: got: "+on.responseText+"\n");
+        if (! on.responseXML) {
           onError({type: "Network" });
           return;
         }
-        let doc = this.responseXML.firstChild;
+        let doc = on.responseXML.firstChild;
         self.url = unescape(doc.getAttribute("url"));
         self.hash = sanitizeHash(doc.getAttribute("hash"));
         self.command = sanitizeFileName(doc.getAttribute("command"));
@@ -489,7 +480,10 @@ installer.prototype = {
         self.progressListener.onDownloaded();
 
       try {
-        performInstall(this.response).then(function _f() { performCleanup(); });
+        // this line used to read:
+        //    performInstall(this.response).then(function _f() { performCleanup(); });
+        // but since this.response is never actually set anywhere, it should always be null
+        performInstall(null).then(function _f() { performCleanup(); });
       }
       catch (ex) {
         Log.writeException("installGnuPG.jsm", ex);
@@ -638,8 +632,8 @@ var InstallGnuPG = {
 
   startInstaller: function(progressListener) {
 
-    var i = new installer(progressListener);
-    i.getDownloadUrl().
+    var i = new Installer(progressListener);
+    i.getDownloadUrl(i).
         then(function _dl() { i.performDownload(); });
     return i;
   }

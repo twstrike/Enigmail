@@ -1,4 +1,5 @@
-/*global Components: false, Locale: false, Data: false, Dialog: false, Windows: false, Log: false, Time: false */
+/*global Components: false, escape: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -34,31 +35,28 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
+"use strict";
 
 /*
  * Common Enigmail crypto-related GUI functionality
  *
- * Import into a JS component using
- * 'Components.utils.import("resource://enigmail/commonFuncs.jsm");'
  */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/enigmailCore.jsm");
-Cu.import("resource://enigmail/enigmailCommon.jsm");
-Cu.import("resource://enigmail/log.jsm");
-Cu.import("resource://enigmail/files.jsm");
-Cu.import("resource://enigmail/locale.jsm");
-Cu.import("resource://enigmail/data.jsm");
-Cu.import("resource://enigmail/dialog.jsm");
-Cu.import("resource://enigmail/windows.jsm");
-Cu.import("resource://enigmail/time.jsm");
+Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
+Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
+Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailFuncs" ];
-
-
 
 const IOSERVICE_CONTRACTID = "@mozilla.org/network/io-service;1";
 
@@ -105,7 +103,7 @@ const TRUSTLEVELS_SORTED_IDX_UNKNOWN = 7;   // index of '?'
 
 var gTxtConverter = null;
 
-var EnigmailFuncs = {
+const EnigmailFuncs = {
 
   /**
    * @return - |string| containing the order of trust/validity values
@@ -597,6 +595,8 @@ var EnigmailFuncs = {
     win.openDialog("chrome://enigmail/content/enigmailKeyDetailsDlg.xul", "",
                    "dialog,modal,centerscreen,resizable", inputObj, resultObj);
     if (resultObj.refresh) {
+      // TODO: look at this usage - it doesn't seem to refer to any function here
+      /*global enigmailRefreshKeys: false */
       enigmailRefreshKeys();
     }
   },
@@ -786,8 +786,8 @@ var EnigmailFuncs = {
     this.createKeyObjects(aGpgUserList, keyListObj);
 
     // search and mark keys that have secret keys
-    for (i=0; i<aGpgSecretsList.length; i++) {
-       listRow=aGpgSecretsList[i].split(/:/);
+    for (let i=0; i<aGpgSecretsList.length; i++) {
+       let listRow=aGpgSecretsList[i].split(/:/);
        if (listRow.length>=0) {
          if (listRow[0] == "sec") {
            if (typeof(keyListObj.keyList[listRow[KEY_ID]]) == "object") {

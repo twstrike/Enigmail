@@ -1,4 +1,5 @@
-/*global Components: false, XPCOMUtils: false, EnigmailCommon: false, Locale: false, Execution: false, Dialog: false, Log: false */
+/*global Components: false, btoa: false, escape: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -34,48 +35,31 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-/*
- * Import into a JS component using
- * 'Components.utils.import("resource://enigmail/enigmailConvert.jsm");'
- */
+"use strict";
 
-Components.utils.import("resource://gre/modules/AddonManager.jsm");
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://enigmail/pipeConsole.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/armor.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/execution.jsm");
-Components.utils.import("resource://enigmail/dialog.jsm");
+const Cu = Components.utils;
 
-try {
-  // TB with omnijar
-  Components.utils.import("resource:///modules/gloda/mimemsg.js");
-  Components.utils.import("resource:///modules/gloda/utils.js");
-}
-catch (ex) {
-  // "old style" TB
-  Components.utils.import("resource://app/modules/gloda/mimemsg.js");
-  Components.utils.import("resource://app/modules/gloda/utils.js");
-}
+Cu.import("resource://gre/modules/AddonManager.jsm"); /*global AddonManager: false */
+Cu.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false */
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/armor.jsm"); /*global Armor: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/glodaUtils.jsm"); /*global GlodaUtils: false */
+Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
+Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
+Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
 
-try {
-  Components.utils.import("resource://gre/modules/Promise.jsm");
-} catch (ex) {
-  Components.utils.import("resource://gre/modules/commonjs/sdk/core/promise.js");
-}
-
-
-Components.utils.import("resource:///modules/MailUtils.js");
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/commonFuncs.jsm");
+/*global MimeBody: false, MimeUnknown: false, MimeMessageAttachment: false */
+/*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
+Cu.import("resource://enigmail/glodaMime.jsm");
 
 var Ec = EnigmailCommon;
 var EC = EnigmailCore;
 
-
-var EXPORTED_SYMBOLS = ["enigmailDecryptPermanently"];
+const EXPORTED_SYMBOLS = ["EnigmailDecryptPermanently"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -94,7 +78,7 @@ const STATUS_NOT_REQUIRED = 2;
  *
  * @return a Promise that we do that
  */
-var EnigmailDecryptPermanently = {
+const EnigmailDecryptPermanently = {
 
   /***
    *  dispatchMessages
@@ -145,7 +129,7 @@ var EnigmailDecryptPermanently = {
     if (requireSync && ! done) {
       // wait here until all messages processed, such that the function returns
       // synchronously
-      LogC.DEBUG("enigmailConvert.jsm: dispatchMessage: enter nested loop\n");
+      Log.DEBUG("enigmailConvert.jsm: dispatchMessage: enter nested loop\n");
       inspector.enterNestedEventLoop({value : 0});
     }
   },
@@ -160,15 +144,15 @@ var EnigmailDecryptPermanently = {
         var messenger = Cc["@mozilla.org/messenger;1"].createInstance(Ci.nsIMessenger);
         var msgSvc = messenger.messageServiceFromURI(msgUriSpec);
 
-        var decrypt = new decryptMessageIntoFolder(destFolder, move, resolve);
+        var decrypt = new DecryptMessageIntoFolder(destFolder, move, resolve);
 
-        Log.DEBUG("enigmailConvert.jsm: EnigmailDecryptPermanently: Calling MsgHdrToMimeMessage\n");
+        Log.DEBUG("enigmailConvert.jsm: EnigmailDecryptPermanently: Calling msgHdrToMimeMessage\n");
         try {
-          MsgHdrToMimeMessage(hdr, decrypt, decrypt.messageParseCallback, true, {examineEncryptedParts: false, partsOnDemand: false});
+          msgHdrToMimeMessage(hdr, decrypt, decrypt.messageParseCallback, true, {examineEncryptedParts: false, partsOnDemand: false});
         }
         catch (ex) {
-          Ec.ERROR_LOG("enigmailConvert.jsm: MsgHdrToMimeMessage failed: "+ex.toString()+"\n");
-          reject("MsgHdrToMimeMessage failed");
+          Log.ERROR("enigmailConvert.jsm: msgHdrToMimeMessage failed: "+ex.toString()+"\n");
+          reject("msgHdrToMimeMessage failed");
         }
         return;
       }
@@ -176,7 +160,7 @@ var EnigmailDecryptPermanently = {
   }
 };
 
-function decryptMessageIntoFolder(destFolder, move, resolve) {
+function DecryptMessageIntoFolder(destFolder, move, resolve) {
   this.destFolder = destFolder;
   this.move = move;
   this.resolve = resolve;
@@ -188,10 +172,10 @@ function decryptMessageIntoFolder(destFolder, move, resolve) {
   this.subject = "";
 }
 
-decryptMessageIntoFolder.prototype = {
+DecryptMessageIntoFolder.prototype = {
 };
 
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 messageParseCallback = function (hdr, mime) {
   Log.DEBUG("enigmailConvert.jsm: messageParseCallback: started\n");
   this.hdr = hdr;
@@ -291,7 +275,7 @@ messageParseCallback = function (hdr, mime) {
         //XXX Do we wanna use the tmp for this?
         var tempFile = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("TmpD", Ci.nsIFile);
         tempFile.append("message.eml");
-        tempFile.createUnique(0, 0600);
+        tempFile.createUnique(0, 384); // == 0600, octal is deprecated
 
         // ensure that file gets deleted on exit, if something goes wrong ...
         var extAppLauncher = Cc["@mozilla.org/mime;1"].getService(Ci.nsPIExternalAppLauncher);
@@ -374,7 +358,7 @@ messageParseCallback = function (hdr, mime) {
       }
     ).catch(
       function catchErr(errorMsg) {
-        Log.DEBUG("enigmailConvert.jsm: Promise.catchErr: "+err+"\n");
+        Log.DEBUG("enigmailConvert.jsm: Promise.catchErr: "+errorMsg+"\n");
         self.resolve(false);
       }
     );
@@ -386,14 +370,15 @@ messageParseCallback = function (hdr, mime) {
   }
 };
 
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 readAttachment = function (attachment, strippedName) {
   return new Promise(
     function(resolve, reject) {
       Log.DEBUG("enigmailConvert.jsm: readAttachment\n");
+      let o;
       var f = function _cb(data) {
           Log.DEBUG("enigmailConvert.jsm: readAttachment - got data ("+ data.length+")\n");
-          var o = {
+          o = {
             type: "attachment",
             data: data,
             name: strippedName ? strippedName : attachment.name,
@@ -420,7 +405,7 @@ readAttachment = function (attachment, strippedName) {
 };
 
 
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 decryptAttachment = function(attachment, strippedName) {
   var self = this;
 
@@ -532,7 +517,7 @@ decryptAttachment = function(attachment, strippedName) {
 
 // the sunny world of PGP/MIME
 
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 walkMimeTree = function(mime, parent) {
   Log.DEBUG("enigmailConvert.jsm: walkMimeTree:\n");
   let ct = getContentType(getHeaderValue(mime, 'content-type'));
@@ -575,7 +560,7 @@ walkMimeTree = function(mime, parent) {
  *  - http://sourceforge.net/p/enigmail/forum/support/thread/4add2b69/
  */
 
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 isBrokenByExchange = function(mime) {
   Log.DEBUG("enigmailConvert.jsm: isBrokenByExchange:\n");
 
@@ -603,7 +588,7 @@ isBrokenByExchange = function(mime) {
 };
 
 
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 isPgpMime = function(mime) {
   Log.DEBUG("enigmailConvert.jsm: isPgpMime:\n");
   try {
@@ -625,7 +610,7 @@ isPgpMime = function(mime) {
 };
 
 // smime-type=enveloped-data
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 isSMime = function(mime) {
   Log.DEBUG("enigmailConvert.jsm: isSMime:\n");
   try {
@@ -646,7 +631,7 @@ isSMime = function(mime) {
   return false;
 };
 
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 decryptPGPMIME = function (mime, part) {
   Log.DEBUG("enigmailConvert.jsm: decryptPGPMIME: part="+part+"\n");
 
@@ -749,7 +734,7 @@ decryptPGPMIME = function (mime, part) {
 
 
 //inline wonderland
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 decryptINLINE = function (mime) {
   Log.DEBUG("enigmailConvert.jsm: decryptINLINE:\n");
   if (typeof mime.body !== 'undefined') {
@@ -897,7 +882,7 @@ decryptINLINE = function (mime) {
   return 0;
 };
 
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 stripHTMLFromArmoredBlocks = function(text) {
 
   var index = 0;
@@ -930,7 +915,7 @@ stripHTMLFromArmoredBlocks = function(text) {
  *
  ******/
 
-decryptMessageIntoFolder.prototype.
+DecryptMessageIntoFolder.prototype.
 mimeToString = function (mime, topLevel) {
   Log.DEBUG("enigmailConvert.jsm: mimeToString: part: '"+mime.partName+"'\n");
 
@@ -1079,10 +1064,10 @@ function formatHeader(headerLabel)
 }
 
 function formatHeaderData(hdrValue) {
+  let header;
   if (Array.isArray(hdrValue)) {
     header = hdrValue.join("").split(" ");
-  }
-  else {
+  } else {
     header = hdrValue.split(" ");
   }
 

@@ -1,8 +1,10 @@
-/*global Components: false, EnigmailCommon: false, Data: false */
+/*global Components: false, atob: false, dump: false */
+/*jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+"use strict";
 
 /**
  *  Module for handling PGP/MIME encrypted messages
@@ -10,12 +12,12 @@
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/mimeVerify.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
-
+Components.utils.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
+Components.utils.import("resource://enigmail/mimeVerify.jsm"); /*global EnigmailVerify: false */
+Components.utils.import("resource://enigmail/log.jsm"); /*global Log: false */
+Components.utils.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
+Components.utils.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;

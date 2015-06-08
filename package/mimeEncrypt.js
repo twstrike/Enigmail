@@ -1,8 +1,10 @@
-/*global Components: false, EnigmailCommon: false, Log: false, Dialog: false */
+/*global Components: false, EnigmailCommon: false, Log: false, Dialog: false, dump: false, EnigmailFuncs: false */
+/*jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+"use strict";
 
 /**
  *  Module for creating PGP/MIME signed and/or encrypted messages
@@ -371,7 +373,7 @@ PgpMimeEncrypt.prototype = {
     this.outStringStream.setData(this.outQueue, this.outQueue.length);
     var writeCount = this.outStream.writeFrom(this.outStringStream, this.outQueue.length);
     if (writeCount < this.outQueue.length) {
-      LOCAL_DEBUG("mimeEncrypt.js: flushOutput: wrote "+writeCount+" instead of "+length+" bytes\n");
+      LOCAL_DEBUG("mimeEncrypt.js: flushOutput: wrote "+writeCount+" instead of "+this.outQueue.length+" bytes\n");
     }
     this.outQueue = "";
   },

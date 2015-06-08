@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, OS: false, AddonManager: false, dump: false */
+/*global Components: false, dump: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -45,7 +45,8 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-Cu.import("resource://gre/modules/AddonManager.jsm");
+Cu.import("resource://gre/modules/AddonManager.jsm"); /*global AddonManager: false */
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 
 const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
 const ENIG_EXTENSION_GUID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";

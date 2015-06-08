@@ -36,15 +36,9 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-try {
-  // TB with omnijar
-  Components.utils.import("resource:///modules/gloda/mimemsg.js");
-}
-catch (ex) {
-  // TB without omnijar
-  Components.utils.import("resource://app/modules/gloda/mimemsg.js");
-}
-
+/*global MimeBody: false, MimeUnknown: false, MimeMessageAttachment: false */
+/*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
+Components.utils.import("resource://enigmail/glodaMime.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
@@ -338,11 +332,11 @@ Enigmail.msg = {
         properties = msgHdr.getUint32Property("enigmail");
         if (draft) {
           try {
-            MsgHdrToMimeMessage(msgHdr , null, this.getMsgPropertiesCb, true,
+            msgHdrToMimeMessage(msgHdr , null, this.getMsgPropertiesCb, true,
             { examineEncryptedParts: true });
           }
           catch (ex) {
-            Log.DEBUG("enigmailMessengerOverlay.js: Enigmail.msg.getMsgProperties: cannot use MsgHdrToMimeMessage\n");
+            Log.DEBUG("enigmailMessengerOverlay.js: Enigmail.msg.getMsgProperties: cannot use msgHdrToMimeMessage\n");
           }
         }
       }

@@ -54,6 +54,9 @@ MODFILES = \
            dialog.jsm \
            timer.jsm \
            time.jsm \
+           glodaUtils.jsm \
+           glodaMime.jsm \
+           promise.jsm \
            windows.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \

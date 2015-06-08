@@ -1,3 +1,4 @@
+/*global Components: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -16,9 +17,12 @@
  *
  * The Initial Developer of the Original Code is Patrick Brunschwig.
  * Portions created by Patrick Brunschwig <patrick@enigmail.net> are
- * Copyright (C) 2012 Patrick Brunschwig. All Rights Reserved.
+ * Copyright (C) 2010 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
+ *  Fan Jiang <fanjiang@thoughtworks.com>
+ *  Iván Pazmiño <iapamino@thoughtworks.com>
+ *  Ola Bini <obini@thoughtworks.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -33,29 +37,27 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
+/*
+ This module is a shim module to make it easier to load
+ Promise from the various potential sources
+*/
+
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "EnigmailConsole" ];
+const EXPORTED_SYMBOLS = [ "Promise" ];
 
-const MAX_SIZE = 32768;
-var dataCache = "";
-var gotNewData = false;
+const Cu = Components.utils;
 
-const EnigmailConsole = {
-  write: function(data) {
-    dataCache += data;
-    if (dataCache.length > MAX_SIZE) {
-      dataCache = dataCache.substr(-MAX_SIZE, MAX_SIZE);
+try {
+    Cu.import("resource://gre/modules/commonjs/promise/core.js");     // Gecko 17 to 20
+} catch (ex) {
+    try {
+        Cu.import("resource://gre/modules/commonjs/sdk/core/promise.js"); // Gecko 21 to 24
+    } catch(ex2) {
+        Cu.import("resource://gre/modules/Promise.jsm"); // Gecko >= 25
     }
-    gotNewData = true;
-  },
+}
 
-  hasNewData: function() {
-    return gotNewData;
-  },
-
-  getData: function() {
-    gotNewData = false;
-    return dataCache;
-  }
-};
+// This module looks a little weird, since it doesn't actually define the symbol it exports.
+// As it turns out, Thunderbird already defines Promise in most cases, and if not, the above
+// imports will do it.
