@@ -1731,9 +1731,9 @@ Enigmail.msg = {
       return;
     }
 
-    var saveFile = EnigmailCommon.filePicker(window, Locale.getString("saveHeader"),
-                                  Enigmail.msg.lastSaveDir, true, "txt",
-                                  null, ["Text files", "*.txt"]);
+    var saveFile = Dialog.filePicker(window, Locale.getString("saveHeader"),
+                                     Enigmail.msg.lastSaveDir, true, "txt",
+                                     null, ["Text files", "*.txt"]);
     if (!saveFile) return;
 
     Log.DEBUG("enigmailMessengerOverlay.js: messageSave: path="+saveFile.path+"\n");
@@ -2163,7 +2163,7 @@ Enigmail.msg = {
     }
 
     if (callbackArg.actionType == "saveAttachment") {
-      outFile = EnigmailCommon.filePicker(window, Locale.getString("saveAttachmentHeader"),
+      outFile = Dialog.filePicker(window, Locale.getString("saveAttachmentHeader"),
                                   Enigmail.msg.lastSaveDir, true, "",
                                   rawFileName, null);
       if (! outFile) return;

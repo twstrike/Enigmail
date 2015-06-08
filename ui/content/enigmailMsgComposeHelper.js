@@ -1,4 +1,4 @@
-/*global Components */
+/*global Components: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -608,7 +608,7 @@ Enigmail.hlp = {
     if (Prefs.getPref("warnOnRulesConflict")==2) {
       Prefs.setPref("warnOnRulesConflict", 0);
     }
-    if (!EnigmailCommon.confirmPref(window, Locale.getString("rulesConflict", [ msg ]), "warnOnRulesConflict")) {
+    if (!Dialog.confirmPref(window, Locale.getString("rulesConflict", [ msg ]), "warnOnRulesConflict")) {
       return false;
     }
     return true;

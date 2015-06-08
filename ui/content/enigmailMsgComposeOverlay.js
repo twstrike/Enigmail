@@ -1997,7 +1997,7 @@ Enigmail.msg = {
           value: userIdValue
         };
 
-        if (EnigmailCommon.promptValue(window, mesg, valueObj)) {
+        if (Dialog.promptValue(window, mesg, valueObj)) {
           userIdValue = valueObj.value;
         }
       }
@@ -2959,7 +2959,7 @@ Enigmail.msg = {
                Dialog.alert(window, Locale.getString("sendingNews"));
                return false;
              }
-             else if (!EnigmailCommon.confirmPref(window,
+             else if (!Dialog.confirmPref(window,
                           Locale.getString("sendToNewsWarning"),
                           "warnOnSendingNewsgroups",
                           Locale.getString("msgCompose.button.send"))) {
@@ -3305,7 +3305,7 @@ Enigmail.msg = {
 
     try {
       if (this.getMailPref("mail.strictly_mime")) {
-        if (EnigmailCommon.confirmPref(window,
+        if (Dialog.confirmPref(window,
               Locale.getString("quotedPrintableWarn"), "quotedPrintableWarn")) {
           Prefs.getPrefRoot().setBoolPref("mail.strictly_mime", false);
         }

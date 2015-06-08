@@ -1170,7 +1170,7 @@ function enigmailDowloadContactKeysEngine() {
 
 function enigmailDownloadContactKeys() {
 
-  var doIt = EnigmailCommon.confirmPref(window,
+  var doIt = Dialog.confirmPref(window,
     EnigGetString("downloadContactsKeys.warn"),
     "warnDownloadContactKeys",
     EnigGetString("dlg.button.continue"),

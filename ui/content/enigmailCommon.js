@@ -270,7 +270,7 @@ function EnigLongAlert(mesg, checkBoxLabel, okLabel, labelButton2, labelButton3,
 }
 
 function EnigAlertPref(mesg, prefText) {
-  return EnigmailCommon.alertPref(window, mesg, prefText);
+  return Dialog.alertPref(window, mesg, prefText);
 }
 
 // Confirmation dialog with OK / Cancel buttons (both customizable)
@@ -280,7 +280,7 @@ function EnigConfirm(mesg, okLabel, cancelLabel) {
 
 
 function EnigConfirmPref(mesg, prefText, okLabel, cancelLabel) {
-  return EnigmailCommon.confirmPref(window, mesg, prefText, okLabel, cancelLabel);
+  return Dialog.confirmPref(window, mesg, prefText, okLabel, cancelLabel);
 }
 
 function EnigError(mesg) {
@@ -475,8 +475,8 @@ function EnigGetVersion() {
 }
 
 function EnigFilePicker(title, displayDir, save, defaultExtension, defaultName, filterPairs) {
-  return EnigmailCommon.filePicker(window, title, displayDir, save, defaultExtension,
-                                   defaultName, filterPairs);
+  return Dialog.filePicker(window, title, displayDir, save, defaultExtension,
+                           defaultName, filterPairs);
 }
 
 // get keys from keyserver
