@@ -53,6 +53,7 @@ Cu.import("resource://enigmail/locale.jsm");
 Cu.import("resource://enigmail/data.jsm");
 Cu.import("resource://enigmail/execution.jsm");
 Cu.import("resource://enigmail/dialog.jsm");
+Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 const EC = EnigmailCore;
@@ -85,7 +86,7 @@ var Decryption = {
         if (keyserver && keyserver !== "") {
             args.push("--keyserver-options");
             var keySrvArgs="auto-key-retrieve";
-            var srvProxy = ecom.getHttpProxy(keyserver);
+            var srvProxy = HttpProxy.getHttpProxy(keyserver);
             if (srvProxy) {
                 keySrvArgs += ",http-proxy="+srvProxy;
             }

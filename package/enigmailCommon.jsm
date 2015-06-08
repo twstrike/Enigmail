@@ -58,6 +58,7 @@ Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
+Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -65,7 +66,6 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const nsIEnigmail = Ci.nsIEnigmail;
 
-const NS_PREFS_SERVICE_CID = "@mozilla.org/preferences-service;1";
 const NS_STRING_INPUT_STREAM_CONTRACTID = "@mozilla.org/io/string-input-stream;1";
 const NS_INPUT_STREAM_CHNL_CONTRACTID = "@mozilla.org/network/input-stream-channel;1";
 
@@ -788,74 +788,6 @@ const EnigmailCommon = {
     return groups;
   },
 
-
-  /**
-   *  get Proxy for a given hostname as configured in Mozilla
-   *
-   *  @hostname: String - the host to check if there is a proxy.
-   *
-   *  @return: String - proxy host URL to provide to GnuPG
-   *                    null if no proxy required
-   */
-  getHttpProxy: function (hostName) {
-    // TODO: move [proxy]
-    function getPasswdForHost(hostname, userObj, passwdObj) {
-      var loginmgr = Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
-
-      // search HTTP password 1st
-      var logins = loginmgr.findLogins({}, "http://"+hostname, "", "");
-      if (logins.length > 0) {
-        userObj.value = logins[0].username;
-        passwdObj.value = logins[0].password;
-        return true;
-      }
-
-      // look for any other password for same host
-      logins = loginmgr.getAllLogins({});
-      for (var i=0; i < logins.lenth; i++) {
-        if (hostname == logins[i].hostname.replace(/^.*:\/\//, "")) {
-          userObj.value = logins[i].username;
-          passwdObj.value = logins[i].password;
-          return true;
-        }
-      }
-      return false;
-    }
-
-    var proxyHost = null;
-    if (Prefs.getPref("respectHttpProxy")) {
-      // determine proxy host
-      var prefsSvc = Cc[NS_PREFS_SERVICE_CID].getService(Ci.nsIPrefService);
-      var prefRoot = prefsSvc.getBranch(null);
-      var useProxy = prefRoot.getIntPref("network.proxy.type");
-      if (useProxy==1) {
-        var proxyHostName = prefRoot.getCharPref("network.proxy.http");
-        var proxyHostPort = prefRoot.getIntPref("network.proxy.http_port");
-        var noProxy = prefRoot.getCharPref("network.proxy.no_proxies_on").split(/[ ,]/);
-        for (var i=0; i<noProxy.length; i++) {
-          var proxySearch=new RegExp(noProxy[i].replace(/\./g, "\\.").replace(/\*/g, ".*")+"$", "i");
-          if (noProxy[i] && hostName.search(proxySearch)>=0) {
-            i=noProxy.length+1;
-            proxyHostName=null;
-          }
-        }
-
-        if (proxyHostName) {
-          var userObj = {};
-          var passwdObj = {};
-          if (getPasswdForHost(proxyHostName, userObj, passwdObj)) {
-            proxyHostName = userObj.value+":"+passwdObj.value+"@"+proxyHostName;
-          }
-        }
-        if (proxyHostName && proxyHostPort) {
-          proxyHost="http://"+proxyHostName+":"+proxyHostPort;
-        }
-      }
-    }
-
-    return proxyHost;
-  },
-
   /**
    * Get a list of all secret keys
    *
@@ -955,7 +887,7 @@ const EnigmailCommon = {
       return null;
     }
 
-    var proxyHost = this.getHttpProxy(keyserver);
+    var proxyHost = HttpProxy.getHttpProxy(keyserver);
     var args = this.getAgentArgs(true);
 
     if (actionFlags & nsIEnigmail.SEARCH_KEY) {

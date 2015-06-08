@@ -121,6 +121,7 @@ zip --must-match\
     modules/prefs.jsm \
     modules/os.jsm \
     modules/app.jsm \
+    modules/httpProxy.jsm \
     modules/locale.jsm \
     modules/execution.jsm \
     modules/configure.jsm \
