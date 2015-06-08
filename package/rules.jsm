@@ -99,9 +99,9 @@ const Rules = {
         if (rulesFile) {
             if (rulesListHolder.rulesList) {
                 // the rule list is not empty -> write into file
-                return EnigmailFuncs.writeFileContents(rulesFile.path,
-                                                       domSerializer.serializeToString(rulesListHolder.rulesList.firstChild),
-                                                       DEFAULT_FILE_PERMS);
+                return Files.writeFileContents(rulesFile.path,
+                                               domSerializer.serializeToString(rulesListHolder.rulesList.firstChild),
+                                               DEFAULT_FILE_PERMS);
             } else {
                 // empty rule list -> delete rules file
                 try {

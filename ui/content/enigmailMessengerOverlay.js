@@ -1745,7 +1745,7 @@ Enigmail.msg = {
 
     var textContent = this.getDecryptedMessage("text/plain", true);
 
-    if (!Enigmail.msg.writeFileContents(saveFile.path, textContent, null)) {
+    if (!Files.writeFileContents(saveFile.path, textContent, null)) {
       Dialog.alert(window, "Error in saving to file "+saveFile.path);
       return;
     }
@@ -2358,68 +2358,6 @@ Enigmail.msg = {
     if (resultObj.importedKeys > 0) {
       this.messageReload(false);
     }
-  },
-
-  createFileStream: function (filePath, permissions)
-  {
-    const DEFAULT_FILE_PERMS = 0600;
-    const WRONLY             = 0x02;
-    const CREATE_FILE        = 0x08;
-    const TRUNCATE           = 0x20;
-
-    try {
-      var localFile = Components.classes[EnigmailCommon.LOCAL_FILE_CONTRACTID].
-        createInstance(EnigmailCommon.getLocalFileApi());
-
-      localFile.initWithPath(filePath);
-
-      if (localFile.exists()) {
-
-        if (localFile.isDirectory() || !localFile.isWritable())
-           throw Components.results.NS_ERROR_FAILURE;
-
-        if (!permissions)
-          permissions = localFile.permissions;
-      }
-
-      if (!permissions)
-        permissions = DEFAULT_FILE_PERMS;
-
-      var flags = WRONLY | CREATE_FILE | TRUNCATE;
-
-      var fileStream = Components.classes["@mozilla.org/network/file-output-stream;1"].
-                        createInstance(Components.interfaces.nsIFileOutputStream);
-
-      fileStream.init(localFile, flags, permissions, 0);
-
-      return fileStream;
-
-    } catch (ex) {
-      Log.ERROR("enigmailMessengerOverlay.js: createFileStream: Failed to create "+filePath+"\n");
-      return null;
-    }
-  },
-
-  writeFileContents: function (filePath, data, permissions)
-  {
-
-    try {
-      var fileOutStream = this.createFileStream(filePath, permissions);
-
-      if (data.length) {
-        if (fileOutStream.write(data, data.length) != data.length)
-          throw Components.results.NS_ERROR_FAILURE;
-
-        fileOutStream.flush();
-      }
-      fileOutStream.close();
-
-    } catch (ex) {
-      Log.ERROR("enigmailMessengerOverlay.js: writeFileContents: Failed to write to "+filePath+"\n");
-      return false;
-    }
-
-    return true;
   }
 };
 

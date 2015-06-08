@@ -126,20 +126,8 @@ const DUMMY_AGENT_INFO = "none";
 var gKeyAlgorithms = [];
 
 ///////////////////////////////////////////////////////////////////////////////
-
-// return the useable path (for gpg) of a file object
-function getFilePath (nsFileObj, creationMode) {
-  // TODO: move [files]
-  if (creationMode === null) creationMode = NS_RDONLY;
-
-  return nsFileObj.path;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
 // Utility functions
 ///////////////////////////////////////////////////////////////////////////////
-
 
 // get a Windows registry value (string)
 // @ keyPath: the path of the registry (e.g. Software\\GNU\\GnuPG)
@@ -899,7 +887,7 @@ Enigmail.prototype = {
     }
 
     if (outputFile) {
-      if (! EnigmailFuncs.writeFileContents(outputFile, keyBlock, DEFAULT_FILE_PERMS)) {
+      if (! Files.writeFileContents(outputFile, keyBlock, DEFAULT_FILE_PERMS)) {
         exitCodeObj.value = -1;
         errorMsgObj.value = Locale.getString("fileWriteFailed", [ outputFile ]);
       }
@@ -1400,8 +1388,8 @@ Enigmail.prototype = {
       args = args.concat(Ec.passwdCommand());
     }
 
-    var inFilePath  = Files.getEscapedFilename(getFilePath(inFile.QueryInterface(Ci.nsIFile)));
-    var outFilePath = Files.getEscapedFilename(getFilePath(outFile.QueryInterface(Ci.nsIFile)));
+      var inFilePath  = Files.getEscapedFilename(Files.getFilePathReadonly(inFile.QueryInterface(Ci.nsIFile)));
+    var outFilePath = Files.getEscapedFilename(Files.getFilePathReadonly(outFile.QueryInterface(Ci.nsIFile)));
 
     args = args.concat(["--yes", "-o", outFilePath, inFilePath ]);
 
@@ -1433,8 +1421,8 @@ Enigmail.prototype = {
     Log.DEBUG("enigmail.js: Enigmail.verifyAttachment:\n");
 
     var exitCode        = -1;
-    var verifyFilePath  = Files.getEscapedFilename(getFilePath(verifyFile.QueryInterface(Ci.nsIFile)));
-    var sigFilePath     = Files.getEscapedFilename(getFilePath(sigFile.QueryInterface(Ci.nsIFile)));
+    var verifyFilePath  = Files.getEscapedFilename(Files.getFilePathReadonly(verifyFile.QueryInterface(Ci.nsIFile)));
+    var sigFilePath     = Files.getEscapedFilename(Files.getFilePathReadonly(sigFile.QueryInterface(Ci.nsIFile)));
 
     var args = Ec.getAgentArgs(true);
     args.push("--verify");
@@ -1492,7 +1480,7 @@ Enigmail.prototype = {
       return true;
     }
 
-    var outFileName = Files.getEscapedFilename(getFilePath(outFile.QueryInterface(Ci.nsIFile), NS_WRONLY));
+    var outFileName = Files.getEscapedFilename(Files.getFilePathReadonly(outFile.QueryInterface(Ci.nsIFile), NS_WRONLY));
 
     var args = Ec.getAgentArgs(true);
     args = args.concat(["-o", outFileName, "--yes"]);

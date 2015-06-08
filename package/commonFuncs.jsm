@@ -1061,38 +1061,5 @@ const EnigmailFuncs = {
       if (i > 0 && a[i].search(/^\s/) < 0) break;
     }
     return res;
-  },
-
-  /**
-   *  Write data to a file
-   *  @filePath |string| or |nsIFile| object - the file to be created
-   *  @data     |string|       - the data to write to the file
-   *  @permissions  |number|   - file permissions according to Unix spec (0600 by default)
-   *
-   *  @return true if data was written successfully, false otherwise
-   */
-
-  writeFileContents: function(filePath, data, permissions) {
-    // TODO: move [files]
-
-    // Log.DEBUG("enigmailFuncs.jsm: WriteFileContents: file="+filePath.toString()+"\n");
-
-    try {
-      var fileOutStream = Files.createFileStream(filePath, permissions);
-
-      if (data.length) {
-        if (fileOutStream.write(data, data.length) != data.length)
-          throw Components.results.NS_ERROR_FAILURE;
-
-        fileOutStream.flush();
-      }
-      fileOutStream.close();
-
-    } catch (ex) {
-      Log.ERROR("enigmailFuncs.jsm: writeFileContents: Failed to write to "+filePath+"\n");
-      return false;
-    }
-
-    return true;
   }
 };

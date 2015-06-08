@@ -296,7 +296,7 @@ MimeVerify.prototype = {
     this.sigFile = Files.getTempDirObj();
     this.sigFile.append("data.sig");
     this.sigFile.createUnique(this.sigFile.NORMAL_FILE_TYPE, 0x180);
-    EnigmailFuncs.writeFileContents(this.sigFile, this.sigData, 0x180);
+    Files.writeFileContents(this.sigFile, this.sigData, 0x180);
 
     var statusFlagsObj = {};
     var errorMsgObj = {};
