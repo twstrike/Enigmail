@@ -80,11 +80,7 @@ const ENIGMAIL_EXTENSION_ID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
 const NS_OBSERVERSERVICE_CONTRACTID = "@mozilla.org/observer-service;1";
 
 const NS_IOSERVICE_CONTRACTID       = "@mozilla.org/network/io-service;1";
-const NS_SCRIPTABLEINPUTSTREAM_CONTRACTID = "@mozilla.org/scriptableinputstream;1";
-const NS_DOMPARSER_CONTRACTID = "@mozilla.org/xmlextras/domparser;1";
-const NS_DOMSERIALIZER_CONTRACTID = "@mozilla.org/xmlextras/xmlserializer;1";
 const NS_CLINE_SERVICE_CONTRACTID = "@mozilla.org/enigmail/cline-handler;1";
-const NS_XPCOM_APPINFO = "@mozilla.org/xre/app-info;1";
 const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
 
 const Cc = Components.classes;
@@ -133,6 +129,7 @@ var gKeyAlgorithms = [];
 
 // return the useable path (for gpg) of a file object
 function getFilePath (nsFileObj, creationMode) {
+  // TODO: move [files]
   if (creationMode === null) creationMode = NS_RDONLY;
 
   return nsFileObj.path;
@@ -224,6 +221,7 @@ Enigmail.prototype = {
   },
 
   getLogDirectoryPrefix: function () {
+    // TODO: move [???]
     var logDirectory = "";
     try {
       logDirectory = this.prefBranch.getCharPref("logDirectory");
@@ -385,6 +383,7 @@ Enigmail.prototype = {
 
 
   useGpgAgent: function() {
+      // TODO: move completely (if possible)
       return EnigmailGpgAgent.useGpgAgent(this);
   },
 
@@ -399,10 +398,12 @@ Enigmail.prototype = {
   },
 
   determineGpgHomeDir: function () {
+      // TODO: move completely (if possible)
       return EnigmailGPG.determineGpgHomeDir(this);
   },
 
   setAgentPath: function (domWindow) {
+    // TODO: move [agent]
     var agentPath = "";
     try {
       agentPath = this.prefBranch.getCharPref("agentPath");
@@ -580,10 +581,12 @@ Enigmail.prototype = {
   },
 
   resolveToolPath: function(fileName) {
+      // TODO: move completely (if possible)
       return EnigmailGPG.resolveToolPath(fileName);
   },
 
   detectGpgAgent: function (domWindow) {
+    // TODO: move [agent]
     Log.DEBUG("enigmail.js: detectGpgAgent\n");
 
     function extractAgentInfo(fullStr) {
@@ -759,6 +762,7 @@ Enigmail.prototype = {
   },
 
   statusObjectFrom: function (signatureObj, exitCodeObj, statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj, blockSeparationObj, encToDetailsObj) {
+    // TODO: move [decryption]
     return {
       signature: signatureObj,
       exitCode: exitCodeObj,
@@ -774,11 +778,13 @@ Enigmail.prototype = {
 
 
   newStatusObject: function () {
+    // TODO: move [decryption]
     return this.statusObjectFrom({value: ""}, {}, {}, {}, {}, {}, {}, {}, {});
   },
 
 
   inlineInnerVerification: function (parent, uiFlags, text, statusObject) {
+    // TODO: move [decryption]
     Log.DEBUG("enigmail.js: Enigmail.inlineInnerVerification\n");
 
     if (text && text.indexOf("-----BEGIN PGP SIGNED MESSAGE-----") === 0) {
@@ -832,6 +838,7 @@ Enigmail.prototype = {
   },
 
   extractKey: function (parent, exportFlags, userId, outputFile, exitCodeObj, errorMsgObj) {
+    // TODO: move [keys]
     Log.DEBUG("enigmail.js: Enigmail.extractKey: "+userId+"\n");
 
     if (!this.initialized) {
@@ -906,6 +913,7 @@ Enigmail.prototype = {
   // ExitCode > 0   => error
   // ExitCode == -1 => Cancelled by user
   importKey: function (parent, uiFlags, msgText, keyId, errorMsgObj) {
+    // TODO: move [keys]
     Log.DEBUG("enigmail.js: Enigmail.importKey: id="+keyId+", "+uiFlags+"\n");
 
     if (!this.initialized) {
@@ -996,6 +1004,7 @@ Enigmail.prototype = {
   },
 
   invalidateUserIdList: function () {
+    // TODO: move [uids]
     // clean the userIdList to force reloading the list at next usage
     Log.DEBUG("enigmail.js: Enigmail.invalidateUserIdList\n");
     this.userIdList = null;
@@ -1004,6 +1013,7 @@ Enigmail.prototype = {
 
   // returns the output of --with-colons --list[-secret]-keys
   getUserIdList: function  (secretOnly, refresh, exitCodeObj, statusFlagsObj, errorMsgObj) {
+    // TODO: move [uids]
 
     if (refresh ||
         (secretOnly && this.secretKeyList === null) ||
@@ -1067,6 +1077,7 @@ Enigmail.prototype = {
 
   // returns the output of --with-colons --list-sig
   getKeySig: function  (keyId, exitCodeObj, errorMsgObj) {
+    // TODO: move [keys]
 
     var keyIdList = keyId.split(" ");
     var args = Ec.getAgentArgs(true);
@@ -1117,6 +1128,7 @@ Enigmail.prototype = {
    */
   getKeyDetails: function (keyId, uidOnly, withUserAttributes)
   {
+    // TODO: move [keys]
     var args = Ec.getAgentArgs(true);
     var keyIdList = keyId.split(" ");
     args=args.concat([ "--fixed-list-mode", "--with-fingerprint", "--with-colons", "--list-keys"]);
@@ -1206,6 +1218,7 @@ Enigmail.prototype = {
    */
   getKeyListEntryOfKey: function (keyId)
   {
+    // TODO: move [keys]
     //Log.DEBUG("enigmail.js: Enigmail.getKeyListEntryOfKey() keyId='"+ keyId +"'\n");
     keyId = keyId.replace(/^0x/, "");
 
@@ -1269,6 +1282,7 @@ Enigmail.prototype = {
    */
   getFirstUserIdOfKey: function (keyId)
   {
+    // TODO: move [keys]
     Log.DEBUG("enigmail.js: Enigmail.getFirstUserIdOfKey() keyId='"+ keyId +"'\n");
 
     var entry = this.getKeyListEntryOfKey(keyId);
@@ -1300,6 +1314,7 @@ Enigmail.prototype = {
    * @return String  public key ID, or null if key not found
    */
   getPubKeyIdForSubkey: function (keyId) {
+    // TODO: move [keys]
     var entry = this.getKeyListEntryOfKey(keyId);
     if (entry === null) {
       return null;
@@ -1322,6 +1337,7 @@ Enigmail.prototype = {
   // returns the output of --with-colons --list-config
   getGnupgConfig: function  (exitCodeObj, errorMsgObj)
   {
+    // TODO: move [gnupg]
     var args = Ec.getAgentArgs(true);
 
     args=args.concat(["--fixed-list-mode", "--with-colons", "--list-config"]);
@@ -1355,6 +1371,7 @@ Enigmail.prototype = {
 
   encryptAttachment: function (parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile,
             exitCodeObj, statusFlagsObj, errorMsgObj) {
+    // TODO: move [encryption]
     Log.DEBUG("enigmail.js: Enigmail.encryptAttachment infileName="+inFile.path+"\n");
 
     if (!this.initialized) {
@@ -1412,6 +1429,7 @@ Enigmail.prototype = {
 
   verifyAttachment: function (parent, verifyFile, sigFile,
                               statusFlagsObj, errorMsgObj) {
+    // TODO: move [verification]
     Log.DEBUG("enigmail.js: Enigmail.verifyAttachment:\n");
 
     var exitCode        = -1;
@@ -1455,6 +1473,7 @@ Enigmail.prototype = {
 
   decryptAttachment: function (parent, outFile, displayName, byteData,
             exitCodeObj, statusFlagsObj, errorMsgObj) {
+    // TODO: move [decryption]
     Log.DEBUG("enigmail.js: Enigmail.decryptAttachment: parent="+parent+", outFileName="+outFile.path+"\n");
 
     var attachmentHead = byteData.substr(0,200);
@@ -1510,6 +1529,7 @@ Enigmail.prototype = {
   },
 
   getCardStatus: function(exitCodeObj, errorMsgObj) {
+    // TODO: move [card]
     Log.DEBUG("enigmail.js: Enigmail.getCardStatus\n");
     var args = Ec.getAgentArgs(false);
 
@@ -1528,6 +1548,7 @@ Enigmail.prototype = {
   },
 
   showKeyPhoto: function(keyId, photoNumber, exitCodeObj, errorMsgObj) {
+    // TODO: move [keys]
     Log.DEBUG("enigmail.js: Enigmail.showKeyPhoto, keyId="+keyId+" photoNumber="+photoNumber+"\n");
 
     var args = Ec.getAgentArgs();
@@ -1630,6 +1651,7 @@ Enigmail.prototype = {
 }; // Enigmail.protoypte
 
 
+// TODO: move [commandLine]
 function EnigCmdLineHandler() {}
 
 EnigCmdLineHandler.prototype = {
@@ -1660,7 +1682,8 @@ EnigCmdLineHandler.prototype = {
   lockFactory: function (lock) {}
 };
 
-var NSGetFactory = XPCOMUtils.generateNSGetFactory([Enigmail, EnigmailProtocolHandler, EnigCmdLineHandler]);
+// This variable is exported implicitly and should not be refactored or removed
+const NSGetFactory = XPCOMUtils.generateNSGetFactory([Enigmail, EnigmailProtocolHandler, EnigCmdLineHandler]);
 
 Filters.registerAll();
 
