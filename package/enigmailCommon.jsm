@@ -1,5 +1,5 @@
 /*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false, Execution: false, App: false */
-/*global XPCOMUtils: false */
+/*global XPCOMUtils: false, Timer: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -58,6 +58,8 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/execution.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
+Components.utils.import("resource://enigmail/timer.jsm");
+Components.utils.import("resource://enigmail/windows.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -109,8 +111,6 @@ var EnigmailCommon = {
   MSG_BUFFER_SIZE:  96000,
   MSG_HEADER_SIZE:  16000,
 
-  APPSHELL_MEDIATOR_CONTRACTID: "@mozilla.org/appshell/window-mediator;1",
-  APPSHSVC_CONTRACTID: "@mozilla.org/appshell/appShellService;1",
   ENIGMAIL_CONTRACTID: "@mozdev.org/enigmail/enigmail;1",
   IOSERVICE_CONTRACTID: "@mozilla.org/network/io-service;1",
   LOCAL_FILE_CONTRACTID: "@mozilla.org/file/local;1",
@@ -172,7 +172,7 @@ var EnigmailCommon = {
     }
 
     if (! win) {
-      win = this.getBestParentWin();
+      win = Windows.getBestParentWin();
     }
 
     Log.DEBUG("enigmailCommon.jsm: this.enigmailSvc = "+this.enigmailSvc+"\n");
@@ -307,7 +307,7 @@ var EnigmailCommon = {
     };
 
     if (! win) {
-      win = this.getBestParentWin();
+      win = Windows.getBestParentWin();
     }
 
     win.openDialog("chrome://enigmail/content/enigmailAlertDlg.xul", "",
@@ -325,51 +325,6 @@ var EnigmailCommon = {
       checkedObj.value=result.checked;
     }
     return result.value;
-  },
-
-  /***
-   * Confirmation dialog with OK / Cancel buttons (both customizable)
-   *
-   * @win:         nsIWindow - parent window to display modal dialog; can be null
-   * @mesg:        String    - message text
-   * @okLabel:     String    - OPTIONAL label for OK button
-   * @cancelLabel: String    - OPTIONAL label for cancel button
-   *
-   * @return:      Boolean   - true: OK pressed / false: Cancel or ESC pressed
-   */
-  confirmDlg: function (win, mesg, okLabel, cancelLabel)
-  {
-    var dummy={};
-
-    var buttonTitles = 0;
-    if (okLabel === null && cancelLabel === null) {
-      buttonTitles = (gPromptSvc.BUTTON_TITLE_YES * BUTTON_POS_0) +
-                     (gPromptSvc.BUTTON_TITLE_NO * BUTTON_POS_1);
-    }
-    else {
-      if (okLabel !== null) {
-        buttonTitles += (gPromptSvc.BUTTON_TITLE_IS_STRING * gPromptSvc.BUTTON_POS_0);
-      }
-      else {
-        buttonTitles += gPromptSvc.BUTTON_TITLE_OK * BUTTON_POS_0;
-      }
-
-      if (cancelLabel !== null) {
-        buttonTitles += (gPromptSvc.BUTTON_TITLE_IS_STRING * gPromptSvc.BUTTON_POS_1);
-      }
-      else {
-        buttonTitles += gPromptSvc.BUTTON_TITLE_CANCEL * BUTTON_POS_1;
-      }
-    }
-
-    var buttonPressed = gPromptSvc.confirmEx(win,
-                          Locale.getString("enigConfirm"),
-                          mesg,
-                          buttonTitles,
-                          okLabel, cancelLabel, null,
-                          null, dummy);
-
-    return (buttonPressed === 0);
   },
 
 
@@ -555,98 +510,6 @@ var EnigmailCommon = {
   },
 
   /**
-   * Determine the best possible window to serve as parent window for dialogs.
-   *
-   * @return: nsIWindow object
-   */
-  getBestParentWin: function() {
-    var windowManager = Cc[this.APPSHELL_MEDIATOR_CONTRACTID].getService(Ci.nsIWindowMediator);
-
-    var bestFit = null;
-    var winEnum=windowManager.getEnumerator(null);
-
-    while (winEnum.hasMoreElements()) {
-      var thisWin = winEnum.getNext();
-      if (thisWin.location.href.search(/\/messenger.xul$/) > 0) {
-        bestFit = thisWin;
-      }
-      if (! bestFit && thisWin.location.href.search(/\/messengercompose.xul$/) > 0) {
-        bestFit = thisWin;
-      }
-    }
-
-    if (! bestFit) {
-      winEnum=windowManager.getEnumerator(null);
-      bestFit = winEnum.getNext();
-    }
-
-    return bestFit;
-  },
-
-  /**
-   * Open a window, or focus it if it is already open
-   *
-   * @winName   : String - name of the window; used to identify if it is already open
-   * @spec      : String - window URL (e.g. chrome://enigmail/content/test.xul)
-   * @winOptions: String - window options as defined in nsIWindow.open
-   * @optObj    : any    - an Object, Array, String, etc. that is passed as parameter
-   *                       to the window
-   */
-  openWin: function (winName, spec, winOptions, optObj)
-  {
-    var windowManager = Cc[this.APPSHELL_MEDIATOR_CONTRACTID].getService(Ci.nsIWindowMediator);
-
-    var winEnum=windowManager.getEnumerator(null);
-    var recentWin=null;
-    while (winEnum.hasMoreElements() && ! recentWin) {
-      var thisWin = winEnum.getNext();
-      if (thisWin.location.href==spec) {
-        recentWin = thisWin;
-        break;
-      }
-      if (winName && thisWin.name && thisWin.name == winName) {
-        thisWin.focus();
-        break;
-      }
-
-    }
-
-    if (recentWin) {
-      recentWin.focus();
-    } else {
-      var appShellSvc = Cc[this.APPSHSVC_CONTRACTID].getService(Ci.nsIAppShellService);
-      var domWin = appShellSvc.hiddenDOMWindow;
-      try {
-        domWin.open(spec, winName, "chrome,"+winOptions, optObj);
-      }
-      catch (ex) {
-        domWin = windowManager.getMostRecentWindow(null);
-        domWin.open(spec, winName, "chrome,"+winOptions, optObj);
-      }
-    }
-  },
-
-  /**
-   * Iterate through the frames of a window and return the first frame with a
-   * matching name.
-   *
-   * @win:       nsIWindow - XUL window to search
-   * @frameName: String    - name of the frame to seach
-   *
-   * @return:    the frame object or null if not found
-   */
-  getFrame: function(win, frameName)
-  {
-    Log.DEBUG("enigmailCommon.jsm: getFrame: name="+frameName+"\n");
-    for (var j=0; j<win.frames.length; j++) {
-      if (win.frames[j].name == frameName) {
-        return win.frames[j];
-      }
-    }
-    return null;
-  },
-
-  /**
    * Transform a Unix-Timestamp to a human-readable date/time string
    *
    * @dateNum:  Number  - Unix timestamp
@@ -764,7 +627,7 @@ var EnigmailCommon = {
         var cbFunc = this._onStopCallback;
         var cbData = this.data;
 
-        EnigmailCommon.setTimeout(function _cb() {
+        Timer.setTimeout(function _cb() {
           cbFunc(cbData);
         });
       },
@@ -850,23 +713,6 @@ var EnigmailCommon = {
     this.enigmailSvc = enigmailSvc;
   },
 
-
-  /**
-   * wait a defined number of miliseconds, then call a callback function
-   * asynchronously
-   *
-   * @callbackFunction: Function - any function specification
-   * @sleepTimeMs:      Number - optional number of miliseconds to delay
-   *                             (0 if not specified)
-   */
-
-  setTimeout: function( callbackFunction, sleepTimeMs ) {
-    if (sleepTimeMs === null) sleepTimeMs = 0;
-    var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
-    timer.initWithCallback(callbackFunction, sleepTimeMs, Ci.nsITimer.TYPE_ONE_SHOT);
-    return timer;
-  },
-
   /**
    * dispatch event aynchronously to the main thread
    *
@@ -911,7 +757,7 @@ var EnigmailCommon = {
 
     var event = new mainEvent(callbackFunction, arrayOfArgs);
     if (sleepTimeMs > 0) {
-      return this.setTimeout(event, sleepTimeMs);
+      return Timer.setTimeout(event, sleepTimeMs);
     }
     else {
       var tm = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
@@ -1686,8 +1532,7 @@ var EnigmailCommon = {
     Log.DEBUG("enigmailCommon.jsm: determineHashAlgorithm\n");
 
     if (! win) {
-      var windowManager = Cc[this.APPSHELL_MEDIATOR_CONTRACTID].getService(Ci.nsIWindowMediator);
-      win = windowManager.getMostRecentWindow(null);
+      win = Windows.getMostRecentWindow();
     }
 
     this.getService(win);
@@ -1852,274 +1697,5 @@ var EnigmailCommon = {
     return b;
   }
 };
-
-
-////////////////////////////////////////////////////////////////////////
-// Local (not exported) functions & objects
-////////////////////////////////////////////////////////////////////////
-var timerObserver = {
-
-  QueryInterface: XPCOMUtils.generateQI([ Ci.nsIObserver, Ci.nsISupports ]),
-
-  observe: function (aSubject, aTopic, aData) {
-    Log.DEBUG("enigmailCommon.jsm: timerObserver.observe: topic='"+aTopic+"' \n");
-
-    if (aTopic == "timer-callback") {
-    }
-    else {
-      Log.DEBUG("enigmailCommon.jsm: timerObserver.observe: no handler for '"+aTopic+"'\n");
-    }
-  }
-};
-
-
-function upgradeRecipientsSelection () {
-  // Upgrade perRecipientRules and recipientsSelectionOption to
-  // new recipientsSelection
-
-  var  keySel = Prefs.getPref("recipientsSelectionOption");
-  var  perRecipientRules = Prefs.getPref("perRecipientRules");
-
-  var setVal = 2;
-
-  /*
-  1: rules only
-  2: rules & email addresses (normal)
-  3: email address only (no rules)
-  4: manually (always prompt, no rules)
-  5: no rules, no key selection
-  */
-
-  switch (perRecipientRules) {
-  case 0:
-    switch (keySel) {
-    case 0:
-      setVal = 5;
-      break;
-    case 1:
-      setVal = 3;
-      break;
-    case 2:
-      setVal = 4;
-      break;
-    default:
-      setVal = 2;
-    }
-    break;
-  case 1:
-    setVal = 2;
-    break;
-  case 2:
-    setVal = 1;
-    break;
-  default:
-    setVal = 2;
-  }
-
-  // set new pref
-  Prefs.setPref("recipientsSelection", setVal);
-
-  // clear old prefs
-  Prefs.getPrefBranch().clearUserPref("perRecipientRules");
-  Prefs.getPrefBranch().clearUserPref("recipientsSelectionOption");
-}
-
-
-function upgradePrefsSending ()
-{
-  Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending()\n");
-
-  var  cbs = Prefs.getPref("confirmBeforeSend");
-  var  ats = Prefs.getPref("alwaysTrustSend");
-  var  ksfr = Prefs.getPref("keepSettingsForReply");
-  Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending cbs="+cbs+" ats="+ats+" ksfr="+ksfr+"\n");
-
-  // Upgrade confirmBeforeSend (bool) to confirmBeforeSending (int)
-  switch (cbs) {
-    case false:
-      Prefs.setPref("confirmBeforeSending", 0); // never
-      break;
-    case true:
-      Prefs.setPref("confirmBeforeSending", 1); // always
-      break;
-  }
-
-  // Upgrade alwaysTrustSend (bool)   to acceptedKeys (int)
-  switch (ats) {
-    case false:
-      Prefs.setPref("acceptedKeys", 0); // valid
-      break;
-    case true:
-      Prefs.setPref("acceptedKeys", 1); // all
-      break;
-  }
-
-  // if all settings are default settings, use convenient encryption
-  if (cbs===false && ats===true && ksfr===true) {
-    Prefs.setPref("encryptionModel", 0); // convenient
-    Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=0 (convenient)\n");
-  }
-  else {
-    Prefs.setPref("encryptionModel", 1); // manually
-    Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=1 (manually)\n");
-  }
-
-  // clear old prefs
-  Prefs.getPrefBranch().clearUserPref("confirmBeforeSend");
-  Prefs.getPrefBranch().clearUserPref("alwaysTrustSend");
-}
-
-
-function upgradeHeadersView() {
-  // all headers hack removed -> make sure view is correct
-  var hdrMode = null;
-  try {
-    hdrMode = Prefs.getPref("show_headers");
-  }
-  catch (ex) {}
-
-  if (hdrMode === null) hdrMode = 1;
-  try {
-    Prefs.getPrefBranch().clearUserPref("show_headers");
-  }
-  catch (ex) {}
-
-  Prefs.getPrefRoot().setIntPref("mail.show_headers", hdrMode);
-}
-
-function upgradeCustomHeaders() {
-  try {
-    var extraHdrs = " " + Prefs.getPrefRoot().getCharPref("mailnews.headers.extraExpandedHeaders").toLowerCase() + " ";
-
-    var extraHdrList = [
-      "x-enigmail-version",
-      "content-transfer-encoding",
-      "openpgp",
-      "x-mimeole",
-      "x-bugzilla-reason",
-      "x-php-bug" ];
-
-    for (let hdr in extraHdrList) {
-      extraHdrs = extraHdrs.replace(" "+extraHdrList[hdr]+" ", " ");
-    }
-
-    extraHdrs = extraHdrs.replace(/^ */, "").replace(/ *$/, "");
-    Prefs.getPrefRoot().setCharPref("mailnews.headers.extraExpandedHeaders", extraHdrs);
-  }
-  catch(ex) {}
-}
-
-function upgradePgpMime() {
-  var pgpMimeMode = false;
-  try {
-    pgpMimeMode = (Prefs.getPref("usePGPMimeOption") == 2);
-  }
-  catch (ex) {
-    return;
-  }
-
-  try {
-    if (pgpMimeMode) {
-      var accountManager = Cc["@mozilla.org/messenger/account-manager;1"].getService(Ci.nsIMsgAccountManager);
-      try {
-        // Gecko >= 20
-        for (var i=0; i < accountManager.allIdentities.length; i++) {
-          var id = accountManager.allIdentities.queryElementAt(i, Ci.nsIMsgIdentity);
-          if (id.getBoolAttribute("enablePgp")) {
-            id.setBoolAttribute("pgpMimeMode", true);
-          }
-        }
-      }
-      catch(ex) {
-        // Gecko < 20
-        for (var i=0; i < accountManager.allIdentities.Count(); i++) {
-          var id = accountManager.allIdentities.QueryElementAt(i, Ci.nsIMsgIdentity);
-          if (id.getBoolAttribute("enablePgp")) {
-            id.setBoolAttribute("pgpMimeMode", true);
-          }
-        }
-      }
-    }
-    Prefs.getPrefBranch().clearUserPref("usePGPMimeOption");
-  }
-  catch (ex) {}
-}
-
-// open the Enigmail Setup Wizard
-// (not using EnigmailFuncs, because we can't cross-ref each other)
-function launchSetupWizard(win) {
-    win.open("chrome://enigmail/content/enigmailSetupWizard.xul",
-    "", "chrome,centerscreen,resizable");
-}
-
-function ConfigureEnigmail(win, startingPreferences) {
-  Log.DEBUG("enigmailCommon.jsm: ConfigureEnigmail\n");
-  var oldVer=Prefs.getPref("configuredVersion");
-
-  try {
-    var vc = Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator);
-    if (oldVer === "") {
-      launchSetupWizard(win);
-    }
-    else {
-      if (oldVer < "0.95") {
-        try {
-          upgradeHeadersView();
-          upgradePgpMime();
-          upgradeRecipientsSelection();
-        }
-        catch (ex) {}
-      }
-      if (vc.compare(oldVer, "1.0") < 0) {
-        upgradeCustomHeaders();
-      }
-      if (vc.compare(oldVer, "1.7a1pre") < 0) {
-        // MISSING:
-        // - upgrade extensions.enigmail.recipientsSelection
-        //   to      extensions.enigmail.assignKeys*
-        // 1: rules only
-        //     => assignKeysByRules true; rest false
-        // 2: rules & email addresses (normal)
-        //     => assignKeysByRules/assignKeysByEmailAddr/assignKeysManuallyIfMissing true
-        // 3: email address only (no rules)
-        //     => assignKeysByEmailAddr/assignKeysManuallyIfMissing true
-        // 4: manually (always prompt, no rules)
-        //     => assignKeysManuallyAlways true
-        // 5: no rules, no key selection
-        //     => assignKeysByRules/assignKeysByEmailAddr true
-
-        upgradePrefsSending();
-      }
-      if (vc.compare(oldVer, "1.7") < 0) {
-        // open a modal dialog. Since this might happen during the opening of another
-        // window, we have to do this asynchronously
-        EnigmailCommon.setTimeout(
-          function _cb() {
-            var doIt = EnigmailCommon.confirmDlg(win,
-                                   Locale.getString("enigmailCommon.versionSignificantlyChanged"),
-                                   Locale.getString("enigmailCommon.checkPreferences"),
-                                   Locale.getString("dlg.button.close"));
-            if (!startingPreferences && doIt) {
-                // same as:
-                // - EnigmailFuncs.openPrefWindow(window, true, 'sendingTab');
-                // but
-                // - without starting the service again because we do that right now
-                // - and modal (waiting for its end)
-                win.openDialog("chrome://enigmail/content/pref-enigmail.xul",
-                                  "_blank", "chrome,resizable=yes,modal",
-                                  {'showBasic': true,
-                                   'clientType': 'thunderbird',
-                                   'selectTab': 'sendingTab'});
-            }
-          }, 100);
-
-      }
-    }
-  }
-  catch(ex) {}
-
-  Prefs.setPref("configuredVersion", App.getVersion());
-  Prefs.savePrefs();
-}
 
 App.initAddon();

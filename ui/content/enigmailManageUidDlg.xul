@@ -88,6 +88,7 @@
     Components.utils.import("resource://enigmail/keyManagement.jsm");
     Components.utils.import("resource://enigmail/locale.jsm");
     Components.utils.import("resource://enigmail/data.jsm");
+    Components.utils.import("resource://enigmail/dialog.jsm");
 
     const Ec = EnigmailCommon;
 
@@ -241,7 +242,7 @@
       if (!enigmailSvc)
         return;
       var uidList = document.getElementById("uidList");
-      if (! Ec.confirmDlg(window, Locale.getString("revokeUidQuestion", uidList.selectedItem.label))) return;
+      if (! Dialog.confirmDlg(window, Locale.getString("revokeUidQuestion", uidList.selectedItem.label))) return;
       if (uidList.selectedItem.value.substr(4)!="1") {
         EnigmailKeyMgmt.revokeUid(window,
           "0x"+window.arguments[0].keyId,
@@ -266,7 +267,7 @@
       if (!enigmailSvc)
         return;
       var uidList = document.getElementById("uidList");
-      if (! Ec.confirmDlg(window, Locale.getString("deleteUidQuestion", uidList.selectedItem.label))) return;
+      if (! Dialog.confirmDlg(window, Locale.getString("deleteUidQuestion", uidList.selectedItem.label))) return;
       if (uidList.selectedItem.value.substr(4) != "1") {
         EnigmailKeyMgmt.deleteUid(window,
           "0x"+window.arguments[0].keyId,

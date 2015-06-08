@@ -50,6 +50,10 @@ MODFILES = \
            prefs.jsm \
            locale.jsm \
            execution.jsm \
+           configure.jsm \
+           dialog.jsm \
+           timer.jsm \
+           windows.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \
            mimeVerify.jsm

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Data: false */
+/*global Components: false, EnigmailCommon: false, Data: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -37,6 +37,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/windows.jsm");
 
 const   Ec = EnigmailCommon;
 
@@ -80,7 +81,7 @@ function refreshConsole() {
 function updateData() {
   //Log.DEBUG("enigmailConsole.js: updateData():\n");
 
-    var contentFrame = Ec.getFrame(window, "contentFrame");
+    var contentFrame = Windows.getFrame(window, "contentFrame");
     if (!contentFrame)
       return;
 
@@ -111,7 +112,7 @@ function enigmailConsoleCopy()
 function getSelectionStr()
 {
   try {
-    var contentFrame = Ec.getFrame(window, "contentFrame");
+    var contentFrame = Windows.getFrame(window, "contentFrame");
 
     var sel = contentFrame.getSelection();
     return sel.toString();

@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, Data: false */
+/*global Components: false, Locale: false, Data: false, Dialog: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -52,8 +52,10 @@ Cu.import("resource://enigmail/log.jsm");
 Cu.import("resource://enigmail/files.jsm");
 Cu.import("resource://enigmail/locale.jsm");
 Cu.import("resource://enigmail/data.jsm");
+Cu.import("resource://enigmail/dialog.jsm");
+Cu.import("resource://enigmail/windows.jsm");
 
-var EXPORTED_SYMBOLS = [ "EnigmailFuncs" ];
+const EXPORTED_SYMBOLS = [ "EnigmailFuncs" ];
 
 
 
@@ -278,25 +280,6 @@ var EnigmailFuncs = {
   },
 
   /**
-   * Display the OpenPGP setup wizard window
-   *
-   * win      : nsIWindow - the parent window
-   * skipIntro: Boolean   - optional, if true, skip the introduction page
-   *
-   * no return value
-   */
-
-  openSetupWizard: function (win, skipIntro)
-  {
-    let param = "";
-    if (skipIntro) {
-      param = "?skipIntro=true";
-    }
-    win.open("chrome://enigmail/content/enigmailSetupWizard.xul"+param,
-                "", "chrome,centerscreen,resizable");
-  },
-
-  /**
    * Display the key help window
    *
    * @source - |string| containing the name of the file to display
@@ -306,9 +289,9 @@ var EnigmailFuncs = {
 
   openHelpWindow: function (source)
   {
-    EnigmailCommon.openWin("enigmail:help",
-                           "chrome://enigmail/content/enigmailHelp.xul?src="+source,
-                           "centerscreen,resizable");
+    Windows.openWin("enigmail:help",
+                    "chrome://enigmail/content/enigmailHelp.xul?src="+source,
+                    "centerscreen,resizable");
   },
 
   /**
@@ -319,9 +302,9 @@ var EnigmailFuncs = {
 
   openAboutWindow: function ()
   {
-    EnigmailCommon.openWin("about:enigmail",
-                           "chrome://enigmail/content/enigmailAbout.xul",
-                           "resizable,centerscreen");
+    Windows.openWin("about:enigmail",
+                    "chrome://enigmail/content/enigmailAbout.xul",
+                    "resizable,centerscreen");
   },
 
   /**
@@ -332,9 +315,9 @@ var EnigmailFuncs = {
 
   openRulesEditor: function ()
   {
-    EnigmailCommon.openWin("enigmail:rulesEditor",
-                           "chrome://enigmail/content/enigmailRulesEditor.xul",
-                           "dialog,centerscreen,resizable");
+    Windows.openWin("enigmail:rulesEditor",
+                    "chrome://enigmail/content/enigmailRulesEditor.xul",
+                    "dialog,centerscreen,resizable");
   },
 
 
@@ -348,9 +331,9 @@ var EnigmailFuncs = {
   {
     EnigmailCommon.getService(win);
 
-    EnigmailCommon.openWin("enigmail:KeyManager",
-                           "chrome://enigmail/content/enigmailKeyManager.xul",
-                           "resizable");
+    Windows.openWin("enigmail:KeyManager",
+                    "chrome://enigmail/content/enigmailKeyManager.xul",
+                    "resizable");
   },
 
   /**
@@ -361,9 +344,9 @@ var EnigmailFuncs = {
 
   openKeyGen: function ()
   {
-    EnigmailCommon.openWin("enigmail:generateKey",
-                           "chrome://enigmail/content/enigmailKeygen.xul",
-                           "chrome,modal,resizable=yes");
+    Windows.openWin("enigmail:generateKey",
+                    "chrome://enigmail/content/enigmailKeygen.xul",
+                    "chrome,modal,resizable=yes");
   },
 
   /**
@@ -374,9 +357,9 @@ var EnigmailFuncs = {
 
   openCardDetails: function ()
   {
-    EnigmailCommon.openWin("enigmail:cardDetails",
-                           "chrome://enigmail/content/enigmailCardDetails.xul",
-                           "centerscreen");
+    Windows.openWin("enigmail:cardDetails",
+                    "chrome://enigmail/content/enigmailCardDetails.xul",
+                    "centerscreen");
   },
 
   /**
@@ -388,9 +371,9 @@ var EnigmailFuncs = {
    */
   openConsoleWindow: function ()
   {
-     EnigmailCommon.openWin("enigmail:console",
-                            "chrome://enigmail/content/enigmailConsole.xul",
-                            "resizable,centerscreen");
+     Windows.openWin("enigmail:console",
+                     "chrome://enigmail/content/enigmailConsole.xul",
+                     "resizable,centerscreen");
   },
 
   /**
@@ -407,9 +390,9 @@ var EnigmailFuncs = {
     var opts="viewLog=1&title=" +
           escape(Locale.getString("debugLog.title"));
 
-    EnigmailCommon.openWin("enigmail:logFile",
-                           "chrome://enigmail/content/enigmailViewFile.xul?"+opts,
-                           "resizable,centerscreen");
+    Windows.openWin("enigmail:logFile",
+                    "chrome://enigmail/content/enigmailViewFile.xul?"+opts,
+                    "resizable,centerscreen");
   },
 
   /**
@@ -791,7 +774,7 @@ var EnigmailFuncs = {
 
     var aGpgSecretsList = this.obtainKeyList(win, true, refresh);
     if (!aGpgSecretsList && !refresh) {
-      if (EnigmailCommon.confirmDlg(Locale.getString("noSecretKeys"),
+      if (Dialog.confirmDlg(Locale.getString("noSecretKeys"),
             Locale.getString("keyMan.button.generateKey"),
             Locale.getString("keyMan.button.skip"))) {
         this.openKeyGen();

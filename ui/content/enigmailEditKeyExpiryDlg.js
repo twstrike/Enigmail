@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Log: false, Locale: false */
+/*global Components: false, EnigmailCommon: false, Log: false, Locale: false, Timer: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -37,6 +37,8 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/timer.jsm");
+
 const Ec = EnigmailCommon;
 
 var gAlertPopUpIsOpen = false;
@@ -125,7 +127,7 @@ function processKey(subKeys) {
     noExpiry,
     function(exitCode, errorMsg) {
       if (exitCode !== 0) {
-        Ec.setTimeout(function () {
+        Timer.setTimeout(function () {
           Ec.alert(window, Locale.getString("setKeyExpirationDateFailed")+"\n\n"+errorMsg);
         }, 10);
       }
@@ -176,7 +178,7 @@ function onAccept() {
     if (subkeys.length > 0) {
       processKey(subkeys);
     } else {
-      Ec.setTimeout(function () {
+      Timer.setTimeout(function () {
         Ec.alert(window, Locale.getString("noKeySelected")+"\n");
       }, 10);
     }
@@ -199,7 +201,7 @@ function checkExpirationDate() {
       /* @TODO GPG throws an error already when using 95 years (multiplying 365 and 95) */
       if (gAlertPopUpIsOpen !== true) {
         gAlertPopUpIsOpen = true;
-        Ec.setTimeout(function () {
+        Timer.setTimeout(function () {
           Ec.alert(window, Locale.getString("expiryTooLongShorter")+"\n");
           gAlertPopUpIsOpen = false;
         }, 10);
@@ -210,7 +212,7 @@ function checkExpirationDate() {
       /* alert("Your key must be valid for at least one day."); */
       if (gAlertPopUpIsOpen !== true) {
         gAlertPopUpIsOpen = true;
-        Ec.setTimeout(function () {
+        Timer.setTimeout(function () {
           Ec.alert(window, Locale.getString("expiryTooShort")+"\n");
           gAlertPopUpIsOpen = false;
         }, 10);

@@ -1,4 +1,4 @@
-/*global Components EnigInitCommon */
+/*global Components: false, EnigInitCommon: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -37,6 +37,7 @@
 
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeyManager");
@@ -1102,7 +1103,7 @@ function enigmailDowloadContactKeysEngine() {
 
     if (addressBook instanceof Ci.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
       // ask for confirmation for each address book:
-      var doIt = EnigmailCommon.confirmDlg(window,
+      var doIt = Dialog.confirmDlg(window,
                    EnigGetString("downloadContactsKeys.importFrom", addressBook.dirName),
                    EnigGetString("dlgYes"),
                    EnigGetString("dlg.button.skip"));

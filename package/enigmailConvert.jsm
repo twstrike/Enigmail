@@ -1,4 +1,4 @@
-/*global Components: false, XPCOMUtils: false, EnigmailCommon: false, Locale: false, Execution: false */
+/*global Components: false, XPCOMUtils: false, EnigmailCommon: false, Locale: false, Execution: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -46,6 +46,7 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/armor.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/execution.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 try {
   // TB with omnijar
@@ -427,8 +428,8 @@ decryptAttachment = function(attachment, strippedName) {
                 // we should ask
                 let msg = Locale.getString("converter.decryptAtt.failed", [ attachment.name , self.subject ]);
 
-                if (!Ec.confirmDlg(null, msg,
-                    Locale.getString("dlg.button.retry"), Locale.getString("dlg.button.skip"))) {
+                if (!Dialog.confirmDlg(null, msg,
+                                       Locale.getString("dlg.button.retry"), Locale.getString("dlg.button.skip"))) {
                   o.status = STATUS_FAILURE;
                   resolve(o);
                   return;
@@ -766,8 +767,8 @@ decryptINLINE = function (mime) {
               // we should ask
               let msg = Locale.getString("converter.decryptBody.failed", this.subject);
 
-              if (!Ec.confirmDlg(null, msg,
-                  Locale.getString("dlg.button.retry"), Locale.getString("dlg.button.skip"))) {
+              if (!Dialog.confirmDlg(null, msg,
+                                     Locale.getString("dlg.button.retry"), Locale.getString("dlg.button.skip"))) {
                 this.foundPGP = -1;
                 return -1;
               }

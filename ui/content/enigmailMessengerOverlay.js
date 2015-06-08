@@ -1,4 +1,4 @@
-/*global Components: false, Data: false, App: false */
+/*global Components: false, Data: false, App: false, Dialog: false, Timer: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -57,6 +57,9 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/timer.jsm");
+Components.utils.import("resource://enigmail/windows.jsm");
 
 const EC = EnigmailCore;
 
@@ -182,7 +185,7 @@ Enigmail.msg = {
 
     if (Prefs.getPref("configuredVersion") === "") {
       Prefs.setPref("configuredVersion", App.getVersion());
-      EnigmailFuncs.openSetupWizard(window);
+      Windows.openSetupWizard(window, false);
     }
   },
 
@@ -804,7 +807,7 @@ Enigmail.msg = {
   messageParse: function (interactive, importOnly, contentEncoding, msgUriSpec)
   {
     Log.DEBUG("enigmailMessengerOverlay.js: messageParse: "+interactive+"\n");
-    var msgFrame = EnigmailCommon.getFrame(window, "messagepane");
+    var msgFrame = Windows.getFrame(window, "messagepane");
     Log.DEBUG("enigmailMessengerOverlay.js: msgFrame="+msgFrame+"\n");
 
     var bodyElement = msgFrame.document.getElementsByTagName("body")[0];
@@ -1168,7 +1171,7 @@ Enigmail.msg = {
                              charset:charset,
                              plainText:msgRfc822Text};
 
-    var msgFrame = EnigmailCommon.getFrame(window, "messagepane");
+    var msgFrame = Windows.getFrame(window, "messagepane");
     var bodyElement = msgFrame.document.getElementsByTagName("body")[0];
 
     // don't display decrypted message if message selection has changed
@@ -1329,7 +1332,7 @@ Enigmail.msg = {
           let index = gFolderDisplay.view.dbView.findIndexFromKey(msgKey, true);
           Log.DEBUG("  ** index = "+index+"\n");
 
-          EnigmailCommon.setTimeout(function () {
+          Timer.setTimeout(function () {
             gFolderDisplay.view.dbView.selectMsgByKey(msgKey);
             }, 750);
         }
@@ -2218,7 +2221,7 @@ Enigmail.msg = {
          (statusFlagsObj.value & nsIEnigmail.UNVERIFIED_SIGNATURE)) {
 
         if (callbackArg.actionType == "openAttachment") {
-          exitStatus = EnigmailCommon.confirmDlg(window, Locale.getString("decryptOkNoSig"), Locale.getString("msgOvl.button.contAnyway"));
+          exitStatus = Dialog.confirmDlg(window, Locale.getString("decryptOkNoSig"), Locale.getString("msgOvl.button.contAnyway"));
         }
         else {
           EnigmailCommon.alert(window, Locale.getString("decryptOkNoSig"));

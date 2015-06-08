@@ -1,4 +1,4 @@
-/*global Components EnigmailCommon */
+/*global Components: false, EnigmailCommon: false, Timer: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -36,13 +36,11 @@
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/timer.jsm");
 
-var enigmail_origCheckActionsReorder = checkActionsReorder;
-
-checkActionsReorder = function()
-{
-  enigmail_origCheckActionsReorder();
-  EnigmailCommon.setTimeout(EnigmailFilterEditor.checkMoveAction.bind(EnigmailFilterEditor), 0);
+var enigmail_origCheckActionsReorder = function() {
+    enigmail_origCheckActionsReorder();
+    Timer.setTimeout(EnigmailFilterEditor.checkMoveAction.bind(EnigmailFilterEditor), 0);
 };
 
 var EnigmailFilterEditor = {

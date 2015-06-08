@@ -1,6 +1,6 @@
 /*global Components: false, EnigmailCore: false, EnigmailCommon: false, XPCOMUtils: false, EnigmailGpgAgent: false, EnigmailGPG: false, Encryption: false, Decryption: false */
 /*global ctypes: false, subprocess: false, EnigmailConsole: false, EnigmailFuncs: false, Data: false, EnigmailProtocolHandler: false, dump: false, OS: false */
-/*global Rules: false, Filters: false, Armor: false, Files: false, Log: false, Locale: false, Execution: false, App: false */
+/*global Rules: false, Filters: false, Armor: false, Files: false, Log: false, Locale: false, Execution: false, App: false, Dialog: false, Windows: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -62,6 +62,8 @@ Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/execution.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/windows.jsm");
 
 try {
   // TB with omnijar
@@ -576,7 +578,7 @@ Enigmail.prototype = {
 
     if (!Ec.getGpgFeature("version-supported")) {
       if (! domWindow) {
-        domWindow = Ec.getBestParentWin();
+        domWindow = Windows.getBestParentWin();
       }
       Ec.alert(domWindow, Locale.getString("oldGpgVersion14", [ gpgVersion ]));
       throw Components.results.NS_ERROR_FAILURE;
@@ -944,7 +946,7 @@ Enigmail.prototype = {
     var interactive = uiFlags & nsIEnigmail.UI_INTERACTIVE;
 
     if (interactive) {
-      if (!Ec.confirmDlg(parent, Locale.getString("importKeyConfirm"), Locale.getString("keyMan.button.import"))) {
+      if (!Dialog.confirmDlg(parent, Locale.getString("importKeyConfirm"), Locale.getString("keyMan.button.import"))) {
         errorMsgObj.value = Locale.getString("failCancel");
         return -1;
       }
@@ -1471,7 +1473,7 @@ Enigmail.prototype = {
     if (attachmentHead.match(/\-\-\-\-\-BEGIN PGP \w+ KEY BLOCK\-\-\-\-\-/)) {
       // attachment appears to be a PGP key file
 
-      if (Ec.confirmDlg(parent, Locale.getString("attachmentPgpKey", [ displayName ]),
+      if (Dialog.confirmDlg(parent, Locale.getString("attachmentPgpKey", [ displayName ]),
             Locale.getString("keyMan.button.import"), Locale.getString("dlg.button.view"))) {
         exitCodeObj.value = this.importKey(parent, 0, byteData, "", errorMsgObj);
         statusFlagsObj.value = nsIEnigmail.IMPORTED_KEY;

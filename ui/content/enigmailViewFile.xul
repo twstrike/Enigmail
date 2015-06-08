@@ -86,6 +86,7 @@
     Components.utils.import("resource://enigmail/log.jsm");
     Components.utils.import("resource://enigmail/prefs.jsm");
     Components.utils.import("resource://enigmail/locale.jsm");
+    Components.utils.import("resource://enigmail/windows.jsm");
 
     const Ec = EnigmailCommon;
 
@@ -106,7 +107,7 @@
       Log.DEBUG("enigmailHelp.js: enigLoadPage\n");
       Ec.getService();
 
-      var contentFrame = Ec.getFrame(window, "contentFrame");
+      var contentFrame = Windows.getFrame(window, "contentFrame");
       if (!contentFrame)
         return;
 

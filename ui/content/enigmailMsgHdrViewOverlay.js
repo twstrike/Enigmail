@@ -1,4 +1,4 @@
-/*global Components EnigmailCommon */
+/*global Components: false, EnigmailCommon: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -41,6 +41,7 @@ Components.utils.import("resource://enigmail/mimeVerify.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/windows.jsm");
 
 if (! Enigmail) var Enigmail = {};
 
@@ -646,7 +647,7 @@ Enigmail.hdrView = {
 
           this.enigmailBox.setAttribute("class", "expandedEnigmailBox enigmailHeaderBoxLabelSignatureOk");
 
-          var msgFrame = EnigmailCommon.getFrame(window, "messagepane");
+          var msgFrame = Windows.getFrame(window, "messagepane");
 
           if (msgFrame) {
             Log.DEBUG("enigmailMsgHdrViewOverlay.js: msgFrame="+msgFrame+"\n");

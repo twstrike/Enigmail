@@ -1,4 +1,4 @@
-/*global Components: false, Data: false, Files: false, EnigmailCommon: false, EnigmailCore: false, App: false */
+/*global Components: false, Data: false, Files: false, EnigmailCommon: false, EnigmailCore: false, App: false, Dialog: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -51,6 +51,8 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/windows.jsm");
 
 const EC = EnigmailCore;
 
@@ -177,7 +179,7 @@ const ENIG_HEADERMODE_URL   = 0x10;
 
 
 function EnigGetFrame(win, frameName) {
-  return EnigmailCommon.getFrame(win, frameName);
+  return Windows.getFrame(win, frameName);
 }
 
 // Initializes enigmailCommon
@@ -273,7 +275,7 @@ function EnigAlertPref(mesg, prefText) {
 
 // Confirmation dialog with OK / Cancel buttons (both customizable)
 function EnigConfirm(mesg, okLabel, cancelLabel) {
-  return EnigmailCommon.confirmDlg(window, mesg, okLabel, cancelLabel);
+  return Dialog.confirmDlg(window, mesg, okLabel, cancelLabel);
 }
 
 

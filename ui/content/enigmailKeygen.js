@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, Data: false */
+/*global Components: false, Locale: false, Data: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -42,6 +42,7 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 try {
   Components.utils.import("resource://gre/modules/Promise.jsm");
@@ -283,7 +284,7 @@ function enigmailCheckPassphrase() {
   }
 
   if (passphrase.search(/[^\x20-\x7E]/)>=0) {
-    if (! Ec.confirmDlg(window, Locale.getString("keygen.passCharProblem"),
+    if (! Dialog.confirmDlg(window, Locale.getString("keygen.passCharProblem"),
         Locale.getString("dlg.button.ignore"), Locale.getString("dlg.button.cancel"))) {
       return null;
     }

@@ -167,6 +167,8 @@
     Components.utils.import("resource://enigmail/keyManagement.jsm");
     Components.utils.import("resource://enigmail/log.jsm");
     Components.utils.import("resource://enigmail/locale.jsm");
+    Components.utils.import("resource://enigmail/dialog.jsm");
+    Components.utils.import("resource://enigmail/windows.jsm");
 
     // Ec is predefined by enigmailCommon.js
 
@@ -252,7 +254,7 @@
           txt=data+"\n";
         }
         if (txt) {
-          var contentFrame = Ec.getFrame(window, "keygenConsole");
+          var contentFrame = Windows.getFrame(window, "keygenConsole");
           if (contentFrame) {
             var consoleElement = contentFrame.document.getElementById('console');
             consoleElement.firstChild.data += txt;
@@ -289,7 +291,7 @@
         }
 
         if (passphrase.search(/[^\x20-\x7E]/)>=0) {
-          if (! Ec.confirmDlg(window, Locale.getString("keygen.passCharProblem"),
+          if (! Dialog.confirmDlg(window, Locale.getString("keygen.passCharProblem"),
               Locale.getString("dlg.button.ignore"), Locale.getString("dlg.button.cancel"))) {
             return null;
           }
@@ -346,7 +348,7 @@
       if (!EnigConfirm(confirmMsg, Locale.getString("keyMan.button.generateKey"))) {
        return;
       }
-      var contentFrame = Ec.getFrame(window, "keygenConsole");
+      var contentFrame = Windows.getFrame(window, "keygenConsole");
       if (contentFrame) {
         var consoleElement = contentFrame.document.getElementById('console');
         consoleElement.firstChild.data = "";
@@ -371,7 +373,7 @@
             if (generateObserver.backupLocation) {
               msg += "\n"+Locale.getString("keygen.keyBackup", generateObserver.backupLocation);
             }
-            if (Ec.confirmDlg(window, msg+"\n\n"+Locale.getString("revokeCertRecommended"), Locale.getString("keyMan.button.generateCert"))) {
+            if (Dialog.confirmDlg(window, msg+"\n\n"+Locale.getString("revokeCertRecommended"), Locale.getString("keyMan.button.generateCert"))) {
               EnigCreateRevokeCert(generateObserver.keyId, curId.email, closeWin);
             }
             else

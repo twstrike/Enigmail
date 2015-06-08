@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, Data: false, App: false */
+/*global Components: false, Locale: false, Data: false, App: false, Dialog: false, Timer: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -56,6 +56,8 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/timer.jsm");
 
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
@@ -130,7 +132,7 @@ Enigmail.msg = {
     Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.composeStartup\n");
 
     function delayedProcessFinalState() {
-      EnigmailCommon.setTimeout(function _f() {
+      Timer.setTimeout(function _f() {
           Enigmail.msg.processFinalState();
           Enigmail.msg.updateStatusBar();
       },
@@ -201,7 +203,7 @@ Enigmail.msg = {
   {
     Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.setIdentityCallback: elementId="+elementId+"\n");
 
-    EnigmailCommon.setTimeout(function _f() {
+    Timer.setTimeout(function _f() {
         Enigmail.msg.setIdentityDefaults();
     },
                               50);
@@ -549,7 +551,7 @@ Enigmail.msg = {
     this.composeOpen();
     this.fireSendFlags();
 
-    EnigmailCommon.setTimeout(function _f() {
+    Timer.setTimeout(function _f() {
         Log.DEBUG("enigmailMsgComposeOverlay: re-determine send flags\n");
         try {
           this.determineSendFlags();
@@ -831,7 +833,7 @@ Enigmail.msg = {
     Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.undoEncryption:\n");
     if (this.processed) {
       if (useEditorUndo) {
-        EnigmailCommon.setTimeout(function _f() {
+        Timer.setTimeout(function _f() {
             Enigmail.msg.editor.undo(useEditorUndo);
           }, 10);
       }
@@ -1000,7 +1002,7 @@ Enigmail.msg = {
     // ignore settings for this account?
     try {
       if (!this.getAccDefault("enabled")) {
-        if (EnigmailCommon.confirmDlg(window, Locale.getString("configureNow"),
+        if (Dialog.confirmDlg(window, Locale.getString("configureNow"),
               Locale.getString("msgCompose.button.configure"))) {
           // configure account settings for the first time
           this.goAccountManager();
@@ -1949,9 +1951,9 @@ Enigmail.msg = {
       msgConfirm += "\n\n"+Locale.getString("encryptKeysNote", [ gpgKeys ]);
     }
 
-    return EnigmailCommon.confirmDlg(window, msgConfirm,
-                                     Locale.getString((isOffline || sendFlags & nsIEnigmail.SEND_LATER) ?
-                                                              "msgCompose.button.save" : "msgCompose.button.send"));
+    return Dialog.confirmDlg(window, msgConfirm,
+                             Locale.getString((isOffline || sendFlags & nsIEnigmail.SEND_LATER) ?
+                                              "msgCompose.button.save" : "msgCompose.button.send"));
   },
 
 
@@ -2541,7 +2543,7 @@ Enigmail.msg = {
 
         var wrapWidth = this.getMailPref("mailnews.wraplength");
         if (wrapWidth > 0 && wrapWidth < 68 && editor.wrapWidth > 0) {
-          if (EnigmailCommon.confirmDlg(window, Locale.getString("minimalLineWrapping", [ wrapWidth ] ))) {
+          if (Dialog.confirmDlg(window, Locale.getString("minimalLineWrapping", [ wrapWidth ] ))) {
             wrapWidth = 68;
             Prefs.getPrefRoot().setIntPref("mailnews.wraplength", wrapWidth);
           }
@@ -2827,7 +2829,7 @@ Enigmail.msg = {
           msg = EnigmailCommon.enigmailSvc.initializationError +"\n\n"+msg;
        }
 
-       return EnigmailCommon.confirmDlg(window, msg, Locale.getString("msgCompose.button.send"));
+       return Dialog.confirmDlg(window, msg, Locale.getString("msgCompose.button.send"));
     }
 
     try {
@@ -3082,7 +3084,7 @@ Enigmail.msg = {
           }
           else {
             if (sendFlags & ENCRYPT) {
-              if (!EnigmailCommon.confirmDlg(window,
+              if (!Dialog.confirmDlg(window,
                     Locale.getString("attachWarning"),
                     Locale.getString("msgCompose.button.send")))
                 return false;
@@ -3208,7 +3210,7 @@ Enigmail.msg = {
              this.statusEncryptedInStatusBar == EnigmailCommon.ENIG_FINAL_FORCEYES)) {
          Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: promised encryption did not succeed\n");
          EnigmailCommon.DEBUG_LOG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg: promised encryption did not succeed\n");
-         if (!EnigmailCommon.confirmDlg(window,
+         if (!Dialog.confirmDlg(window,
                                         Locale.getString("msgCompose.internalEncryptionError"),
                                         Locale.getString("msgCompose.button.sendAnyway"))) {
            return false; // cancel sending
@@ -3261,7 +3263,7 @@ Enigmail.msg = {
        if (EnigmailCommon.enigmailSvc && EnigmailCommon.enigmailSvc.initializationError) {
           msg += "\n"+EnigmailCommon.enigmailSvc.initializationError;
        }
-       return EnigmailCommon.confirmDlg(window, msg, Locale.getString("msgCompose.button.sendUnencrypted"));
+       return Dialog.confirmDlg(window, msg, Locale.getString("msgCompose.button.sendUnencrypted"));
     }
 
     // The encryption process for PGP/MIME messages follows "here". It's
@@ -3291,7 +3293,7 @@ Enigmail.msg = {
     try {
       var convert = DetermineConvertibility();
       if (convert == nsIMsgCompConvertible.No) {
-        if (!EnigmailCommon.confirmDlg(window,
+        if (!Dialog.confirmDlg(window,
                                        Locale.getString("strippingHTML"),
                                        Locale.getString("msgCompose.button.sendAnyway"))) {
           return false;
@@ -3332,7 +3334,7 @@ Enigmail.msg = {
           wrapWidth = this.getMailPref("editor.htmlWrapColumn");
 
           if (wrapWidth > 0 && wrapWidth < 68 && gMsgCompose.wrapLength > 0) {
-            if (EnigmailCommon.confirmDlg(window, Locale.getString("minimalLineWrapping", [ wrapWidth ] ))) {
+            if (Dialog.confirmDlg(window, Locale.getString("minimalLineWrapping", [ wrapWidth ] ))) {
               Prefs.getPrefRoot().setIntPref("editor.htmlWrapColumn", 68);
             }
           }
@@ -4213,7 +4215,7 @@ Enigmail.msg = {
      Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.addressOnChange\n");
      if (! this.addrOnChangeTimer) {
         var self = this;
-        this.addrOnChangeTimer = EnigmailCommon.setTimeout(function _f() {
+        this.addrOnChangeTimer = Timer.setTimeout(function _f() {
            self.fireSendFlags();
            self.addrOnChangeTimer = null;
         }, 200);
@@ -4342,7 +4344,7 @@ Enigmail.composeStateListener = {
       return;
 
     if (!Enigmail.msg.timeoutId && !Enigmail.msg.dirty) {
-      Enigmail.msg.timeoutId = EnigmailCommon.setTimeout(function () {
+      Enigmail.msg.timeoutId = Timer.setTimeout(function () {
           Enigmail.msg.decryptQuote(false);
 
         },
