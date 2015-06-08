@@ -252,6 +252,7 @@ const EnigmailCommon = {
    */
   newStringStreamListener: function (onStopCallback)
   {
+    // TODO: move [streams]
     Log.DEBUG("enigmailCommon.jsm: newStreamListener\n");
 
     var simpleStreamListener = {
@@ -300,6 +301,7 @@ const EnigmailCommon = {
    */
   newRequestObserver: function (terminateFunc, terminateArg)
   {
+    // TODO: move [requests]
     var RequestObserver = function (terminateFunc, terminateArg)
     {
       this._terminateFunc = terminateFunc;
@@ -347,6 +349,7 @@ const EnigmailCommon = {
    * @return: human readable error message from GnuPG
    */
   parseErrorOutput: function (errOutput, retStatusObj) {
+    // TODO: move completely
     return EnigmailErrorHandling.parseErrorOutput(errOutput, retStatusObj);
   },
 
@@ -369,6 +372,7 @@ const EnigmailCommon = {
 
   dispatchEvent: function (callbackFunction, sleepTimeMs, arrayOfArgs)
   {
+    // TODO: move [events]
     Log.DEBUG("enigmailCommon.jsm: dispatchEvent f="+callbackFunction.name+"\n");
 
     // object for dispatching callback back to main thread
@@ -498,6 +502,7 @@ const EnigmailCommon = {
    * @return: Array of String - the list of arguments
    */
   getAgentArgs: function (withBatchOpts) {
+    // TODO: move [agent]
     // return the arguments to pass to every GnuPG subprocess
 
     function pushTrimmedStr(arr, str, splitStr) {
@@ -613,6 +618,7 @@ const EnigmailCommon = {
    */
   generateKey: function (parent, name, comment, email, expiryDate, keyLength, keyType,
             passphrase, listener) {
+    // TODO: move [keys]
     Log.WRITE("enigmailCommon.jsm: generateKey:\n");
 
     if (gKeygenProcess) {
@@ -698,8 +704,7 @@ const EnigmailCommon = {
    * get nsIIOService object
    */
   getIoService: function() {
-    var ioServ = Cc[this.IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
-    return ioServ;
+    return Cc[this.IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
   },
 
   /**
@@ -714,6 +719,7 @@ const EnigmailCommon = {
    */
   newStringChannel: function(uri, contentType, contentCharset, data)
   {
+    // TODO: move [streams]
     Log.DEBUG("enigmailCommon.jsm: newStringChannel\n");
 
     var inputStream = Cc[NS_STRING_INPUT_STREAM_CONTRACTID].createInstance(Ci.nsIStringInputStream);
@@ -753,6 +759,7 @@ const EnigmailCommon = {
     * (see docu for gnupg parameter --group)
     */
   getGpgGroups: function() {
+    // TODO: move [gpg]
     if (!this.enigmailSvc) return [];
 
     let exitCodeObj = {};
@@ -791,7 +798,7 @@ const EnigmailCommon = {
    *                    null if no proxy required
    */
   getHttpProxy: function (hostName) {
-
+    // TODO: move [proxy]
     function getPasswdForHost(hostname, userObj, passwdObj) {
       var loginmgr = Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
@@ -857,6 +864,7 @@ const EnigmailCommon = {
    *                                false -> use cached values if available
    */
   getSecretKeys: function (win, refresh) {
+    // TODO: move [keys]
     // return a sorted array containing objects of (valid, usable) secret keys.
     // @return: [ {name: <userId>, id: 0x1234ABCD, created: YYYY-MM-DD },  { ... } ]
     var enigmailSvc = this.getService(win);
@@ -928,6 +936,7 @@ const EnigmailCommon = {
    * @return:      Subprocess object, or null in case process could not be started
    */
   keyserverAccess: function (actionFlags, keyserver, searchTerms, listener, errorMsgObj) {
+    // TODO: move [keyservers]
     Log.DEBUG("enigmailCommon.jsm: keyserverAccess: "+searchTerms+"\n");
 
     if (! (this.enigmailSvc && this.enigmailSvc.initialized)) {
@@ -1043,6 +1052,7 @@ const EnigmailCommon = {
    */
 
   recalcTrustDb: function() {
+    // TODO: move [agent]
     Log.DEBUG("enigmailCommon.jsm: recalcTrustDb:\n");
 
     let command = this.agentPath;
@@ -1082,6 +1092,7 @@ const EnigmailCommon = {
    */
 
   getGpgFeature: function(featureName) {
+    // TODO: move [gpg]
     let gpgVersion = this.enigmailSvc.agentVersion;
 
     if (! gpgVersion || typeof(gpgVersion) != "string" || gpgVersion.length === 0) {
@@ -1133,6 +1144,7 @@ const EnigmailCommon = {
 
   // Extract public key from Status Message
   extractPubkey: function (statusMsg) {
+    // TODO: move [keys]
     var keyId = null;
     var matchb = statusMsg.match(/(^|\n)NO_PUBKEY (\w{8})(\w{8})/);
 
@@ -1158,6 +1170,7 @@ const EnigmailCommon = {
   decryptMessageStart: function (win, verifyOnly, noOutput, listener,
                                  statusFlagsObj, errorMsgObj, mimeSignatureFile,
                                  maxOutputLength) {
+      // TODO: move completely
       return Decryption.decryptMessageStart(this, win, verifyOnly, noOutput, listener,
                                             statusFlagsObj, errorMsgObj, mimeSignatureFile,
                                             maxOutputLength);
@@ -1165,11 +1178,13 @@ const EnigmailCommon = {
 
 
   decryptMessageEnd: function (stderrStr, exitCode, outputLen, verifyOnly, noOutput, uiFlags, retStatusObj) {
+      // TODO: move completely
       return Decryption.decryptMessageEnd(this, stderrStr, exitCode, outputLen, verifyOnly, noOutput, uiFlags, retStatusObj);
   },
 
 
   getEncryptCommand: function (fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj) {
+      // TODO: move completely
       return Encryption.getEncryptCommand(this, fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj);
   },
 
@@ -1280,11 +1295,13 @@ const EnigmailCommon = {
   // returns subprocess object
   encryptMessageStart: function (win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
             hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj) {
+      // TODO: move completely
       return Encryption.encryptMessageStart(this, win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj);
   },
 
   // returns exitCode
   encryptMessageEnd: function (stderrStr, exitCode, uiFlags, sendFlags, outputLen, retStatusObj) {
+      // TODO: move completely
       return Encryption.encryptMessageEnd(this, stderrStr, exitCode, uiFlags, sendFlags, outputLen, retStatusObj);
   },
 
