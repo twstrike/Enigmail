@@ -1,6 +1,4 @@
-/*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false, Execution: false, App: false, Time: false */
-/*global XPCOMUtils: false, Timer: false, Windows: false, Dialog: false, Configure: false, Encryption: false, Decryption: false */
-/*global EnigmailErrorHandling: false, subprocess: false, escape: false, unescape: false */
+/*global Components: false, escape: false, unescape: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,29 +37,29 @@
 
 "use strict";
 
-Components.utils.import("resource://enigmail/pipeConsole.jsm");
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/subprocess.jsm");
-Components.utils.import("resource://enigmail/pipeConsole.jsm");
-Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm");
-Components.utils.import("resource://enigmail/encryption.jsm");
-Components.utils.import("resource://enigmail/decryption.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/prefs.jsm");
-Components.utils.import("resource://enigmail/os.jsm");
-Components.utils.import("resource://enigmail/files.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
-Components.utils.import("resource://enigmail/execution.jsm");
-Components.utils.import("resource://enigmail/app.jsm");
-Components.utils.import("resource://enigmail/timer.jsm");
-Components.utils.import("resource://enigmail/time.jsm");
-Components.utils.import("resource://enigmail/windows.jsm");
-Components.utils.import("resource://enigmail/dialog.jsm");
-Components.utils.import("resource://enigmail/configure.jsm");
+const Cu = Components.utils;
 
-var EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
+Cu.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false */
+Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
+Cu.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
+Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
+Cu.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
+Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/app.jsm"); /*global App: false */
+Cu.import("resource://enigmail/timer.jsm"); /*global Timer: false */
+Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
+Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
+
+const EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -87,7 +85,7 @@ const gMimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha
 // various global variables
 var gKeygenProcess = null;
 
-var EnigmailCommon = {
+const EnigmailCommon = {
   // "constants"
   POSSIBLE_PGPMIME: -2081,
   PGP_DESKTOP_ATT : -2082,
