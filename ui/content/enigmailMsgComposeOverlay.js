@@ -1611,6 +1611,9 @@ Enigmail.msg = {
          (gMsgCompose.compFields.securityInfo.signMessage ||
           gMsgCompose.compFields.securityInfo.requireEncryptMessage)) {
 
+      // Determine if user wants to encrypt drafts
+      let doEncryptDrafts = this.identity.getBoolAttribute("autoEncryptDrafts");
+
       switch (Prefs.getPref("mimePreferPgp")) {
         case 0:
           // prefer OpenPGP over S/MIME
@@ -1623,12 +1626,18 @@ Enigmail.msg = {
           if (doSign || doEncrypt) {
             toolbarMsg += " " + Locale.getString("msgCompose.toolbarTxt.smime");
           }
+          if (doEncryptDrafts) {
+            toolbarMsg += " " + EnigmailCommon.getString("msgCompose.toolbarTxt.smimeNoDraftEncryption");
+          }
           break;
         case 2:
           // prefer S/MIME over OpenPGP
           encBroadcaster.setAttribute("disabled", "true");
           signBroadcaster.setAttribute("disabled", "true");
           toolbarMsg = Locale.getString("msgCompose.toolbarTxt.smimeSignOrEncrypt");
+          if (doEncryptDrafts) {
+            toolbarMsg += " " + Locale.getString("msgCompose.toolbarTxt.smimeNoDraftEncryption");
+          }
           break;
 
       }
@@ -2691,9 +2700,15 @@ Enigmail.msg = {
       // check if own key is invalid
       let s = new RegExp("^INV_RECP [0-9]+ \\<?" + fromAddr + "\\>?", "m");
       if (testErrorMsgObj.value.search(s) >= 0)  {
+<<<<<<< HEAD
         Dialog.alert(window,
           Locale.getString("saveDraftError")+ "\n\n" +
           Locale.getString("errorKeyUnusable", [ fromAddr ]));
+=======
+        EnigmailCommon.alert(window,
+          EnigmailCommon.getString("saveDraftError")+ "\n\n" +
+          EnigmailCommon.getString("errorOwnKeyUnusable", [ fromAddr ]));
+>>>>>>> org/master
         return false;
       }
     }

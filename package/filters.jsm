@@ -1,4 +1,4 @@
-/*global Components: false, enigmailDecryptPermanently: false, EnigmailCore: false, Log: false, Locale: false, Dialog: false */
+/*global Components: false, EnigmailDecryptPermanently: false, EnigmailCore: false, Log: false, Locale: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -54,60 +54,6 @@ const Ci = Components.interfaces;
  Filter actions for decrypting messages permanently
  ********************************************************************************/
 
-/***
- *  dispatchMessages
- *
- *  Because thunderbird throws all messages at once at us thus we have to rate limit the dispatching
- *  of the message processing. Because there is only a negligible performance gain when dispatching
- *  several message at once we serialize to not overwhelm low power devices.
- *
- *  The function is implemented such that the 1st call (requireSync == true) is a synchronous function,
- *  while any other call is asynchronous. This is required to make the filters work correctly in case
- *  there are other filters that work on the message. (see bug 374).
- *
- *  Parameters
- *   aMsgHdrs:     Array of nsIMsgDBHdr
- *   targetFolder: String; target folder URI
- *   move:         Boolean: type of action; true = "move" / false = "copy"
- *   requireSync:  Boolean: true = require  function to behave synchronously
- *                          false = async function (no useful return value)
- *
- **/
-
-function dispatchMessages(aMsgHdrs, targetFolder, move, requireSync) {
-    var inspector = Cc["@mozilla.org/jsinspector;1"].getService(Ci.nsIJSInspector);
-
-    var promise = enigmailDecryptPermanently(aMsgHdrs[0], targetFolder, move);
-    var done = false;
-
-    var processNext = function (data) {
-        aMsgHdrs.splice(0,1);
-        if (aMsgHdrs.length > 0) {
-            dispatchMessages(aMsgHdrs, targetFolder, move, false);
-        }
-        else {
-            // last message was finished processing
-            done = true;
-            Log.DEBUG("enigmail.js: dispatchMessage: exit nested loop\n");
-            inspector.exitNestedEventLoop();
-        }
-    };
-
-    promise.then(processNext);
-
-    promise.catch(function(err) {
-        Log.ERROR("enigmail.js: dispatchMessage: caught error: "+err+"\n");
-        processNext(null);
-    });
-
-    if (requireSync && ! done) {
-        // wait here until all messages processed, such that the function returns
-        // synchronously
-        Log.DEBUG("enigmail.js: dispatchMessage: enter nested loop\n");
-        inspector.enterNestedEventLoop({value : 0});
-    }
-}
-
 /**
  * filter action for creating a decrypted version of the mail and
  * deleting the original mail at the same time
@@ -127,7 +73,7 @@ const filterActionMoveDecrypt = {
             msgHdrs.push(aMsgHdrs.queryElementAt(i, Ci.nsIMsgDBHdr));
         }
 
-        dispatchMessages(msgHdrs, aActionValue, true, true);
+        EnigmailDecryptPermanently.dispatchMessages(msgHdrs, aActionValue, true, true);
 
         return;
     },
@@ -168,7 +114,7 @@ const filterActionCopyDecrypt = {
             msgHdrs.push(aMsgHdrs.queryElementAt(i, Ci.nsIMsgDBHdr));
         }
 
-        dispatchMessages(msgHdrs, aActionValue, false, true);
+        EnigmailDecryptPermanently.dispatchMessages(msgHdrs, aActionValue, false, true);
         return;
     },
 

@@ -125,11 +125,13 @@ Enigmail.hlp = {
     var encrypt = EnigmailCommon.ENIG_UNDEF;  // default encrypt flag is: maybe
     var pgpMime = EnigmailCommon.ENIG_UNDEF;  // default pgpMime flag is: maybe
 
-    var addresses="{"+EnigmailFuncs.stripEmail(emailAddrs.toLowerCase()).replace(/[, ]+/g, "}{")+"}";
-    var keyList=[];
+    // list of addresses not processed
+    // - string with { and } around each email to enable pattern matching with rules
+    var openAddresses = "{"+EnigmailFuncs.stripEmail(emailAddrs.toLowerCase()).replace(/[, ]+/g, "}{")+"}";
+    var foundAddresses = "";  // string of found addresses with { and } around
+    var keyList = [];  // list of keys found for all Addresses
 
     var rulesListObj= {};
-    var foundAddresses="";
 
     var i;
     // process recipient rules
@@ -156,47 +158,52 @@ Enigmail.hlp = {
               if (! negateRule) {
                 // normal rule
                 addrList=nodeText.toLowerCase().split(/[ ,;]+/);
-                for(var addrIndex=0; addrIndex < addrList.length; addrIndex++) {
-                  var email=addrList[addrIndex];
-                  i=addresses.indexOf(email);
-                  while (i>=0) {
+                for (var addrIndex=0; addrIndex < addrList.length; addrIndex++) {
+                  var email = addrList[addrIndex];
+                  let idx = openAddresses.indexOf(email);
+                  while (idx >= 0) {
                     Log.DEBUG("enigmailMsgComposeHelper.js: getRecipientsKeys(): got matching rule for \""+email+"\"\n");
 
+                    // process sign/sncrypt/ppgMime settings
                     sign    = this.getFlagVal(sign,    node, "sign");
                     encrypt = this.getFlagVal(encrypt, node, "encrypt");
                     pgpMime = this.getFlagVal(pgpMime, node, "pgpMime");
 
-                    // extract found address
-                    let keyIds=node.getAttribute("keyId");
-
-                    var start=addresses.substring(0,i+email.length).lastIndexOf("{");
-                    var end=start+addresses.substring(start).indexOf("}")+1;
-                    foundAddresses+=addresses.substring(start,end);
+                    // process keys
+                    let keyIds = node.getAttribute("keyId");
                     if (keyIds) {
-                      if (keyIds != ".") {
-                        keyList.push(keyIds.replace(/[ ,;]+/g, ", "));
+                      if (keyIds != ".") {  // if NOT "do not check further rules for this address"
+                        var ids = keyIds.replace(/[ ,;]+/g, ", ");
+                        keyList.push(ids);
+                        var elem = {addr:email,keys:ids};
                       }
-                      addresses=addresses.substring(0,start)+addresses.substring(end);
-                      i=addresses.indexOf(email);
+                      let start = openAddresses.substring(0, idx+email.length).lastIndexOf("{");
+                      let end   = start + openAddresses.substring(start).indexOf("}")+1;
+                      foundAddresses += openAddresses.substring(start,end);
+                      openAddresses = openAddresses.substring(0,start) + openAddresses.substring(end);
+                      idx = openAddresses.indexOf(email);
                     }
                     else {
-                      var oldMatch=i;
-                      i=addresses.substring(oldMatch+email.length).indexOf(email);
-                      if (i>=0) i+=oldMatch+email.length;
+                      var oldMatch = idx;
+                      idx = openAddresses.substring(oldMatch+email.length).indexOf(email);
+                      if (idx>=0) {
+                        idx += oldMatch + email.length;
+                      }
                     }
                   }
                 }
               }
               else {
                 // "not" rule
-                addrList = addresses.replace(/\}\{/g, "},{").split(/,/);
-                for (i=0; i<addrList.length; i++) {
-                  if (nodeText.toLowerCase().indexOf(addrList[i])>=0) {
-                    i=addrList.length+2;
+                addrList = openAddresses.replace(/\}\{/g, "},{").split(/,/);
+                var idx;
+                for (idx = 0; idx < addrList.length; idx++) {
+                  if (nodeText.toLowerCase().indexOf(addrList[idx])>=0) {
+                    idx = addrList.length+2;
                     break;
                   }
                 }
-                if (i==addrList.length) {
+                if (idx == addrList.length) {
                   // no matching address; apply rule
                   sign    = this.getFlagVal(sign,    node, "sign");
                   encrypt = this.getFlagVal(encrypt, node, "encrypt");
@@ -204,7 +211,9 @@ Enigmail.hlp = {
                   let keyIds=node.getAttribute("keyId");
                   if (keyIds) {
                     if (keyIds != ".") {
-                      keyList.push(keyIds.replace(/[ ,;]+/g, ", "));
+                      var ids = keyIds.replace(/[ ,;]+/g, ", ");
+                      keyList.push(ids);
+                      var elem = {addr:email,keys:ids};
                     }
                   }
                 }
@@ -245,8 +254,8 @@ Enigmail.hlp = {
               pgpMime = this.getFlagVal(pgpMime, resultObj, "pgpMime");
               if (resultObj.keyId.length>0) {
                 keyList.push(resultObj.keyId);
-                var replaceAddr=new RegExp("{"+addrList[i]+"}", "g");
-                addresses=addresses.replace(replaceAddr, "");
+                var replaceAddr = new RegExp("{"+addrList[i]+"}", "g");
+                openAddresses = openAddresses.replace(replaceAddr, "");
               }
               else {
                 // no key -> no encryption
@@ -261,7 +270,7 @@ Enigmail.hlp = {
     if (keyList.length>0) {
       // sort key list and make it unique?
       matchedKeysObj.value = keyList.join(", ");
-      matchedKeysObj.value += addresses.replace(/\{/g, ", ").replace(/\}/g, "");
+      matchedKeysObj.value += openAddresses.replace(/\{/g, ", ").replace(/\}/g, "");
     }
 
     // return result from combining flags
