@@ -1,4 +1,4 @@
-/*global do_load_module: false, do_get_cwd: false, Components: false, Assert: false,  CustomAssert: false */
+/*global do_load_module: false, do_get_cwd: false, Components: false, Assert: false,  CustomAssert: false, FileUtils: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -38,6 +38,10 @@
  * ***** END LICENSE BLOCK ***** */
 
 "use strict";
+
+const osUtils = {};
+Components.utils.import("resource://gre/modules/osfile.jsm", osUtils);
+Components.utils.import("resource://gre/modules/FileUtils.jsm", osUtils);
 
 var TestHelper = {
     loadDirectly: function(name) {
@@ -81,10 +85,8 @@ var TestHelper = {
     },
 
     initalizeGpgHome: function() {
-        var OS = Components.utils.import("resource://gre/modules/osfile.jsm").OS;
-        var FileUtils = Components.utils.import("resource://gre/modules/FileUtils.jsm").FileUtils;
-        var homedir = OS.Path.join(OS.Constants.Path.homeDir, ".gnupgTest");
-        var working_directory = new FileUtils.File(homedir);
+        var homedir = osUtils.OS.Path.join(osUtils.OS.Constants.Path.homeDir, ".gnupgTest");
+        var working_directory = new osUtils.FileUtils.File(homedir);
         if (!working_directory.exists()) {
             working_directory.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 448);
         }
@@ -110,7 +112,7 @@ var TestHelper = {
     },
 
     removeGpgHome: function(homedir){
-        var working_directory = new FileUtils.File(homedir);
+        var working_directory = new osUtils.FileUtils.File(homedir);
         working_directory.remove(true);
     }
 };

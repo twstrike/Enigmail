@@ -173,9 +173,7 @@ Enigmail.hlp = {
                     let keyIds = node.getAttribute("keyId");
                     if (keyIds) {
                       if (keyIds != ".") {  // if NOT "do not check further rules for this address"
-                        var ids = keyIds.replace(/[ ,;]+/g, ", ");
-                        keyList.push(ids);
-                        var elem = {addr:email,keys:ids};
+                        keyList.push(keyIds.replace(/[ ,;]+/g, ", "));
                       }
                       let start = openAddresses.substring(0, idx+email.length).lastIndexOf("{");
                       let end   = start + openAddresses.substring(start).indexOf("}")+1;
@@ -211,9 +209,7 @@ Enigmail.hlp = {
                   let keyIds=node.getAttribute("keyId");
                   if (keyIds) {
                     if (keyIds != ".") {
-                      var ids = keyIds.replace(/[ ,;]+/g, ", ");
-                      keyList.push(ids);
-                      var elem = {addr:email,keys:ids};
+                      keyList.push(keyIds.replace(/[ ,;]+/g, ", "));
                     }
                   }
                 }

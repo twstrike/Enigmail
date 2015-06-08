@@ -174,7 +174,7 @@ var EnigmailDecryptPermanently = {
       }
     );
   }
-}
+};
 
 function decryptMessageIntoFolder(destFolder, move, resolve) {
   this.destFolder = destFolder;

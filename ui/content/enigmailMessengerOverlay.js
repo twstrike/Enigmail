@@ -2340,7 +2340,7 @@ Enigmail.msg = {
 
   decryptToFolder: function(destFolder) {
     let msgHdrs = gFolderDisplay ? gFolderDisplay.selectedMessages : null;
-    if (! msgHdrs || msgHdrs.length == 0) return;
+    if (! msgHdrs || msgHdrs.length === 0) return;
 
     EnigmailDecryptPermanently.dispatchMessages(msgHdrs, destFolder.URI, false, false);
   },
