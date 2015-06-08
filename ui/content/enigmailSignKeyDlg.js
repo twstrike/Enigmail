@@ -1,3 +1,4 @@
+/*global Components: false, EnigmailCommon: false, Log: false, Locale: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -37,6 +38,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 const Ec = EnigmailCommon;
 
 
@@ -51,13 +53,13 @@ function onLoad() {
 
   var enigmailSvc = Ec.getService(window);
   if (!enigmailSvc) {
-    Ec.alert(null, Locale.getString("accessError"));
+    Dialog.alert(null, Locale.getString("accessError"));
     window.close();
     return;
   }
   var keys = Ec.getSecretKeys(window);
   if (keys.length === 0) {
-    Ec.alert(null, Locale.getString("noTrustedOwnKeys"));
+    Dialog.alert(null, Locale.getString("noTrustedOwnKeys"));
     window.close();
     return;
   }
@@ -147,7 +149,7 @@ function onAccept() {
 
   var enigmailSvc = Ec.getService(window);
   if (!enigmailSvc) {
-    Ec.alert(window, Locale.getString("accessError"));
+    Dialog.alert(window, Locale.getString("accessError"));
     return true;
   }
 
@@ -158,7 +160,7 @@ function onAccept() {
     trustLevel.selectedItem.value,
     function (exitCode, errorMsg) {
       if (exitCode !== 0) {
-        Ec.alert(window, Locale.getString("signKeyFailed")+"\n\n"+errorMsg);
+        Dialog.alert(window, Locale.getString("signKeyFailed")+"\n\n"+errorMsg);
       }
       else {
         window.arguments[1].refresh = true;

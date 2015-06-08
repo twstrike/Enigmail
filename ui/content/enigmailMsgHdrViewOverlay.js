@@ -42,6 +42,7 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 if (! Enigmail) var Enigmail = {};
 
@@ -298,7 +299,7 @@ Enigmail.hdrView = {
       else if (statusFlags & nsIEnigmail.IMPORTED_KEY) {
         statusLine = "";
         statusInfo = "";
-        EnigmailCommon.alert(window, errorMsg);
+        Dialog.alert(window, errorMsg);
       }
       else {
         statusInfo = Locale.getString("failedDecryptVerify");

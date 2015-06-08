@@ -1,5 +1,5 @@
 /*global Components: false, EnigmailCore: false, Prefs: false, OS: false, Files: false, Locale: false, Data: false, Log: false, Execution: false, App: false */
-/*global XPCOMUtils: false, Timer: false, Windows: false */
+/*global XPCOMUtils: false, Timer: false, Windows: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -60,6 +60,7 @@ Components.utils.import("resource://enigmail/execution.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 var EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -204,16 +205,16 @@ var EnigmailCommon = {
 
           var checkedObj = {value: false};
           if (Prefs.getPref("initAlert")) {
-            var r = this.longAlert(win, "Enigmail: "+errMsg,
-                                   Locale.getString("dlgNoPrompt"),
-                                   null, Locale.getString("initErr.setupWizard.button"),
-                                   null, checkedObj);
+            var r = Dialog.longAlert(win, "Enigmail: "+errMsg,
+                                     Locale.getString("dlgNoPrompt"),
+                                     null, Locale.getString("initErr.setupWizard.button"),
+                                     null, checkedObj);
             if (r >= 0 && checkedObj.value) {
               Prefs.setPref("initAlert", false);
             }
             if (r == 1) {
               // start setup wizard
-              launchSetupWizard(win);
+              Windows.openSetupWizard(win, false);
               return this.getService(win);
             }
           }
@@ -232,7 +233,7 @@ var EnigmailCommon = {
 
       if (firstInitialization && this.enigmailSvc.initialized &&
           this.enigmailSvc.agentType && this.enigmailSvc.agentType == "pgp") {
-        this.alert(win, Locale.getString("pgpNotSupported"));
+        Dialog.alert(win, Locale.getString("pgpNotSupported"));
       }
 
       if (this.enigmailSvc.initialized && (App.getVersion() != configuredVersion)) {
@@ -259,74 +260,6 @@ var EnigmailCommon = {
   getEnvList: function() {
     return this.envList;
   },
-
-  /**
-   * Displays an alert dialog.
-   *
-   * @win:         nsIWindow - parent window to display modal dialog; can be null
-   * @mesg:        String    - message text
-   *
-   * no return value
-   */
-  alert: function (win, mesg)
-  {
-    if (mesg.length > 1000) {
-      this.longAlert(win, mesg, null, Locale.getString("dlg.button.close"));
-    }
-    else {
-      try {
-        gPromptSvc.alert(win, Locale.getString("enigAlert"), mesg);
-      }
-      catch(ex) {
-        Log.writeException("alert" , ex);
-      }
-    }
-  },
-
-  /**
-   * Displays an alert dialog with 1-3 optional buttons.
-   *
-   * @win:           nsIWindow - parent window to display modal dialog; can be null
-   * @mesg:          String    - message text
-   * @checkBoxLabel: String    - if not null, display checkbox with text; the
-   *                             checkbox state is returned in checkedObj.value
-   * @button-Labels: String    - use "&" to indicate access key
-   *     use "buttonType:label" or ":buttonType" to indicate special button types
-   *        (buttonType is one of cancel, help, extra1, extra2)
-   * @checkedObj:    Object    - holding the checkbox value
-   *
-   * @return: 0-2: button Number pressed
-   *          -1: ESC or close window button pressed
-   *
-   */
-  longAlert: function (win, mesg, checkBoxLabel, okLabel, labelButton2, labelButton3, checkedObj)
-  {
-    var result = {
-      value: -1,
-      checked: false
-    };
-
-    if (! win) {
-      win = Windows.getBestParentWin();
-    }
-
-    win.openDialog("chrome://enigmail/content/enigmailAlertDlg.xul", "",
-              "chrome,dialog,modal,centerscreen",
-              {
-                msgtext: mesg,
-                checkboxLabel: checkBoxLabel,
-                button1: okLabel,
-                button2: labelButton2,
-                button3: labelButton3
-              },
-              result);
-
-    if (checkBoxLabel) {
-      checkedObj.value=result.checked;
-    }
-    return result.value;
-  },
-
 
   /**
    * Display a confirmation dialog with OK / Cancel buttons (both customizable) and
@@ -506,7 +439,7 @@ var EnigmailCommon = {
       mesg += Locale.getString("noRepeat");
     }
 
-    this.alert(win, mesg);
+    Dialog.alert(win, mesg);
   },
 
   /**
@@ -1226,7 +1159,7 @@ var EnigmailCommon = {
     var keyList=enigmailSvc.getUserIdList(true, refresh, exitCodeObj, statusFlagsObj, errorMsgObj);
 
     if (exitCodeObj.value !== 0 && keyList.length === 0) {
-      this.alert(win, errorMsgObj.value);
+      Dialog.alert(win, errorMsgObj.value);
       return null;
     }
 
@@ -1599,7 +1532,7 @@ var EnigmailCommon = {
           // "Unremember" passphrase on error return
           retStatusObj.errorMsg = Locale.getString("badPhrase");
         }
-        this.alert(win, retStatusObj.errorMsg);
+        Dialog.alert(win, retStatusObj.errorMsg);
         return exitCode;
       }
 

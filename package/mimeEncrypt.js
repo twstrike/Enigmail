@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Log: false */
+/*global Components: false, EnigmailCommon: false, Log: false, Dialog: false */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -12,6 +12,7 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -463,7 +464,7 @@ PgpMimeEncrypt.prototype = {
           retStatusObj);
 
     if (this.exitCode !== 0)
-      Ec.alert(this.win, retStatusObj.errorMsg);
+      Dialog.alert(this.win, retStatusObj.errorMsg);
 
     if (this.inspector && this.inspector.eventLoopNestLevel > 0) {
       // unblock the waiting lock in finishCryptoEncapsulation

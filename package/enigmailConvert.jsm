@@ -1,4 +1,4 @@
-/*global Components: false, XPCOMUtils: false, EnigmailCommon: false, Locale: false, Execution: false, Dialog: false */
+/*global Components: false, XPCOMUtils: false, EnigmailCommon: false, Locale: false, Execution: false, Dialog: false, Log: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -755,7 +755,7 @@ decryptINLINE = function (mime) {
                                                keyIdObj, userIdObj, sigDetailsObj, errorMsgObj, blockSeparationObj, encToDetailsObj);
         if (!plaintext || plaintext.length === 0) {
           if (statusFlagsObj.value & nsIEnigmail.DISPLAY_MESSAGE) {
-            Ec.alert(null, errorMsgObj.value);
+            Dialog.alert(null, errorMsgObj.value);
             this.foundPGP = -1;
             return -1;
           }

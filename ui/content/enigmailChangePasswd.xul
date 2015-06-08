@@ -109,11 +109,11 @@
     }
     else {
       if (newPasswd.length < 8) {
-        Ec.alert(window, Locale.getString("passphrase.min8keys"));
+        Dialog.alert(window, Locale.getString("passphrase.min8keys"));
         return false;
       }
       if (newPasswd != repeatPasswd) {
-        Ec.alert(window, Locale.getString("passNoMatch"));
+        Dialog.alert(window, Locale.getString("passNoMatch"));
         return false;
       }
 
@@ -130,7 +130,7 @@
         Data.convertFromUnicode(newPasswd),
       function _changePwdCb(exitCode, errorMsg) {
         if (exitCode != 0) {
-          Ec.alert(window, Locale.getString("changePassFailed")+"\n\n"+errorMsg);
+          Dialog.alert(window, Locale.getString("changePassFailed")+"\n\n"+errorMsg);
         }
         else
           window.close();

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, App: false, Locale: false, Execution: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, App: false, Locale: false, Execution: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -48,6 +48,7 @@ Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/execution.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -251,7 +252,7 @@ var Encryption = {
         }
 
         if (pgpMime && errorMsgObj.value) {
-            ecom.alert(win, errorMsgObj.value);
+            Dialog.alert(win, errorMsgObj.value);
         }
 
         return proc;

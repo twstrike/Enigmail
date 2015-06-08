@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Log: false, Locale: false, Timer: false */
+/*global Components: false, EnigmailCommon: false, Log: false, Locale: false, Timer: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -38,6 +38,7 @@ Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 const Ec = EnigmailCommon;
 
@@ -128,7 +129,7 @@ function processKey(subKeys) {
     function(exitCode, errorMsg) {
       if (exitCode !== 0) {
         Timer.setTimeout(function () {
-          Ec.alert(window, Locale.getString("setKeyExpirationDateFailed")+"\n\n"+errorMsg);
+          Dialog.alert(window, Locale.getString("setKeyExpirationDateFailed")+"\n\n"+errorMsg);
         }, 10);
       }
       else {
@@ -179,7 +180,7 @@ function onAccept() {
       processKey(subkeys);
     } else {
       Timer.setTimeout(function () {
-        Ec.alert(window, Locale.getString("noKeySelected")+"\n");
+        Dialog.alert(window, Locale.getString("noKeySelected")+"\n");
       }, 10);
     }
   }
@@ -202,7 +203,7 @@ function checkExpirationDate() {
       if (gAlertPopUpIsOpen !== true) {
         gAlertPopUpIsOpen = true;
         Timer.setTimeout(function () {
-          Ec.alert(window, Locale.getString("expiryTooLongShorter")+"\n");
+          Dialog.alert(window, Locale.getString("expiryTooLongShorter")+"\n");
           gAlertPopUpIsOpen = false;
         }, 10);
       }
@@ -213,7 +214,7 @@ function checkExpirationDate() {
       if (gAlertPopUpIsOpen !== true) {
         gAlertPopUpIsOpen = true;
         Timer.setTimeout(function () {
-          Ec.alert(window, Locale.getString("expiryTooShort")+"\n");
+          Dialog.alert(window, Locale.getString("expiryTooShort")+"\n");
           gAlertPopUpIsOpen = false;
         }, 10);
       }

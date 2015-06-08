@@ -580,7 +580,7 @@ Enigmail.prototype = {
       if (! domWindow) {
         domWindow = Windows.getBestParentWin();
       }
-      Ec.alert(domWindow, Locale.getString("oldGpgVersion14", [ gpgVersion ]));
+      Dialog.alert(domWindow, Locale.getString("oldGpgVersion14", [ gpgVersion ]));
       throw Components.results.NS_ERROR_FAILURE;
     }
 
@@ -689,7 +689,7 @@ Enigmail.prototype = {
 
         if (command === null) {
           Log.ERROR("enigmail.js: detectGpgAgent: gpg-agent not found\n");
-          Ec.alert(domWindow, Locale.getString("gpgAgentNotStarted", [ this.agentVersion ]));
+          Dialog.alert(domWindow, Locale.getString("gpgAgentNotStarted", [ this.agentVersion ]));
           throw Components.results.NS_ERROR_FAILURE;
         }
       }
@@ -737,7 +737,7 @@ Enigmail.prototype = {
         }
         else {
           Log.ERROR("enigmail.js: detectGpgAgent: gpg-agent output: "+outStr+"\n");
-          Ec.alert(domWindow, Locale.getString("gpgAgentNotStarted", [ this.agentVersion ]));
+          Dialog.alert(domWindow, Locale.getString("gpgAgentNotStarted", [ this.agentVersion ]));
           throw Components.results.NS_ERROR_FAILURE;
         }
       }

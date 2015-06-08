@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false */
+/*global Components: false, Locale: false, Log: false, Windows: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -46,6 +46,8 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/locale.jsm");
+Cu.import("resource://enigmail/log.jsm");
+Cu.import("resource://enigmail/windows.jsm");
 
 const BUTTON_POS_0           = 1;
 const BUTTON_POS_1           = 1 << 8;
@@ -91,5 +93,70 @@ const Dialog = {
                                                  null, {});
 
         return (buttonPressed === 0);
+    },
+
+    /**
+     * Displays an alert dialog.
+     *
+     * @win:         nsIWindow - parent window to display modal dialog; can be null
+     * @mesg:        String    - message text
+     *
+     * no return value
+     */
+    alert: function (win, mesg) {
+        if (mesg.length > 1000) {
+            Dialog.longAlert(win, mesg, null, Locale.getString("dlg.button.close"));
+        } else {
+            try {
+                gPromptSvc.alert(win, Locale.getString("enigAlert"), mesg);
+            }
+            catch(ex) {
+                Log.writeException("alert" , ex);
+            }
+        }
+    },
+
+    /**
+     * Displays an alert dialog with 1-3 optional buttons.
+     *
+     * @win:           nsIWindow - parent window to display modal dialog; can be null
+     * @mesg:          String    - message text
+     * @checkBoxLabel: String    - if not null, display checkbox with text; the
+     *                             checkbox state is returned in checkedObj.value
+     * @button-Labels: String    - use "&" to indicate access key
+     *     use "buttonType:label" or ":buttonType" to indicate special button types
+     *        (buttonType is one of cancel, help, extra1, extra2)
+     * @checkedObj:    Object    - holding the checkbox value
+     *
+     * @return: 0-2: button Number pressed
+     *          -1: ESC or close window button pressed
+     *
+     */
+    longAlert: function (win, mesg, checkBoxLabel, okLabel, labelButton2, labelButton3, checkedObj) {
+        var result = {
+            value: -1,
+            checked: false
+        };
+
+        if (! win) {
+            win = Windows.getBestParentWin();
+        }
+
+        win.openDialog("chrome://enigmail/content/enigmailAlertDlg.xul", "",
+                       "chrome,dialog,modal,centerscreen",
+                       {
+                           msgtext: mesg,
+                           checkboxLabel: checkBoxLabel,
+                           button1: okLabel,
+                           button2: labelButton2,
+                           button3: labelButton3
+                       },
+                       result);
+
+        if (checkBoxLabel) {
+            checkedObj.value=result.checked;
+        }
+        return result.value;
     }
+
 };

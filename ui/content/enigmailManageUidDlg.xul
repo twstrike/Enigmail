@@ -227,12 +227,12 @@
           uidList.selectedItem.value.substr(4),
           function _cb(exitCode, errorMsg) {
             if (exitCode == 0) {
-              Ec.alert(window, Locale.getString("changePrimUidOK"));
+              Dialog.alert(window, Locale.getString("changePrimUidOK"));
               window.arguments[1].refresh = true;
               reloadUidList();
             }
             else
-              Ec.alert(window, Locale.getString("changePrimUidFailed")+"\n\n"+errorMsg);
+              Dialog.alert(window, Locale.getString("changePrimUidFailed")+"\n\n"+errorMsg);
           });
       }
     }
@@ -249,12 +249,12 @@
           uidList.selectedItem.value.substr(4),
           function _cb (exitCode, errorMsg) {
             if (exitCode == 0) {
-              Ec.alert(window, Locale.getString("revokeUidOK", uidList.selectedItem.label));
+              Dialog.alert(window, Locale.getString("revokeUidOK", uidList.selectedItem.label));
               window.arguments[1].refresh = true;
               reloadUidList();
             }
             else
-              Ec.alert(window, Locale.getString("revokeUidFailed", uidList.selectedItem.label)+"\n\n"+errorMsgObj.value);
+              Dialog.alert(window, Locale.getString("revokeUidFailed", uidList.selectedItem.label)+"\n\n"+errorMsgObj.value);
           });
         if (r != 0) {
           return;
@@ -274,12 +274,12 @@
           uidList.selectedItem.value.substr(4),
           function _cb (exitCode, errorMsg) {
             if (exitCode == 0) {
-              Ec.alert(window, Locale.getString("deleteUidOK", uidList.selectedItem.label));
+              Dialog.alert(window, Locale.getString("deleteUidOK", uidList.selectedItem.label));
               window.arguments[1].refresh = true;
               reloadUidList();
             }
             else
-              Ec.alert(window, Locale.getString("deleteUidFailed", uidList.selectedItem.label)+"\n\n"+errorMsgObj.value);
+              Dialog.alert(window, Locale.getString("deleteUidFailed", uidList.selectedItem.label)+"\n\n"+errorMsgObj.value);
           });
       }
     }

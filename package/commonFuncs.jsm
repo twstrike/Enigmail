@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, Data: false, Dialog: false, Windows: false */
+/*global Components: false, Locale: false, Data: false, Dialog: false, Windows: false, Log: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -140,7 +140,7 @@ var EnigmailFuncs = {
 
     var ioService = Cc[IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
     if (ioService && ioService.offline) {
-      EnigmailCommon.alert(win, Locale.getString("needOnline"));
+      Dialog.alert(win, Locale.getString("needOnline"));
       return;
     }
 
@@ -541,7 +541,7 @@ var EnigmailFuncs = {
           createInstance(Ci.nsIFile);
         photoFile.initWithPath(photoPath);
         if (! (photoFile.isFile() && photoFile.isReadable())) {
-          EnigmailCommon.alert(win, Locale.getString("error.photoPathNotReadable", photoPath));
+          Dialog.alert(win, Locale.getString("error.photoPathNotReadable", photoPath));
         }
         else {
           var ioServ = Cc[EnigmailCommon.IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
@@ -564,7 +564,7 @@ var EnigmailFuncs = {
        }
       }
       else {
-        EnigmailCommon.alert(win, Locale.getString("noPhotoAvailable"));
+        Dialog.alert(win, Locale.getString("noPhotoAvailable"));
       }
     }
   },
@@ -868,7 +868,7 @@ var EnigmailFuncs = {
                                            statusFlagsObj,
                                            errorMsgObj);
       if (exitCodeObj.value !== 0) {
-        EnigmailCommon.alert(win, errorMsgObj.value);
+        Dialog.alert(win, errorMsgObj.value);
         return null;
       }
     } catch (ex) {

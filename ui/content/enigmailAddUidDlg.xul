@@ -78,6 +78,7 @@
     Components.utils.import("resource://enigmail/keyManagement.jsm");
     Components.utils.import("resource://enigmail/locale.jsm");
     Components.utils.import("resource://enigmail/data.jsm");
+    Components.utils.import("resource://enigmail/dialog.jsm");
 
     const Ec = EnigmailCommon;
 
@@ -87,24 +88,24 @@
       var comment = document.getElementById("addUid_comment");
 
       if ((email.value.search(/^ *$/) == 0) || (name.value.search(/^ *$/) == 0)) {
-        Ec.alert(window, Locale.getString ("addUidDlg.nameOrEmailError"));
+        Dialog.alert(window, Locale.getString ("addUidDlg.nameOrEmailError"));
         return false;
       }
       if (name.value.replace(/ *$/, "").length <5) {
-        Ec.alert(window, Locale.getString ("addUidDlg.nameMinLengthError"));
+        Dialog.alert(window, Locale.getString ("addUidDlg.nameMinLengthError"));
         return false;
       }
       if (email.value.search(/.@./)<0) {
-        Ec.alert(window, Locale.getString ("addUidDlg.invalidEmailError"));
+        Dialog.alert(window, Locale.getString ("addUidDlg.invalidEmailError"));
         return false;
       }
       if (comment.value.search(/[()]/) >= 0) {
-        Ec.alert(window, Locale.getString ("addUidDlg.commentError"));
+        Dialog.alert(window, Locale.getString ("addUidDlg.commentError"));
         return false;
       }
       var enigmailSvc = Ec.getService();
       if (!enigmailSvc) {
-        Ec.alert(window, Locale.getString ("accessError"));
+        Dialog.alert(window, Locale.getString ("accessError"));
         return true;
       }
 
@@ -115,11 +116,11 @@
         Data.convertFromUnicode(comment.value),
         function _addUidCb(exitCode, errorMsg) {
            if (exitCode != 0) {
-              Ec.alert(window, Locale.getString("addUidFailed")+"\n\n"+errorMsg);
+              Dialog.alert(window, Locale.getString("addUidFailed")+"\n\n"+errorMsg);
             }
             else {
               window.arguments[1].refresh = true;
-              Ec.alert(window, Locale.getString("addUidOK"));
+              Dialog.alert(window, Locale.getString("addUidOK"));
             }
             window.close();
         });

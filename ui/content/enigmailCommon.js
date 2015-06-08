@@ -252,7 +252,7 @@ function EnigWriteException(referenceInfo, ex) {
 ///////////////////////////////////////////////////////////////////////////////
 
 function EnigAlert(mesg) {
-  return EnigmailCommon.alert(window, mesg);
+  return Dialog.alert(window, mesg);
 }
 
 /**
@@ -266,7 +266,7 @@ function EnigAlert(mesg) {
  *
  */
 function EnigLongAlert(mesg, checkBoxLabel, okLabel, labelButton2, labelButton3, checkedObj) {
-  return EnigmailCommon.longAlert(window, mesg, checkBoxLabel, okLabel, labelButton2, labelButton3, checkedObj);
+  return Dialog.longAlert(window, mesg, checkBoxLabel, okLabel, labelButton2, labelButton3, checkedObj);
 }
 
 function EnigAlertPref(mesg, prefText) {

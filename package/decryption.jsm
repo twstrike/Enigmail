@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, Locale: false, Armor: false, Data: false, Execution: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, Locale: false, Armor: false, Data: false, Execution: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -52,6 +52,7 @@ Cu.import("resource://enigmail/armor.jsm");
 Cu.import("resource://enigmail/locale.jsm");
 Cu.import("resource://enigmail/data.jsm");
 Cu.import("resource://enigmail/execution.jsm");
+Cu.import("resource://enigmail/dialog.jsm");
 
 const nsIEnigmail = Ci.nsIEnigmail;
 const EC = EnigmailCore;
@@ -617,7 +618,7 @@ var Decryption = {
                     importedKey = (exitStatus === 0);
 
                     if (exitStatus > 0) {
-                        ec.alert(parent, Locale.getString("cantImport")+importErrorMsgObj.value);
+                        Dialog.alert(parent, Locale.getString("cantImport")+importErrorMsgObj.value);
                     }
                 }
 

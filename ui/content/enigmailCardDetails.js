@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, EnigmailCommon: false, Data: false */
+/*global Components: false, Locale: false, EnigmailCommon: false, Data: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -39,6 +39,7 @@ Components.utils.import("resource://enigmail/keyManagement.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 const Ec = EnigmailCommon;
 
@@ -108,7 +109,7 @@ function onLoad() {
 }
 
 function failWithError(errorMsg) {
-  Ec.alert(window, errorMsg);
+  Dialog.alert(window, errorMsg);
   window.close();
 }
 
@@ -158,7 +159,7 @@ function doSaveChanges() {
 
   var enigmailSvc = Ec.getService(window);
   if (!enigmailSvc) {
-    Ec.alert(window, Locale.getString("accessError"));
+    Dialog.alert(window, Locale.getString("accessError"));
     window.close();
     return;
   }
@@ -167,7 +168,7 @@ function doSaveChanges() {
   var dialogname = getValue("name");
   var dialogfirstname = getValue("firstname");
   if ((dialogname.search(/^[A-Za-z0-9\.\-,\?_ ]*$/) !== 0) || (dialogfirstname.search(/^[A-Za-z0-9\.\-,\?_ ]*$/) !== 0)) {
-    Ec.alert(window, Locale.getString("Carddetails.NoASCII"));
+    Dialog.alert(window, Locale.getString("Carddetails.NoASCII"));
     onLoad();
     doEditData();
   }
@@ -182,7 +183,7 @@ function doSaveChanges() {
                                   forcepin,
     function _cardAdminCb(exitCode, errorMsg) {
       if (exitCode !== 0) {
-        Ec.alert(window, errorMsg);
+        Dialog.alert(window, errorMsg);
       }
 
       onLoad();

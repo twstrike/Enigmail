@@ -1,4 +1,4 @@
-/*global Components: false, enigmailDecryptPermanently: false, EnigmailCore: false, Log: false, Locale: false */
+/*global Components: false, enigmailDecryptPermanently: false, EnigmailCore: false, Log: false, Locale: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -45,15 +45,10 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/enigmailConvert.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-
-const EC = EnigmailCore;
-
-function ensuredEc() {
-    return EC.ensuredEnigmailCommon();
-}
 
 /********************************************************************************
  Filter actions for decrypting messages permanently
@@ -142,7 +137,7 @@ const filterActionMoveDecrypt = {
     },
 
     validateActionValue: function (value, folder, type) {
-        ensuredEc().alert(null, Locale.getString("filter.decryptMove.warnExperimental"));
+        Dialog.alert(null, Locale.getString("filter.decryptMove.warnExperimental"));
 
         if (value === "") {
             return Locale.getString("filter.folderRequired");

@@ -210,7 +210,7 @@ Enigmail.msg = {
   viewOpenpgpInfo: function ()
   {
     if (Enigmail.msg.securityInfo) {
-      EnigmailCommon.longAlert(window, Locale.getString("securityInfo")+Enigmail.msg.securityInfo.statusInfo);
+      Dialog.longAlert(window, Locale.getString("securityInfo")+Enigmail.msg.securityInfo.statusInfo);
     }
   },
 
@@ -1034,7 +1034,7 @@ Enigmail.msg = {
 
     if (importOnly) {
        if (interactive && errorMsg)
-         EnigmailCommon.longAlert(window, errorMsg);
+         Dialog.longAlert(window, errorMsg);
        return;
     }
 
@@ -1092,7 +1092,7 @@ Enigmail.msg = {
 
     if (!plainText) {
        if (interactive && Enigmail.msg.securityInfo && Enigmail.msg.securityInfo.statusInfo)
-         EnigmailCommon.longAlert(window, Enigmail.msg.securityInfo.statusInfo);
+         Dialog.longAlert(window, Enigmail.msg.securityInfo.statusInfo);
        return;
     }
 
@@ -1341,7 +1341,7 @@ Enigmail.msg = {
       }
     );
     p.catch(function _rejected() {
-      EnigmailCommon.alert(window, Locale.getString("fixBrokenExchangeMsg.failed"));
+      Dialog.alert(window, Locale.getString("fixBrokenExchangeMsg.failed"));
       hideAndResetExchangePane();
     });
   },
@@ -1407,7 +1407,7 @@ Enigmail.msg = {
       return true;
     }
     else {
-      EnigmailCommon.alert(window, "PGPMail");
+      Dialog.alert(window, "PGPMail");
     }
 
     return false;
@@ -1714,20 +1714,20 @@ Enigmail.msg = {
     Log.DEBUG("enigmailMessengerOverlay.js: messageSave: \n");
 
     if (!Enigmail.msg.decryptedMessage) {
-      EnigmailCommon.alert(window, Locale.getString("noDecrypted"));
+      Dialog.alert(window, Locale.getString("noDecrypted"));
       return;
     }
 
     var mailNewsUrl = this.getCurrentMsgUrl();
 
     if (!mailNewsUrl) {
-      EnigmailCommon.alert(window, Locale.getString("noMessage"));
+      Dialog.alert(window, Locale.getString("noMessage"));
       return;
     }
 
     if (Enigmail.msg.decryptedMessage.url != mailNewsUrl.spec) {
       Enigmail.msg.decryptedMessage = null;
-      EnigmailCommon.alert(window, Locale.getString("useButton"));
+      Dialog.alert(window, Locale.getString("useButton"));
       return;
     }
 
@@ -1744,7 +1744,7 @@ Enigmail.msg = {
     var textContent = this.getDecryptedMessage("text/plain", true);
 
     if (!Enigmail.msg.writeFileContents(saveFile.path, textContent, null)) {
-      EnigmailCommon.alert(window, "Error in saving to file "+saveFile.path);
+      Dialog.alert(window, "Error in saving to file "+saveFile.path);
       return;
     }
 
@@ -2013,11 +2013,11 @@ Enigmail.msg = {
     }
 
     if (! signatureAtt) {
-      EnigmailCommon.alert(window, Locale.getString("attachment.noMatchToSignature", [ this.getAttachmentName(origAtt) ]));
+      Dialog.alert(window, Locale.getString("attachment.noMatchToSignature", [ this.getAttachmentName(origAtt) ]));
       return;
     }
     if (! origAtt) {
-      EnigmailCommon.alert(window, Locale.getString("attachment.noMatchFromSignature", [ this.getAttachmentName(signatureAtt) ]));
+      Dialog.alert(window, Locale.getString("attachment.noMatchFromSignature", [ this.getAttachmentName(signatureAtt) ]));
       return;
     }
 
@@ -2028,7 +2028,7 @@ Enigmail.msg = {
       createInstance(EnigmailCommon.getLocalFileApi());
     outFile1.initWithPath(tmpDir);
     if (!(outFile1.isDirectory() && outFile1.isWritable())) {
-      EnigmailCommon.alert(window, Locale.getString("noTempDir"));
+      Dialog.alert(window, Locale.getString("noTempDir"));
       return;
     }
     outFile1.append(this.getAttachmentName(origAtt));
@@ -2047,9 +2047,9 @@ Enigmail.msg = {
     var r = enigmailSvc.verifyAttachment(window, outFile1, outFile2, statusFlagsObj, errorMsgObj);
 
     if (r === 0)
-      EnigmailCommon.alert(window, Locale.getString("signature.verifiedOK", [ this.getAttachmentName(origAtt) ]) +"\n\n"+ errorMsgObj.value);
+      Dialog.alert(window, Locale.getString("signature.verifiedOK", [ this.getAttachmentName(origAtt) ]) +"\n\n"+ errorMsgObj.value);
     else
-      EnigmailCommon.alert(window, Locale.getString("signature.verifyFailed", [ this.getAttachmentName(origAtt) ])+"\n\n"+
+      Dialog.alert(window, Locale.getString("signature.verifyFailed", [ this.getAttachmentName(origAtt) ])+"\n\n"+
         errorMsgObj.value);
 
     outFile1.remove(false);
@@ -2200,10 +2200,10 @@ Enigmail.msg = {
       }
       catch (ex) {}
       if (exitStatus === 0) {
-        EnigmailCommon.longAlert(window, Locale.getString("successKeyImport")+"\n\n"+errorMsgObj.value);
+        Dialog.longAlert(window, Locale.getString("successKeyImport")+"\n\n"+errorMsgObj.value);
       }
       else {
-        EnigmailCommon.alert(window, Locale.getString("failKeyImport")+"\n"+errorMsgObj.value);
+        Dialog.alert(window, Locale.getString("failKeyImport")+"\n"+errorMsgObj.value);
       }
 
       return;
@@ -2224,17 +2224,17 @@ Enigmail.msg = {
           exitStatus = Dialog.confirmDlg(window, Locale.getString("decryptOkNoSig"), Locale.getString("msgOvl.button.contAnyway"));
         }
         else {
-          EnigmailCommon.alert(window, Locale.getString("decryptOkNoSig"));
+          Dialog.alert(window, Locale.getString("decryptOkNoSig"));
         }
       }
       else {
-        EnigmailCommon.alert(window, Locale.getString("failedDecrypt")+"\n\n"+errorMsgObj.value);
+        Dialog.alert(window, Locale.getString("failedDecrypt")+"\n\n"+errorMsgObj.value);
         exitStatus=false;
       }
     }
     if (exitStatus) {
       if (statusFlagsObj.value & nsIEnigmail.IMPORTED_KEY) {
-        EnigmailCommon.longAlert(window, Locale.getString("successKeyImport")+"\n\n"+errorMsgObj.value);
+        Dialog.longAlert(window, Locale.getString("successKeyImport")+"\n\n"+errorMsgObj.value);
       }
       else if (statusFlagsObj.value & nsIEnigmail.DISPLAY_MESSAGE) {
         HandleSelectedAttachments('open');

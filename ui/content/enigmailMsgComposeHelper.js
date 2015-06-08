@@ -43,6 +43,7 @@ Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
 
 if (! Enigmail) var Enigmail = {};
 
@@ -137,7 +138,7 @@ Enigmail.hlp = {
       var rulesList=rulesListObj.value;
 
       if (rulesList.firstChild.nodeName=="parsererror") {
-        EnigmailCommon.alert(window, "Invalid pgprules.xml file:\n"+ rulesList.firstChild.textContent);
+        Dialog.alert(window, "Invalid pgprules.xml file:\n"+ rulesList.firstChild.textContent);
         return false;
       }
       Log.DEBUG("enigmailMsgComposeHelper.js: getRecipientsKeys(): rules successfully loaded; now process them\n");
