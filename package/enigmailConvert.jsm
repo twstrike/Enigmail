@@ -51,6 +51,7 @@ Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
+Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
 
 /*global MimeBody: false, MimeUnknown: false, MimeMessageAttachment: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
@@ -421,7 +422,7 @@ decryptAttachment = function(attachment, strippedName) {
             return;
           }
           var enigmailSvc = Ec.getService();
-          var args = Ec.getAgentArgs(true);
+          var args = EnigmailGpgAgent.getAgentArgs(true);
           args = args.concat(Ec.passwdCommand());
           args.push("-d");
 

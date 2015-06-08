@@ -837,7 +837,7 @@ Enigmail.prototype = {
 
     var uidList=userId.split(/[ ,\t]+/);
 
-    var args = Ec.getAgentArgs(true);
+    var args = EnigmailGpgAgent.getAgentArgs(true);
     args = args.concat(["-a", "--export"]);
     args = args.concat(uidList);
 
@@ -862,7 +862,7 @@ Enigmail.prototype = {
     }
 
     if (exportFlags & nsIEnigmail.EXTRACT_SECRET_KEY) {
-      args = Ec.getAgentArgs(true);
+      args = EnigmailGpgAgent.getAgentArgs(true);
       args = args.concat(["-a", "--export-secret-keys"]);
       args = args.concat(uidList);
 
@@ -936,7 +936,7 @@ Enigmail.prototype = {
       }
     }
 
-    var args = Ec.getAgentArgs(true);
+    var args = EnigmailGpgAgent.getAgentArgs(true);
     args.push("--import");
 
     var exitCodeObj    = {};
@@ -1006,7 +1006,7 @@ Enigmail.prototype = {
     if (refresh ||
         (secretOnly && this.secretKeyList === null) ||
         ((! secretOnly) && this.userIdList === null)) {
-      var args = Ec.getAgentArgs(true);
+      var args = EnigmailGpgAgent.getAgentArgs(true);
 
       if (secretOnly) {
         args=args.concat(["--with-fingerprint", "--fixed-list-mode", "--with-colons", "--list-secret-keys"]);
@@ -1068,7 +1068,7 @@ Enigmail.prototype = {
     // TODO: move [keys]
 
     var keyIdList = keyId.split(" ");
-    var args = Ec.getAgentArgs(true);
+    var args = EnigmailGpgAgent.getAgentArgs(true);
     args=args.concat(["--with-fingerprint", "--fixed-list-mode", "--with-colons", "--list-sig"]);
     args=args.concat(keyIdList);
 
@@ -1117,7 +1117,7 @@ Enigmail.prototype = {
   getKeyDetails: function (keyId, uidOnly, withUserAttributes)
   {
     // TODO: move [keys]
-    var args = Ec.getAgentArgs(true);
+    var args = EnigmailGpgAgent.getAgentArgs(true);
     var keyIdList = keyId.split(" ");
     args=args.concat([ "--fixed-list-mode", "--with-fingerprint", "--with-colons", "--list-keys"]);
     args=args.concat(keyIdList);
@@ -1326,7 +1326,7 @@ Enigmail.prototype = {
   getGnupgConfig: function  (exitCodeObj, errorMsgObj)
   {
     // TODO: move [gnupg]
-    var args = Ec.getAgentArgs(true);
+    var args = EnigmailGpgAgent.getAgentArgs(true);
 
     args=args.concat(["--fixed-list-mode", "--with-colons", "--list-config"]);
 
@@ -1424,7 +1424,7 @@ Enigmail.prototype = {
     var verifyFilePath  = Files.getEscapedFilename(Files.getFilePathReadonly(verifyFile.QueryInterface(Ci.nsIFile)));
     var sigFilePath     = Files.getEscapedFilename(Files.getFilePathReadonly(sigFile.QueryInterface(Ci.nsIFile)));
 
-    var args = Ec.getAgentArgs(true);
+    var args = EnigmailGpgAgent.getAgentArgs(true);
     args.push("--verify");
     args.push(sigFilePath);
     args.push(verifyFilePath);
@@ -1482,7 +1482,7 @@ Enigmail.prototype = {
 
     var outFileName = Files.getEscapedFilename(Files.getFilePathReadonly(outFile.QueryInterface(Ci.nsIFile), NS_WRONLY));
 
-    var args = Ec.getAgentArgs(true);
+    var args = EnigmailGpgAgent.getAgentArgs(true);
     args = args.concat(["-o", outFileName, "--yes"]);
     args = args.concat(Ec.passwdCommand());
     args.push("-d");
@@ -1519,7 +1519,7 @@ Enigmail.prototype = {
   getCardStatus: function(exitCodeObj, errorMsgObj) {
     // TODO: move [card]
     Log.DEBUG("enigmail.js: Enigmail.getCardStatus\n");
-    var args = Ec.getAgentArgs(false);
+    var args = EnigmailGpgAgent.getAgentArgs(false);
 
     args = args.concat(["--status-fd", "2", "--fixed-list-mode", "--with-colons", "--card-status"]);
     var statusMsgObj = {};
@@ -1539,7 +1539,7 @@ Enigmail.prototype = {
     // TODO: move [keys]
     Log.DEBUG("enigmail.js: Enigmail.showKeyPhoto, keyId="+keyId+" photoNumber="+photoNumber+"\n");
 
-    var args = Ec.getAgentArgs();
+    var args = EnigmailGpgAgent.getAgentArgs();
     args = args.concat(["--no-secmem-warning", "--no-verbose", "--no-auto-check-trustdb", "--batch", "--no-tty", "--status-fd", "1", "--attribute-fd", "2" ]);
     args = args.concat(["--fixed-list-mode", "--list-keys", keyId]);
 

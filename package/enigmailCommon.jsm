@@ -59,6 +59,7 @@ Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
+Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -68,8 +69,6 @@ const nsIEnigmail = Ci.nsIEnigmail;
 
 const NS_STRING_INPUT_STREAM_CONTRACTID = "@mozilla.org/io/string-input-stream;1";
 const NS_INPUT_STREAM_CHNL_CONTRACTID = "@mozilla.org/network/input-stream-channel;1";
-
-const GPG_BATCH_OPT_LIST = [ "--batch", "--no-tty", "--status-fd", "2" ];
 
 const KEYTYPE_DSA = 1;
 const KEYTYPE_RSA = 2;
@@ -494,80 +493,6 @@ const EnigmailCommon = {
   },
 
   /**
-   * get the standard arguments to pass to every GnuPG subprocess
-   *
-   * @withBatchOpts: Boolean - true: use --batch and some more options
-   *                           false: don't use --batch and co.
-   *
-   * @return: Array of String - the list of arguments
-   */
-  getAgentArgs: function (withBatchOpts) {
-    // TODO: move [agent]
-    // return the arguments to pass to every GnuPG subprocess
-
-    function pushTrimmedStr(arr, str, splitStr) {
-      // Helper function for pushing a string without leading/trailing spaces
-      // to an array
-      str = str.replace(/^ */, "").replace(/ *$/, "");
-      if (str.length > 0) {
-        if (splitStr) {
-          var tmpArr = str.split(/[\t ]+/);
-          for (var i=0; i< tmpArr.length; i++) {
-            arr.push(tmpArr[i]);
-          }
-        }
-        else {
-          arr.push(str);
-        }
-      }
-      return (str.length > 0);
-    }
-
-    var r = [ "--charset", "utf-8", "--display-charset", "utf-8" ]; // mandatory parameter to add in all cases
-
-    try {
-      var p = "";
-      p = Prefs.getPref("agentAdditionalParam").replace(/\\\\/g, "\\");
-
-      var i = 0;
-      var last = 0;
-      var foundSign="";
-      var startQuote=-1;
-
-      while ((i=p.substr(last).search(/['"]/)) >= 0) {
-        if (startQuote==-1) {
-          startQuote = i;
-          foundSign=p.substr(last).charAt(i);
-          last = i +1;
-        }
-        else if (p.substr(last).charAt(i) == foundSign) {
-          // found enquoted part
-          if (startQuote > 1) pushTrimmedStr(r, p.substr(0, startQuote), true);
-
-          pushTrimmedStr(r, p.substr(startQuote + 1, last + i - startQuote -1), false);
-          p = p.substr(last + i + 1);
-          last = 0;
-          startQuote = -1;
-          foundSign = "";
-        }
-        else {
-          last = last + i + 1;
-        }
-      }
-
-      pushTrimmedStr(r, p, true);
-    }
-    catch (ex) {}
-
-
-    if (withBatchOpts) {
-      r = r.concat(GPG_BATCH_OPT_LIST);
-    }
-
-    return r;
-  },
-
-  /**
    * Fix the exit code of GnuPG (which may be wrong in some circumstances)
    *
    * @exitCode:    Number - the exitCode obtained from GnuPG
@@ -626,7 +551,7 @@ const EnigmailCommon = {
       throw Components.results.NS_ERROR_FAILURE;
     }
 
-    var args = this.getAgentArgs(true);
+    var args = EnigmailGpgAgent.getAgentArgs(true);
     args.push("--gen-key");
 
     Log.CONSOLE(Files.formatCmdLine(this.enigmailSvc.agentPath, args));
@@ -888,10 +813,10 @@ const EnigmailCommon = {
     }
 
     var proxyHost = HttpProxy.getHttpProxy(keyserver);
-    var args = this.getAgentArgs(true);
+    var args = EnigmailGpgAgent.getAgentArgs(true);
 
     if (actionFlags & nsIEnigmail.SEARCH_KEY) {
-      args = this.getAgentArgs(false);
+      args = EnigmailGpgAgent.getAgentArgs(false);
       args = args.concat(["--command-fd", "0", "--fixed-list", "--with-colons"]);
     }
     if (proxyHost) {
@@ -988,7 +913,7 @@ const EnigmailCommon = {
     Log.DEBUG("enigmailCommon.jsm: recalcTrustDb:\n");
 
     let command = this.agentPath;
-    let args = this.getAgentArgs(false);
+    let args = EnigmailGpgAgent.getAgentArgs(false);
     args = args.concat(["--check-trustdb"]);
 
     try {
@@ -1243,7 +1168,7 @@ const EnigmailCommon = {
   getAttachmentFileName: function (parent, byteData) {
     Log.DEBUG("enigmailCommon.jsm: getAttachmentFileName\n");
 
-    var args = this.getAgentArgs(true);
+    var args = EnigmailGpgAgent.getAgentArgs(true);
     args = args.concat(this.passwdCommand());
     args.push("--list-packets");
 

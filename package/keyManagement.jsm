@@ -46,6 +46,7 @@ Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/execution.jsm");
+Components.utils.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailKeyMgmt" ];
 
@@ -263,7 +264,7 @@ var EnigmailKeyMgmt = {
     }
 
     var command= enigmailSvc.agentPath;
-    var args = Ec.getAgentArgs(false);
+    var args = EnigmailGpgAgent.getAgentArgs(false);
 
     outputData.key = "";
     args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);
@@ -323,7 +324,7 @@ var EnigmailKeyMgmt = {
     }
 
     var keyIdList = keyId.split(" ");
-    var args = Ec.getAgentArgs(false);
+    var args = EnigmailGpgAgent.getAgentArgs(false);
 
     var statusFlags = {};
 
@@ -392,7 +393,7 @@ var EnigmailKeyMgmt = {
     }
 
     var command= enigmailSvc.agentPath;
-    var args = Ec.getAgentArgs(false);
+    var args = EnigmailGpgAgent.getAgentArgs(false);
     Log.DEBUG("enigmail.js: Enigmail.importKeyFromFile: fileName="+inputFile.path+"\n");
     importedKeysObj.value="";
 

@@ -49,6 +49,7 @@ Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/execution.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -124,7 +125,7 @@ var Encryption = {
         var bccAddrList = bccMailAddr.split(/\s*,\s*/);
         var k;
 
-        var encryptArgs = ecom.getAgentArgs(true);
+        var encryptArgs = EnigmailGpgAgent.getAgentArgs(true);
 
         if (!useDefaultComment)
             encryptArgs = encryptArgs.concat(["--comment", GPG_COMMENT_OPT.replace(/\%s/, App.getName())]);

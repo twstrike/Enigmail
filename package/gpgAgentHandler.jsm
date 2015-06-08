@@ -50,10 +50,29 @@ const EXPORTED_SYMBOLS = [ "EnigmailGpgAgent" ];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
+const GPG_BATCH_OPT_LIST = [ "--batch", "--no-tty", "--status-fd", "2" ];
+
 var gIsGpgAgent = -1;
 
 var Ec = null;
 const EC = EnigmailCore;
+
+function pushTrimmedStr(arr, str, splitStr) {
+    // Helper function for pushing a string without leading/trailing spaces
+    // to an array
+    str = str.replace(/^ */, "").replace(/ *$/, "");
+    if (str.length > 0) {
+        if (splitStr) {
+            let tmpArr = str.split(/[\t ]+/);
+            for (let i=0; i< tmpArr.length; i++) {
+                arr.push(tmpArr[i]);
+            }
+        } else {
+            arr.push(str);
+        }
+    }
+    return (str.length > 0);
+}
 
 const EnigmailGpgAgent = {
     setEnigmailCommon: function(enigCommon) {
@@ -81,19 +100,9 @@ const EnigmailGpgAgent = {
         return useAgent;
     },
 
-
     resetGpgAgent: function() {
         Log.DEBUG("gpgAgentHandler.jsm: resetGpgAgent\n");
         gIsGpgAgent = -1;
-    },
-
-    readString: function(data, length) {
-        var r = '';
-        for(var i = 0; i < length; i++) {
-            r += String.fromCharCode(data[i]);
-        }
-
-        return r;
     },
 
     isCmdGpgAgent: function(pid) {
@@ -139,8 +148,9 @@ const EnigmailGpgAgent = {
         // to my knowledge there is no other agent than gpg-agent on Windows
         if (OS.getOS() == "WINNT") return true;
 
-        if (gIsGpgAgent >= 0)
+        if (gIsGpgAgent >= 0) {
             return gIsGpgAgent == 1;
+        }
 
         var pid = -1;
         var exitCode = -1;
@@ -176,11 +186,11 @@ const EnigmailGpgAgent = {
 
         Log.DEBUG("gpgAgentHandler.jsm: isAgentTypeGpgAgent: pid="+pid+"\n");
 
-        this.isCmdGpgAgent(pid);
+        EnigmailGpgAgent.isCmdGpgAgent(pid);
         var isAgent = false;
 
         try {
-            isAgent = this.isCmdGpgAgent(pid);
+            isAgent = EnigmailGpgAgent.isCmdGpgAgent(pid);
             gIsGpgAgent = isAgent ? 1 : 0;
         }
         catch(ex) {}
@@ -273,8 +283,8 @@ const EnigmailGpgAgent = {
                 if (svc.gpgconfPath &&
                     svc.connGpgAgentPath) {
 
-                    if (this.isAgentTypeGpgAgent()) {
-                        let m = this.getAgentMaxIdle();
+                    if (EnigmailGpgAgent.isAgentTypeGpgAgent()) {
+                        let m = EnigmailGpgAgent.getAgentMaxIdle();
                         if (m > -1) maxIdle = m;
                     }
 
@@ -289,11 +299,61 @@ const EnigmailGpgAgent = {
     setMaxIdlePref: function(minutes) {
         Prefs.setPref("maxIdleMinutes", minutes);
 
-        if (this.isAgentTypeGpgAgent()) {
+        if (EnigmailGpgAgent.isAgentTypeGpgAgent()) {
             try {
-                this.setAgentMaxIdle(minutes);
-            }
-            catch(ex) {}
+                EnigmailGpgAgent.setAgentMaxIdle(minutes);
+            } catch(ex) {}
         }
+    },
+
+    /**
+     * get the standard arguments to pass to every GnuPG subprocess
+     *
+     * @withBatchOpts: Boolean - true: use --batch and some more options
+     *                           false: don't use --batch and co.
+     *
+     * @return: Array of String - the list of arguments
+     */
+    getAgentArgs: function (withBatchOpts) {
+        // return the arguments to pass to every GnuPG subprocess
+        let r = [ "--charset", "utf-8", "--display-charset", "utf-8" ]; // mandatory parameter to add in all cases
+
+        try {
+            let p = Prefs.getPref("agentAdditionalParam").replace(/\\\\/g, "\\");
+
+            let i = 0;
+            let last = 0;
+            let foundSign="";
+            let startQuote=-1;
+
+            while ((i=p.substr(last).search(/['"]/)) >= 0) {
+                if (startQuote==-1) {
+                    startQuote = i;
+                    foundSign=p.substr(last).charAt(i);
+                    last = i +1;
+                } else if (p.substr(last).charAt(i) == foundSign) {
+                    // found enquoted part
+                    if (startQuote > 1) pushTrimmedStr(r, p.substr(0, startQuote), true);
+
+                    pushTrimmedStr(r, p.substr(startQuote + 1, last + i - startQuote -1), false);
+                    p = p.substr(last + i + 1);
+                    last = 0;
+                    startQuote = -1;
+                    foundSign = "";
+                } else {
+                    last = last + i + 1;
+                }
+            }
+
+            pushTrimmedStr(r, p, true);
+        } catch (ex) {}
+
+
+        if (withBatchOpts) {
+            r = r.concat(GPG_BATCH_OPT_LIST);
+        }
+
+        return r;
     }
+
 };
