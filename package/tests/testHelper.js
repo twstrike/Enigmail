@@ -68,6 +68,7 @@ var TestHelper = {
     },
 
     runTests: function() {
+        var homedir = this.initalizeGpgHome();
         if(TestHelper.currentlyTesting) {
             TestHelper.loadDirectly(TestHelper.currentlyTesting);
         }
@@ -76,6 +77,41 @@ var TestHelper = {
                 TestHelper.allTests[i]();
             }
         }
+        this.removeGpgHome(homedir);
+    },
+
+    initalizeGpgHome: function() {
+        var OS = Components.utils.import("resource://gre/modules/osfile.jsm").OS;
+        var FileUtils = Components.utils.import("resource://gre/modules/FileUtils.jsm").FileUtils;
+        var homedir = OS.Path.join(OS.Constants.Path.homeDir, ".gnupgTest");
+        var working_directory = new FileUtils.File(homedir);
+        if (!working_directory.exists()) {
+            working_directory.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 448);
+        }
+
+        var file = working_directory.clone();
+        file.append("gpg-agent.conf");
+        if (!file.exists()) {
+            file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 384);
+        }
+        var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"].
+            createInstance(Components.interfaces.nsIFileOutputStream);
+        foStream.init(file, 0x02 | 0x08 | 0x20, 384, 0);
+        var converter = Components.classes["@mozilla.org/intl/converter-output-stream;1"].
+            createInstance(Components.interfaces.nsIConverterOutputStream);
+        converter.init(foStream, "UTF-8", 0, 0);
+        converter.writeString("pinentry-program "+do_get_cwd().path+"/pinentry-auto");
+        converter.close();
+
+        var environment = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
+
+        environment.set("GNUPGHOME", working_directory.path);
+        return homedir;
+    },
+
+    removeGpgHome: function(homedir){
+        var working_directory = new FileUtils.File(homedir);
+        working_directory.remove(true);
     }
 };
 
@@ -86,6 +122,8 @@ var component = TestHelper.loadModule;
 var run_test = TestHelper.runTests;
 var test = TestHelper.registerTest;
 var resetting = TestHelper.resetting;
+var initalizeGpgHome = TestHelper.initalizeGpgHome;
+var removeGpgHome = TestHelper.removeGpgHome;
 
 function withEnvironment(vals, f) {
     var environment = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
