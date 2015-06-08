@@ -88,12 +88,12 @@ var TestHelper = {
 
     initalizeGpgHome: function() {
         var homedir = osUtils.OS.Path.join(osUtils.OS.Constants.Path.homeDir, ".gnupgTest");
-        var working_directory = new osUtils.FileUtils.File(homedir);
-        if (!working_directory.exists()) {
-            working_directory.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 448);
+        var workingDirectory = new osUtils.FileUtils.File(homedir);
+        if (!workingDirectory.exists()) {
+            workingDirectory.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 448);
         }
 
-        var file = working_directory.clone();
+        var file = workingDirectory.clone();
         file.append("gpg-agent.conf");
         if (!file.exists()) {
             file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 384);
@@ -109,13 +109,13 @@ var TestHelper = {
 
         var environment = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
 
-        environment.set("GNUPGHOME", working_directory.path);
+        environment.set("GNUPGHOME", workingDirectory.path);
         return homedir;
     },
 
     removeGpgHome: function(homedir){
-        var working_directory = new osUtils.FileUtils.File(homedir);
-        if(working_directory.exists()) working_directory.remove(true);
+        var workingDirectory = new osUtils.FileUtils.File(homedir);
+        if(workingDirectory.exists()) workingDirectory.remove(true);
     }
 };
 
