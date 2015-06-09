@@ -36,6 +36,8 @@
 
 "use strict";
 
+const EXPORTED_SYMBOLS = [ "EnigmailGpgAgent" ];
+
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
@@ -47,8 +49,6 @@ Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
-
-const EXPORTED_SYMBOLS = [ "EnigmailGpgAgent" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -84,26 +84,20 @@ function pushTrimmedStr(arr, str, splitStr) {
     return (str.length > 0);
 }
 
-// get a Windows registry value (string)
-// @ keyPath: the path of the registry (e.g. Software\\GNU\\GnuPG)
-// @ keyName: the name of the key to get (e.g. InstallDir)
-// @ rootKey: HKLM, HKCU, etc. (according to constants in nsIWindowsRegKey)
-function getWinRegistryString(keyPath, keyName, rootKey) {
-  var registry = Cc["@mozilla.org/windows-registry-key;1"].createInstance(Ci.nsIWindowsRegKey);
-
-  var retval = "";
-  try {
-    registry.open(rootKey, keyPath, registry.ACCESS_READ);
-    retval = registry.readStringValue(keyName);
-    registry.close();
+function cloneOrNull(v) {
+  if(v !== null && typeof v.clone === "function") {
+    return v.clone();
+  } else {
+    return v;
   }
-  catch (ex) {}
-
-  return retval;
 }
 
 const EnigmailGpgAgent = {
+    agentType: "",
     agentPath: null,
+    agentVersion: "",
+    connGpgAgentPath: null,
+    gpgconfPath: null,
 
     setEnigmailCommon: function(enigCommon) {
         Ec = enigCommon;
@@ -188,7 +182,7 @@ const EnigmailGpgAgent = {
         if (! svc) return false;
 
         var proc = {
-            command:     svc.connGpgAgentPath,
+            command:     EnigmailGpgAgent.connGpgAgentPath,
             arguments:   [],
             charset: null,
             environment: Ec.envList,
@@ -239,7 +233,7 @@ const EnigmailGpgAgent = {
         const CFGVALUE = 9;
 
         var proc = {
-            command:     svc.gpgconfPath,
+            command:     EnigmailGpgAgent.gpgconfPath,
             arguments:   [ "--list-options", "gpg-agent" ],
             charset: null,
             environment: Ec.envList,
@@ -278,7 +272,7 @@ const EnigmailGpgAgent = {
         const RUNTIME = 8;
 
         var proc = {
-            command:     svc.gpgconfPath,
+            command:     EnigmailGpgAgent.gpgconfPath,
             arguments:   [ "--runtime", "--change-options", "gpg-agent" ],
             environment: Ec.envList,
             charset: null,
@@ -310,8 +304,8 @@ const EnigmailGpgAgent = {
         try {
             var svc = Ec.getService(win);
             if (svc) {
-                if (svc.gpgconfPath &&
-                    svc.connGpgAgentPath) {
+                if (EnigmailGpgAgent.gpgconfPath &&
+                    EnigmailGpgAgent.connGpgAgentPath) {
 
                     if (EnigmailGpgAgent.isAgentTypeGpgAgent()) {
                         let m = EnigmailGpgAgent.getAgentMaxIdle();
@@ -456,10 +450,10 @@ const EnigmailGpgAgent = {
                 agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
             }
 
-            if ((! agentPath) && esvc.isWin32) {
+            if ((! agentPath) && OS.isWin32) {
                 // Look up in Windows Registry
                 try {
-                    let gpgPath = getWinRegistryString("Software\\GNU\\GNUPG", "Install Directory", nsIWindowsRegKey.ROOT_KEY_LOCAL_MACHINE);
+                    let gpgPath = OS.getWinRegistryString("Software\\GNU\\GNUPG", "Install Directory", nsIWindowsRegKey.ROOT_KEY_LOCAL_MACHINE);
                     agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
                 }
                 catch (ex) {}
@@ -486,8 +480,8 @@ const EnigmailGpgAgent = {
 
         Log.CONSOLE("EnigmailAgentPath="+Files.getFilePathDesc(agentPath)+"\n\n");
 
-        esvc.agentType = agentType;
-        esvc.agentPath = agentPath;
+        EnigmailGpgAgent.agentType = agentType;
+        EnigmailGpgAgent.agentPath = agentPath;
 
         var command = agentPath;
         var args = [];
@@ -546,7 +540,7 @@ const EnigmailGpgAgent = {
         var gpgVersion = versionParts[versionParts.length-1];
 
         Log.DEBUG("enigmail.js: detected GnuPG version '"+gpgVersion+"'\n");
-        esvc.agentVersion = gpgVersion;
+        EnigmailGpgAgent.agentVersion = gpgVersion;
 
         if (!Ec.getGpgFeature("version-supported")) {
             if (! domWindow) {
@@ -556,9 +550,31 @@ const EnigmailGpgAgent = {
             throw Components.results.NS_ERROR_FAILURE;
         }
 
-        esvc.gpgconfPath = esvc.resolveToolPath("gpgconf");
-        esvc.connGpgAgentPath = esvc.resolveToolPath("gpg-connect-agent");
+        EnigmailGpgAgent.gpgconfPath = EnigmailGpgAgent.resolveToolPath("gpgconf");
+        EnigmailGpgAgent.connGpgAgentPath = EnigmailGpgAgent.resolveToolPath("gpg-connect-agent");
 
-        Log.DEBUG("enigmail.js: Enigmail.setAgentPath: gpgconf found: "+ (esvc.gpgconfPath ? "yes" : "no") +"\n");
+        Log.DEBUG("enigmail.js: Enigmail.setAgentPath: gpgconf found: "+ (EnigmailGpgAgent.gpgconfPath ? "yes" : "no") +"\n");
+    },
+
+    // resolve the path for GnuPG helper tools
+    resolveToolPath: function(fileName) {
+        if (OS.isDosLike()) {
+            fileName += ".exe";
+        }
+
+        var filePath = cloneOrNull(EnigmailGpgAgent.agentPath);
+
+        if (filePath) filePath = filePath.parent;
+        if (filePath) {
+            filePath.append(fileName);
+            if (filePath.exists()) {
+                filePath.normalize();
+                return filePath;
+            }
+        }
+
+        var foundPath = Files.resolvePath(fileName, EC.getEnigmailService().environment.get("PATH"), OS.isDosLike());
+        if (foundPath !== null) { foundPath.normalize(); }
+        return foundPath;
     }
 };

@@ -113,7 +113,7 @@ var Decryption = {
             args.push("--decrypt");
         }
 
-        var proc = Execution.execStart(ecom.enigmailSvc.agentPath,
+        var proc = Execution.execStart(EnigmailGpgAgent.agentPath,
                                        args, !verifyOnly, win,
                                        listener, statusFlagsObj);
 

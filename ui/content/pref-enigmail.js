@@ -248,15 +248,15 @@ function enigDetermineGpgPath() {
     } catch (ex) {}
   }
 
-  if (gEnigmailSvc.initialized && typeof(gEnigmailSvc.agentPath) == "object") {
+  if (gEnigmailSvc.initialized && typeof(EnigmailGpgAgent.agentPath) == "object") {
     try {
       var agentPath = "";
       if (EnigGetOS() == "WINNT") {
-        agentPath = EnigGetFilePath(gEnigmailSvc.agentPath).replace(/\\\\/g, "\\");
+        agentPath = EnigGetFilePath(EnigmailGpgAgent.agentPath).replace(/\\\\/g, "\\");
       }
       else {
-        agentPath = gEnigmailSvc.agentPath.path;
-        // EnigGetFilePath(gEnigmailSvc.agentPath); // .replace(/\\\\/g, "\\");
+        agentPath = EnigmailGpgAgent.agentPath.path;
+        // EnigGetFilePath(EnigmailGpgAgent.agentPath); // .replace(/\\\\/g, "\\");
       }
       if (agentPath.length > 50) {
         agentPath = agentPath.substring(0,50)+"...";

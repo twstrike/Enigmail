@@ -42,6 +42,7 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
+Components.utils.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
 
 // Initialize enigmailCommon
 const Ec = EnigmailCommon;
@@ -64,8 +65,7 @@ function enigAboutLoad() {
 
   var agentStr;
   if (enigmailSvc) {
-    agentStr = Locale.getString("usingAgent", [enigmailSvc.agentType, enigmailSvc.agentPath.path]);
-
+    agentStr = Locale.getString("usingAgent", [EnigmailGpgAgent.agentType, EnigmailGpgAgent.agentPath.path]);
   } else {
     agentStr = Locale.getString("agentError");
 

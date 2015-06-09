@@ -49,14 +49,14 @@ Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent:
 
 const Card = {
     getCardStatus: function(exitCodeObj, errorMsgObj) {
-        // TODO: finish when Enigmail.agentPath have been moved
+        // TODO: finish
         Log.DEBUG("enigmail.js: Enigmail.getCardStatus\n");
         const args = EnigmailGpgAgent.getAgentArgs(false).
-                concat(["--status-fd", "2", "--fixed-list-mode", "--with-colons", "--card-status"]);
+                  concat(["--status-fd", "2", "--fixed-list-mode", "--with-colons", "--card-status"]);
         const statusMsgObj = {};
         const statusFlagsObj = {};
 
-        const outputTxt = Execution.execCmd(this.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+        const outputTxt = Execution.execCmd(EnigmailGpgAgent.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
 
         if ((exitCodeObj.value === 0) && !outputTxt) {
             exitCodeObj.value = -1;

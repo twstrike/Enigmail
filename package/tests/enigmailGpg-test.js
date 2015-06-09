@@ -1,4 +1,4 @@
-/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false */
+/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false, OS: false */
 /*global TestHelper: false, EnigmailGPG: false, withEnvironment: false, nsIWindowsRegKey: true */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
@@ -71,16 +71,18 @@ test(function determineGpgHomeDirReturnsHomePlusGnupgForNonWindowsIfNoGNUPGHOMES
 test(function determineGpgHomeDirReturnsRegistryValueForWindowsIfExists() {
     withEnvironment({}, function(e) {
         e.set("GNUPGHOME",null);
-        resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {
+        resetting(OS, 'getWinRegistryString', function(a, b, c) {
             if(a === "Software\\GNU\\GNUPG" && b === "HomeDir" && c === "foo bar") {
                 return "\\foo\\bar\\gnupg";
             } else {
                 return "\\somewhere\\else";
             }
         }, function() {
-            var enigmail = {environment: e, isWin32: true};
-            nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
-            Assert.equal("\\foo\\bar\\gnupg", EnigmailGPG.determineGpgHomeDir(enigmail));
+            resetting(OS, 'isWin32', true, function() {
+                var enigmail = {environment: e};
+                nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
+                Assert.equal("\\foo\\bar\\gnupg", EnigmailGPG.determineGpgHomeDir(enigmail));
+            });
         });
     });
 });
@@ -88,10 +90,12 @@ test(function determineGpgHomeDirReturnsRegistryValueForWindowsIfExists() {
 test(function determineGpgHomeDirReturnsUserprofileIfItExists() {
     withEnvironment({"USERPROFILE": "\\bahamas"}, function(e) {
         e.set("GNUPGHOME",null);
-        resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {}, function() {
-            var enigmail = {environment: e, isWin32: true};
-            nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
-            Assert.equal("\\bahamas\\Application Data\\GnuPG", EnigmailGPG.determineGpgHomeDir(enigmail));
+        resetting(OS, 'getWinRegistryString', function(a, b, c) {}, function() {
+            resetting(OS, 'isWin32', true, function() {
+                var enigmail = {environment: e};
+                nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
+                Assert.equal("\\bahamas\\Application Data\\GnuPG", EnigmailGPG.determineGpgHomeDir(enigmail));
+            });
         });
     });
 });
@@ -99,10 +103,12 @@ test(function determineGpgHomeDirReturnsUserprofileIfItExists() {
 test(function determineGpgHomeDirReturnsSystemrootIfItExists() {
     withEnvironment({"SystemRoot": "\\tahiti"}, function(e) {
         e.set("GNUPGHOME",null);
-        resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {}, function() {
-            var enigmail = {environment: e, isWin32: true};
-            nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
-            Assert.equal("\\tahiti\\Application Data\\GnuPG", EnigmailGPG.determineGpgHomeDir(enigmail));
+        resetting(OS, 'getWinRegistryString', function(a, b, c) {}, function() {
+            resetting(OS, 'isWin32', true, function() {
+                var enigmail = {environment: e};
+                nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
+                Assert.equal("\\tahiti\\Application Data\\GnuPG", EnigmailGPG.determineGpgHomeDir(enigmail));
+            });
         });
     });
 });
@@ -110,10 +116,12 @@ test(function determineGpgHomeDirReturnsSystemrootIfItExists() {
 test(function determineGpgHomeDirReturnsDefaultForWin32() {
     withEnvironment({}, function(e) {
         e.set("GNUPGHOME",null);
-        resetting(EnigmailGPG, 'getWinRegistryString', function(a, b, c) {}, function() {
-            var enigmail = {environment: e, isWin32: true};
-            nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
-            Assert.equal("C:\\gnupg", EnigmailGPG.determineGpgHomeDir(enigmail));
+        resetting(OS, 'getWinRegistryString', function(a, b, c) {}, function() {
+            resetting(OS, 'isWin32', true, function() {
+                var enigmail = {environment: e};
+                nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
+                Assert.equal("C:\\gnupg", EnigmailGPG.determineGpgHomeDir(enigmail));
+            });
         });
     });
 });

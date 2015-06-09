@@ -451,7 +451,7 @@ decryptAttachment = function(attachment, strippedName) {
 
           do {
 
-            var proc = Execution.execStart(enigmailSvc.agentPath, args, false, null, listener, statusFlagsObj);
+            var proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, null, listener, statusFlagsObj);
             if (!proc) {
               resolve(o);
               return;

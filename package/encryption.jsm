@@ -244,7 +244,7 @@ var Encryption = {
 
         var signMsg     = sendFlags & nsIEnigmail.SEND_SIGNED;
 
-        var proc = Execution.execStart(ecom.enigmailSvc.agentPath, encryptArgs, signMsg, win, listener, statusFlagsObj);
+        var proc = Execution.execStart(EnigmailGpgAgent.agentPath, encryptArgs, signMsg, win, listener, statusFlagsObj);
 
         if (statusFlagsObj.value & nsIEnigmail.MISSING_PASSPHRASE) {
             Log.ERROR("enigmailCommon.jsm: encryptMessageStart: Error - no passphrase supplied\n");

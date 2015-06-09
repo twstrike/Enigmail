@@ -212,7 +212,7 @@ const EnigmailCommon = {
       Log.DEBUG("enigmailCommon.jsm: getService: "+configuredVersion+"\n");
 
       if (firstInitialization && this.enigmailSvc.initialized &&
-          this.enigmailSvc.agentType && this.enigmailSvc.agentType == "pgp") {
+          EnigmailGpgAgent.agentType === "pgp") {
         Dialog.alert(win, Locale.getString("pgpNotSupported"));
       }
 
@@ -509,7 +509,7 @@ const EnigmailCommon = {
       }
     }
 
-    if ((this.enigmailSvc.agentType == "gpg") && (exitCode == 256) && (OS.getOS() == "WINNT")) {
+    if ((EnigmailGpgAgent.agentType === "gpg") && (exitCode == 256) && (OS.getOS() == "WINNT")) {
       Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Using gpg and exit code is 256. You seem to use cygwin-gpg, activating countermeasures.\n");
       if (statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) {
         Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->2\n");
@@ -554,7 +554,7 @@ const EnigmailCommon = {
     var args = EnigmailGpgAgent.getAgentArgs(true);
     args.push("--gen-key");
 
-    Log.CONSOLE(Files.formatCmdLine(this.enigmailSvc.agentPath, args));
+    Log.CONSOLE(Files.formatCmdLine(EnigmailGpgAgent.agentPath, args));
 
     var inputData = "%echo Generating key\nKey-Type: ";
 
@@ -590,7 +590,7 @@ const EnigmailCommon = {
 
     try {
       proc = subprocess.call({
-        command:     this.enigmailSvc.agentPath,
+        command:     EnigmailGpgAgent.agentPath,
         arguments:   args,
         environment: this.getEnvList(),
         charset: null,
@@ -850,7 +850,7 @@ const EnigmailCommon = {
 
     var isDownload = actionFlags & (nsIEnigmail.REFRESH_KEY | nsIEnigmail.DOWNLOAD_KEY);
 
-    Log.CONSOLE("enigmail> "+Files.formatCmdLine(this.enigmailSvc.agentPath, args)+"\n");
+    Log.CONSOLE("enigmail> "+Files.formatCmdLine(EnigmailGpgAgent.agentPath, args)+"\n");
 
     var proc = null;
     var self = this;
@@ -859,7 +859,7 @@ const EnigmailCommon = {
 
     try {
       proc = subprocess.call({
-        command:     this.enigmailSvc.agentPath,
+        command:     EnigmailGpgAgent.agentPath,
         arguments:   args,
         environment: this.getEnvList(),
         charset: null,
@@ -912,13 +912,13 @@ const EnigmailCommon = {
     // TODO: move [agent]
     Log.DEBUG("enigmailCommon.jsm: recalcTrustDb:\n");
 
-    let command = this.agentPath;
+    let command = EnigmailGpgAgent.agentPath;
     let args = EnigmailGpgAgent.getAgentArgs(false);
     args = args.concat(["--check-trustdb"]);
 
     try {
       let proc = subprocess.call({
-        command:     this.enigmailSvc.agentPath,
+        command:     EnigmailGpgAgent.agentPath,
         arguments:   args,
         environment: this.getEnvList(),
         charset: null,
@@ -950,7 +950,7 @@ const EnigmailCommon = {
 
   getGpgFeature: function(featureName) {
     // TODO: move [gpg]
-    let gpgVersion = this.enigmailSvc.agentVersion;
+    let gpgVersion = EnigmailGpgAgent.agentVersion;
 
     if (! gpgVersion || typeof(gpgVersion) != "string" || gpgVersion.length === 0) {
       return undefined;
@@ -1182,7 +1182,7 @@ const EnigmailCommon = {
       });
 
     var statusFlagsObj = {};
-    var proc = Execution.execStart(this.enigmailSvc.agentPath, args, false, parent,
+    var proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, parent,
                                    listener, statusFlagsObj);
 
     if (!proc) {

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Files: false, OS: false */
+/*global Components: false, dump: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,11 +39,13 @@
 
 "use strict";
 
-var EXPORTED_SYMBOLS = [ "EnigmailGPG" ];
+const EXPORTED_SYMBOLS = [ "EnigmailGPG" ];
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/files.jsm");
-Components.utils.import("resource://enigmail/os.jsm");
+const Cu = Components.utils;
+
+Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -53,40 +55,14 @@ var nsIWindowsRegKey       = Ci.nsIWindowsRegKey;
 
 var EC = EnigmailCore;
 
-function cloneOrNull(v) {
-  if(v !== null && typeof v.clone === "function") {
-    return v.clone();
-  } else {
-    return v;
-  }
-}
-
 const EnigmailGPG = {
-    // get a Windows registry value (string)
-    // @ keyPath: the path of the registry (e.g. Software\\GNU\\GnuPG)
-    // @ keyName: the name of the key to get (e.g. InstallDir)
-    // @ rootKey: HKLM, HKCU, etc. (according to constants in nsIWindowsRegKey)
-    getWinRegistryString: function(keyPath, keyName, rootKey) {
-        var registry = Cc["@mozilla.org/windows-registry-key;1"].createInstance(Ci.nsIWindowsRegKey);
-
-        var retval = "";
-        try {
-            registry.open(rootKey, keyPath, registry.ACCESS_READ);
-            retval = registry.readStringValue(keyName);
-            registry.close();
-        }
-        catch (ex) {}
-
-        return retval;
-    },
-
     determineGpgHomeDir: function (esvc) {
         var homeDir = "";
 
         homeDir = esvc.environment.get("GNUPGHOME");
 
-        if (! homeDir && esvc.isWin32) {
-            homeDir=EnigmailGPG.getWinRegistryString("Software\\GNU\\GNUPG", "HomeDir", nsIWindowsRegKey.ROOT_KEY_CURRENT_USER);
+        if (! homeDir && OS.isWin32) {
+            homeDir=OS.getWinRegistryString("Software\\GNU\\GNUPG", "HomeDir", nsIWindowsRegKey.ROOT_KEY_CURRENT_USER);
 
             if (! homeDir) {
                 homeDir = esvc.environment.get("USERPROFILE");
@@ -104,27 +80,5 @@ const EnigmailGPG = {
         if (! homeDir) homeDir = esvc.environment.get("HOME")+"/.gnupg";
 
         return homeDir;
-    },
-
-    // resolve the path for GnuPG helper tools
-    resolveToolPath: function(fileName) {
-        if (OS.isDosLike()) {
-            fileName += ".exe";
-        }
-
-        var filePath = cloneOrNull(EC.getEnigmailService().agentPath);
-
-        if (filePath) filePath = filePath.parent;
-        if (filePath) {
-            filePath.append(fileName);
-            if (filePath.exists()) {
-                filePath.normalize();
-                return filePath;
-            }
-        }
-
-        var foundPath = Files.resolvePath(fileName, EC.getEnigmailService().environment.get("PATH"), OS.isDosLike());
-        if (foundPath !== null) { foundPath.normalize(); }
-        return foundPath;
     }
 };

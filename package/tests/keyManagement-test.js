@@ -62,7 +62,7 @@ test(shouldReadKeyObjectFromFile);
 function shouldExecCmd() {
     var window = JSUnit.createStubWindow();
     var enigmailSvc = Ec.getService(window);
-    var command= enigmailSvc.agentPath;
+    var command= EnigmailGpgAgent.agentPath;
 
     var args = EnigmailGpgAgent.getAgentArgs(false);
     args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);

@@ -263,7 +263,7 @@ var EnigmailKeyMgmt = {
       return -1;
     }
 
-    var command= enigmailSvc.agentPath;
+    var command= EnigmailGpgAgent.agentPath;
     var args = EnigmailGpgAgent.getAgentArgs(false);
 
     outputData.key = "";
@@ -355,7 +355,7 @@ var EnigmailKeyMgmt = {
     }
 
 
-    var command= enigmailSvc.agentPath;
+    var command= EnigmailGpgAgent.agentPath;
     Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
 
     var keyEdit = new KeyEditor(requestObserver, callbackFunc, inputData);
@@ -392,7 +392,7 @@ var EnigmailKeyMgmt = {
       return 1;
     }
 
-    var command= enigmailSvc.agentPath;
+    var command= EnigmailGpgAgent.agentPath;
     var args = EnigmailGpgAgent.getAgentArgs(false);
     Log.DEBUG("enigmail.js: Enigmail.importKeyFromFile: fileName="+inputFile.path+"\n");
     importedKeysObj.value="";

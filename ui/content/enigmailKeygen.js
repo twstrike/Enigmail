@@ -44,6 +44,7 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/promise.jsm"); /*global Promise: false */
+Components.utils.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
 
 const Ec = EnigmailCommon;
 
@@ -100,7 +101,7 @@ function enigmailKeygenLoad() {
      EnigAlert(EnigGetString("accessError"));
   }
 
-  if (enigmailSvc.agentType != "gpg") {
+  if (EnigmailGpgAgent.agentType != "gpg") {
      EnigAlert(EnigGetString("onlyGPG"));
      return;
   }

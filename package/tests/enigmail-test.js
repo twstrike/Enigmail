@@ -436,11 +436,11 @@ test(function setAgentPathDefaultValues() {
         newEnigmail(function(enigmail) {
             enigmail.environment = e;
             EnigmailGpgAgent.setAgentPath(JSUnit.createStubWindow(), enigmail);
-            Assert.equal("gpg", enigmail.agentType);
-            Assert.equal("/usr/bin/gpg2", enigmail.agentPath.path);
-            //        Assert.equal("2.0.22", enigmail.agentVersion); // this will vary between environments.
-            Assert.equal("/usr/bin/gpgconf", enigmail.gpgconfPath.path);
-            Assert.equal("/usr/bin/gpg-connect-agent", enigmail.connGpgAgentPath.path);
+            Assert.equal("gpg", EnigmailGpgAgent.agentType);
+            Assert.equal("/usr/bin/gpg2", EnigmailGpgAgent.agentPath.path);
+            //        Assert.equal("2.0.22", EnigmailGpgAgent.agentVersion); // this will vary between environments.
+            Assert.equal("/usr/bin/gpgconf", EnigmailGpgAgent.gpgconfPath.path);
+            Assert.equal("/usr/bin/gpg-connect-agent", EnigmailGpgAgent.connGpgAgentPath.path);
         });
     });
 });
@@ -451,8 +451,8 @@ test(function resolveToolPathDefaultValues() {
     withEnvironment({}, function(e) {
         newEnigmail(function(enigmail) {
             enigmail.environment = e;
-            enigmail.agentPath = "/usr/bin/gpg-agent";
-            var result = enigmail.resolveToolPath("zip");
+            EnigmailGpgAgent.agentPath = "/usr/bin/gpg-agent";
+            var result = EnigmailGpgAgent.resolveToolPath("zip");
             Assert.equal("/usr/bin/zip", result.path);
         });
     });
@@ -462,8 +462,8 @@ test(function resolveToolPathFromPATH() {
     withEnvironment({PATH: "/sbin"}, function(e) {
         newEnigmail(function(enigmail) {
             enigmail.environment = e;
-            enigmail.agentPath = null;
-            var result = enigmail.resolveToolPath("route");
+            EnigmailGpgAgent.agentPath = null;
+            var result = EnigmailGpgAgent.resolveToolPath("route");
             Assert.equal("/sbin/route", result.path);
         });
     });
