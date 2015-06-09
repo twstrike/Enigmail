@@ -48,6 +48,7 @@ component("enigmail/enigmailCore.jsm");
 component("enigmail/enigmailCommon.jsm");
 component("enigmail/execution.jsm");
 component("enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+component("enigmail/gpg.jsm"); /*global Gpg: false */
 
 test(withTestGpgHome(importKeyForEdit));
 test(withTestGpgHome(shouldExecCmd));
@@ -63,7 +64,7 @@ function shouldExecCmd() {
     var enigmailSvc = Ec.getService(window);
     var command= EnigmailGpgAgent.agentPath;
 
-    var args = EnigmailGpgAgent.getAgentArgs(false);
+    var args = Gpg.getStandardArgs(false);
     args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);
     args=args.concat(["--list-packets", "resources/dev-strike.asc"]);
     var output = "";

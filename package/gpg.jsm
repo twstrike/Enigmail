@@ -45,8 +45,35 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
+Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+
+const GPG_BATCH_OPT_LIST = [ "--batch", "--no-tty", "--status-fd", "2" ];
+
+function pushTrimmedStr(arr, str, splitStr) {
+    // Helper function for pushing a string without leading/trailing spaces
+    // to an array
+    str = str.replace(/^ */, "").replace(/ *$/, "");
+    if (str.length > 0) {
+        if (splitStr) {
+            const tmpArr = str.split(/[\t ]+/);
+            for (let i=0; i< tmpArr.length; i++) {
+                arr.push(tmpArr[i]);
+            }
+        } else {
+            arr.push(str);
+        }
+    }
+    return (str.length > 0);
+}
+
 const Gpg = {
     agentVersion: "",
+    agentPath: null,
 
     /***
      determine if a specific feature is available in the GnuPG version used
@@ -91,5 +118,116 @@ const Gpg = {
         }
 
         return undefined;
+    },
+
+    /**
+     * get the standard arguments to pass to every GnuPG subprocess
+     *
+     * @withBatchOpts: Boolean - true: use --batch and some more options
+     *                           false: don't use --batch and co.
+     *
+     * @return: Array of String - the list of arguments
+     */
+    getStandardArgs: function (withBatchOpts) {
+        // return the arguments to pass to every GnuPG subprocess
+        let r = [ "--charset", "utf-8", "--display-charset", "utf-8" ]; // mandatory parameter to add in all cases
+
+        try {
+            let p = Prefs.getPref("agentAdditionalParam").replace(/\\\\/g, "\\");
+
+            let i = 0;
+            let last = 0;
+            let foundSign="";
+            let startQuote=-1;
+
+            while ((i=p.substr(last).search(/['"]/)) >= 0) {
+                if (startQuote==-1) {
+                    startQuote = i;
+                    foundSign=p.substr(last).charAt(i);
+                    last = i +1;
+                } else if (p.substr(last).charAt(i) == foundSign) {
+                    // found enquoted part
+                    if (startQuote > 1) pushTrimmedStr(r, p.substr(0, startQuote), true);
+
+                    pushTrimmedStr(r, p.substr(startQuote + 1, last + i - startQuote -1), false);
+                    p = p.substr(last + i + 1);
+                    last = 0;
+                    startQuote = -1;
+                    foundSign = "";
+                } else {
+                    last = last + i + 1;
+                }
+            }
+
+            pushTrimmedStr(r, p, true);
+        } catch (ex) {}
+
+
+        if (withBatchOpts) {
+            r = r.concat(GPG_BATCH_OPT_LIST);
+        }
+
+        return r;
+    },
+
+    // returns the output of --with-colons --list-config
+    getGnupgConfig: function  (exitCodeObj, errorMsgObj) {
+        const args = Gpg.getStandardArgs(true).
+                concat(["--fixed-list-mode", "--with-colons", "--list-config"]);
+
+        const statusMsgObj   = {};
+        const cmdErrorMsgObj = {};
+        const statusFlagsObj = {};
+
+        const listText = Execution.execCmd(Gpg.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+
+        if (exitCodeObj.value !== 0) {
+            errorMsgObj.value = Locale.getString("badCommand");
+            if (cmdErrorMsgObj.value) {
+                errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, args);
+                errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
+            }
+
+            return "";
+        }
+
+        return listText.replace(/(\r\n|\r)/g, "\n");
+    },
+
+    /**
+     * return an array containing the aliases and the email addresses
+     * of groups defined in gpg.conf
+     *
+     * @return: array of objects with the following properties:
+     *  - alias: group name as used by GnuPG
+     *  - keylist: list of keys (any form that GnuPG accepts), separated by ";"
+     *
+     * (see docu for gnupg parameter --group)
+     */
+    getGpgGroups: function() {
+        let exitCodeObj = {};
+        let errorMsgObj = {};
+
+        let cfgStr = Gpg.getGnupgConfig(exitCodeObj, errorMsgObj);
+
+        if (exitCodeObj.value !== 0) {
+            Dialog.alert(errorMsgObj.value);
+            return null;
+        }
+
+        let groups = [];
+        let cfg = cfgStr.split(/\n/);
+
+        for (let i=0; i < cfg.length;i++) {
+            if (cfg[i].indexOf("cfg:group") === 0) {
+                let groupArr = cfg[i].split(/:/);
+                groups.push({
+                    alias: groupArr[2],
+                    keylist: groupArr[3]
+                });
+            }
+        }
+
+        return groups;
     }
 };

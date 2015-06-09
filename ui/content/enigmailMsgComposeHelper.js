@@ -44,6 +44,7 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 
 if (! Enigmail) var Enigmail = {};
 
@@ -349,7 +350,7 @@ Enigmail.hlp = {
       // create array of address elements (email or key)
       var addresses=EnigmailFuncs.stripEmail(emailsOrKeys).split(',');
 
-      var gpgGroups = EnigmailCommon.getGpgGroups();
+      var gpgGroups = Gpg.getGpgGroups();
 
       // resolve GnuPG groups
       for (let i=0; i < addresses.length; i++) {

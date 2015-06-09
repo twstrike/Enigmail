@@ -52,13 +52,12 @@ Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/app.jsm"); /*global App: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 const nsIEnigmail = Ci.nsIEnigmail;
-
-const GPG_BATCH_OPT_LIST = [ "--batch", "--no-tty", "--status-fd", "2" ];
 
 const NS_LOCAL_FILE_CONTRACTID = "@mozilla.org/file/local;1";
 const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
@@ -75,23 +74,6 @@ var Ec = null;
 const EC = EnigmailCore;
 
 const DUMMY_AGENT_INFO = "none";
-
-function pushTrimmedStr(arr, str, splitStr) {
-    // Helper function for pushing a string without leading/trailing spaces
-    // to an array
-    str = str.replace(/^ */, "").replace(/ *$/, "");
-    if (str.length > 0) {
-        if (splitStr) {
-            let tmpArr = str.split(/[\t ]+/);
-            for (let i=0; i< tmpArr.length; i++) {
-                arr.push(tmpArr[i]);
-            }
-        } else {
-            arr.push(str);
-        }
-    }
-    return (str.length > 0);
-}
 
 function cloneOrNull(v) {
   if(v !== null && typeof v.clone === "function") {
@@ -355,57 +337,6 @@ const EnigmailGpgAgent = {
         }
     },
 
-    /**
-     * get the standard arguments to pass to every GnuPG subprocess
-     *
-     * @withBatchOpts: Boolean - true: use --batch and some more options
-     *                           false: don't use --batch and co.
-     *
-     * @return: Array of String - the list of arguments
-     */
-    getAgentArgs: function (withBatchOpts) {
-        // return the arguments to pass to every GnuPG subprocess
-        let r = [ "--charset", "utf-8", "--display-charset", "utf-8" ]; // mandatory parameter to add in all cases
-
-        try {
-            let p = Prefs.getPref("agentAdditionalParam").replace(/\\\\/g, "\\");
-
-            let i = 0;
-            let last = 0;
-            let foundSign="";
-            let startQuote=-1;
-
-            while ((i=p.substr(last).search(/['"]/)) >= 0) {
-                if (startQuote==-1) {
-                    startQuote = i;
-                    foundSign=p.substr(last).charAt(i);
-                    last = i +1;
-                } else if (p.substr(last).charAt(i) == foundSign) {
-                    // found enquoted part
-                    if (startQuote > 1) pushTrimmedStr(r, p.substr(0, startQuote), true);
-
-                    pushTrimmedStr(r, p.substr(startQuote + 1, last + i - startQuote -1), false);
-                    p = p.substr(last + i + 1);
-                    last = 0;
-                    startQuote = -1;
-                    foundSign = "";
-                } else {
-                    last = last + i + 1;
-                }
-            }
-
-            pushTrimmedStr(r, p, true);
-        } catch (ex) {}
-
-
-        if (withBatchOpts) {
-            r = r.concat(GPG_BATCH_OPT_LIST);
-        }
-
-        return r;
-    },
-
-
     setAgentPath: function (domWindow, esvc) {
         var agentPath = "";
         try {
@@ -507,6 +438,8 @@ const EnigmailGpgAgent = {
 
         EnigmailGpgAgent.agentType = agentType;
         EnigmailGpgAgent.agentPath = agentPath;
+        Gpg.agentPath = agentPath;
+        Execution.agentType = agentType;
 
         var command = agentPath;
         var args = [];
@@ -784,37 +717,6 @@ const EnigmailGpgAgent = {
         if (! homeDir) homeDir = esvc.environment.get("HOME")+"/.gnupg";
 
         return homeDir;
-    },
-
-    /**
-     * Fix the exit code of GnuPG (which may be wrong in some circumstances)
-     *
-     * @exitCode:    Number - the exitCode obtained from GnuPG
-     * @statusFlags: Numebr - the statusFlags as calculated by parseErrorOutput()
-     *
-     * @return: Number - fixed exit code
-     */
-    fixExitCode: function (exitCode, statusFlags) {
-        if (exitCode !== 0) {
-            if ((statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) &&
-                (statusFlags & nsIEnigmail.DECRYPTION_OKAY )) {
-                    Log.DEBUG("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode for decrypted msg "+exitCode+"->0\n");
-                    exitCode = 0;
-                }
-        }
-
-        if ((EnigmailGpgAgent.agentType === "gpg") && (exitCode == 256) && (OS.getOS() == "WINNT")) {
-            Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Using gpg and exit code is 256. You seem to use cygwin-gpg, activating countermeasures.\n");
-            if (statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) {
-                Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->2\n");
-                exitCode = 2;
-            } else {
-                Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->0\n");
-                exitCode = 0;
-            }
-        }
-
-        return exitCode;
     },
 
     finalize: function() {

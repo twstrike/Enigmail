@@ -55,6 +55,7 @@ Cu.import("resource://enigmail/execution.jsm");
 Cu.import("resource://enigmail/dialog.jsm");
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 Cu.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 
@@ -105,7 +106,7 @@ const Decryption = {
             return null;
         }
 
-        var args = EnigmailGpgAgent.getAgentArgs(true);
+        var args = Gpg.getStandardArgs(true);
 
         var keyserver = Prefs.getPref("autoKeyRetrieve");
         if (keyserver && keyserver !== "") {
@@ -182,7 +183,7 @@ const Decryption = {
         }
 
         var statusMsg = retStatusObj.statusMsg;
-        exitCode = EnigmailGpgAgent.fixExitCode(exitCode, retStatusObj.statusFlags);
+        exitCode = Execution.fixExitCode(exitCode, retStatusObj.statusFlags);
         if ((exitCode === 0) && !noOutput && !outputLen &&
             ((retStatusObj.statusFlags & (STATUS_DECRYPTION_OK | STATUS_GOODSIG)) === 0)) {
             exitCode = -1;
@@ -722,7 +723,7 @@ const Decryption = {
 
         var outFileName = Files.getEscapedFilename(Files.getFilePathReadonly(outFile.QueryInterface(Ci.nsIFile), NS_WRONLY));
 
-        var args = EnigmailGpgAgent.getAgentArgs(true);
+        var args = Gpg.getStandardArgs(true);
         args = args.concat(["-o", outFileName, "--yes"]);
         args = args.concat(ec.passwdCommand());
         args.push("-d");

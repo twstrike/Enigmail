@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, App: false, Locale: false, Execution: false, Dialog: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, App: false, Locale: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -47,10 +47,11 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/execution.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
+Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -125,7 +126,7 @@ var Encryption = {
         var bccAddrList = bccMailAddr.split(/\s*,\s*/);
         var k;
 
-        var encryptArgs = EnigmailGpgAgent.getAgentArgs(true);
+        var encryptArgs = Gpg.getStandardArgs(true);
 
         if (!useDefaultComment)
             encryptArgs = encryptArgs.concat(["--comment", GPG_COMMENT_OPT.replace(/\%s/, App.getName())]);
@@ -283,7 +284,7 @@ var Encryption = {
 
         EnigmailErrorHandling.parseErrorOutput(stderrStr, retStatusObj);
 
-        exitCode = EnigmailGpgAgent.fixExitCode(exitCode, retStatusObj.statusFlags);
+        exitCode = Execution.fixExitCode(exitCode, retStatusObj.statusFlags);
         if ((exitCode === 0) && !outputLen) {
             exitCode = -1;
         }

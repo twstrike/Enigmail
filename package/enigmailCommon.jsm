@@ -60,6 +60,7 @@ Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -352,7 +353,7 @@ const EnigmailCommon = {
       throw Components.results.NS_ERROR_FAILURE;
     }
 
-    var args = EnigmailGpgAgent.getAgentArgs(true);
+    var args = Gpg.getStandardArgs(true);
     args.push("--gen-key");
 
     Log.CONSOLE(Files.formatCmdLine(EnigmailGpgAgent.agentPath, args));
@@ -431,47 +432,6 @@ const EnigmailCommon = {
    */
   getIoService: function() {
     return Cc[this.IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
-  },
-
-
-  /**
-    * return an array containing the aliases and the email addresses
-    * of groups defined in gpg.conf
-    *
-    * @return: array of objects with the following properties:
-    *  - alias: group name as used by GnuPG
-    *  - keylist: list of keys (any form that GnuPG accepts), separated by ";"
-    *
-    * (see docu for gnupg parameter --group)
-    */
-  getGpgGroups: function() {
-    // TODO: move [gpg]
-    if (!this.enigmailSvc) return [];
-
-    let exitCodeObj = {};
-    let errorMsgObj = {};
-
-    let cfgStr = this.enigmailSvc.getGnupgConfig(exitCodeObj, errorMsgObj);
-
-    if (exitCodeObj.value !== 0) {
-      this.aelrt(errorMsgObj.value);
-      return null;
-    }
-
-    let groups = [];
-    let cfg = cfgStr.split(/\n/);
-
-    for (let i=0; i < cfg.length;i++) {
-      if (cfg[i].indexOf("cfg:group") === 0) {
-        let groupArr = cfg[i].split(/:/);
-        groups.push({
-          alias: groupArr[2],
-          keylist: groupArr[3]
-        });
-      }
-    }
-
-    return groups;
   },
 
   /**
@@ -574,10 +534,10 @@ const EnigmailCommon = {
     }
 
     var proxyHost = HttpProxy.getHttpProxy(keyserver);
-    var args = EnigmailGpgAgent.getAgentArgs(true);
+    var args = Gpg.getStandardArgs(true);
 
     if (actionFlags & nsIEnigmail.SEARCH_KEY) {
-      args = EnigmailGpgAgent.getAgentArgs(false);
+      args = Gpg.getStandardArgs(false);
       args = args.concat(["--command-fd", "0", "--fixed-list", "--with-colons"]);
     }
     if (proxyHost) {
@@ -674,7 +634,7 @@ const EnigmailCommon = {
     Log.DEBUG("enigmailCommon.jsm: recalcTrustDb:\n");
 
     let command = EnigmailGpgAgent.agentPath;
-    let args = EnigmailGpgAgent.getAgentArgs(false);
+    let args = Gpg.getStandardArgs(false);
     args = args.concat(["--check-trustdb"]);
 
     try {
@@ -833,7 +793,7 @@ const EnigmailCommon = {
   getAttachmentFileName: function (parent, byteData) {
     Log.DEBUG("enigmailCommon.jsm: getAttachmentFileName\n");
 
-    var args = EnigmailGpgAgent.getAgentArgs(true);
+    var args = Gpg.getStandardArgs(true);
     args = args.concat(this.passwdCommand());
     args.push("--list-packets");
 

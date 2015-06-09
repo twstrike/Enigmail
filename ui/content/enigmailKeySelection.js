@@ -37,6 +37,7 @@
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeySelection");
@@ -125,7 +126,7 @@ function enigGetUserList(secretOnly, refresh)
     }
 
     if (! secretOnly) {
-      let groups = EnigmailCommon.getGpgGroups();
+      let groups = Gpg.getGpgGroups();
 
       for (var i=0; i < groups.length; i++) {
         userList += "grp:"+groups[i].alias+":"+groups[i].keylist+"\n";

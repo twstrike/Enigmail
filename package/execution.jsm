@@ -51,7 +51,7 @@ Cu.import("resource://enigmail/log.jsm");
 Cu.import("resource://enigmail/subprocess.jsm");
 Cu.import("resource://enigmail/enigmailErrorHandling.jsm");
 Cu.import("resource://enigmail/enigmailCore.jsm");
-Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 
@@ -60,6 +60,8 @@ function envList() {
 }
 
 const Execution = {
+    agentType: "",
+
     /**
      * execStart Listener Object
      *
@@ -265,7 +267,7 @@ const Execution = {
         statusMsgObj.value = retStatusObj.statusMsg;
         var blockSeparation = retStatusObj.blockSeparation;
 
-        exitCodeObj.value = EnigmailGpgAgent.fixExitCode(exitCodeObj.value, statusFlagsObj.value);
+        exitCodeObj.value = Execution.fixExitCode(exitCodeObj.value, statusFlagsObj.value);
 
         if (blockSeparation.indexOf(" ") > 0) {
             exitCodeObj.value = 2;
@@ -274,6 +276,37 @@ const Execution = {
         Log.CONSOLE(errorMsgObj.value+"\n");
 
         return outputData;
+    },
+
+    /**
+     * Fix the exit code of GnuPG (which may be wrong in some circumstances)
+     *
+     * @exitCode:    Number - the exitCode obtained from GnuPG
+     * @statusFlags: Numebr - the statusFlags as calculated by parseErrorOutput()
+     *
+     * @return: Number - fixed exit code
+     */
+    fixExitCode: function (exitCode, statusFlags) {
+        if (exitCode !== 0) {
+            if ((statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) &&
+                (statusFlags & nsIEnigmail.DECRYPTION_OKAY )) {
+                    Log.DEBUG("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode for decrypted msg "+exitCode+"->0\n");
+                    exitCode = 0;
+                }
+        }
+
+        if ((Execution.agentType === "gpg") && (exitCode == 256) && (OS.getOS() == "WINNT")) {
+            Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Using gpg and exit code is 256. You seem to use cygwin-gpg, activating countermeasures.\n");
+            if (statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) {
+                Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->2\n");
+                exitCode = 2;
+            } else {
+                Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->0\n");
+                exitCode = 0;
+            }
+        }
+
+        return exitCode;
     },
 
     execCmd2: function (command, args, stdinFunc, stdoutFunc, doneFunc) {
