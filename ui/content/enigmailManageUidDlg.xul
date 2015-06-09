@@ -222,7 +222,7 @@
       var uidList = document.getElementById("uidList");
       if (uidList.selectedItem.value.substr(0,3)=="uid") {
 
-        EnigmailKeyMgmt.setPrimaryUid(window,
+        KeyEditor.setPrimaryUid(window,
           "0x"+window.arguments[0].keyId,
           uidList.selectedItem.value.substr(4),
           function _cb(exitCode, errorMsg) {
@@ -244,7 +244,7 @@
       var uidList = document.getElementById("uidList");
       if (! Dialog.confirmDlg(window, Locale.getString("revokeUidQuestion", uidList.selectedItem.label))) return;
       if (uidList.selectedItem.value.substr(4)!="1") {
-        EnigmailKeyMgmt.revokeUid(window,
+        KeyEditor.revokeUid(window,
           "0x"+window.arguments[0].keyId,
           uidList.selectedItem.value.substr(4),
           function _cb (exitCode, errorMsg) {
@@ -269,7 +269,7 @@
       var uidList = document.getElementById("uidList");
       if (! Dialog.confirmDlg(window, Locale.getString("deleteUidQuestion", uidList.selectedItem.label))) return;
       if (uidList.selectedItem.value.substr(4) != "1") {
-        EnigmailKeyMgmt.deleteUid(window,
+        KeyEditor.deleteUid(window,
           "0x"+window.arguments[0].keyId,
           uidList.selectedItem.value.substr(4),
           function _cb (exitCode, errorMsg) {

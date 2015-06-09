@@ -109,7 +109,7 @@
         return true;
       }
 
-      EnigmailKeyMgmt.addUid(window,
+      KeyEditor.addUid(window,
         window.arguments[0].keyId,
         Data.convertFromUnicode(name.value),
         Data.convertFromUnicode(email.value),

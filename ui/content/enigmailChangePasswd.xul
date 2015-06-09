@@ -125,7 +125,7 @@
       }
     }
 
-    EnigmailKeyMgmt.changePassphrase(window, window.arguments[0].keyId,
+    KeyEditor.changePassphrase(window, window.arguments[0].keyId,
         Data.convertFromUnicode(currPasswd),
         Data.convertFromUnicode(newPasswd),
       function _changePwdCb(exitCode, errorMsg) {

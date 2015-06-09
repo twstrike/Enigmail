@@ -63,7 +63,7 @@ Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 Cu.import("resource://enigmail/commonFuncs.jsm"); /*global EnigmailFuncs: false */
-Cu.import("resource://enigmail/keyManagement.jsm"); /*global EnigmailKeyMgmt: false */
+Cu.import("resource://enigmail/keyManagement.jsm"); /*global KeyEditor: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global Armor: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
@@ -488,7 +488,7 @@ Enigmail.prototype = {
   },
 
   importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj) {
-    return EnigmailKeyMgmt.importKeyFromFile(parent,inputFile,errorMsgObj,importedKeysObj);
+    return KeyEditor.importKeyFromFile(parent,inputFile,errorMsgObj,importedKeysObj);
   },
 
   createMessageURI: function (originalUrl, contentType, contentCharset, contentData, persist) {

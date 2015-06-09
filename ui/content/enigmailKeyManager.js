@@ -506,7 +506,7 @@ function enigmailDeleteKey() {
     fprArr.push("0x" + gKeyList[keyList[j]].fpr);
   }
 
-  EnigmailKeyMgmt.deleteKey(window, fprArr.join(" "), deleteSecret,
+  KeyEditor.deleteKey(window, fprArr.join(" "), deleteSecret,
     function(exitCode, errorMsg) {
       if (exitCode !== 0) {
         EnigAlert(EnigGetString("deleteKeyFailed")+"\n\n"+errorMsg);
@@ -528,7 +528,7 @@ function enigmailEnableKey() {
 
   var keyIndex = 0;
   function processNextKey() {
-    EnigmailKeyMgmt.enableDisableKey(window, "0x"+keyList[keyIndex], disableKey, function _enDisCb(exitCode, errorMsg) {
+    KeyEditor.enableDisableKey(window, "0x"+keyList[keyIndex], disableKey, function _enDisCb(exitCode, errorMsg) {
       if (exitCode === 0) {
         ++keyIndex;
         if (keyIndex < keyList.length) {
@@ -629,7 +629,7 @@ function keyMgrAddPhoto(userId, keyId) {
 
   if (!argsObj.okPressed) return;
 
-  EnigmailKeyMgmt.addPhoto(window, "0x"+keyId, inFile,
+  KeyEditor.addPhoto(window, "0x"+keyId, inFile,
     function(exitCode, errorMsg) {
       if (exitCode !== 0) {
         EnigAlert(EnigGetString("keyMan.addphoto.failed")+"\n\n"+errorMsg);
@@ -910,7 +910,7 @@ function enigmailImportKeysFromFile() {
 
   var errorMsgObj = {};
   var keyListObj = {};
-  var exitCode = EnigmailKeyMgmt.importKeyFromFile(window, inFile, errorMsgObj, keyListObj);
+  var exitCode = KeyEditor.importKeyFromFile(window, inFile, errorMsgObj, keyListObj);
   if (exitCode !== 0) {
     EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
   }

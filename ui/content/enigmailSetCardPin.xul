@@ -181,7 +181,7 @@
 
     var pinObserver = new changePinObserver();
 
-    EnigmailKeyMgmt.cardChangePin(window,
+    KeyEditor.cardChangePin(window,
                                  action,
                                  oldPin,
                                  newPin,

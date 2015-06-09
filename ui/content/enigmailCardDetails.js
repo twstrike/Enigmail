@@ -176,7 +176,7 @@ function doSaveChanges() {
     doEditData();
   }
   else {
-    EnigmailKeyMgmt.cardAdminData(window,
+    KeyEditor.cardAdminData(window,
                                   Data.convertFromUnicode(dialogname),
                                   Data.convertFromUnicode(dialogfirstname),
                                   getValue("lang"),

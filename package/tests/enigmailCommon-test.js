@@ -1,5 +1,5 @@
 /*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false */
-/*global EnigmailCommon: false, EnigmailCore: false, EnigmailKeyMgmt: false, component: false, Cc: false, Ci: false, do_print: false, Prefs: false, withTestGpgHome:false */
+/*global EnigmailCommon: false, EnigmailCore: false, KeyEditor: false, component: false, Cc: false, Ci: false, do_print: false, Prefs: false, withTestGpgHome:false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -170,10 +170,10 @@ function shouldGetSecretKeys() {
     var errorMsgObj = {};
     var importedKeysObj = {};
     var window = JSUnit.createStubWindow();
-    var importResult = EnigmailKeyMgmt.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
+    var importResult = KeyEditor.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
     var expectedKey = [{"name": "anonymous strike <strike.devtest@gmail.com>", "id": "781617319CE311C4", "created": "05/04/2015"}];
     do_test_pending();
-    EnigmailKeyMgmt.setKeyTrust(window,
+    KeyEditor.setKeyTrust(window,
         "781617319CE311C4",
         5,
         function() {

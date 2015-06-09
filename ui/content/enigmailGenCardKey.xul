@@ -355,7 +355,7 @@
       }
 
       var generateObserver = new enigGenKeyObserver();
-      EnigmailKeyMgmt.genCardKey(window,
+      KeyEditor.genCardKey(window,
                                userName,
                                userEmail,
                                comment,
