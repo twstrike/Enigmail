@@ -37,7 +37,7 @@
 
 "use strict";
 
-var EXPORTED_SYMBOLS = [ "Key" ];
+const EXPORTED_SYMBOLS = [ "Key" ];
 
 function Key(key) {
     if (!(this instanceof Key)) {
@@ -53,6 +53,7 @@ function Key(key) {
     if (!this.primaryKey || !this.users) {
         throw new Error('Invalid key: need at least key and user ID packet');
     }
+    return this;
 }
 
 Key.prototype = {

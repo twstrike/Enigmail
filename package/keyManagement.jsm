@@ -252,67 +252,7 @@ KeyEditor.prototype = {
  * returnCode = 0 in case of success
  * returnCode != 0 and errorMsg set in case of failure
 */
-
-var EnigmailKeyMgmt = {
-  readKey: function (parent, inputData, outputData, callbackFunc, requestObserver, parentCallback){
-    Log.DEBUG("keyManagmenent.jsm: readKey: parent="+parent+"\n");
-
-    var enigmailSvc = Ec.getService(parent);
-    if (!enigmailSvc) {
-      Log.ERROR("keyManagmenent.jsm: Enigmail.readKey: not yet initialized\n");
-      parentCallback(-1, Locale.getString("notInit"));
-      return -1;
-    }
-
-    var command= EnigmailGpgAgent.agentPath;
-    var args = Gpg.getStandardArgs(false);
-
-    outputData.key = "";
-    args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);
-
-    if (inputData.path) {//read key from file
-      args=args.concat(["--list-packets", inputData.path]);
-      Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
-      Execution.execCmd2(command, args,
-                         function(pipe) {
-                         },
-                         function (stdout) {
-                             outputData.key+=stdout;
-                         },
-                         function (result) {
-                             if(callbackFunc) callbackFunc(outputData,result);
-                             if(parentCallback) parentCallback(outputData,result);
-                         }
-                        );
-    }
-    else if (inputData.keytext){//read key from text
-      args=args.concat(["--list-packets"]);
-
-      Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
-      var input = inputData.keytext;
-      if ((typeof input) != "string") input = "";
-
-      var preInput = "";
-
-      Execution.execCmd2(command, args,
-                        function(pipe) {
-                            if (input.length > 0 || preInput.length > 0) {
-                                pipe.write(preInput + input);
-                            }
-                            pipe.close();
-                        },
-                        function (stdout) {
-                            outputData.key+=stdout;
-                        },
-                        function (result) {
-                            Log.DEBUG(result);
-                            if(callbackFunc) callbackFunc(outputData,result);
-                            if(parentCallback) parentCallback(outputData,result);
-                        }
-                       );
-    }
-  },
-
+const EnigmailKeyMgmt = {
   editKey: function (parent, needPassphrase, userId, keyId, editCmd, inputData, callbackFunc, requestObserver, parentCallback) {
     Log.DEBUG("keyManagmenent.jsm: editKey: parent="+parent+", editCmd="+editCmd+"\n");
 
@@ -372,15 +312,6 @@ var EnigmailKeyMgmt = {
       Log.ERROR("keyManagement.jsm: editKey: "+command.path+" failed\n");
       parentCallback(-1, "");
     }
-  },
-
-  readKeyObjectFromFile: function (parent,path,callbackFunc){
-    Log.DEBUG("keyManagmenent.jsm: Enigmail.readKeyObjectFromFile: filepath="+path+"\n");
-
-    return this.readKey(parent, {"path":path}, {},
-        keyReadCallback,
-        null,
-        callbackFunc);
   },
 
   importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj){
