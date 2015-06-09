@@ -83,6 +83,7 @@ var TestHelper = {
     },
 
     initalizeGpgHome: function() {
+        // TODO: We should put this inside of the test resources directory, not the home directory
         var homedir = osUtils.OS.Path.join(osUtils.OS.Constants.Path.homeDir, ".gnupgTest");
         var workingDirectory = new osUtils.FileUtils.File(homedir);
         if (!workingDirectory.exists()) {
