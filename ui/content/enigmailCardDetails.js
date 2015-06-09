@@ -41,6 +41,7 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
+Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 
 const Ec = EnigmailCommon;
 
@@ -49,7 +50,7 @@ var gCardData = {};
 function onLoad() {
   var enigmailSvc = Ec.getService(window);
   if (!enigmailSvc) {
-    Ec.dispatchEvent(failWithError, 0, Locale.getString("accessError"));
+    Events.dispatchEvent(failWithError, 0, Locale.getString("accessError"));
     return;
   }
   var exitCodeObj = {};
@@ -103,7 +104,7 @@ function onLoad() {
   }
   else {
     if (! dryRun) {
-      Ec.dispatchEvent(failWithError, 0, errorMsgObj.value);
+      Events.dispatchEvent(failWithError, 0, errorMsgObj.value);
     }
   }
   return;

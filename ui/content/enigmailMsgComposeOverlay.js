@@ -52,6 +52,7 @@ Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
+Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
@@ -4248,7 +4249,7 @@ Enigmail.msg = {
     try {
       Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.fireSendFlags\n");
       if (! this.determineSendFlagId) {
-        this.determineSendFlagId = EnigmailCommon.dispatchEvent(
+        this.determineSendFlagId = Events.dispatchEvent(
           function _sendFlagWrapper() {
             Enigmail.msg.determineSendFlags();
           },

@@ -58,6 +58,7 @@ MODFILES = \
            glodaUtils.jsm \
            glodaMime.jsm \
            promise.jsm \
+           events.jsm \
            windows.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \

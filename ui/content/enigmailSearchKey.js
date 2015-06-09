@@ -41,6 +41,7 @@ Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 
 const Ec = EnigmailCommon;
 
@@ -125,7 +126,7 @@ function onLoad () {
       document.getElementById("keySelGroup").setAttribute("collapsed", "true");
       window.sizeToContent();
       window.resizeBy(0, -320);
-      Ec.dispatchEvent(startDownload, 10);
+      Events.dispatchEvent(startDownload, 10);
   }
   else {
     switch (gEnigRequest.requestType) {

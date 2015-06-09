@@ -242,51 +242,6 @@ const EnigmailCommon = {
   },
 
   /**
-   * create a nsIRequestObserver object to observe an nsIRequest
-   *
-   * @terminateFunc: Function - function that is called asynchronously when the request
-   *                            has stopped
-   * @terminateArg:  Object   - arguments to pass to terminateFunc as array
-   *
-   * @return: the nsIRequestObserver
-   */
-  newRequestObserver: function (terminateFunc, terminateArg)
-  {
-    // TODO: move [requests]
-    var RequestObserver = function (terminateFunc, terminateArg)
-    {
-      this._terminateFunc = terminateFunc;
-      this._terminateArg = terminateArg;
-    };
-
-    RequestObserver.prototype = {
-
-      _terminateFunc: null,
-      _terminateArg: null,
-
-      QueryInterface: function (iid) {
-        if (!iid.equals(Ci.nsIRequestObserver) &&
-            !iid.equals(Ci.nsISupports))
-          throw Components.results.NS_ERROR_NO_INTERFACE;
-        return this;
-      },
-
-      onStartRequest: function (channel, ctxt)
-      {
-        Log.DEBUG("enigmailCommon.jsm: requestObserver.onStartRequest\n");
-      },
-
-      onStopRequest: function (channel, ctxt, status)
-      {
-        Log.DEBUG("enigmailCommon.jsm: requestObserver.onStopRequest: "+ctxt+"\n");
-        EnigmailCommon.dispatchEvent(this._terminateFunc, 0, [ this._terminateArg ]);
-      }
-    };
-
-    return new RequestObserver(terminateFunc, terminateArg);
-  },
-
-  /**
    * Parse error output from GnuPG
    *
    * @errOutput:    String - the output from GnuPG
@@ -312,62 +267,6 @@ const EnigmailCommon = {
     this.enigmailSvc = enigmailSvc;
   },
 
-  /**
-   * dispatch event aynchronously to the main thread
-   *
-   * @callbackFunction: Function - any function specification
-   * @sleepTimeMs:      Number - optional number of miliseconds to delay
-   *                             (0 if not specified)
-   * @arrayOfArgs:      Array - arguments to pass to callbackFunction
-   */
-
-  dispatchEvent: function (callbackFunction, sleepTimeMs, arrayOfArgs)
-  {
-    // TODO: move [events]
-    Log.DEBUG("enigmailCommon.jsm: dispatchEvent f="+callbackFunction.name+"\n");
-
-    // object for dispatching callback back to main thread
-    var MainEvent = function(cbFunc, arrayOfArgs) {
-      this.cbFunc = cbFunc;
-      this.args   = arrayOfArgs;
-    };
-
-    MainEvent.prototype = {
-      QueryInterface: function(iid) {
-        if (iid.equals(Ci.nsIRunnable) ||
-            iid.equals(Ci.nsISupports)) {
-                return this;
-        }
-        throw Components.results.NS_ERROR_NO_INTERFACE;
-      },
-
-      run: function()
-      {
-        Log.DEBUG("enigmailCommon.jsm: dispatchEvent running mainEvent\n");
-        this.cbFunc(this.args);
-      },
-
-      notify: function()
-      {
-        Log.DEBUG("enigmailCommon.jsm: dispatchEvent got notified\n");
-        this.cbFunc(this.args);
-      }
-
-    };
-
-    var event = new MainEvent(callbackFunction, arrayOfArgs);
-    if (sleepTimeMs > 0) {
-      return Timer.setTimeout(event, sleepTimeMs);
-    }
-    else {
-      var tm = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
-
-      // dispatch the event to the main thread
-      tm.mainThread.dispatch(event, Ci.nsIThread.DISPATCH_NORMAL);
-    }
-
-    return event;
-  },
 
   /*
    * remember the fact a URI is encrypted

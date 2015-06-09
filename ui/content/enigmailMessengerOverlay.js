@@ -63,6 +63,7 @@ Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/enigmailConvert.jsm");
 Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
+Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 
 const EC = EnigmailCore;
 
@@ -540,7 +541,7 @@ Enigmail.msg = {
     // MsgHdrToMimeMessage is not on the main thread which may lead to problems with
     // accessing DOM and debugging
 
-    EnigmailCommon.dispatchEvent(
+    Events.dispatchEvent(
       function(argList) {
         var enigmailSvc=Enigmail.getEnigmailSvc();
         if (!enigmailSvc) return;
@@ -1863,7 +1864,7 @@ Enigmail.msg = {
                            cb.msgUriSpec);
     };
 
-    EnigmailCommon.dispatchEvent(f, 0, [msgText, callbackArg ]);
+    Events.dispatchEvent(f, 0, [msgText, callbackArg ]);
   },
 
 

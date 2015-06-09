@@ -128,6 +128,7 @@ zip --must-match\
     modules/timer.jsm \
     modules/streams.jsm \
     modules/time.jsm \
+    modules/events.jsm \
     modules/glodaUtils.jsm \
     modules/glodaMime.jsm \
     modules/promise.jsm \

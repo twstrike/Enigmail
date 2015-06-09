@@ -74,6 +74,7 @@
   <script type="application/x-javascript">
   <![CDATA[
     EnigInitCommon("enigmailAlertDlg");
+    Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 
     function onLoad() {
       var dlg=document.getElementById("enigmailAlertDlg");
@@ -125,7 +126,7 @@
       textbox.setAttribute("value", msgtext);
       textbox.setAttribute("rows", lines);
       if (EnigGetOS() != "Darwin")
-        EnigmailCommon.dispatchEvent(resizeDlg, 0);
+        Events.dispatchEvent(resizeDlg, 0);
     }
 
     function resizeDlg() {
@@ -174,4 +175,3 @@
   </script>
 
 </dialog>
-
