@@ -150,7 +150,7 @@ function withTestGpgHome(f){
         finally{
             removeGpgHome(homedir);
         }
-    }
+    };
 }
 
 CustomAssert.registerExtraAssertionsOn(Assert);
