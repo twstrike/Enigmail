@@ -455,6 +455,7 @@ test(function resolveToolPathDefaultValues() {
             EnigmailGpgAgent.agentPath = "/usr/bin/gpg-agent";
             var result = EnigmailGpgAgent.resolveToolPath("zip");
             Assert.equal("/usr/bin/zip", result.path);
+            EnigmailGpgAgent.setAgentPath(null,enigmail);
         });
     });
 });
@@ -466,6 +467,7 @@ test(function resolveToolPathFromPATH() {
             EnigmailGpgAgent.agentPath = null;
             var result = EnigmailGpgAgent.resolveToolPath("route");
             Assert.equal("/sbin/route", result.path);
+            EnigmailGpgAgent.setAgentPath(null,enigmail);
         });
     });
 });
