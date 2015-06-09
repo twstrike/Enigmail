@@ -343,53 +343,6 @@ Enigmail.prototype = {
       return Armor.extractSignaturePart(signatureBlock, part);
   },
 
-  statusObjectFrom: function (signatureObj, exitCodeObj, statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj, blockSeparationObj, encToDetailsObj) {
-    // TODO: move [decryption]
-    return {
-      signature: signatureObj,
-      exitCode: exitCodeObj,
-      statusFlags: statusFlagsObj,
-      keyId: keyIdObj,
-      userId: userIdObj,
-      sigDetails: sigDetailsObj,
-      message: errorMsgObj,
-      blockSeparation: blockSeparationObj,
-      encToDetails: encToDetailsObj
-    };
-  },
-
-
-  newStatusObject: function () {
-    // TODO: move [decryption]
-    return this.statusObjectFrom({value: ""}, {}, {}, {}, {}, {}, {}, {}, {});
-  },
-
-
-  inlineInnerVerification: function (parent, uiFlags, text, statusObject) {
-    // TODO: move [decryption]
-    Log.DEBUG("enigmail.js: Enigmail.inlineInnerVerification\n");
-
-    if (text && text.indexOf("-----BEGIN PGP SIGNED MESSAGE-----") === 0) {
-      var status = this.newStatusObject();
-      var newText = this.decryptMessage(parent, uiFlags, text,
-                                        status.signature, status.exitCode, status.statusFlags, status.keyId, status.userId,
-                                        status.sigDetails, status.message, status.blockSeparation, status.encToDetails);
-      if (status.exitCode.value === 0) {
-        text = newText;
-        // merge status into status object:
-        statusObject.statusFlags.value = statusObject.statusFlags.value | status.statusFlags.value;
-        statusObject.keyId.value = status.keyId.value;
-        statusObject.userId.value = status.userId.value;
-        statusObject.sigDetails.value = status.sigDetails.value;
-        statusObject.message.value = status.message.value;
-        // we don't merge encToDetails
-      }
-    }
-
-    return text;
-  },
-
-
 /**
   *  Decrypts a PGP ciphertext and returns the the plaintext
   *
@@ -413,7 +366,7 @@ Enigmail.prototype = {
                             signatureObj, exitCodeObj,
                             statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
                             blockSeparationObj, encToDetailsObj) {
-      return Decryption.decryptMessage(this, Ec, parent, uiFlags, cipherText,
+      return Decryption.decryptMessage(parent, uiFlags, cipherText,
                                        signatureObj, exitCodeObj,
                                        statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
                                        blockSeparationObj, encToDetailsObj);
@@ -1039,7 +992,7 @@ Enigmail.prototype = {
 
     var retObj = {};
 
-    Ec.decryptMessageEnd (listener.stderrData, listener.exitCode, 1, true, true, nsIEnigmail.UI_INTERACTIVE, retObj);
+    Decryption.decryptMessageEnd (listener.stderrData, listener.exitCode, 1, true, true, nsIEnigmail.UI_INTERACTIVE, retObj);
 
     if (listener.exitCode === 0) {
       var detailArr = retObj.sigDetails.split(/ /);

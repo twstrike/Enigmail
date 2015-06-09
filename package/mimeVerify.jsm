@@ -21,6 +21,7 @@ Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailVerify" ];
 
@@ -301,7 +302,7 @@ MimeVerify.prototype = {
     var statusFlagsObj = {};
     var errorMsgObj = {};
 
-    this.proc = Ec.decryptMessageStart(win, true, true, this,
+    this.proc = Decryption.decryptMessageStart(win, true, true, this,
                 statusFlagsObj, errorMsgObj,
                 Files.getEscapedFilename(Files.getFilePath(this.sigFile)));
 
@@ -350,13 +351,13 @@ MimeVerify.prototype = {
     //LOCAL_DEBUG("mimeVerify.jsm: "+this.statusStr+"\n");
 
     this.returnStatus = {};
-    Ec.decryptMessageEnd(this.statusStr,
-          this.exitCode,
-          this.dataLength,
-          true, // verifyOnly
-          true,
-          Ci.nsIEnigmail.UI_PGP_MIME,
-          this.returnStatus);
+    Decryption.decryptMessageEnd(this.statusStr,
+                                 this.exitCode,
+                                 this.dataLength,
+                                 true, // verifyOnly
+                                 true,
+                                 Ci.nsIEnigmail.UI_PGP_MIME,
+                                 this.returnStatus);
 
     if (this.partiallySigned)
       this.returnStatus.statusFlags |= Ci.nsIEnigmail.PARTIALLY_PGP;

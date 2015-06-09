@@ -1013,33 +1013,6 @@ const EnigmailCommon = {
     return keyId;
   },
 
-  /***
-   * Start decryption by launching gpg
-   * win:               window object for password prompt
-   * verifyOnly:        Boolean: true if message is to be verified; false if message is
-   *                    decrypted and result is returned
-   * listener:          listener object for getting results from process (see execStart)
-   * statusFlagsObj:    object for getting status flags in .value property
-   * errorMsgObj:       object for getting error message text in .value property
-   * mimeSignatureFile: file name for separate signature file
-   * maxOutputLength:   maximum output length for GnuPG; 0 for infinite
-   */
-  decryptMessageStart: function (win, verifyOnly, noOutput, listener,
-                                 statusFlagsObj, errorMsgObj, mimeSignatureFile,
-                                 maxOutputLength) {
-      // TODO: move completely
-      return Decryption.decryptMessageStart(this, win, verifyOnly, noOutput, listener,
-                                            statusFlagsObj, errorMsgObj, mimeSignatureFile,
-                                            maxOutputLength);
-  },
-
-
-  decryptMessageEnd: function (stderrStr, exitCode, outputLen, verifyOnly, noOutput, uiFlags, retStatusObj) {
-      // TODO: move completely
-      return Decryption.decryptMessageEnd(this, stderrStr, exitCode, outputLen, verifyOnly, noOutput, uiFlags, retStatusObj);
-  },
-
-
   getEncryptCommand: function (fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj) {
       // TODO: move completely
       return Encryption.getEncryptCommand(this, fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj);

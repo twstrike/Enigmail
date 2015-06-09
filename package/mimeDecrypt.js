@@ -18,6 +18,7 @@ Components.utils.import("resource://enigmail/log.jsm"); /*global Log: false */
 Components.utils.import("resource://enigmail/locale.jsm"); /*global Locale: false */
 Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
 Components.utils.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Components.utils.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -273,8 +274,8 @@ PgpMimeDecrypt.prototype = {
 
     var maxOutput = this.outQueue.length * 100; // limit output to 100 times message size
                                                 // to avoid DoS attack
-    this.proc = Ec.decryptMessageStart(win, false, false, this,
-                    statusFlagsObj, errorMsgObj, null, maxOutput);
+    this.proc = Decryption.decryptMessageStart(win, false, false, this,
+                                               statusFlagsObj, errorMsgObj, null, maxOutput);
 
     if (! this.proc) return;
     this.flushInput();
@@ -288,13 +289,13 @@ PgpMimeDecrypt.prototype = {
     this.proc.wait();
 
     this.returnStatus = {};
-    Ec.decryptMessageEnd(this.statusStr,
-                         this.exitCode,
-                         this.dataLength,
-                         false,
-                         false,
-                         Ci.nsIEnigmail.UI_PGP_MIME,
-                         this.returnStatus);
+    Decryption.decryptMessageEnd(this.statusStr,
+                                 this.exitCode,
+                                 this.dataLength,
+                                 false,
+                                 false,
+                                 Ci.nsIEnigmail.UI_PGP_MIME,
+                                 this.returnStatus);
 
     this.displayStatus();
 
