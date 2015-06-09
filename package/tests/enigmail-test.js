@@ -49,6 +49,7 @@ component("enigmail/prefs.jsm");
 component("enigmail/os.jsm");
 component("enigmail/armor.jsm");
 component("enigmail/keyManagement.jsm");
+component("enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
 
 test(shouldLocateArmoredBlock);
 test(shouldExtractSignaturePart);
@@ -434,7 +435,7 @@ test(function setAgentPathDefaultValues() {
     withEnvironment({}, function(e) {
         newEnigmail(function(enigmail) {
             enigmail.environment = e;
-            enigmail.setAgentPath(JSUnit.createStubWindow());
+            EnigmailGpgAgent.setAgentPath(JSUnit.createStubWindow(), enigmail);
             Assert.equal("gpg", enigmail.agentType);
             Assert.equal("/usr/bin/gpg2", enigmail.agentPath.path);
             //        Assert.equal("2.0.22", enigmail.agentVersion); // this will vary between environments.
