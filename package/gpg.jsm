@@ -249,7 +249,7 @@ const Gpg = {
             const proc = subprocess.call({
                 command:     Gpg.agentPath,
                 arguments:   args,
-                environment: EnigmailCore.getEnigmailCommon().getEnvList(),
+                environment: EnigmailCore.getEnvList(),
                 charset: null,
                 mergeStderr: false
             });

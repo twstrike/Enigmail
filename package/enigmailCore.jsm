@@ -39,7 +39,8 @@
 const EXPORTED_SYMBOLS = [ "EnigmailCore" ];
 
 var gEnigmailSvc = null;      // Global Enigmail Service
-var gEnigmailCommon = null;      // Global Enigmail Common instance, to avoid circular dependencies
+var gEnigmailCommon = null;   // Global Enigmail Common instance, to avoid circular dependencies
+var envList = null;           // currently filled from enigmail.js
 
 const EnigmailCore = {
     version: "",
@@ -80,5 +81,23 @@ const EnigmailCore = {
     defaultEnigmailCommonCreation: function() {
         Components.utils.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
         return EnigmailCommon;
+    },
+
+    /**
+     * obtain a list of all environment variables
+     *
+     * @return: Array of Strings with the following structrue
+     *          variable_name=variable_content
+     */
+    getEnvList: function() {
+        return envList;
+    },
+
+    addToEnvList: function(str) {
+        envList.push(str);
+    },
+
+    initEnvList: function() {
+        envList = [];
     }
 };

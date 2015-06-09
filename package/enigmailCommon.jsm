@@ -121,7 +121,6 @@ const EnigmailCommon = {
 
   // variables
   enigmailSvc: null,
-  envList: null, // currently filled from enigmail.js
   gpgAgentIsOptional: true,
 
   // methods
@@ -230,16 +229,6 @@ const EnigmailCommon = {
    */
   getPromptSvc: function() {
     return gPromptSvc;
-  },
-
-  /**
-   * obtain a list of all environment variables
-   *
-   * @return: Array of Strings with the following structrue
-   *          variable_name=variable_content
-   */
-  getEnvList: function() {
-    return this.envList;
   },
 
   /**
@@ -394,7 +383,7 @@ const EnigmailCommon = {
       proc = subprocess.call({
         command:     EnigmailGpgAgent.agentPath,
         arguments:   args,
-        environment: this.getEnvList(),
+        environment: EnigmailCore.getEnvList(),
         charset: null,
         stdin: function (pipe) {
           pipe.write(inputData);
@@ -582,7 +571,7 @@ const EnigmailCommon = {
       proc = subprocess.call({
         command:     EnigmailGpgAgent.agentPath,
         arguments:   args,
-        environment: this.getEnvList(),
+        environment: EnigmailCore.getEnvList(),
         charset: null,
         stdin: inputData,
         stdout: function(data) {

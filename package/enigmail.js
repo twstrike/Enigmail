@@ -271,15 +271,16 @@ Enigmail.prototype = {
         passEnv.push(passNames[k]);
     }
 
-    Ec.envList = [];
+    EnigmailCore.initEnvList();
     for (var j=0; j<passEnv.length; j++) {
       var envName = passEnv[j];
       var envValue = this.environment.get(envName);
-      if (envValue)
-         Ec.envList.push(envName+"="+envValue);
+      if (envValue) {
+          EnigmailCore.addToEnvList(envName+"="+envValue);
+      }
     }
 
-    Log.DEBUG("enigmail.js: Enigmail.initialize: Ec.envList = "+Ec.envList+"\n");
+    Log.DEBUG("enigmail.js: Enigmail.initialize: Ec.envList = "+EnigmailCore.getEnvList()+"\n");
 
     try {
       EnigmailConsole.write("Initializing Enigmail service ...\n");
@@ -295,8 +296,9 @@ Enigmail.prototype = {
     EnigmailGpgAgent.detectGpgAgent(domWindow, this);
 
     if (EnigmailGpgAgent.useGpgAgent(this) && (! OS.isDosLike())) {
-      if (!EnigmailGpgAgent.isDummy())
-        Ec.envList.push("GPG_AGENT_INFO="+EnigmailGpgAgent.gpgAgentInfo.envStr);
+      if (!EnigmailGpgAgent.isDummy()) {
+          EnigmailCore.addToEnvList("GPG_AGENT_INFO="+EnigmailGpgAgent.gpgAgentInfo.envStr);
+      }
     }
 
 

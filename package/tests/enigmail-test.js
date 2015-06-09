@@ -277,7 +277,7 @@ test(function initializeWillPassEnvironmentIfAskedTo() {
     }, function() {
         newEnigmail(function(enigmail) {
             enigmail.initialize(window, "", Prefs.getPrefBranch());
-            Assert.assertArrayContains(EnigmailCommon.envList, "STUFF=testing");
+            Assert.assertArrayContains(EnigmailCore.getEnvList(), "STUFF=testing");
         });
     });
 });
@@ -289,7 +289,7 @@ test(function initializeWillNotPassEnvironmentsNotAskedTo() {
     environment.set("STUFF", "testing");
     newEnigmail(function(enigmail) {
         enigmail.initialize(window, "", Prefs.getPrefBranch());
-        Assert.assertArrayNotContains(EnigmailCommon.envList, "STUFF=testing");
+        Assert.assertArrayNotContains(EnigmailCore.getEnvList(), "STUFF=testing");
     });
 });
 
@@ -299,7 +299,7 @@ test(function initializeWillNotSetEmptyEnvironmentValue() {
     environment.set("APPDATA", "");
     newEnigmail(function(enigmail) {
         enigmail.initialize(window, "", Prefs.getPrefBranch());
-        Assert.assertArrayNotContains(EnigmailCommon.envList, "APPDATA=");
+        Assert.assertArrayNotContains(EnigmailCore.getEnvList(), "APPDATA=");
     });
 });
 

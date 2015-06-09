@@ -55,10 +55,6 @@ Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 
-function envList() {
-    return EnigmailCore.getEnigmailCommon().getEnvList();
-}
-
 const Execution = {
     agentType: "",
 
@@ -109,7 +105,7 @@ const Execution = {
             proc = subprocess.call({
                 command:     command,
                 arguments:   args,
-                environment: envList(),
+                environment: EnigmailCore.getEnvList(),
                 charset: null,
                 bufferedOutput: true,
                 stdin: function (pipe) {
@@ -185,7 +181,7 @@ const Execution = {
                 command: command,
                 arguments: args,
                 charset: null,
-                environment: envList(),
+                environment: EnigmailCore.getEnvList(),
                 done: function(result) {
                     exitCodeObj.value = result.exitCode;
                     outputData = result.stdout;
@@ -224,7 +220,7 @@ const Execution = {
         var procBuilder = new subprocess.ProcessBuilder();
         procBuilder.setCommand(command);
         procBuilder.setArguments(args);
-        procBuilder.setEnvironment(envList());
+        procBuilder.setEnvironment(EnigmailCore.getEnvList());
         procBuilder.setStdin(
             function (pipe) {
                 if (input.length > 0 || preInput.length > 0) {
@@ -313,7 +309,7 @@ const Execution = {
         var procBuilder = new subprocess.ProcessBuilder();
         procBuilder.setCommand(command);
         procBuilder.setArguments(args);
-        procBuilder.setEnvironment(envList());
+        procBuilder.setEnvironment(EnigmailCore.getEnvList());
         procBuilder.setStdin(stdinFunc);
         procBuilder.setStdout(stdoutFunc);
         procBuilder.setDone(doneFunc);

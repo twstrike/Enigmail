@@ -152,7 +152,7 @@ const EnigmailGpgAgent = {
         var proc = {
             command:     psCmd,
             arguments:   [ "-o", "comm", "-p", pid ],
-            environment: Ec.envList,
+            environment: EnigmailCore.getEnvList(),
             charset: null,
             done: function(result) {
                 Log.DEBUG("enigmailGpgAgent.jsm: isCmdGpgAgent: got data: '"+result.stdout+"'\n");
@@ -192,7 +192,7 @@ const EnigmailGpgAgent = {
             command:     EnigmailGpgAgent.connGpgAgentPath,
             arguments:   [],
             charset: null,
-            environment: Ec.envList,
+            environment: EnigmailCore.getEnvList(),
             stdin: function(pipe) {
                 pipe.write("/subst\n");
                 pipe.write("/serverpid\n");
@@ -243,7 +243,7 @@ const EnigmailGpgAgent = {
             command:     EnigmailGpgAgent.gpgconfPath,
             arguments:   [ "--list-options", "gpg-agent" ],
             charset: null,
-            environment: Ec.envList,
+            environment: EnigmailCore.getEnvList(),
             done: function(result) {
                 var lines = result.stdout.split(/[\r\n]/);
                 var i;
@@ -281,7 +281,7 @@ const EnigmailGpgAgent = {
         var proc = {
             command:     EnigmailGpgAgent.gpgconfPath,
             arguments:   [ "--runtime", "--change-options", "gpg-agent" ],
-            environment: Ec.envList,
+            environment: EnigmailCore.getEnvList(),
             charset: null,
             mergeStderr: true,
             stdin: function(pipe) {
@@ -457,7 +457,7 @@ const EnigmailGpgAgent = {
         var proc = {
             command:     command,
             arguments:   args,
-            environment: Ec.envList,
+            environment: EnigmailCore.getEnvList(),
             charset: null,
             done: function(result) {
                 exitCode = result.exitCode;
@@ -574,7 +574,7 @@ const EnigmailGpgAgent = {
                     try {
                         subprocess.call({
                             command: command,
-                            environment: Ec.envList,
+                            environment: EnigmailCore.getEnvList(),
                             stdin: "/echo OK\n",
                             charset: null,
                             done: function(result) {
