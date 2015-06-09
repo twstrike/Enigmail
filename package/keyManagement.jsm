@@ -61,7 +61,7 @@ const GET_HIDDEN = "GET_HIDDEN";
 
 const NS_PROMPTSERVICE_CONTRACTID = "@mozilla.org/embedcomp/prompt-service;1";
 
-function KeyEditor(reqObserver, callbackFunc, inputData) {
+function GpgEditorInterface(reqObserver, callbackFunc, inputData) {
   this._reqObserver = reqObserver;
   this._callbackFunc = callbackFunc;
   this._inputData = inputData;
@@ -74,7 +74,7 @@ function KeyEditor(reqObserver, callbackFunc, inputData) {
 }
 
 
-KeyEditor.prototype = {
+GpgEditorInterface.prototype = {
   _stdin: null,
   _data: "",
   _txt: "",
@@ -87,13 +87,13 @@ KeyEditor.prototype = {
   },
 
   gotData: function(data) {
-    //Log.DEBUG("keyManagement.jsm: KeyEditor.gotData: '"+data+"'\n");
+    //Log.DEBUG("keyManagement.jsm: GpgEditorInterface.gotData: '"+data+"'\n");
     this._data += data.replace(/\r\n/g, "\n");
     this.processData();
   },
 
   processData: function() {
-    //Log.DEBUG("keyManagement.jsm: KeyEditor.processData\n");
+    //Log.DEBUG("keyManagement.jsm: GpgEditorInterface.processData\n");
     var txt = "";
     while (this._data.length > 0 && this._stdin) {
       var index = this._data.indexOf("\n");
@@ -110,7 +110,7 @@ KeyEditor.prototype = {
   },
 
   closeStdin: function() {
-    Log.DEBUG("keyManagement.jsm: KeyEditor.closeStdin:\n");
+    Log.DEBUG("keyManagement.jsm: GpgEditorInterface.closeStdin:\n");
     if (this._stdin) {
       this._stdin.close();
       this._stdin = null;
@@ -118,17 +118,17 @@ KeyEditor.prototype = {
   },
 
   done: function(parentCallback, exitCode) {
-    Log.DEBUG("keyManagmenent.jsm: KeyEditor.done: exitCode="+exitCode+"\n");
+    Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.done: exitCode="+exitCode+"\n");
 
     if (exitCode === 0) exitCode = this._exitCode;
 
-    Log.DEBUG("keyManagmenent.jsm: KeyEditor.done: returning exitCode "+exitCode+"\n");
+    Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.done: returning exitCode "+exitCode+"\n");
 
     parentCallback(exitCode, this.errorMsg);
   },
 
   writeLine: function (inputData) {
-    Log.DEBUG("keyManagmenent.jsm: KeyEditor.writeLine: '"+inputData+"'\n");
+    Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.writeLine: '"+inputData+"'\n");
     this._stdin.write(inputData+"\n");
   },
 
@@ -156,38 +156,38 @@ KeyEditor.prototype = {
   },
 
   processLine: function(txt) {
-    Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: '"+txt+"'\n");
+    Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.processLine: '"+txt+"'\n");
     var r = { quitNow: false,
               exitCode: -1 };
 
     try {
       if (txt.indexOf("[GNUPG:] BAD_PASSPHRASE")>=0 ||
           txt.indexOf("[GNUPG:] SC_OP_FAILURE 2") >= 0) {
-        Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: detected bad passphrase\n");
+        Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.processLine: detected bad passphrase\n");
         r.exitCode=-2;
         r.quitNow=true;
         this.errorMsg=Locale.getString("badPhrase");
       }
       if (txt.indexOf("[GNUPG:] NO_CARD_AVAILABLE")>=0) {
-        Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: detected missing card\n");
+        Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.processLine: detected missing card\n");
         this.errorMsg=Locale.getString("sc.noCardAvailable");
         r.exitCode=-3;
         r.quitNow=true;
       }
       if (txt.indexOf("[GNUPG:] ENIGMAIL_FAILURE")===0) {
-        Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: detected general failure\n");
+        Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.processLine: detected general failure\n");
         r.exitCode = -3;
         r.quitNow = true;
         this.errorMsg = txt.substr(26);
       }
       if (txt.indexOf("[GNUPG:] ALREADY_SIGNED")>=0) {
-        Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: detected key already signed\n");
+        Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.processLine: detected key already signed\n");
         this.errorMsg=Locale.getString("keyAlreadySigned");
         r.exitCode=-1;
         r.quitNow = true;
       }
       if (txt.indexOf("[GNUPG:] MISSING_PASSPHRASE")>=0) {
-        Log.DEBUG("keyManagmenent.jsm: KeyEditor.processLine: detected missing passphrase\n");
+        Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.processLine: detected missing passphrase\n");
         this.errorMsg=Locale.getString("noPassphrase");
         r.exitCode = -2;
         this._exitCode = -2;
@@ -291,7 +291,7 @@ function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, call
     var command= EnigmailGpgAgent.agentPath;
     Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
 
-    var keyEdit = new KeyEditor(requestObserver, callbackFunc, inputData);
+    var keyEdit = new GpgEditorInterface(requestObserver, callbackFunc, inputData);
 
     try {
         Execution.execCmd2(command, args,
