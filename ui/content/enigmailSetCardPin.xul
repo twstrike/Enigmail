@@ -114,6 +114,7 @@
   Components.utils.import("resource://enigmail/log.jsm");
   Components.utils.import("resource://enigmail/locale.jsm");
   Components.utils.import("resource://enigmail/dialog.jsm");
+  Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
 
   const Ec = EnigmailCommon;
   const nsIEnigmail = Components.interfaces.nsIEnigmail;
@@ -163,7 +164,7 @@
     var oldPin = "";
     var newPin = "";
 
-    if (! enigmailSvc.useGpgAgent()) {
+    if (! EnigmailGpgAgent.useGpgAgent()) {
       adminPin = document.getElementById("currAdmPinTxt").value;
       oldPin = document.getElementById("currPinTxt").value;
       newPin = document.getElementById(pinItem1).value;
@@ -212,7 +213,7 @@
 
     gAction = sel;
 
-    if (enigmailSvc.useGpgAgent()) {
+    if (EnigmailGpgAgent.useGpgAgent()) {
       dlgDisable("currAdminPinRow");
       dlgDisable("adminPinRow");
       dlgDisable("adminPinRepeatRow");

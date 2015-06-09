@@ -110,7 +110,7 @@ const EnigmailGpgAgent = {
         return EnigmailGpgAgent.gpgAgentInfo.envStr === DUMMY_AGENT_INFO;
     },
 
-    useGpgAgent: function(ecom) {
+    useGpgAgent: function() {
         var useAgent = false;
 
         try {

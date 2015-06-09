@@ -54,6 +54,7 @@ Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
+Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
 
 const EC = EnigmailCore;
 
@@ -514,12 +515,7 @@ function EnigSignKey(userId, keyId) {
 
 
 function EnigChangeKeyPwd(keyId, userId) {
-
-  var enigmailSvc = GetEnigmailSvc();
-  if (!enigmailSvc)
-    return;
-
-  if (! enigmailSvc.useGpgAgent()) {
+  if (! EnigmailGpgAgent.useGpgAgent()) {
     // no gpg-agent: open dialog to enter new passphrase
     var inputObj = {
       keyId: keyId,

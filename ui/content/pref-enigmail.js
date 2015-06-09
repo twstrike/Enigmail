@@ -471,8 +471,7 @@ function prefOnAccept() {
   }
 
   // detect use of gpg-agent and warn if needed
-  var enigmailSvc = GetEnigmailSvc();
-  if (enigmailSvc && enigmailSvc.useGpgAgent()) {
+  if (EnigmailGpgAgent.useGpgAgent()) {
     if (!  EnigmailGpgAgent.isAgentTypeGpgAgent()) {
       if ((document.getElementById("maxIdleMinutes").value > 0) &&
           (! document.getElementById("enigmail_noPassphrase").checked)) {

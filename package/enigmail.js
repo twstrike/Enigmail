@@ -274,7 +274,7 @@ Enigmail.prototype = {
     EnigmailGpgAgent.setAgentPath(domWindow, this);
     EnigmailGpgAgent.detectGpgAgent(domWindow, this);
 
-    if (EnigmailGpgAgent.useGpgAgent(this) && (! OS.isDosLike())) {
+    if (EnigmailGpgAgent.useGpgAgent() && (! OS.isDosLike())) {
       if (!EnigmailGpgAgent.isDummy()) {
           EnigmailCore.addToEnvList("GPG_AGENT_INFO="+EnigmailGpgAgent.gpgAgentInfo.envStr);
       }
@@ -291,13 +291,6 @@ Enigmail.prototype = {
 
     Log.DEBUG("enigmail.js: Enigmail.initialize: END\n");
   },
-
-
-  useGpgAgent: function() {
-      // TODO: move completely (if possible)
-      return EnigmailGpgAgent.useGpgAgent(this);
-  },
-
 
   reinitialize: function () {
     this.initialized = false;

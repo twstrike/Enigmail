@@ -560,7 +560,7 @@ var EnigmailKeyMgmt = {
     var r= this.editKey(parent, false, null, keyId, "passwd",
                         { oldPw: oldPw,
                           newPw: newPw,
-                          useAgent: Ec.enigmailSvc.useGpgAgent(),
+                          useAgent: EnigmailGpgAgent.useGpgAgent(),
                           step: 0,
                           observer: pwdObserver,
                           usePassphrase: true },
@@ -680,7 +680,7 @@ var EnigmailKeyMgmt = {
     var adminObserver = new EnigCardAdminObserver(pinObserver, OS.isDosLike());
     var enigmailSvc = Ec.getService(parent);
 
-    var r = this.editKey(parent, enigmailSvc.useGpgAgent(), null, "", ["--with-colons", "--card-edit"],
+    var r = this.editKey(parent, EnigmailGpgAgent.useGpgAgent(), null, "", ["--with-colons", "--card-edit"],
             { step: 0,
               pinStep: 0,
               cardAdmin: true,

@@ -469,7 +469,7 @@ decryptAttachment = function(attachment, strippedName) {
             }
             else if (statusFlagsObj.value & nsIEnigmail.DECRYPTION_FAILED) {
               Log.DEBUG("enigmailConvert.jsm: decryptAttachment: decryption failed\n");
-              if (enigmailSvc.useGpgAgent()) {
+              if (EnigmailGpgAgent.useGpgAgent()) {
                 // since we cannot find out if the user wants to cancel
                 // we should ask
                 let msg = Locale.getString("converter.decryptAtt.failed", [ attachment.name , self.subject ]);
@@ -808,7 +808,7 @@ decryptINLINE = function (mime) {
 
           if (statusFlagsObj.value & nsIEnigmail.DECRYPTION_FAILED) {
 
-            if (enigmailSvc.useGpgAgent()) {
+            if (EnigmailGpgAgent.useGpgAgent()) {
               // since we cannot find out if the user wants to cancel
               // we should ask
               let msg = Locale.getString("converter.decryptBody.failed", this.subject);

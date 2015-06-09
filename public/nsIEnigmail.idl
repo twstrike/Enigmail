@@ -54,8 +54,6 @@ interface nsIEnigmail : nsISupports
   void initialize(in nsIDOMWindow domWindow, in string version);
   void reinitialize();
   void finalize();
-  boolean useGpgAgent();     /* is gpg-agent used */
-
 
   string locateArmoredBlock(in string text,
                             in long offset,

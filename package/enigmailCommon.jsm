@@ -276,7 +276,7 @@ const EnigmailCommon = {
   passwdCommand: function () {
     var commandArgs = [];
 
-    if (this.enigmailSvc.useGpgAgent()) {
+    if (EnigmailGpgAgent.useGpgAgent()) {
        commandArgs.push("--use-agent");
     }
     else {

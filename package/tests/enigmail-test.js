@@ -335,7 +335,7 @@ test(function useGpgAgentIsFalseIfIsDosLikeAndDoesntSupportAgent() {
     asDosLike(function() {
         withGpgFeatures([], function() {
             newEnigmail(function(enigmail) {
-                Assert.ok(!enigmail.useGpgAgent());
+                Assert.ok(!EnigmailGpgAgent.useGpgAgent());
             });
         });
     });
@@ -345,7 +345,7 @@ test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndAutostartsAgent() {
     asDosLike(function() {
         withGpgFeatures(["supports-gpg-agent", "autostart-gpg-agent"], function() {
             newEnigmail(function(enigmail) {
-                Assert.ok(enigmail.useGpgAgent());
+                Assert.ok(EnigmailGpgAgent.useGpgAgent());
             });
         });
     });
@@ -356,7 +356,7 @@ test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndThereExistsAnAgentS
         withGpgFeatures(["supports-gpg-agent"], function() {
             newEnigmail(function(enigmail) {
                 EnigmailGpgAgent.gpgAgentInfo.envStr = "blarg";
-                Assert.ok(enigmail.useGpgAgent());
+                Assert.ok(EnigmailGpgAgent.useGpgAgent());
             });
         });
     });
@@ -367,7 +367,7 @@ test(function useGpgAgentIsFalseIfIsDosLikeAndSupportsAgentButNoAgentInfoAvailab
         withGpgFeatures(["supports-gpg-agent"], function() {
             newEnigmail(function(enigmail) {
                 EnigmailGpgAgent.gpgAgentInfo.envStr = "";
-                Assert.ok(!enigmail.useGpgAgent());
+                Assert.ok(!EnigmailGpgAgent.useGpgAgent());
             });
         });
     });
@@ -378,7 +378,7 @@ test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndPrefIsSet() {
         withGpgFeatures(["supports-gpg-agent"], function() {
             newEnigmail(function(enigmail) {
                 resetting(Prefs, 'getPrefBranch', function() { return mockPrefs({useGpgAgent: true}); }, function() {
-                    Assert.ok(enigmail.useGpgAgent());
+                    Assert.ok(EnigmailGpgAgent.useGpgAgent());
                 });
             });
         });
@@ -390,7 +390,7 @@ test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndAutostartsAgent() 
     notDosLike(function() {
         withGpgFeatures(["supports-gpg-agent", "autostart-gpg-agent"], function() {
             newEnigmail(function(enigmail) {
-                Assert.ok(enigmail.useGpgAgent());
+                Assert.ok(EnigmailGpgAgent.useGpgAgent());
             });
         });
     });
@@ -401,7 +401,7 @@ test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndThereExistsAnAgent
         withGpgFeatures(["supports-gpg-agent"], function() {
             newEnigmail(function(enigmail) {
                 EnigmailGpgAgent.gpgAgentInfo.envStr = "blarg";
-                Assert.ok(enigmail.useGpgAgent());
+                Assert.ok(EnigmailGpgAgent.useGpgAgent());
             });
         });
     });
@@ -412,7 +412,7 @@ test(function useGpgAgentIsFalseIfNotDosLikeAndSupportsAgentButNoAgentInfoAvaila
         withGpgFeatures(["supports-gpg-agent"], function() {
             newEnigmail(function(enigmail) {
                 EnigmailGpgAgent.gpgAgentInfo.envStr = "";
-                Assert.ok(!enigmail.useGpgAgent());
+                Assert.ok(!EnigmailGpgAgent.useGpgAgent());
             });
         });
     });
@@ -423,7 +423,7 @@ test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndPrefIsSet() {
         withGpgFeatures(["supports-gpg-agent"], function() {
             newEnigmail(function(enigmail) {
                 resetting(Prefs, 'getPrefBranch', function() { return mockPrefs({useGpgAgent: true}); }, function() {
-                    Assert.ok(enigmail.useGpgAgent());
+                    Assert.ok(EnigmailGpgAgent.useGpgAgent());
                 });
             });
         });
