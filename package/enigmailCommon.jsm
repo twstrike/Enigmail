@@ -325,37 +325,6 @@ const EnigmailCommon = {
   },
 
   /**
-   * Fix the exit code of GnuPG (which may be wrong in some circumstances)
-   *
-   * @exitCode:    Number - the exitCode obtained from GnuPG
-   * @statusFlags: Numebr - the statusFlags as calculated by parseErrorOutput()
-   *
-   * @return: Number - fixed exit code
-   */
-  fixExitCode: function (exitCode, statusFlags) {
-    if (exitCode !== 0) {
-      if ((statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) &&
-          (statusFlags & nsIEnigmail.DECRYPTION_OKAY )) {
-        Log.DEBUG("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode for decrypted msg "+exitCode+"->0\n");
-        exitCode = 0;
-      }
-    }
-
-    if ((EnigmailGpgAgent.agentType === "gpg") && (exitCode == 256) && (OS.getOS() == "WINNT")) {
-      Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Using gpg and exit code is 256. You seem to use cygwin-gpg, activating countermeasures.\n");
-      if (statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) {
-        Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->2\n");
-        exitCode = 2;
-      } else {
-        Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->0\n");
-        exitCode = 0;
-      }
-    }
-
-    return exitCode;
-  },
-
-  /**
    * Generate a new key pair with GnuPG
    *
    * @parent:     nsIWindow  - parent window (not used anymore)
@@ -843,11 +812,6 @@ const EnigmailCommon = {
     }
 
     return keyId;
-  },
-
-  getEncryptCommand: function (fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj) {
-      // TODO: move completely
-      return Encryption.getEncryptCommand(this, fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj);
   },
 
   determineHashAlgorithm: function (win, uiFlags, fromMailAddr, hashAlgoObj) {

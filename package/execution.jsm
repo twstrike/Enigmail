@@ -51,15 +51,12 @@ Cu.import("resource://enigmail/log.jsm");
 Cu.import("resource://enigmail/subprocess.jsm");
 Cu.import("resource://enigmail/enigmailErrorHandling.jsm");
 Cu.import("resource://enigmail/enigmailCore.jsm");
+Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 
 function envList() {
     return EnigmailCore.getEnigmailCommon().getEnvList();
-}
-
-function fixExitCode(exitCode, statusFlags) {
-    return EnigmailCore.getEnigmailCommon().fixExitCode(exitCode, statusFlags);
 }
 
 const Execution = {
@@ -268,7 +265,7 @@ const Execution = {
         statusMsgObj.value = retStatusObj.statusMsg;
         var blockSeparation = retStatusObj.blockSeparation;
 
-        exitCodeObj.value = fixExitCode(exitCodeObj.value, statusFlagsObj.value);
+        exitCodeObj.value = EnigmailGpgAgent.fixExitCode(exitCodeObj.value, statusFlagsObj.value);
 
         if (blockSeparation.indexOf(" ") > 0) {
             exitCodeObj.value = 2;

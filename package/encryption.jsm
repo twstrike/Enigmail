@@ -68,8 +68,7 @@ const GPG_COMMENT_OPT = "Using GnuPG with %s - http://www.enigmail.net/";
 
 // Remove all quoted strings (and angle brackets) from a list of email
 // addresses, returning a list of pure email address
-function stripEmailAdr(ecom, mailAddrs) {
-
+function stripEmailAdr(mailAddrs) {
     var qStart, qEnd;
     while ((qStart = mailAddrs.indexOf('"')) != -1) {
         qEnd = mailAddrs.indexOf('"', qStart+1);
@@ -92,13 +91,13 @@ function stripEmailAdr(ecom, mailAddrs) {
 }
 
 var Encryption = {
-    getEncryptCommand: function (ecom, fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj) {
+    getEncryptCommand: function (fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj) {
         Log.DEBUG("enigmailCommon.jsm: getEncryptCommand: hashAlgorithm="+hashAlgorithm+"\n");
 
         try {
-            fromMailAddr = stripEmailAdr(ecom, fromMailAddr);
-            toMailAddr = stripEmailAdr(ecom, toMailAddr);
-            bccMailAddr = stripEmailAdr(ecom, bccMailAddr);
+            fromMailAddr = stripEmailAdr(fromMailAddr);
+            toMailAddr = stripEmailAdr(toMailAddr);
+            bccMailAddr = stripEmailAdr(bccMailAddr);
 
         } catch (ex) {
             errorMsgObj.value = Locale.getString("invalidEmail");
@@ -281,7 +280,7 @@ var Encryption = {
 
         EnigmailErrorHandling.parseErrorOutput(stderrStr, retStatusObj);
 
-        exitCode = ecom.fixExitCode(exitCode, retStatusObj.statusFlags);
+        exitCode = EnigmailGpgAgent.fixExitCode(exitCode, retStatusObj.statusFlags);
         if ((exitCode === 0) && !outputLen) {
             exitCode = -1;
         }

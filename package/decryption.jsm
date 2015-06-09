@@ -182,7 +182,7 @@ const Decryption = {
         }
 
         var statusMsg = retStatusObj.statusMsg;
-        exitCode = ecom.fixExitCode(exitCode, retStatusObj.statusFlags);
+        exitCode = EnigmailGpgAgent.fixExitCode(exitCode, retStatusObj.statusFlags);
         if ((exitCode === 0) && !noOutput && !outputLen &&
             ((retStatusObj.statusFlags & (STATUS_DECRYPTION_OK | STATUS_GOODSIG)) === 0)) {
             exitCode = -1;
