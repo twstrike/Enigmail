@@ -87,13 +87,13 @@ GpgEditorInterface.prototype = {
   },
 
   gotData: function(data) {
-    //Log.DEBUG("keyManagement.jsm: GpgEditorInterface.gotData: '"+data+"'\n");
+    //Log.DEBUG("keyEditor.jsm: GpgEditorInterface.gotData: '"+data+"'\n");
     this._data += data.replace(/\r\n/g, "\n");
     this.processData();
   },
 
   processData: function() {
-    //Log.DEBUG("keyManagement.jsm: GpgEditorInterface.processData\n");
+    //Log.DEBUG("keyEditor.jsm: GpgEditorInterface.processData\n");
     var txt = "";
     while (this._data.length > 0 && this._stdin) {
       var index = this._data.indexOf("\n");
@@ -110,7 +110,7 @@ GpgEditorInterface.prototype = {
   },
 
   closeStdin: function() {
-    Log.DEBUG("keyManagement.jsm: GpgEditorInterface.closeStdin:\n");
+    Log.DEBUG("keyEditor.jsm: GpgEditorInterface.closeStdin:\n");
     if (this._stdin) {
       this._stdin.close();
       this._stdin = null;
@@ -302,7 +302,7 @@ function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, call
                            }
                           );
     } catch (ex) {
-        Log.ERROR("keyManagement.jsm: editKey: "+command.path+" failed\n");
+        Log.ERROR("keyEditor.jsm: editKey: "+command.path+" failed\n");
         parentCallback(-1, "");
     }
 }

@@ -42,7 +42,7 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
-testing("keyManagement.jsm"); /*global editKey: false */
+testing("keyEditor.jsm"); /*global editKey: false */
 component("enigmail/prefs.jsm");
 component("enigmail/enigmailCore.jsm");
 component("enigmail/enigmailCommon.jsm");

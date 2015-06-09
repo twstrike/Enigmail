@@ -106,7 +106,7 @@ zip --must-match\
     modules/decryption.jsm \
     modules/data.jsm \
     modules/pipeConsole.jsm \
-    modules/keyManagement.jsm \
+    modules/keyEditor.jsm \
     modules/key.jsm \
     modules/mimeVerify.jsm \
     modules/installGnuPG.jsm \

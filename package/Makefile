@@ -28,7 +28,7 @@ MODFILES = \
            commonFuncs.jsm \
            enigmailGpgAgent.jsm \
            gpg.jsm \
-           keyManagement.jsm \
+           keyEditor.jsm \
            key.jsm \
            pipeConsole.jsm \
            encryption.jsm \

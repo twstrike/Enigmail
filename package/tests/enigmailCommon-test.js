@@ -164,7 +164,7 @@ function shouldHandleErrors() {
 }
 
 function shouldGetSecretKeys() {
-    Components.utils.import("resource://enigmail/keyManagement.jsm");
+    Components.utils.import("resource://enigmail/keyEditor.jsm");
     EnigmailCommon.enigmailSvc = initializeEnigmail();
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
