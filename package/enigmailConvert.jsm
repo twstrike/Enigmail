@@ -186,8 +186,6 @@ messageParseCallback = function (hdr, mime) {
   var self = this;
 
   try {
-    var enigmailSvc = Locale.getService();
-
     if (mime === null) {
       Log.DEBUG("enigmailConvert.jsm: messageParseCallback: MimeMessage is null\n");
       this.resolve(true);
