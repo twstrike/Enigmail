@@ -7,8 +7,13 @@
  */
 
 "use strict";
-do_subtest("mimeDecrypt-test.js");
+do_subtest("data-test.js");
 do_subtest("enigmailCommon-test.js");
 do_subtest("enigmailCore-test.js");
 do_subtest("enigmailErrorHandling-test.js");
+do_subtest("enigmailGpgAgent-test.js");
 do_subtest("enigmail-test.js");
+do_subtest("files-test.js");
+do_subtest("keyEditor-test.js");
+do_subtest("mimeDecrypt-test.js");
+do_subtest("rules-test.js");
