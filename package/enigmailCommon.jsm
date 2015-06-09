@@ -818,9 +818,9 @@ const EnigmailCommon = {
 
       var statusFlagsObj = {};
       var errorMsgObj = {};
-      var proc = this.encryptMessageStart(win, testUiFlags, fromMailAddr, "",
-                              "", hashAlgo, sendFlags,
-                              listener, statusFlagsObj, errorMsgObj);
+      var proc = Encryption.encryptMessageStart(win, testUiFlags, fromMailAddr, "",
+                                                "", hashAlgo, sendFlags,
+                                                listener, statusFlagsObj, errorMsgObj);
 
       if (!proc) {
         return 1;
@@ -832,9 +832,9 @@ const EnigmailCommon = {
       var exitCode = listener.exitCode;
 
       var retStatusObj = {};
-      exitCode = this.encryptMessageEnd(listener.stderrData, exitCode,
-                                        testUiFlags, sendFlags, 10,
-                                        retStatusObj);
+      exitCode = Encryption.encryptMessageEnd(listener.stderrData, exitCode,
+                                              testUiFlags, sendFlags, 10,
+                                              retStatusObj);
 
       if ((exitCode === 0) && !msgText) exitCode = 1;
       // if (exitCode > 0) exitCode = -exitCode;
@@ -877,22 +877,6 @@ const EnigmailCommon = {
 
     return 0;
   },
-
-  // returns subprocess object
-  encryptMessageStart: function (win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
-            hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj) {
-      // TODO: move completely
-      return Encryption.encryptMessageStart(this, win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj);
-  },
-
-  // returns exitCode
-  encryptMessageEnd: function (stderrStr, exitCode, uiFlags, sendFlags, outputLen, retStatusObj) {
-      // TODO: move completely
-      return Encryption.encryptMessageEnd(this, stderrStr, exitCode, uiFlags, sendFlags, outputLen, retStatusObj);
-  },
-
-
-
 
   getAttachmentFileName: function (parent, byteData) {
     Log.DEBUG("enigmailCommon.jsm: getAttachmentFileName\n");

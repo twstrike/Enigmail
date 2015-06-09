@@ -15,6 +15,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/commonFuncs.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -176,16 +177,16 @@ PgpMimeEncrypt.prototype = {
 
       var statusFlagsObj = {};
       var errorMsgObj = {};
-      this.proc = Ec.encryptMessageStart(this.win,
-                      this.enigSecurityInfo.UIFlags,
-                      this.enigSecurityInfo.senderEmailAddr,
-                      this.enigSecurityInfo.recipients,
-                      this.enigSecurityInfo.bccRecipients,
-                      this.hashAlgorithm,
-                      this.enigSecurityInfo.sendFlags,
-                      this,
-                      statusFlagsObj,
-                      errorMsgObj);
+      this.proc = Encryption.encryptMessageStart(this.win,
+                                                 this.enigSecurityInfo.UIFlags,
+                                                 this.enigSecurityInfo.senderEmailAddr,
+                                                 this.enigSecurityInfo.recipients,
+                                                 this.enigSecurityInfo.bccRecipients,
+                                                 this.hashAlgorithm,
+                                                 this.enigSecurityInfo.sendFlags,
+                                                 this,
+                                                 statusFlagsObj,
+                                                 errorMsgObj);
       if (! this.proc) throw Cr.NS_ERROR_FAILURE;
 
       this.cryptoBoundary = Ec.createMimeBoundary();
@@ -458,12 +459,12 @@ PgpMimeEncrypt.prototype = {
 
     let retStatusObj = {};
 
-    this.exitCode = Ec.encryptMessageEnd(this.statusStr,
-          exitCode,
-          this.enigSecurityInfo.UIFlags,
-          this.enigSecurityInfo.sendFlags,
-          this.dataLength,
-          retStatusObj);
+    this.exitCode = Encryption.encryptMessageEnd(this.statusStr,
+                                                 exitCode,
+                                                 this.enigSecurityInfo.UIFlags,
+                                                 this.enigSecurityInfo.sendFlags,
+                                                 this.dataLength,
+                                                 retStatusObj);
 
     if (this.exitCode !== 0)
       Dialog.alert(this.win, retStatusObj.errorMsg);

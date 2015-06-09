@@ -206,8 +206,10 @@ var Encryption = {
         return encryptArgs;
     },
 
-    encryptMessageStart: function(ecom, win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
+    encryptMessageStart: function(win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
                                   hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj) {
+        const ecom = EnigmailCore.getEnigmailCommon();
+
         Log.DEBUG("enigmailCommon.jsm: encryptMessageStart: uiFlags="+uiFlags+", from "+fromMailAddr+" to "+toMailAddr+", hashAlgorithm="+hashAlgorithm+" ("+Data.bytesToHex(Data.pack(sendFlags,4))+")\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
@@ -259,8 +261,9 @@ var Encryption = {
         return proc;
     },
 
-    encryptMessageEnd: function (ecom, stderrStr, exitCode, uiFlags, sendFlags, outputLen, retStatusObj)
-    {
+    encryptMessageEnd: function (stderrStr, exitCode, uiFlags, sendFlags, outputLen, retStatusObj) {
+        const ecom = EnigmailCore.getEnigmailCommon();
+
         Log.DEBUG("enigmailCommon.jsm: encryptMessageEnd: uiFlags="+uiFlags+", sendFlags="+Data.bytesToHex(Data.pack(sendFlags,4))+", outputLen="+outputLen+"\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
@@ -373,10 +376,10 @@ var Encryption = {
             });
 
 
-        var proc = ec.encryptMessageStart(parent, uiFlags,
-                                          fromMailAddr, toMailAddr, bccMailAddr,
-                                          null, sendFlags,
-                                          listener, statusFlagsObj, errorMsgObj);
+        var proc = Encryption.encryptMessageStart(parent, uiFlags,
+                                                  fromMailAddr, toMailAddr, bccMailAddr,
+                                                  null, sendFlags,
+                                                  listener, statusFlagsObj, errorMsgObj);
         if (! proc) {
             exitCodeObj.value = -1;
             Log.DEBUG("  <=== encryptMessage()\n");
@@ -387,10 +390,10 @@ var Encryption = {
         inspector.enterNestedEventLoop(0);
 
         var retStatusObj = {};
-        exitCodeObj.value = ec.encryptMessageEnd(Data.getUnicodeData(listener.stderrData), listener.exitCode,
-                                                 uiFlags, sendFlags,
-                                                 listener.stdoutData.length,
-                                                 retStatusObj);
+        exitCodeObj.value = Encryption.encryptMessageEnd(Data.getUnicodeData(listener.stderrData), listener.exitCode,
+                                                         uiFlags, sendFlags,
+                                                         listener.stdoutData.length,
+                                                         retStatusObj);
 
         statusFlagsObj.value = retStatusObj.statusFlags;
         errorMsgObj.value = retStatusObj.errorMsg;
