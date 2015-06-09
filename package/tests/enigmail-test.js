@@ -451,11 +451,11 @@ test(function setAgentPathDefaultValues() {
 test(function resolveToolPathDefaultValues() {
     withEnvironment({}, function(e) {
         newEnigmail(function(enigmail) {
-            enigmail.environment = e;
-            EnigmailGpgAgent.agentPath = "/usr/bin/gpg-agent";
-            var result = EnigmailGpgAgent.resolveToolPath("zip");
-            Assert.equal("/usr/bin/zip", result.path);
-            EnigmailGpgAgent.setAgentPath(null,enigmail);
+            resetting(EnigmailGpgAgent, 'agentPath', "/usr/bin/gpg-agent", function() {
+                enigmail.environment = e;
+                var result = EnigmailGpgAgent.resolveToolPath("zip");
+                Assert.equal("/usr/bin/zip", result.path);
+            });
         });
     });
 });
@@ -463,11 +463,11 @@ test(function resolveToolPathDefaultValues() {
 test(function resolveToolPathFromPATH() {
     withEnvironment({PATH: "/sbin"}, function(e) {
         newEnigmail(function(enigmail) {
-            enigmail.environment = e;
-            EnigmailGpgAgent.agentPath = null;
-            var result = EnigmailGpgAgent.resolveToolPath("route");
-            Assert.equal("/sbin/route", result.path);
-            EnigmailGpgAgent.setAgentPath(null,enigmail);
+            resetting(EnigmailGpgAgent, 'agentPath', "/usr/bin/gpg-agent", function() {
+                enigmail.environment = e;
+                var result = EnigmailGpgAgent.resolveToolPath("route");
+                Assert.equal("/sbin/route", result.path);
+            });
         });
     });
 });
