@@ -242,28 +242,9 @@ const EnigmailCommon = {
   },
 
   /**
-   * Parse error output from GnuPG
-   *
-   * @errOutput:    String - the output from GnuPG
-   * @retStatusObj: Object: {
-   *                  - statusMsg:       String - status message
-   *                  - statusFlags:     Number - status flags as defined in nsIEnigmail.
-   *                  - blockSeparation: String - list of blocks with markers.
-   *                  - extendedStatus:  String - space-separated list of additional status
-   *                                              information that could be useful for the caller
-   *
-   * @return: human readable error message from GnuPG
-   */
-  parseErrorOutput: function (errOutput, retStatusObj) {
-    // TODO: move completely
-    return EnigmailErrorHandling.parseErrorOutput(errOutput, retStatusObj);
-  },
-
-  /**
    * initialize this module
    */
-  initialize: function (enigmailSvc)
-  {
+  initialize: function (enigmailSvc) {
     this.enigmailSvc = enigmailSvc;
   },
 

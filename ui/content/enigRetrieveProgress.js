@@ -38,6 +38,7 @@
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 
 const Ec = EnigmailCommon;
 
@@ -215,7 +216,7 @@ function processEnd (progressBar, exitCode) {
       if (gErrorData.length > 0) {
         var statusFlagsObj={};
         var statusMsgObj={};
-        errorMsg=Ec.parseErrorOutput(gErrorData, statusFlagsObj, statusMsgObj);
+        errorMsg=EnigmailErrorHandling.parseErrorOutput(gErrorData, statusFlagsObj, statusMsgObj);
       }
     } catch (ex) {}
 

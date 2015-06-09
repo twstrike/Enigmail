@@ -42,6 +42,7 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 
 const Ec = EnigmailCommon;
 
@@ -291,7 +292,7 @@ function enigImportKeys (connType, txt, errorTxt) {
   else if (errorTxt) {
     let resStatusObj = {};
 
-    gEnigRequest.errorTxt = Ec.parseErrorOutput(errorTxt, resStatusObj) + "\n";
+    gEnigRequest.errorTxt = EnigmailErrorHandling.parseErrorOutput(errorTxt, resStatusObj) + "\n";
   }
 
   if (errorTxt.search(/^\[GNUPG:\] IMPORT_RES/m) >= 0) {

@@ -56,6 +56,7 @@ Cu.import("resource://enigmail/dialog.jsm");
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 const EC = EnigmailCore;
@@ -167,7 +168,7 @@ const Decryption = {
         retStatusObj.errorMsg    = "";
         retStatusObj.blockSeparation  = "";
 
-        var errorMsg = ecom.parseErrorOutput(stderrStr, retStatusObj);
+        var errorMsg = EnigmailErrorHandling.parseErrorOutput(stderrStr, retStatusObj);
         if (retStatusObj.statusFlags & STATUS_ERROR) {
             retStatusObj.errorMsg = errorMsg;
         }

@@ -42,7 +42,7 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
-testing("enigmailCommon.jsm");
+testing("enigmailCommon.jsm"); /*global EnigmailCommon: false, EnigmailErrorHandling: false */
 component("enigmail/enigmailCore.jsm");
 component("enigmail/prefs.jsm");
 
@@ -61,7 +61,7 @@ function shouldHandleNoDataErrors() {
     "[GNUPG:] NODATA 2\n" +
     "gpg: decrypt_message failed: Unknown system error\n";
 
-  var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
+  var result = EnigmailErrorHandling.parseErrorOutput(errorOutput, {});
 
   Assert.assertContains(result, "no valid OpenPGP data found");
 }
@@ -76,7 +76,7 @@ function shouldHandleErrorOutput() {
         "[GNUPG:] INV_SGNR 0 <strike.devtest@gmail.com>\n" +
         "gpg: [stdin]: clearsign failed: Operation cancelled\n";
   var retStatusObj = {};
-    EnigmailCommon.parseErrorOutput(errorOutput, retStatusObj);
+    EnigmailErrorHandling.parseErrorOutput(errorOutput, retStatusObj);
     Assert.assertContains(retStatusObj.statusMsg,"Missing Passphrase");
     Assert.equal(retStatusObj.extendedStatus, "");
 }
@@ -94,7 +94,7 @@ function shouldHandleFailedEncryption() {
            "gpg: decryption failed: Invalid packet\n" +
            "[GNUPG:] END_DECRYPTION";
 
-     var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
+     var result = EnigmailErrorHandling.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "decryption failed: Invalid packet");
 }
@@ -115,7 +115,7 @@ function shouldHandleSuccessfulImport() {
         "[GNUPG:] IMPORT_RES 2 0 1 1 1 0 0 0 0 1 1 0 0 0";
 
      EnigmailCommon.enigmailSvc = initializeEnigmail();
-     var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
+     var result = EnigmailErrorHandling.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "secret key imported");
 }
@@ -134,7 +134,7 @@ function shouldHandleUnverifiedSignature() {
     "[GNUPG:] USERID_HINT D535623BB60E9E71 anonymous strike <strike.devtest@gmail.com>\n" +
     "Use this key anyway? (y/N) y";
 
-     var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
+     var result = EnigmailErrorHandling.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "Use this key anyway");
 }
@@ -144,7 +144,7 @@ function shouldHandleEncryptionFailedNoPublicKey() {
          "[GNUPG:] INV_RECP 0 iapazmino@thoughtworks.com\n" +
          "gpg: salida3.xtxt: encryption failed: No public key";
 
-     var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
+     var result = EnigmailErrorHandling.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "No public key");
 }
@@ -158,7 +158,7 @@ function shouldHandleErrors() {
         "[GNUPG:] MISSING_PASSPHRASE \n" +
         "[GNUPG:] KEY_NOT_CREATED";
 
-     var result = EnigmailCommon.parseErrorOutput(errorOutput, {});
+     var result = EnigmailErrorHandling.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "Invalid IPC response");
 }

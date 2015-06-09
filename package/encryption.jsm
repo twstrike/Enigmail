@@ -50,6 +50,7 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/execution.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -278,7 +279,7 @@ var Encryption = {
             return -1;
         }
 
-        ecom.parseErrorOutput(stderrStr, retStatusObj);
+        EnigmailErrorHandling.parseErrorOutput(stderrStr, retStatusObj);
 
         exitCode = ecom.fixExitCode(exitCode, retStatusObj.statusFlags);
         if ((exitCode === 0) && !outputLen) {
