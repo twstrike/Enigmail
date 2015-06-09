@@ -258,10 +258,6 @@ interface nsIEnigmail : nsISupports
   boolean saveRulesFile();
   void clearRules();
 
-  /* smartcard functions */
-  string getCardStatus (out long exitCode,
-                        out wstring errorMsg);
-
   const long CARD_PIN_CHANGE       = 1;
   const long CARD_PIN_UNBLOCK      = 2;
   const long CARD_ADMIN_PIN_CHANGE = 3;

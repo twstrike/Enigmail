@@ -956,25 +956,6 @@ Enigmail.prototype = {
       return Decryption.decryptAttachment(parent, outFile, displayName, byteData, exitCodeObj, statusFlagsObj, errorMsgObj);
   },
 
-  getCardStatus: function(exitCodeObj, errorMsgObj) {
-    // TODO: move [card]
-    Log.DEBUG("enigmail.js: Enigmail.getCardStatus\n");
-    var args = Gpg.getStandardArgs(false);
-
-    args = args.concat(["--status-fd", "2", "--fixed-list-mode", "--with-colons", "--card-status"]);
-    var statusMsgObj = {};
-    var statusFlagsObj = {};
-
-    var outputTxt = Execution.execCmd(EnigmailGpgAgent.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
-
-    if ((exitCodeObj.value === 0) && !outputTxt) {
-      exitCodeObj.value = -1;
-      return "";
-    }
-
-    return outputTxt;
-  },
-
   showKeyPhoto: function(keyId, photoNumber, exitCodeObj, errorMsgObj) {
     // TODO: move [keys]
     Log.DEBUG("enigmail.js: Enigmail.showKeyPhoto, keyId="+keyId+" photoNumber="+photoNumber+"\n");

@@ -49,7 +49,6 @@ Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 
 const Card = {
     getCardStatus: function(exitCodeObj, errorMsgObj) {
-        // TODO: finish
         Log.DEBUG("enigmail.js: Enigmail.getCardStatus\n");
         const args = Gpg.getStandardArgs(false).
                   concat(["--status-fd", "2", "--fixed-list-mode", "--with-colons", "--card-status"]);

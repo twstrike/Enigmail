@@ -42,6 +42,7 @@ Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+Components.utils.import("resource://enigmail/card.jsm"); /*global Card: false */
 
 const Ec = EnigmailCommon;
 
@@ -62,7 +63,7 @@ function onLoad() {
   }
   catch(ex) {}
 
-  var cardStr = enigmailSvc.getCardStatus(exitCodeObj, errorMsgObj);
+  var cardStr = Card.getCardStatus(exitCodeObj, errorMsgObj);
   if (exitCodeObj.value === 0) {
     var statusList=cardStr.split(/[\r\n]+/);
     for (var i=0; i<statusList.length; i++) {
