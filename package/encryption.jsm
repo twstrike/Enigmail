@@ -92,7 +92,7 @@ function stripEmailAdr(mailAddrs) {
 
 var Encryption = {
     getEncryptCommand: function (fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj) {
-        Log.DEBUG("enigmailCommon.jsm: getEncryptCommand: hashAlgorithm="+hashAlgorithm+"\n");
+        Log.DEBUG("encryption.jsm: getEncryptCommand: hashAlgorithm="+hashAlgorithm+"\n");
 
         try {
             fromMailAddr = stripEmailAdr(fromMailAddr);
@@ -238,7 +238,7 @@ var Encryption = {
             return null;
         }
 
-        var encryptArgs = ecom.getEncryptCommand(fromMailAddr, toMailAddr, bccMailAddr, hashAlgo, sendFlags, ENC_TYPE_MSG, errorMsgObj);
+        var encryptArgs = Encryption.getEncryptCommand(fromMailAddr, toMailAddr, bccMailAddr, hashAlgo, sendFlags, ENC_TYPE_MSG, errorMsgObj);
         if (! encryptArgs)
             return null;
 
