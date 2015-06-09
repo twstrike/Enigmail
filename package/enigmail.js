@@ -62,6 +62,8 @@ Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 Cu.import("resource://enigmail/commonFuncs.jsm"); /*global EnigmailFuncs: false */
+Cu.import("resource://enigmail/keyManagement.jsm"); /*global EnigmailKeyMgmt: false */
+Cu.import("resource://enigmail/armor.jsm"); /*global Armor: false */
 
 /* Implementations supplied by this module */
 const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";
@@ -329,6 +331,18 @@ Enigmail.prototype = {
       return Encryption.encryptMessage(this, Ec, parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, exitCodeObj, statusFlagsObj, errorMsgObj);
   },
 
+  locateArmoredBlock: function (text, offset, indentStr, beginIndexObj, endIndexObj, indentStrObj) {
+      return Armor.locateArmoredBlock(text, offset, indentStr, beginIndexObj, endIndexObj, indentStrObj);
+  },
+
+  locateArmoredBlocks: function(text) {
+      return Armor.locateArmoredBlocks(text);
+  },
+
+  extractSignaturePart: function (signatureBlock, part) {
+      return Armor.extractSignaturePart(signatureBlock, part);
+  },
+
   statusObjectFrom: function (signatureObj, exitCodeObj, statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj, blockSeparationObj, encToDetailsObj) {
     // TODO: move [decryption]
     return {
@@ -543,6 +557,10 @@ Enigmail.prototype = {
     }
 
     return exitCodeObj.value;
+  },
+
+  importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj) {
+    return EnigmailKeyMgmt.importKeyFromFile(parent,inputFile,errorMsgObj,importedKeysObj);
   },
 
   createMessageURI: function (originalUrl, contentType, contentCharset, contentData, persist) {
