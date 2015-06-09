@@ -236,11 +236,6 @@ var Encryption = {
             return null;
         }
 
-        if (ecom.keygenProcess) {
-            errorMsgObj.value = Locale.getString("notComplete");
-            return null;
-        }
-
         var encryptArgs = Encryption.getEncryptCommand(fromMailAddr, toMailAddr, bccMailAddr, hashAlgo, sendFlags, ENC_TYPE_MSG, errorMsgObj);
         if (! encryptArgs)
             return null;

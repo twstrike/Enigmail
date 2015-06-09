@@ -243,7 +243,7 @@ function enigDetermineGpgPath() {
       gEnigmailSvc = ENIG_C[ENIG_ENIGMAIL_CONTRACTID].createInstance(ENIG_I.nsIEnigmail);
       if (! gEnigmailSvc.initialized) {
         // attempt to initialize Enigmail
-        gEnigmailSvc.initialize(window, EnigGetVersion(), gPrefEnigmail);
+        gEnigmailSvc.initialize(window, EnigGetVersion());
       }
     } catch (ex) {}
   }

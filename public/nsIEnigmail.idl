@@ -51,8 +51,7 @@ interface nsIEnigmail : nsISupports
   attribute boolean initializationAttempted;
   readonly attribute string initializationError;
 
-  void initialize(in nsIDOMWindow domWindow, in string version,
-                  in nsIPrefBranch enigmailPrefs);
+  void initialize(in nsIDOMWindow domWindow, in string version);
   void reinitialize();
   void finalize();
   boolean useGpgAgent();     /* is gpg-agent used */

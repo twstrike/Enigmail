@@ -156,7 +156,7 @@ const EnigmailCommon = {
       try {
         // Initialize enigmail
         EnigmailCore.init(App.getVersion());
-        this.enigmailSvc.initialize(win, App.getVersion(), Prefs.getPrefBranch());
+        this.enigmailSvc.initialize(win, App.getVersion());
 
         try {
           // Reset alert count to default value

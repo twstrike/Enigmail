@@ -191,6 +191,6 @@ function shouldGetSecretKeys() {
 var initializeEnigmail = function() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     var window = JSUnit.createStubWindow();
-    enigmail.initialize(window, "", Prefs.getPrefBranch());
+    enigmail.initialize(window, "");
     return enigmail;
 };

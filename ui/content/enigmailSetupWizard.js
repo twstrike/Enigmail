@@ -53,7 +53,6 @@ var gEnigAccountMgr;
 var gPubkeyFile = {value: null};
 var gSeckeyFile = {value: null};
 var gCreateNewKey=false;
-var gPrefEnigmail;
 var gDownoadObj = null;
 var gPassPhraseQuality = null;
 var gPageStack = [];  // required for correct stepping back
@@ -749,17 +748,13 @@ function enigGetSvc(resetCheck) {
   if (!gEnigmailSvc.initialized) {
     // Try to initialize enigmail
 
-    if (! gPrefEnigmail) {
-      gPrefEnigmail = Prefs.getPrefBranch();
-    }
-
     try {
       // Initialize enigmail
-      gEnigmailSvc.initialize(window, EnigGetVersion(), gPrefEnigmail);
+      gEnigmailSvc.initialize(window, EnigGetVersion());
 
       try {
         // Reset alert count to default value
-        gPrefEnigmail.clearUserPref("initAlert");
+        Prefs.getPrefBranch().clearUserPref("initAlert");
       } catch(ex) {}
 
     } catch (ex) {

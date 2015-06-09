@@ -66,6 +66,7 @@ Cu.import("resource://enigmail/commonFuncs.jsm"); /*global EnigmailFuncs: false 
 Cu.import("resource://enigmail/keyManagement.jsm"); /*global EnigmailKeyMgmt: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global Armor: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
+Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 
 /* Implementations supplied by this module */
 const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";
@@ -123,7 +124,6 @@ function Enigmail() {
 }
 
 Enigmail.prototype = {
-
   classDescription: "Enigmail",
   classID:  NS_ENIGMAIL_CID,
   contractID: NS_ENIGMAIL_CONTRACTID,
@@ -133,8 +133,6 @@ Enigmail.prototype = {
   initializationError: "",
 
   prefBranch: null,
-  keygenProcess: null,  // TODO: remove me
-  keygenConsole: null,
 
   userIdList: null,
   secretKeyList: null,
@@ -164,17 +162,11 @@ Enigmail.prototype = {
   },
 
   getLogDirectoryPrefix: function () {
-    // TODO: move [???]
-    var logDirectory = "";
     try {
-      logDirectory = this.prefBranch.getCharPref("logDirectory");
+      return this.prefBranch.getCharPref("logDirectory") || "";
     } catch (ex) {
-    }
-
-    if (!logDirectory)
       return "";
-
-    return logDirectory;
+    }
   },
 
 
@@ -192,10 +184,10 @@ Enigmail.prototype = {
   },
 
 
-  initialize: function (domWindow, version, prefBranch) {
+  initialize: function (domWindow, version) {
     this.initializationAttempted = true;
 
-    this.prefBranch = prefBranch;
+    this.prefBranch = Prefs.getPrefBranch();
 
     Log.DEBUG("enigmail.js: Enigmail.initialize: START\n");
     if (this.initialized) return;
