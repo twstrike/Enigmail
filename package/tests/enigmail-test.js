@@ -51,12 +51,12 @@ component("enigmail/armor.jsm");
 component("enigmail/keyManagement.jsm");
 component("enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
 
-test(shouldLocateArmoredBlock);
-test(shouldExtractSignaturePart);
-test(shouldGetKeyDetails);
-test(shouldSignMessage);
-test(shouldEncryptMessage);
-test(shouldDecryptMessage);
+test(withTestGpgHome(shouldLocateArmoredBlock));
+test(withTestGpgHome(shouldExtractSignaturePart));
+test(withTestGpgHome(shouldGetKeyDetails));
+test(withTestGpgHome(shouldSignMessage));
+test(withTestGpgHome(shouldEncryptMessage));
+test(withTestGpgHome(shouldDecryptMessage));
 
 function initializeService(enigmail) {
     var window = JSUnit.createStubWindow();

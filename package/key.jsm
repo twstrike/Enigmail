@@ -82,7 +82,7 @@ Key.prototype = {
         }
         var lines = key.split("\n");
         for (var i in  lines) {
-            extractPackets(lines[i]);
+            if(!lines[i].startsWith("gpg:")) extractPackets(lines[i]);
         }
         return _packets;
     },

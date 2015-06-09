@@ -49,11 +49,11 @@ component("enigmail/prefs.jsm");
 test(shouldHandleNoDataErrors);
 test(shouldHandleErrorOutput);
 test(shouldHandleFailedEncryption);
-test(shouldHandleSuccessfulImport);
+test(withTestGpgHome(shouldHandleSuccessfulImport));
 test(shouldHandleUnverifiedSignature);
 test(shouldHandleEncryptionFailedNoPublicKey);
 test(shouldHandleErrors);
-test(shouldGetSecretKeys);
+test(withTestGpgHome(shouldGetSecretKeys));
 
 function shouldHandleNoDataErrors() {
   var errorOutput = "gpg: no valid OpenPGP data found.\n" +

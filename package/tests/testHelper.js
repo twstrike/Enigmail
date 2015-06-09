@@ -77,11 +77,7 @@ var TestHelper = {
         }
         if(TestHelper.allTests) {
             for(var i=0; i < TestHelper.allTests.length; i++) {
-                var homedir = this.initalizeGpgHome();
-                try{ TestHelper.allTests[i]();}
-                finally{
-                    this.removeGpgHome(homedir);
-                }
+                TestHelper.allTests[i]();
             }
         }
     },
@@ -141,6 +137,18 @@ function withEnvironment(vals, f) {
     } finally {
         for(let key in oldVals) {
             environment.set(key, oldVals[key]);
+        }
+    }
+}
+
+function withTestGpgHome(f){
+    return function(){
+        var homedir = initalizeGpgHome();
+        try{
+            f();
+        }
+        finally{
+            removeGpgHome(homedir);
         }
     }
 }

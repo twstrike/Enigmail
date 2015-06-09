@@ -279,7 +279,6 @@ var EnigmailKeyMgmt = {
                              outputData.key+=stdout;
                          },
                          function (result) {
-                             Log.DEBUG(result);
                              if(callbackFunc) callbackFunc(outputData,result);
                              if(parentCallback) parentCallback(outputData,result);
                          }

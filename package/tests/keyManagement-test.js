@@ -1,5 +1,5 @@
 /*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false */
-/*global Ec: false, Cc: false, Ci: false, do_print: false, EnigmailCore: false, EnigmailKeyMgmt: false, EnigmailCommon: false, Components: false, Log: false, component: false, Prefs: false, Execution: false */
+/*global Ec: false, Cc: false, Ci: false, do_print: false, EnigmailCore: false, EnigmailKeyMgmt: false, EnigmailCommon: false, Components: false, component: false, Prefs: false, Execution: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -49,15 +49,14 @@ component("enigmail/enigmailCommon.jsm");
 component("enigmail/execution.jsm");
 component("enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
 
-initializeEnigmail();
-test(importKeyForEdit);
-test(shouldExecCmd);
-test(shouldEditKey);
-test(shouldSetTrust);
-test(shouldSignKey);
-test(shouldReadKeyFromFile);
-test(shouldReadKeyFromText);
-test(shouldReadKeyObjectFromFile);
+test(withTestGpgHome(importKeyForEdit));
+test(withTestGpgHome(shouldExecCmd));
+test(withTestGpgHome(shouldEditKey));
+test(withTestGpgHome(shouldSetTrust));
+test(withTestGpgHome(shouldSignKey));
+test(withTestGpgHome(shouldReadKeyFromFile));
+test(withTestGpgHome(shouldReadKeyFromText));
+test(withTestGpgHome(shouldReadKeyObjectFromFile));
 
 function shouldExecCmd() {
     var window = JSUnit.createStubWindow();
@@ -89,7 +88,6 @@ function shouldExecCmd() {
 }
 
 function shouldReadKeyFromFile() {
-    Log.setLogLevel(5);
     var window = JSUnit.createStubWindow();
     var outputData = {};
     EnigmailKeyMgmt.readKey(
@@ -113,24 +111,25 @@ function shouldReadKeyFromFile() {
 }
 
 function shouldReadKeyObjectFromFile() {
-    Log.setLogLevel(5);
+    do_test_pending();
     var window = JSUnit.createStubWindow();
     var outputData = {};
+    var keyFile = do_get_file("resources/dev-strike.asc", false);
     EnigmailKeyMgmt.readKeyObjectFromFile(
         window,
-        "resources/dev-strike.asc",
+        keyFile.path,
         function (output,result){
             outputData = output;
             Assert.equal(result.exitCode, 0);
+            Assert.assertContains(outputData.keyObj.primaryKey.value,"keyid: 781617319CE311C4");
+            Assert.equal(outputData.keyObj.users.length,2);
+            Assert.equal(outputData.keyObj.subKeys.length,2);
+            do_test_finished();
         }
     );
-    Assert.assertContains(outputData.keyObj.primaryKey.value,"keyid: 781617319CE311C4");
-    Assert.equal(outputData.keyObj.users.length,2);
-    Assert.equal(outputData.keyObj.subKeys.length,2);
 }
 
 function shouldReadKeyFromText() {
-    Log.setLogLevel(5);
     var window = JSUnit.createStubWindow();
     var outputData = {};
     EnigmailKeyMgmt.readKey(
@@ -313,6 +312,7 @@ function shouldReadKeyFromText() {
 }
 
 function shouldEditKey() {
+    importKeyForEdit();
     do_test_pending();
     var window = JSUnit.createStubWindow();
     EnigmailKeyMgmt.editKey(
@@ -338,6 +338,7 @@ function shouldEditKey() {
 }
 
 function shouldSetTrust() {
+    importKeyForEdit();
     do_test_pending();
     var window = JSUnit.createStubWindow();
     EnigmailKeyMgmt.setKeyTrust(window,
@@ -352,6 +353,7 @@ function shouldSetTrust() {
 }
 
 function shouldSignKey() {
+    importKeyForEdit();
     do_test_pending();
     var window = JSUnit.createStubWindow();
     EnigmailKeyMgmt.signKey(window,
@@ -368,6 +370,7 @@ function shouldSignKey() {
 }
 
 function importKeyForEdit() {
+    initializeEnigmail();
     var window = JSUnit.createStubWindow();
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
