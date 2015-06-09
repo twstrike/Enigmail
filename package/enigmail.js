@@ -1010,61 +1010,8 @@ Enigmail.prototype = {
   },
 
 
-  decryptAttachment: function (parent, outFile, displayName, byteData,
-            exitCodeObj, statusFlagsObj, errorMsgObj) {
-    // TODO: move [decryption]
-    Log.DEBUG("enigmail.js: Enigmail.decryptAttachment: parent="+parent+", outFileName="+outFile.path+"\n");
-
-    var attachmentHead = byteData.substr(0,200);
-    if (attachmentHead.match(/\-\-\-\-\-BEGIN PGP \w+ KEY BLOCK\-\-\-\-\-/)) {
-      // attachment appears to be a PGP key file
-
-      if (Dialog.confirmDlg(parent, Locale.getString("attachmentPgpKey", [ displayName ]),
-            Locale.getString("keyMan.button.import"), Locale.getString("dlg.button.view"))) {
-        exitCodeObj.value = this.importKey(parent, 0, byteData, "", errorMsgObj);
-        statusFlagsObj.value = nsIEnigmail.IMPORTED_KEY;
-      }
-      else {
-        exitCodeObj.value = 0;
-        statusFlagsObj.value = nsIEnigmail.DISPLAY_MESSAGE;
-      }
-      return true;
-    }
-
-    var outFileName = Files.getEscapedFilename(Files.getFilePathReadonly(outFile.QueryInterface(Ci.nsIFile), NS_WRONLY));
-
-    var args = EnigmailGpgAgent.getAgentArgs(true);
-    args = args.concat(["-o", outFileName, "--yes"]);
-    args = args.concat(Ec.passwdCommand());
-    args.push("-d");
-
-
-    statusFlagsObj.value = 0;
-
-    var listener = Execution.newSimpleListener(
-      function _stdin(pipe) {
-        pipe.write(byteData);
-        pipe.close();
-      });
-
-
-    var proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, parent,
-                                   listener, statusFlagsObj);
-
-    if (!proc) {
-      return false;
-    }
-
-    // Wait for child STDOUT to close
-    proc.wait();
-
-    var statusMsgObj = {};
-    var cmdLineObj   = {};
-
-    exitCodeObj.value = Execution.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
-
-    return true;
-
+  decryptAttachment: function (parent, outFile, displayName, byteData, exitCodeObj, statusFlagsObj, errorMsgObj) {
+      return Decryption.decryptAttachment(parent, outFile, displayName, byteData, exitCodeObj, statusFlagsObj, errorMsgObj);
   },
 
   getCardStatus: function(exitCodeObj, errorMsgObj) {

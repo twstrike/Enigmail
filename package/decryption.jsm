@@ -55,6 +55,7 @@ Cu.import("resource://enigmail/execution.jsm");
 Cu.import("resource://enigmail/dialog.jsm");
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 const EC = EnigmailCore;
@@ -63,6 +64,7 @@ const STATUS_ERROR = nsIEnigmail.BAD_SIGNATURE | nsIEnigmail.DECRYPTION_FAILED;
 const STATUS_DECRYPTION_OK = nsIEnigmail.DECRYPTION_OKAY;
 const STATUS_GOODSIG = nsIEnigmail.GOOD_SIGNATURE;
 
+const NS_WRONLY      = 0x02;
 
 function statusObjectFrom(signatureObj, exitCodeObj, statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj, blockSeparationObj, encToDetailsObj) {
     return {
@@ -692,5 +694,64 @@ const Decryption = {
         }
 
         return text;
+    },
+
+    decryptAttachment: function (parent, outFile, displayName, byteData,
+                                 exitCodeObj, statusFlagsObj, errorMsgObj) {
+        const esvc = EnigmailCore.getEnigmailSvc();
+        const ec = EnigmailCore.getEnigmailCommon();
+
+        Log.DEBUG("enigmail.js: Enigmail.decryptAttachment: parent="+parent+", outFileName="+outFile.path+"\n");
+
+        var attachmentHead = byteData.substr(0,200);
+        if (attachmentHead.match(/\-\-\-\-\-BEGIN PGP \w+ KEY BLOCK\-\-\-\-\-/)) {
+            // attachment appears to be a PGP key file
+
+            if (Dialog.confirmDlg(parent, Locale.getString("attachmentPgpKey", [ displayName ]),
+                                  Locale.getString("keyMan.button.import"), Locale.getString("dlg.button.view"))) {
+                exitCodeObj.value = esvc.importKey(parent, 0, byteData, "", errorMsgObj);
+                statusFlagsObj.value = nsIEnigmail.IMPORTED_KEY;
+            }
+            else {
+                exitCodeObj.value = 0;
+                statusFlagsObj.value = nsIEnigmail.DISPLAY_MESSAGE;
+            }
+            return true;
+        }
+
+        var outFileName = Files.getEscapedFilename(Files.getFilePathReadonly(outFile.QueryInterface(Ci.nsIFile), NS_WRONLY));
+
+        var args = EnigmailGpgAgent.getAgentArgs(true);
+        args = args.concat(["-o", outFileName, "--yes"]);
+        args = args.concat(ec.passwdCommand());
+        args.push("-d");
+
+
+        statusFlagsObj.value = 0;
+
+        var listener = Execution.newSimpleListener(
+            function _stdin(pipe) {
+                pipe.write(byteData);
+                pipe.close();
+            });
+
+
+        var proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, parent,
+                                       listener, statusFlagsObj);
+
+        if (!proc) {
+            return false;
+        }
+
+        // Wait for child STDOUT to close
+        proc.wait();
+
+        var statusMsgObj = {};
+        var cmdLineObj   = {};
+
+        exitCodeObj.value = Execution.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
+
+        return true;
+
     }
 };
