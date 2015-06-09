@@ -2167,7 +2167,7 @@ Enigmail.msg = {
            return false;
          }
          else {
-           var promptSvc = EnigmailCommon.getPromptSvc();
+           var promptSvc = Dialog.getPromptSvc();
            var prefAlgo = Prefs.getPref("mimePreferPgp");
            if (prefAlgo == 1) {
              var checkedObj={ value: null};
@@ -2745,7 +2745,7 @@ Enigmail.msg = {
     const SIGN    = nsIEnigmail.SEND_SIGNED;
     const ENCRYPT = nsIEnigmail.SEND_ENCRYPTED;
     const CiMsgCompDeliverMode = Components.interfaces.nsIMsgCompDeliverMode;
-    var promptSvc = EnigmailCommon.getPromptSvc();
+    var promptSvc = Dialog.getPromptSvc();
 
     var gotSendFlags = this.sendMode;
     // here we process the final state:
@@ -3569,11 +3569,11 @@ Enigmail.msg = {
       if (warn) {
           var checkValue = {value:false};
           var bundle = document.getElementById("bundle_composeMsgs");
-          var buttonPressed = EnigmailCommon.getPromptSvc().confirmEx(window,
+          var buttonPressed = Dialog.getPromptSvc().confirmEx(window,
                 bundle.getString('sendMessageCheckWindowTitle'),
                 bundle.getString('sendMessageCheckLabel'),
-                (EnigmailCommon.getPromptSvc().BUTTON_TITLE_IS_STRING * EnigmailCommon.getPromptSvc().BUTTON_POS_0) +
-                (EnigmailCommon.getPromptSvc().BUTTON_TITLE_CANCEL * EnigmailCommon.getPromptSvc().BUTTON_POS_1),
+                (Dialog.getPromptSvc().BUTTON_TITLE_IS_STRING * Dialog.getPromptSvc().BUTTON_POS_0) +
+                (Dialog.getPromptSvc().BUTTON_TITLE_CANCEL * Dialog.getPromptSvc().BUTTON_POS_1),
                 bundle.getString('sendMessageCheckSendButtonLabel'),
                 null, null,
                 bundle.getString('CheckMsg'),

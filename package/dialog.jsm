@@ -386,4 +386,10 @@ const Dialog = {
         return filePicker.file.QueryInterface(Ci.nsIFile);
     },
 
+    /**
+     * return a pre-initialized prompt service
+     */
+    getPromptSvc: function() {
+        return gPromptSvc;
+    }
 };

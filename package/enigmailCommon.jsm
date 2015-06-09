@@ -68,13 +68,10 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const nsIEnigmail = Ci.nsIEnigmail;
 
-const NS_STRING_INPUT_STREAM_CONTRACTID = "@mozilla.org/io/string-input-stream;1";
-const NS_INPUT_STREAM_CHNL_CONTRACTID = "@mozilla.org/network/input-stream-channel;1";
+const ENIGMAIL_CONTRACTID = "@mozdev.org/enigmail/enigmail;1";
 
 const KEYTYPE_DSA = 1;
 const KEYTYPE_RSA = 2;
-
-var gPromptSvc = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
 
 var gEncryptedUris = [];
 
@@ -86,18 +83,11 @@ const gMimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha
 var gKeygenProcess = null;
 
 const EnigmailCommon = {
-  // "constants"
   POSSIBLE_PGPMIME: -2081,
-  PGP_DESKTOP_ATT : -2082,
 
-  MSG_BUFFER_SIZE:  96000,
-  MSG_HEADER_SIZE:  16000,
-
-  ENIGMAIL_CONTRACTID: "@mozdev.org/enigmail/enigmail;1",
   IOSERVICE_CONTRACTID: "@mozilla.org/network/io-service;1",
   LOCAL_FILE_CONTRACTID: "@mozilla.org/file/local;1",
   MIME_CONTRACTID: "@mozilla.org/mime;1",
-  SIMPLEURI_CONTRACTID: "@mozilla.org/network/simple-uri;1",
 
   // possible values for
   // - encryptByRule, signByRules, pgpmimeByRules
@@ -145,7 +135,7 @@ const EnigmailCommon = {
     }
 
     try {
-      this.enigmailSvc = Cc[this.ENIGMAIL_CONTRACTID].createInstance(Ci.nsIEnigmail);
+      this.enigmailSvc = Cc[ENIGMAIL_CONTRACTID].createInstance(Ci.nsIEnigmail);
     }
     catch (ex) {
       Log.ERROR("enigmailCommon.jsm: Error in instantiating EnigmailService: "+ex+"\n");
@@ -224,12 +214,6 @@ const EnigmailCommon = {
     return this.enigmailSvc.initialized ? this.enigmailSvc : null;
   },
 
-  /**
-   * return a pre-initialized prompt service
-   */
-  getPromptSvc: function() {
-    return gPromptSvc;
-  },
 
   /**
    * initialize this module

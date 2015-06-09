@@ -64,12 +64,6 @@ var gEnigPromptSvc;
 
 
 // Maximum size of message directly processed by Enigmail
-const ENIG_MSG_BUFFER_SIZE = 96000;
-const ENIG_MSG_HEADER_SIZE = 16000;
-const ENIG_UNLIMITED_BUFFER_SIZE = -1;
-
-const ENIG_KEY_BUFFER_SIZE = 64000;
-
 const ENIG_PROCESSINFO_CONTRACTID = "@mozilla.org/xpcom/process-info;1";
 const ENIG_ENIGMAIL_CONTRACTID    = "@mozdev.org/enigmail/enigmail;1";
 const ENIG_STRINGBUNDLE_CONTRACTID = "@mozilla.org/intl/stringbundle;1";
