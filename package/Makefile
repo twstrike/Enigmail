@@ -30,6 +30,7 @@ MODFILES = \
            gpg.jsm \
            keyEditor.jsm \
            key.jsm \
+           keyRing.jsm \
            pipeConsole.jsm \
            encryption.jsm \
            decryption.jsm \

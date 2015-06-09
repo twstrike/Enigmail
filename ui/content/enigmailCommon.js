@@ -55,6 +55,7 @@ Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 const EC = EnigmailCore;
 
@@ -568,7 +569,7 @@ function EnigRevokeKey(keyId, userId, callbackFunc) {
       }
       var errorMsgObj = {};
       var keyList = {};
-      var r = KeyEditor.importKeyFromFile(window, revFile, errorMsgObj, keyList);
+      var r = KeyRing.importKeyFromFile(window, revFile, errorMsgObj, keyList);
       revFile.remove(false);
       if (r !== 0) {
         EnigAlert(EnigGetString("revokeKeyFailed")+"\n\n"+EnigConvertGpgToUnicode(errorMsgObj.value));

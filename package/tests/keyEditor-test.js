@@ -44,6 +44,7 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("keyEditor.jsm"); /*global editKey: false */
 component("enigmail/prefs.jsm");
+component("enigmail/keyRing.jsm"); /*global KeyRing: false */
 component("enigmail/enigmailCore.jsm");
 component("enigmail/enigmailCommon.jsm");
 component("enigmail/execution.jsm");
@@ -149,7 +150,7 @@ function importKeyForEdit() {
     var publicKey = do_get_file("resources/dev-strike.asc", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-    var importResult = KeyEditor.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
+    var importResult = KeyRing.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
     Assert.equal(importResult, 0);
 }
 

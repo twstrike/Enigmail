@@ -108,6 +108,7 @@ zip --must-match\
     modules/pipeConsole.jsm \
     modules/keyEditor.jsm \
     modules/key.jsm \
+    modules/keyRing.jsm \
     modules/mimeVerify.jsm \
     modules/installGnuPG.jsm \
     modules/enigmailGpgAgent.jsm \

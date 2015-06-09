@@ -44,6 +44,7 @@ Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 // const Ec is already defined in enigmailKeygen.js
 
@@ -478,7 +479,7 @@ function importKeyFiles() {
 
   var errorMsgObj = {};
   var keyListObj = {};
-  exitCode = KeyEditor.importKeyFromFile(window, gPubkeyFile.value, errorMsgObj, keyListObj);
+  exitCode = KeyRing.importKeyFromFile(window, gPubkeyFile.value, errorMsgObj, keyListObj);
   if (exitCode !== 0) {
     EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
     return false;
@@ -488,7 +489,7 @@ function importKeyFiles() {
   if (document.getElementById("privateKeysFile").value.trim().length > 0) {
     Log.DEBUG("enigmailSetupWizard.js: importKeyFiles - private Keys\n");
 
-    exitCode = KeyEditor.importKeyFromFile(window, gSeckeyFile.value, errorMsgObj, keyListObj);
+    exitCode = KeyRing.importKeyFromFile(window, gSeckeyFile.value, errorMsgObj, keyListObj);
     if (exitCode !== 0) {
       EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
       return false;

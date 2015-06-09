@@ -314,66 +314,6 @@ function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, call
  * returnCode != 0 and errorMsg set in case of failure
 */
 const KeyEditor = {
-
-  importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj){
-    Log.setLogLevel(5);
-    var enigmailSvc = Ec.getService(parent);
-    if (!enigmailSvc) {
-      Log.ERROR("keyManagmenent.jsm: Enigmail.importKeyFromFile: not yet initialized\n");
-      errorMsgObj.value = Locale.getString("notInit");
-      return 1;
-    }
-
-    var command= EnigmailGpgAgent.agentPath;
-    var args = Gpg.getStandardArgs(false);
-    Log.DEBUG("enigmail.js: Enigmail.importKeyFromFile: fileName="+inputFile.path+"\n");
-    importedKeysObj.value="";
-
-    var fileName=Files.getEscapedFilename((inputFile.QueryInterface(Ci.nsIFile)).path);
-
-    args.push("--import");
-    args.push(fileName);
-
-    var statusFlagsObj = {};
-    var statusMsgObj   = {};
-    var exitCodeObj    = {};
-
-    var output = Execution.execCmd(command, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
-    Log.ERROR("enigmail.js: Enigmail.importKeyFromFile: error="+errorMsgObj.value+"\n");
-
-    var statusMsg = statusMsgObj.value;
-
-    var keyList = [];
-
-    if (exitCodeObj.value === 0) {
-      // Normal return
-      enigmailSvc.invalidateUserIdList();
-
-      var statusLines = statusMsg.split(/\r?\n/);
-
-      // Discard last null string, if any
-
-      for (var j=0; j<statusLines.length; j++) {
-        var matches = statusLines[j].match(/IMPORT_OK ([0-9]+) (\w+)/);
-        if (matches && (matches.length > 2)) {
-          if (typeof (keyList[matches[2]]) != "undefined") {
-            keyList[matches[2]] |= Number(matches[1]);
-          }
-          else
-            keyList[matches[2]] = Number(matches[1]);
-
-          Log.DEBUG("enigmail.js: Enigmail.importKey: imported "+matches[2]+":"+matches[1]+"\n");
-        }
-      }
-
-      for (j in keyList) {
-        importedKeysObj.value += j+":"+keyList[j]+";";
-      }
-    }
-
-    return exitCodeObj.value;
-  },
-
   setKeyTrust: function (parent, keyId, trustLevel, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.setKeyTrust: trustLevel="+trustLevel+", keyId="+keyId+"\n");
 

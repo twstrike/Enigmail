@@ -36,6 +36,7 @@
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
 Components.utils.import("resource://enigmail/keyEditor.jsm");
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
@@ -910,7 +911,7 @@ function enigmailImportKeysFromFile() {
 
   var errorMsgObj = {};
   var keyListObj = {};
-  var exitCode = KeyEditor.importKeyFromFile(window, inFile, errorMsgObj, keyListObj);
+  var exitCode = KeyRing.importKeyFromFile(window, inFile, errorMsgObj, keyListObj);
   if (exitCode !== 0) {
     EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
   }
