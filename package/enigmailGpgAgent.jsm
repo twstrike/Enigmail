@@ -40,6 +40,7 @@ const EXPORTED_SYMBOLS = [ "EnigmailGpgAgent" ];
 
 const Cu = Components.utils;
 
+Cu.import("resource://gre/modules/ctypes.jsm"); /*global ctypes: false */
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
@@ -50,7 +51,7 @@ Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/app.jsm"); /*global App: false */
-Cu.import("resource://gre/modules/ctypes.jsm"); /*global ctypes: false */
+Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -114,7 +115,6 @@ function extractAgentInfo(fullStr) {
 const EnigmailGpgAgent = {
     agentType: "",
     agentPath: null,
-    agentVersion: "",
     connGpgAgentPath: null,
     gpgconfPath: null,
     gpgAgentInfo: {preStarted: false, envStr: ""},
@@ -132,11 +132,11 @@ const EnigmailGpgAgent = {
         var useAgent = false;
 
         try {
-            if (OS.isDosLike() && !Ec.getGpgFeature("supports-gpg-agent")) {
+            if (OS.isDosLike() && !Gpg.getGpgFeature("supports-gpg-agent")) {
                 useAgent = false;
             } else {
                 // gpg version >= 2.0.16 launches gpg-agent automatically
-                if (Ec.getGpgFeature("autostart-gpg-agent")) {
+                if (Gpg.getGpgFeature("autostart-gpg-agent")) {
                     useAgent = true;
                     Log.DEBUG("enigmail.js: Setting useAgent to "+useAgent+" for gpg2 >= 2.0.16\n");
                 }
@@ -565,9 +565,9 @@ const EnigmailGpgAgent = {
         var gpgVersion = versionParts[versionParts.length-1];
 
         Log.DEBUG("enigmail.js: detected GnuPG version '"+gpgVersion+"'\n");
-        EnigmailGpgAgent.agentVersion = gpgVersion;
+        Gpg.agentVersion = gpgVersion;
 
-        if (!Ec.getGpgFeature("version-supported")) {
+        if (!Gpg.getGpgFeature("version-supported")) {
             if (! domWindow) {
                 domWindow = Windows.getBestParentWin();
             }
@@ -623,7 +623,7 @@ const EnigmailGpgAgent = {
             var errorStr = "";
             var exitCode = -1;
             Ec.gpgAgentIsOptional = false;
-            if (Ec.getGpgFeature("autostart-gpg-agent")) {
+            if (Gpg.getGpgFeature("autostart-gpg-agent")) {
                 Log.DEBUG("enigmail.js: detectGpgAgent: gpg 2.0.16 or newer - not starting agent\n");
             }
             else {
@@ -684,12 +684,12 @@ const EnigmailGpgAgent = {
 
                 if (command === null) {
                     Log.ERROR("enigmail.js: detectGpgAgent: gpg-agent not found\n");
-                    Dialog.alert(domWindow, Locale.getString("gpgAgentNotStarted", [ EnigmailGpgAgent.agentVersion ]));
+                    Dialog.alert(domWindow, Locale.getString("gpgAgentNotStarted", [ Gpg.agentVersion ]));
                     throw Components.results.NS_ERROR_FAILURE;
                 }
             }
 
-            if ((! OS.isDosLike()) && (! Ec.getGpgFeature("autostart-gpg-agent"))) {
+            if ((! OS.isDosLike()) && (! Gpg.getGpgFeature("autostart-gpg-agent"))) {
 
                 // create unique tmp file
                 var ds = Cc[DIR_SERV_CONTRACTID].getService();
@@ -732,7 +732,7 @@ const EnigmailGpgAgent = {
                 }
                 else {
                     Log.ERROR("enigmail.js: detectGpgAgent: gpg-agent output: "+outStr+"\n");
-                    Dialog.alert(domWindow, Locale.getString("gpgAgentNotStarted", [ EnigmailGpgAgent.agentVersion ]));
+                    Dialog.alert(domWindow, Locale.getString("gpgAgentNotStarted", [ Gpg.agentVersion ]));
                     throw Components.results.NS_ERROR_FAILURE;
                 }
             }

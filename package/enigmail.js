@@ -45,6 +45,7 @@ Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/pipeConsole.jsm"); /*global EnigmailConsole: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
 Cu.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
 Cu.import("resource://enigmail/enigmailProtocolHandler.jsm"); /*global EnigmailProtocolHandler: false */
@@ -1050,7 +1051,7 @@ Enigmail.prototype = {
       return "";
     }
 
-    if (OS.isDosLike() && Ec.getGpgFeature("windows-photoid-bug")) {
+    if (OS.isDosLike() && Gpg.getGpgFeature("windows-photoid-bug")) {
       // workaround for error in gpg
       photoDataObj.value=photoDataObj.value.replace(/\r\n/g, "\n");
     }

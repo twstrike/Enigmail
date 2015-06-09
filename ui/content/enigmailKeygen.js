@@ -45,6 +45,7 @@ Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 
 const Ec = EnigmailCommon;
 
@@ -75,7 +76,7 @@ function enigmailKeygenLoad() {
 
   var noPassphrase = document.getElementById("noPassphrase");
 
-  if (! Ec.getGpgFeature("keygen-passphrase")) {
+  if (! Gpg.getGpgFeature("keygen-passphrase")) {
     document.getElementById("passphraseRow").setAttribute("collapsed", "true");
     noPassphrase.setAttribute("collapsed", "true");
   }
@@ -317,7 +318,7 @@ function enigmailKeygenStart() {
 
   var passphrase;
    // gpg >= 2.1 queries passphrase using gpg-agent only
-   if (Ec.getGpgFeature("keygen-passphrase")) {
+   if (Gpg.getGpgFeature("keygen-passphrase")) {
      passphrase = enigmailCheckPassphrase();
      if (passphrase === null) return;
 

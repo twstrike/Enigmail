@@ -48,7 +48,7 @@ component("enigmail/enigmailCommon.jsm");
 component("enigmail/prefs.jsm");
 component("enigmail/os.jsm");
 component("enigmail/armor.jsm");
-component("enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+component("enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false, Gpg: false */
 
 test(withTestGpgHome(shouldLocateArmoredBlock));
 test(withTestGpgHome(shouldExtractSignaturePart));
@@ -306,8 +306,8 @@ test(function initializeWillNotSetEmptyEnvironmentValue() {
 // testing: useGpgAgent
 // useGpgAgent depends on several values:
 //   OS.isDosLike()
-//   EnigmailCommon.getGpgFeature("supports-gpg-agent")
-//   EnigmailCommon.getGpgFeature("autostart-gpg-agent")
+//   Gpg.getGpgFeature("supports-gpg-agent")
+//   Gpg.getGpgFeature("autostart-gpg-agent")
 //   EnigmailGpgAgent.gpgAgentInfo.envStr.length>0
 //   Prefs.getPrefBranch().getBoolPref("useGpgAgent")
 
@@ -320,7 +320,7 @@ function notDosLike(f) {
 }
 
 function withGpgFeatures(features, f) {
-    resetting(EnigmailCommon, 'getGpgFeature', function(feature) {
+    resetting(Gpg, 'getGpgFeature', function(feature) {
         return features.indexOf(feature) != -1;
     }, f);
 }
@@ -437,7 +437,7 @@ test(function setAgentPathDefaultValues() {
             EnigmailGpgAgent.setAgentPath(JSUnit.createStubWindow(), enigmail);
             Assert.equal("gpg", EnigmailGpgAgent.agentType);
             Assert.equal("/usr/bin/gpg2", EnigmailGpgAgent.agentPath.path);
-            //        Assert.equal("2.0.22", EnigmailGpgAgent.agentVersion); // this will vary between environments.
+            //        Assert.equal("2.0.22", Gpg.agentVersion); // this will vary between environments.
             Assert.equal("/usr/bin/gpgconf", EnigmailGpgAgent.gpgconfPath.path);
             Assert.equal("/usr/bin/gpg-connect-agent", EnigmailGpgAgent.connGpgAgentPath.path);
         });

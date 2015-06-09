@@ -27,6 +27,7 @@ PREFFILES = prefs/enigmail.js
 MODFILES = \
            commonFuncs.jsm \
            enigmailGpgAgent.jsm \
+           gpg.jsm \
            keyManagement.jsm \
            key.jsm \
            pipeConsole.jsm \

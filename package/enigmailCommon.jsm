@@ -694,53 +694,6 @@ const EnigmailCommon = {
   },
 
 
-  /***
-    determine if a specific feature is available in the GnuPG version used
-
-    @featureName:  String; one of the following values:
-      version-supported    - is the gpg version supported at all (true for gpg >= 2.0.7)
-      supports-gpg-agent   - is gpg-agent is usually provided (true for gpg >= 2.0)
-      autostart-gpg-agent  - is gpg-agent started automatically by gpg (true for gpg >= 2.0.16)
-      keygen-passphrase    - can the passphrase be specified when generating keys (false for gpg 2.1 and 2.1.1)
-      windows-photoid-bug  - is there a bug in gpg with the output of photoid on Windows (true for gpg < 2.0.16)
-
-    @return: depending on featureName - Boolean unless specified differently:
-      (true if feature is available / false otherwise)
-      If the feature cannot be found, undefined is returned
-   */
-
-  getGpgFeature: function(featureName) {
-    // TODO: move [gpg]
-    let gpgVersion = EnigmailGpgAgent.agentVersion;
-
-    if (! gpgVersion || typeof(gpgVersion) != "string" || gpgVersion.length === 0) {
-      return undefined;
-    }
-
-    gpgVersion = gpgVersion.replace(/\-.*$/, "");
-    if (gpgVersion.search(/^\d+\.\d+/) < 0) {
-      // not a valid version number
-      return undefined;
-    }
-
-    var vc = Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator);
-
-    switch(featureName) {
-    case 'version-supported':
-      return (vc.compare(gpgVersion, "2.0.7") >= 0);
-    case 'supports-gpg-agent':
-      return (vc.compare(gpgVersion, "2.0") >= 0);
-    case 'autostart-gpg-agent':
-      return (vc.compare(gpgVersion, "2.0.16") >= 0);
-    case 'keygen-passphrase':
-      return (vc.compare(gpgVersion, "2.1") < 0 || vc.compare(gpgVersion, "2.1.2") >= 0);
-    case 'windows-photoid-bug':
-      return (vc.compare(gpgVersion, "2.0.16") < 0);
-    }
-
-    return undefined;
-
-  },
 
 
   //////////////// Passphrase Mangagement /////////
@@ -758,7 +711,6 @@ const EnigmailCommon = {
   getLocalFileApi: function () {
     return Ci.nsIFile;
   },
-
 
   // Extract public key from Status Message
   extractPubkey: function (statusMsg) {
