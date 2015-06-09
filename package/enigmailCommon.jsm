@@ -242,54 +242,6 @@ const EnigmailCommon = {
   },
 
   /**
-   * create an nsIStreamListener object to read String data from an nsIInputStream
-   *
-   * @onStopCallback: Function - function(data) that is called when the stream has stopped
-   *                             string data is passed as |data|
-   *
-   * @return: the nsIStreamListener to pass to the stream
-   */
-  newStringStreamListener: function (onStopCallback)
-  {
-    // TODO: move [streams]
-    Log.DEBUG("enigmailCommon.jsm: newStreamListener\n");
-
-    var simpleStreamListener = {
-      data: "",
-      inStream: Cc["@mozilla.org/binaryinputstream;1"].createInstance(Ci.nsIBinaryInputStream),
-      _onStopCallback: onStopCallback,
-      QueryInterface: XPCOMUtils.generateQI([ Ci.nsIStreamListener, Ci.nsIRequestObserver ]),
-
-      onStartRequest: function (channel, ctxt)
-      {
-        // Log.DEBUG("enigmailCommon.jsm: stringListener.onStartRequest\n");
-      },
-
-      onStopRequest: function (channel, ctxt, status)
-      {
-        // Log.DEBUG("enigmailCommon.jsm: stringListener.onStopRequest: "+ctxt+"\n");
-        this.inStream = null;
-        var cbFunc = this._onStopCallback;
-        var cbData = this.data;
-
-        Timer.setTimeout(function _cb() {
-          cbFunc(cbData);
-        });
-      },
-
-      onDataAvailable: function(req, sup, stream, offset, count)
-      {
-        // get data from stream
-        // Log.DEBUG("enigmailCommon.jsm: stringListener.onDataAvailable: "+count+"\n");
-        this.inStream.setInputStream(stream);
-        this.data += this.inStream.readBytes(count);
-      }
-    };
-
-    return simpleStreamListener;
-  },
-
-  /**
    * create a nsIRequestObserver object to observe an nsIRequest
    *
    * @terminateFunc: Function - function that is called asynchronously when the request

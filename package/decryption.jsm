@@ -434,7 +434,7 @@ const Decryption = {
                               signatureObj, exitCodeObj,
                               statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
                               blockSeparationObj, encToDetailsObj) {
-        const esvc = EnigmailCore.getEnigmailSvc();
+        const esvc = EnigmailCore.getEnigmailService();
         const ec = EnigmailCore.getEnigmailCommon();
 
         Log.DEBUG("enigmail.js: Enigmail.decryptMessage: "+cipherText.length+" bytes, "+uiFlags+"\n");
@@ -698,7 +698,7 @@ const Decryption = {
 
     decryptAttachment: function (parent, outFile, displayName, byteData,
                                  exitCodeObj, statusFlagsObj, errorMsgObj) {
-        const esvc = EnigmailCore.getEnigmailSvc();
+        const esvc = EnigmailCore.getEnigmailService();
         const ec = EnigmailCore.getEnigmailCommon();
 
         Log.DEBUG("enigmail.js: Enigmail.decryptAttachment: parent="+parent+", outFileName="+outFile.path+"\n");

@@ -52,6 +52,7 @@ Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
 Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 
 /*global MimeBody: false, MimeUnknown: false, MimeMessageAttachment: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
@@ -391,7 +392,7 @@ readAttachment = function (attachment, strippedName) {
       };
 
       try {
-        var bufferListener = EnigmailCommon.newStringStreamListener(f);
+        var bufferListener = Streams.newStringStreamListener(f);
         var ioServ = Cc[EnigmailCommon.IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
         var msgUri = ioServ.newURI(attachment.url, null, null);
 
@@ -652,7 +653,7 @@ decryptPGPMIME = function (mime, part) {
 
       Log.DEBUG("enigmailConvert.jsm: getting data from URL " + url +"\n");
 
-      let s = Ec.newStringStreamListener(
+      let s = Streams.newStringStreamListener(
         function analyzeDecryptedData(data) {
           Log.DEBUG("enigmailConvert.jsm: analyzeDecryptedData: got " + data.length +" bytes\n");
 

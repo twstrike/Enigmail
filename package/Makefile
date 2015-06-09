@@ -53,6 +53,7 @@ MODFILES = \
            dialog.jsm \
            timer.jsm \
            time.jsm \
+           streams.jsm \
            httpProxy.jsm \
            glodaUtils.jsm \
            glodaMime.jsm \

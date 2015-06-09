@@ -126,6 +126,7 @@ zip --must-match\
     modules/configure.jsm \
     modules/dialog.jsm \
     modules/timer.jsm \
+    modules/streams.jsm \
     modules/time.jsm \
     modules/glodaUtils.jsm \
     modules/glodaMime.jsm \
