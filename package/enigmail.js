@@ -65,6 +65,7 @@ Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 Cu.import("resource://enigmail/commonFuncs.jsm"); /*global EnigmailFuncs: false */
 Cu.import("resource://enigmail/keyManagement.jsm"); /*global EnigmailKeyMgmt: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global Armor: false */
+Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
 
 /* Implementations supplied by this module */
 const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";
@@ -72,16 +73,12 @@ const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";
 const NS_ENIGMAIL_CID =
   Components.ID("{847b3a01-7ab1-11d4-8f02-006008948af5}");
 
-const NS_ENIGCLINE_SERVICE_CID =
-  Components.ID("{847b3ab1-7ab1-11d4-8f02-006008948af5}");
-
 const ENIGMAIL_EXTENSION_ID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
 
 // Contract IDs and CIDs used by this module
 const NS_OBSERVERSERVICE_CONTRACTID = "@mozilla.org/observer-service;1";
 
 const NS_IOSERVICE_CONTRACTID       = "@mozilla.org/network/io-service;1";
-const NS_CLINE_SERVICE_CONTRACTID = "@mozilla.org/enigmail/cline-handler;1";
 const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
 
 const Cc = Components.classes;
@@ -92,10 +89,6 @@ const nsISupports            = Ci.nsISupports;
 const nsIObserver            = Ci.nsIObserver;
 const nsIEnvironment         = Ci.nsIEnvironment;
 const nsIEnigmail            = Ci.nsIEnigmail;
-const nsICmdLineHandler      = Ci.nsICmdLineHandler;
-const nsIWindowWatcher       = Ci.nsIWindowWatcher;
-const nsICommandLineHandler  = Ci.nsICommandLineHandler;
-const nsIFactory             = Ci.nsIFactory;
 
 const NS_XPCOM_SHUTDOWN_OBSERVER_ID = "xpcom-shutdown";
 
@@ -104,8 +97,6 @@ var EC = EnigmailCore;
 
 ///////////////////////////////////////////////////////////////////////////////
 // File read/write operations
-
-const NS_LOCAL_FILE_CONTRACTID = "@mozilla.org/file/local;1";
 
 const NS_LOCALFILEOUTPUTSTREAM_CONTRACTID =
                               "@mozilla.org/network/file-output-stream;1";
@@ -1106,40 +1097,8 @@ Enigmail.prototype = {
   }
 }; // Enigmail.protoypte
 
-
-// TODO: move [commandLine]
-function EnigCmdLineHandler() {}
-
-EnigCmdLineHandler.prototype = {
-  classDescription: "Enigmail Key Management CommandLine Service",
-  classID:  NS_ENIGCLINE_SERVICE_CID,
-  contractID: NS_CLINE_SERVICE_CONTRACTID,
-  _xpcom_categories: [{
-    category: "command-line-handler",
-    entry: "m-cline-enigmail",
-    service: false
-  }],
-  QueryInterface: XPCOMUtils.generateQI([nsICommandLineHandler, nsIFactory, nsISupports]),
-
-  // nsICommandLineHandler
-  handle: function(cmdLine) {
-    if (cmdLine.handleFlag("pgpkeyman", false)) {
-      cmdLine.preventDefault = true; // do not open main app window
-
-      var wwatch = Cc["@mozilla.org/embedcomp/window-watcher;1"]
-                             .getService(Ci.nsIWindowWatcher);
-      wwatch.openWindow(null, "chrome://enigmail/content/enigmailKeyManager.xul", "_blank",
-                        "chrome,dialog=no,all", cmdLine);
-    }
-  },
-
-  helpInfo: "  -pgpkeyman         Open the OpenPGP key management.\n",
-
-  lockFactory: function (lock) {}
-};
-
 // This variable is exported implicitly and should not be refactored or removed
-const NSGetFactory = XPCOMUtils.generateNSGetFactory([Enigmail, EnigmailProtocolHandler, EnigCmdLineHandler]);
+const NSGetFactory = XPCOMUtils.generateNSGetFactory([Enigmail, EnigmailProtocolHandler, CommandLine.Handler]);
 
 Filters.registerAll();
 

@@ -289,16 +289,6 @@ const EnigmailCommon = {
   },
 
   /**
-   * determine if a password needs to be provided on stdin to GnuPG
-   *
-   * @return: true: password is required / false: no password required
-   */
-  requirePassword: function () {
-
-    return false;
-  },
-
-  /**
    * Generate a new key pair with GnuPG
    *
    * @parent:     nsIWindow  - parent window (not used anymore)

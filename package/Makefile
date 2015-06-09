@@ -53,6 +53,7 @@ MODFILES = \
            configure.jsm \
            dialog.jsm \
            timer.jsm \
+           commandLine.jsm \
            time.jsm \
            streams.jsm \
            httpProxy.jsm \
