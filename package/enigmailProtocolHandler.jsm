@@ -45,6 +45,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 
 const NS_SIMPLEURI_CONTRACTID   = "@mozilla.org/network/simple-uri;1";
 const NS_ENIGMAILPROTOCOLHANDLER_CONTRACTID = "@mozilla.org/network/protocol;1?name=enigmail";
@@ -62,9 +63,7 @@ var EC = EnigmailCore;
 const gDummyPKCS7 = 'Content-Type: multipart/mixed;\r\n boundary="------------060503030402050102040303\r\n\r\nThis is a multi-part message in MIME format.\r\n--------------060503030402050102040303\r\nContent-Type: application/x-pkcs7-mime\r\nContent-Transfer-Encoding: 8bit\r\n\r\n\r\n--------------060503030402050102040303\r\nContent-Type: application/x-enigmail-dummy\r\nContent-Transfer-Encoding: 8bit\r\n\r\n\r\n--------------060503030402050102040303--\r\n';
 
 
-function EnigmailProtocolHandler()
-{
-}
+function EnigmailProtocolHandler() {}
 
 EnigmailProtocolHandler.prototype = {
     classDescription: "Enigmail Protocol Handler",
@@ -129,14 +128,14 @@ EnigmailProtocolHandler.prototype = {
                 contentData = "Enigmail error: invalid URI "+aURI.spec;
             }
 
-            var channel = EC.getEnigmailCommon().newStringChannel(aURI, contentType, "UTF-8", contentData);
+            var channel = Streams.newStringChannel(aURI, contentType, "UTF-8", contentData);
 
             return channel;
         }
 
         if (aURI.spec == aURI.scheme+":dummy") {
             // Dummy PKCS7 content (to access mimeEncryptedClass)
-            return EC.getEnigmailCommon().newStringChannel(aURI, "message/rfc822", "", gDummyPKCS7);
+            return Streams.newStringChannel(aURI, "message/rfc822", "", gDummyPKCS7);
         }
 
         var winName, spec;

@@ -433,46 +433,6 @@ const EnigmailCommon = {
     return Cc[this.IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
   },
 
-  /**
-   * create a nsIInputStream object that is fed with string data
-   *
-   * @uri:            nsIURI - object representing the URI that will deliver the data
-   * @contentType:    String - the content type as specified in nsIChannel
-   * @contentCharset: String - the character set; automatically determined if null
-   * @data:           String - the data to feed to the stream
-   *
-   * @return nsIChannel object
-   */
-  newStringChannel: function(uri, contentType, contentCharset, data)
-  {
-    // TODO: move [streams]
-    Log.DEBUG("enigmailCommon.jsm: newStringChannel\n");
-
-    var inputStream = Cc[NS_STRING_INPUT_STREAM_CONTRACTID].createInstance(Ci.nsIStringInputStream);
-    inputStream.setData(data, -1);
-
-    if (! contentCharset || contentCharset.length===0) {
-      var ioServ = this.getIoService();
-      var netUtil = ioServ.QueryInterface(Ci.nsINetUtil);
-      var newCharset = {};
-      var hadCharset = {};
-      var mimeType = netUtil.parseContentType(contentType, newCharset, hadCharset);
-      contentCharset = newCharset.value;
-
-    }
-
-    var isc = Cc[NS_INPUT_STREAM_CHNL_CONTRACTID].createInstance(Ci.nsIInputStreamChannel);
-    isc.setURI(uri);
-    isc.contentStream = inputStream;
-
-    var chan  = isc.QueryInterface(Ci.nsIChannel);
-    if (contentType && contentType.length) chan.contentType = contentType;
-    if (contentCharset && contentCharset.length) chan.contentCharset = contentCharset;
-
-    Log.DEBUG("enigmailCommon.jsm: newStringChannel - done\n");
-
-    return chan;
-  },
 
   /**
     * return an array containing the aliases and the email addresses

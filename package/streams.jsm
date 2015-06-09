@@ -49,6 +49,9 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false *
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/timer.jsm"); /*global Timer: false */
 
+const NS_STRING_INPUT_STREAM_CONTRACTID = "@mozilla.org/io/string-input-stream;1";
+const NS_INPUT_STREAM_CHNL_CONTRACTID = "@mozilla.org/network/input-stream-channel;1";
+
 const Streams = {
     /**
      * create an nsIStreamListener object to read String data from an nsIInputStream
@@ -89,5 +92,43 @@ const Streams = {
                 this.data += this.inStream.readBytes(count);
             }
         };
+    },
+
+    /**
+     * create a nsIInputStream object that is fed with string data
+     *
+     * @uri:            nsIURI - object representing the URI that will deliver the data
+     * @contentType:    String - the content type as specified in nsIChannel
+     * @contentCharset: String - the character set; automatically determined if null
+     * @data:           String - the data to feed to the stream
+     *
+     * @return nsIChannel object
+     */
+    newStringChannel: function(uri, contentType, contentCharset, data) {
+        Log.DEBUG("enigmailCommon.jsm: newStringChannel\n");
+
+        const inputStream = Cc[NS_STRING_INPUT_STREAM_CONTRACTID].createInstance(Ci.nsIStringInputStream);
+        inputStream.setData(data, -1);
+
+        if (! contentCharset || contentCharset.length===0) {
+            const ioServ = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+            const netUtil = ioServ.QueryInterface(Ci.nsINetUtil);
+            const newCharset = {};
+            const hadCharset = {};
+            const mimeType = netUtil.parseContentType(contentType, newCharset, hadCharset);
+            contentCharset = newCharset.value;
+        }
+
+        const isc = Cc[NS_INPUT_STREAM_CHNL_CONTRACTID].createInstance(Ci.nsIInputStreamChannel);
+        isc.setURI(uri);
+        isc.contentStream = inputStream;
+
+        const chan  = isc.QueryInterface(Ci.nsIChannel);
+        if (contentType && contentType.length) chan.contentType = contentType;
+        if (contentCharset && contentCharset.length) chan.contentCharset = contentCharset;
+
+        Log.DEBUG("enigmailCommon.jsm: newStringChannel - done\n");
+
+        return chan;
     }
 };
