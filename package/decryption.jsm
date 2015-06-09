@@ -583,7 +583,7 @@ const Decryption = {
 
             var doubleDashSeparator = false;
             try {
-                doubleDashSeparator = esvc.prefBranch.getBoolPref("doubleDashSeparator");
+                doubleDashSeparator = Prefs.getPrefBranch().getBoolPref("doubleDashSeparator");
             } catch(ex) { }
 
             if (doubleDashSeparator && (plainText.search(/(\r|\n)-- +(\r|\n)/) < 0) ) {

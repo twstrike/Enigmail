@@ -377,8 +377,9 @@ test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndPrefIsSet() {
     asDosLike(function() {
         withGpgFeatures(["supports-gpg-agent"], function() {
             newEnigmail(function(enigmail) {
-                enigmail.prefBranch = mockPrefs({useGpgAgent: true});
-                Assert.ok(enigmail.useGpgAgent());
+                resetting(Prefs, 'getPrefBranch', function() { return mockPrefs({useGpgAgent: true}); }, function() {
+                    Assert.ok(enigmail.useGpgAgent());
+                });
             });
         });
     });
@@ -421,8 +422,9 @@ test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndPrefIsSet() {
     notDosLike(function() {
         withGpgFeatures(["supports-gpg-agent"], function() {
             newEnigmail(function(enigmail) {
-                enigmail.prefBranch = mockPrefs({useGpgAgent: true});
-                Assert.ok(enigmail.useGpgAgent());
+                resetting(Prefs, 'getPrefBranch', function() { return mockPrefs({useGpgAgent: true}); }, function() {
+                    Assert.ok(enigmail.useGpgAgent());
+                });
             });
         });
     });

@@ -123,7 +123,7 @@ const EnigmailGpgAgent = {
                     Log.DEBUG("enigmail.js: Setting useAgent to "+useAgent+" for gpg2 >= 2.0.16\n");
                 }
                 else {
-                    useAgent = (EnigmailGpgAgent.gpgAgentInfo.envStr.length>0 || ecom.prefBranch.getBoolPref("useGpgAgent"));
+                    useAgent = (EnigmailGpgAgent.gpgAgentInfo.envStr.length>0 || Prefs.getPrefBranch().getBoolPref("useGpgAgent"));
                 }
             }
         }
@@ -340,7 +340,7 @@ const EnigmailGpgAgent = {
     setAgentPath: function (domWindow, esvc) {
         var agentPath = "";
         try {
-            agentPath = esvc.prefBranch.getCharPref("agentPath");
+            agentPath = Prefs.getPrefBranch().getCharPref("agentPath");
         } catch (ex) {}
 
         var agentType = "gpg";

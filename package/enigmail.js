@@ -132,8 +132,6 @@ Enigmail.prototype = {
   initializationAttempted: false,
   initializationError: "",
 
-  prefBranch: null,
-
   userIdList: null,
   secretKeyList: null,
 
@@ -163,7 +161,7 @@ Enigmail.prototype = {
 
   getLogDirectoryPrefix: function () {
     try {
-      return this.prefBranch.getCharPref("logDirectory") || "";
+      return Prefs.getPrefBranch().getCharPref("logDirectory") || "";
     } catch (ex) {
       return "";
     }
@@ -186,8 +184,6 @@ Enigmail.prototype = {
 
   initialize: function (domWindow, version) {
     this.initializationAttempted = true;
-
-    this.prefBranch = Prefs.getPrefBranch();
 
     Log.DEBUG("enigmail.js: Enigmail.initialize: START\n");
     if (this.initialized) return;
@@ -877,7 +873,7 @@ Enigmail.prototype = {
 
     var asciiArmor = false;
     try {
-      asciiArmor = this.prefBranch.getBoolPref("inlineAttachAsciiArmor");
+      asciiArmor = Prefs.getPrefBranch().getBoolPref("inlineAttachAsciiArmor");
     } catch (ex) {}
     var asciiFlags = (asciiArmor ? ENC_TYPE_ATTACH_ASCII : ENC_TYPE_ATTACH_BINARY);
 
