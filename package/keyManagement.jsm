@@ -246,21 +246,14 @@ KeyEditor.prototype = {
   }
 };
 
-/*
- * NOTE: the callbackFunc used in every call to the key editor needs to be implemented like this:
- * callbackFunc(returnCode, errorMsg)
- * returnCode = 0 in case of success
- * returnCode != 0 and errorMsg set in case of failure
-*/
-const EnigmailKeyMgmt = {
-  editKey: function (parent, needPassphrase, userId, keyId, editCmd, inputData, callbackFunc, requestObserver, parentCallback) {
+function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, callbackFunc, requestObserver, parentCallback) {
     Log.DEBUG("keyManagmenent.jsm: editKey: parent="+parent+", editCmd="+editCmd+"\n");
 
     var enigmailSvc = Ec.getService(parent);
     if (!enigmailSvc) {
-      Log.ERROR("keyManagmenent.jsm: Enigmail.editKey: not yet initialized\n");
-      parentCallback(-1, Locale.getString("notInit"));
-      return -1;
+        Log.ERROR("keyManagmenent.jsm: Enigmail.editKey: not yet initialized\n");
+        parentCallback(-1, Locale.getString("notInit"));
+        return -1;
     }
 
     var keyIdList = keyId.split(" ");
@@ -272,26 +265,26 @@ const EnigmailKeyMgmt = {
     if (userId) args=args.concat(["-u", userId]);
     var editCmdArr;
     if (typeof(editCmd) == "string") {
-      editCmdArr = [ editCmd ];
+        editCmdArr = [ editCmd ];
     }
     else {
-      editCmdArr = editCmd;
+        editCmdArr = editCmd;
     }
 
     if (editCmdArr[0] == "revoke") {
-      // escape backslashes and ' characters
-      args=args.concat(["-a", "-o"]);
-      args.push(Files.getEscapedFilename(inputData.outFile.path));
-      args.push("--gen-revoke");
-      args=args.concat(keyIdList);
+        // escape backslashes and ' characters
+        args=args.concat(["-a", "-o"]);
+        args.push(Files.getEscapedFilename(inputData.outFile.path));
+        args.push("--gen-revoke");
+        args=args.concat(keyIdList);
     }
     else if (editCmdArr[0].indexOf("--")===0) {
-      args=args.concat(editCmd);
-      args=args.concat(keyIdList);
+        args=args.concat(editCmd);
+        args=args.concat(keyIdList);
     }
     else {
-      args=args.concat(["--ask-cert-level", "--edit-key", keyId]);
-      args=args.concat(editCmd);
+        args=args.concat(["--ask-cert-level", "--edit-key", keyId]);
+        args=args.concat(editCmd);
     }
 
 
@@ -301,18 +294,26 @@ const EnigmailKeyMgmt = {
     var keyEdit = new KeyEditor(requestObserver, callbackFunc, inputData);
 
     try {
-      Execution.execCmd2(command, args,
-                         keyEdit.setStdin.bind(keyEdit),
-                         keyEdit.gotData.bind(keyEdit),
-                         function (result) {
-                             keyEdit.done(parentCallback, result.exitCode);
-                         }
-                        );
+        Execution.execCmd2(command, args,
+                           keyEdit.setStdin.bind(keyEdit),
+                           keyEdit.gotData.bind(keyEdit),
+                           function (result) {
+                               keyEdit.done(parentCallback, result.exitCode);
+                           }
+                          );
     } catch (ex) {
-      Log.ERROR("keyManagement.jsm: editKey: "+command.path+" failed\n");
-      parentCallback(-1, "");
+        Log.ERROR("keyManagement.jsm: editKey: "+command.path+" failed\n");
+        parentCallback(-1, "");
     }
-  },
+}
+
+/*
+ * NOTE: the callbackFunc used in every call to the key editor needs to be implemented like this:
+ * callbackFunc(returnCode, errorMsg)
+ * returnCode = 0 in case of success
+ * returnCode != 0 and errorMsg set in case of failure
+*/
+const EnigmailKeyMgmt = {
 
   importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj){
     Log.setLogLevel(5);
@@ -376,11 +377,11 @@ const EnigmailKeyMgmt = {
   setKeyTrust: function (parent, keyId, trustLevel, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.setKeyTrust: trustLevel="+trustLevel+", keyId="+keyId+"\n");
 
-    return this.editKey(parent, false, null, keyId, "trust",
-                        { trustLevel: trustLevel},
-                        keyTrustCallback,
-                        null,
-                        callbackFunc);
+    return editKey(parent, false, null, keyId, "trust",
+                   { trustLevel: trustLevel},
+                   keyTrustCallback,
+                   null,
+                   callbackFunc);
   },
 
 
@@ -419,86 +420,81 @@ const EnigmailKeyMgmt = {
       }
     }
 
-    let r = this.editKey(parent,
-                         true,
-                         null,
-                         keyId,
-                         "",    /* "expire", */
-                         {expiryLength: expiryLength, subKeys: subKeys, currentSubKey: false},
-                         keyExpiryCallback, /* contains the gpg communication logic */
-                         null,
-                         callbackFunc);
-    return r;
+    return editKey(parent,
+                   true,
+                   null,
+                   keyId,
+                   "",    /* "expire", */
+                   {expiryLength: expiryLength, subKeys: subKeys, currentSubKey: false},
+                   keyExpiryCallback, /* contains the gpg communication logic */
+                   null,
+                   callbackFunc);
   },
 
 
   signKey: function (parent, userId, keyId, signLocally, trustLevel, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.signKey: trustLevel="+trustLevel+", userId="+userId+", keyId="+keyId+"\n");
-    return this.editKey(parent, true, userId, keyId,
-                        (signLocally ? "lsign" : "sign"),
-                        { trustLevel: trustLevel,
-                          usePassphrase: true },
-                        signKeyCallback,
-                        null,
-                        callbackFunc);
+    return editKey(parent, true, userId, keyId,
+                   (signLocally ? "lsign" : "sign"),
+                   { trustLevel: trustLevel,
+                     usePassphrase: true },
+                   signKeyCallback,
+                   null,
+                   callbackFunc);
   },
 
   genRevokeCert: function (parent, keyId, outFile, reasonCode, reasonText, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.genRevokeCert: keyId="+keyId+"\n");
 
-    var r= this.editKey(parent, true, null, keyId, "revoke",
-                        { outFile: outFile,
-                          reasonCode: reasonCode,
-                          reasonText: Data.convertFromUnicode(reasonText),
-                          usePassphrase: true },
-                        revokeCertCallback,
-                        null,
-                        callbackFunc);
-    return r;
+    return editKey(parent, true, null, keyId, "revoke",
+                   { outFile: outFile,
+                     reasonCode: reasonCode,
+                     reasonText: Data.convertFromUnicode(reasonText),
+                     usePassphrase: true },
+                   revokeCertCallback,
+                   null,
+                   callbackFunc);
   },
 
   addUid: function (parent, keyId, name, email, comment, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.addUid: keyId="+keyId+", name="+name+", email="+email+"\n");
-    var r= this.editKey(parent, true, null, keyId, "adduid",
-                        { email: email,
-                          name: name,
-                          comment: comment,
-                          nameAsked: 0,
-                          emailAsked: 0,
-                          usePassphrase: true },
-                        addUidCallback,
-                        null,
-                        callbackFunc);
-    return r;
+    return editKey(parent, true, null, keyId, "adduid",
+                   { email: email,
+                     name: name,
+                     comment: comment,
+                     nameAsked: 0,
+                     emailAsked: 0,
+                     usePassphrase: true },
+                   addUidCallback,
+                   null,
+                   callbackFunc);
   },
 
   deleteKey: function (parent, keyId, deleteSecretKey, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.addUid: keyId="+keyId+", deleteSecretKey="+deleteSecretKey+"\n");
 
     var cmd = (deleteSecretKey ? "--delete-secret-and-public-key" : "--delete-key");
-    var r= this.editKey(parent, false, null, keyId, cmd,
-                        { usePassphrase: true },
-                        deleteKeyCallback,
-                        null,
-                        callbackFunc);
-    return r;
+    return editKey(parent, false, null, keyId, cmd,
+                   { usePassphrase: true },
+                   deleteKeyCallback,
+                   null,
+                   callbackFunc);
   },
 
   changePassphrase: function (parent, keyId, oldPw, newPw, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.changePassphrase: keyId="+keyId+"\n");
 
     var pwdObserver = new ChangePasswdObserver();
-    var r= this.editKey(parent, false, null, keyId, "passwd",
-                        { oldPw: oldPw,
-                          newPw: newPw,
-                          useAgent: EnigmailGpgAgent.useGpgAgent(),
-                          step: 0,
-                          observer: pwdObserver,
-                          usePassphrase: true },
-                        changePassphraseCallback,
-                        pwdObserver,
-                        callbackFunc);
-    return r;
+    return editKey(parent, false, null, keyId, "passwd",
+                   { oldPw: oldPw,
+                     newPw: newPw,
+                     useAgent: EnigmailGpgAgent.useGpgAgent(),
+                     step: 0,
+                     observer: pwdObserver,
+                     usePassphrase: true },
+                   changePassphraseCallback,
+                   pwdObserver,
+                   callbackFunc);
   },
 
 
@@ -506,50 +502,46 @@ const EnigmailKeyMgmt = {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.enableDisableKey: keyId="+keyId+", disableKey="+disableKey+"\n");
 
     var cmd = (disableKey ? "disable" : "enable");
-    var r= this.editKey(parent, false, null, keyId, cmd,
-                        { usePassphrase: true },
-                        null,
-                        null,
-                        callbackFunc);
-    return r;
+    return editKey(parent, false, null, keyId, cmd,
+                   { usePassphrase: true },
+                   null,
+                   null,
+                   callbackFunc);
   },
 
   setPrimaryUid: function (parent, keyId, idNumber, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.setPrimaryUid: keyId="+keyId+", idNumber="+idNumber+"\n");
-    var r = this.editKey(parent, true, null, keyId, "",
-                        { idNumber: idNumber,
-                          step: 0,
-                          usePassphrase: true },
-                        setPrimaryUidCallback,
-                        null,
-                        callbackFunc);
-    return r;
+    return editKey(parent, true, null, keyId, "",
+                   { idNumber: idNumber,
+                     step: 0,
+                     usePassphrase: true },
+                   setPrimaryUidCallback,
+                   null,
+                   callbackFunc);
   },
 
 
   deleteUid: function (parent, keyId, idNumber, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.deleteUid: keyId="+keyId+", idNumber="+idNumber+"\n");
-    var r = this.editKey(parent, true, null, keyId, "",
-                        { idNumber: idNumber,
-                          step: 0,
-                          usePassphrase: true },
-                        deleteUidCallback,
-                        null,
-                        callbackFunc);
-    return r;
+    return editKey(parent, true, null, keyId, "",
+                   { idNumber: idNumber,
+                     step: 0,
+                     usePassphrase: true },
+                   deleteUidCallback,
+                   null,
+                   callbackFunc);
   },
 
 
   revokeUid: function (parent, keyId, idNumber, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.revokeUid: keyId="+keyId+", idNumber="+idNumber+"\n");
-    var r = this.editKey(parent, true, null, keyId, "",
-                        { idNumber: idNumber,
-                          step: 0,
-                          usePassphrase: true },
-                        revokeUidCallback,
-                        null,
-                        callbackFunc);
-    return r;
+    return editKey(parent, true, null, keyId, "",
+                   { idNumber: idNumber,
+                     step: 0,
+                     usePassphrase: true },
+                   revokeUidCallback,
+                   null,
+                   callbackFunc);
   },
 
   addPhoto: function (parent, keyId, photoFile, callbackFunc) {
@@ -557,53 +549,50 @@ const EnigmailKeyMgmt = {
 
     var photoFileName = Files.getEscapedFilename(Files.getFilePath(photoFile.QueryInterface(Ec.getLocalFileApi())));
 
-    var r = this.editKey(parent, true, null, keyId, "addphoto",
-                        { file: photoFileName,
-                          step: 0,
-                          usePassphrase: true },
-                        addPhotoCallback,
-                        null,
-                        callbackFunc);
-    return r;
+    return editKey(parent, true, null, keyId, "addphoto",
+                   { file: photoFileName,
+                     step: 0,
+                     usePassphrase: true },
+                   addPhotoCallback,
+                   null,
+                   callbackFunc);
   },
 
 
   genCardKey: function (parent, name, email, comment, expiry, backupPasswd, requestObserver, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.genCardKey: \n");
     var generateObserver = new EnigCardAdminObserver(requestObserver, OS.isDosLike());
-    var r = this.editKey(parent, false, null, "", ["--with-colons", "--card-edit"] ,
-                        { step: 0,
-                          name: Data.convertFromUnicode(name),
-                          email: email,
-                          comment: Data.convertFromUnicode(comment),
-                          expiry: expiry,
-                          backupPasswd: backupPasswd,
-                          cardAdmin: true,
-                          backupKey: (backupPasswd.length > 0 ? "Y" : "N"),
-                          parent: parent },
-                        genCardKeyCallback,
-                        generateObserver,
-                        callbackFunc);
-    return r;
+    return editKey(parent, false, null, "", ["--with-colons", "--card-edit"] ,
+                   { step: 0,
+                     name: Data.convertFromUnicode(name),
+                     email: email,
+                     comment: Data.convertFromUnicode(comment),
+                     expiry: expiry,
+                     backupPasswd: backupPasswd,
+                     cardAdmin: true,
+                     backupKey: (backupPasswd.length > 0 ? "Y" : "N"),
+                     parent: parent },
+                   genCardKeyCallback,
+                   generateObserver,
+                   callbackFunc);
   },
 
   cardAdminData: function (parent, name, firstname, lang, sex, url, login, forcepin, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.cardAdminData: parent="+parent+", name="+name+", firstname="+firstname+", lang="+lang+", sex="+sex+", url="+url+", login="+login+", forcepin="+forcepin+"\n");
     var adminObserver = new EnigCardAdminObserver(null, OS.isDosLike());
-    var r = this.editKey(parent, false, null, "", ["--with-colons", "--card-edit"],
-            { step: 0,
-              name: name,
-              firstname: firstname,
-              lang: lang,
-              sex: sex,
-              url: url,
-              login: login,
-              cardAdmin: true,
-              forcepin: forcepin },
-             cardAdminDataCallback,
-             adminObserver,
-             callbackFunc);
-    return r;
+    return editKey(parent, false, null, "", ["--with-colons", "--card-edit"],
+                   { step: 0,
+                     name: name,
+                     firstname: firstname,
+                     lang: lang,
+                     sex: sex,
+                     url: url,
+                     login: login,
+                     cardAdmin: true,
+                     forcepin: forcepin },
+                   cardAdminDataCallback,
+                   adminObserver,
+                   callbackFunc);
   },
 
   cardChangePin: function (parent, action, oldPin, newPin, adminPin, pinObserver, callbackFunc) {
@@ -611,18 +600,17 @@ const EnigmailKeyMgmt = {
     var adminObserver = new EnigCardAdminObserver(pinObserver, OS.isDosLike());
     var enigmailSvc = Ec.getService(parent);
 
-    var r = this.editKey(parent, EnigmailGpgAgent.useGpgAgent(), null, "", ["--with-colons", "--card-edit"],
-            { step: 0,
-              pinStep: 0,
-              cardAdmin: true,
-              action: action,
-              oldPin: oldPin,
-              newPin: newPin,
-              adminPin: adminPin },
-             cardChangePinCallback,
-             adminObserver,
-             callbackFunc);
-    return r;
+    return editKey(parent, EnigmailGpgAgent.useGpgAgent(), null, "", ["--with-colons", "--card-edit"],
+                   { step: 0,
+                     pinStep: 0,
+                     cardAdmin: true,
+                     action: action,
+                     oldPin: oldPin,
+                     newPin: newPin,
+                     adminPin: adminPin },
+                   cardChangePinCallback,
+                   adminObserver,
+                   callbackFunc);
   }
 
 }; // EnigmailKeyMgmt

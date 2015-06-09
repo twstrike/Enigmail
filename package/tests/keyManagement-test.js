@@ -42,7 +42,7 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
-testing("keyManagement.jsm");
+testing("keyManagement.jsm"); /*global editKey: false */
 component("enigmail/prefs.jsm");
 component("enigmail/enigmailCore.jsm");
 component("enigmail/enigmailCommon.jsm");
@@ -89,7 +89,7 @@ function shouldEditKey() {
     importKeyForEdit();
     do_test_pending();
     var window = JSUnit.createStubWindow();
-    EnigmailKeyMgmt.editKey(
+    editKey(
         window,
         false,
         null,
