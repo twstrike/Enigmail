@@ -44,7 +44,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false *
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/pipeConsole.jsm"); /*global EnigmailConsole: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
 Cu.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
 Cu.import("resource://enigmail/enigmailProtocolHandler.jsm"); /*global EnigmailProtocolHandler: false */

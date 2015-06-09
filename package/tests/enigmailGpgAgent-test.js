@@ -42,7 +42,7 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestHelper: false, withEnvironment: false */
 
-testing("gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false, OS: false */
+testing("enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false, OS: false */
 
 // testing: determineGpgHomeDir
 //   environment: GNUPGHOME

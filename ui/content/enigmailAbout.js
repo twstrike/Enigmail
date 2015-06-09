@@ -42,7 +42,7 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
-Components.utils.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 
 // Initialize enigmailCommon
 const Ec = EnigmailCommon;

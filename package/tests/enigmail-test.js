@@ -48,7 +48,7 @@ component("enigmail/enigmailCommon.jsm");
 component("enigmail/prefs.jsm");
 component("enigmail/os.jsm");
 component("enigmail/armor.jsm");
-component("enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+component("enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 
 test(withTestGpgHome(shouldLocateArmoredBlock));
 test(withTestGpgHome(shouldExtractSignaturePart));

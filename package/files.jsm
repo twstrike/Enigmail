@@ -82,7 +82,7 @@ const Files = {
     },
 
     resolvePath: function (filePath, envPath, isDosLike) {
-        Files.lazyLog().DEBUG("gpgAgentHandler.jsm: resolvePath: filePath="+filePath+"\n");
+        Files.lazyLog().DEBUG("files.jsm: resolvePath: filePath="+filePath+"\n");
 
         if (Files.isAbsolutePath(filePath, isDosLike))
             return filePath;
@@ -99,7 +99,7 @@ const Files = {
                 try {
                     var pathDir = Cc[NS_FILE_CONTRACTID].createInstance(Ci.nsIFile);
 
-                    Files.lazyLog().DEBUG("gpgAgentHandler.jsm: resolvePath: checking for "+pathDirs[j]+"/"+fileNames[i]+"\n");
+                    Files.lazyLog().DEBUG("files.jsm: resolvePath: checking for "+pathDirs[j]+"/"+fileNames[i]+"\n");
 
                     Files.initPath(pathDir, pathDirs[j]);
 

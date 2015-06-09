@@ -44,7 +44,7 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/promise.jsm"); /*global Promise: false */
-Components.utils.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 
 const Ec = EnigmailCommon;
 

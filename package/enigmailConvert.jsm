@@ -51,7 +51,7 @@ Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
-Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 
 /*global MimeBody: false, MimeUnknown: false, MimeMessageAttachment: false */

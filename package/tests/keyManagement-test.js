@@ -47,7 +47,7 @@ component("enigmail/prefs.jsm");
 component("enigmail/enigmailCore.jsm");
 component("enigmail/enigmailCommon.jsm");
 component("enigmail/execution.jsm");
-component("enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+component("enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 
 test(withTestGpgHome(importKeyForEdit));
 test(withTestGpgHome(shouldExecCmd));

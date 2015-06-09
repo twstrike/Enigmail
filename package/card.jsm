@@ -45,7 +45,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
-Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 
 const Card = {
     getCardStatus: function(exitCodeObj, errorMsgObj) {

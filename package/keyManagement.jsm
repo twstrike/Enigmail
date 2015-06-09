@@ -46,7 +46,7 @@ Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/execution.jsm");
-Components.utils.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailKeyMgmt" ];
 

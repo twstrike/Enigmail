@@ -59,7 +59,7 @@ Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
-Cu.import("resource://enigmail/gpgAgentHandler.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
