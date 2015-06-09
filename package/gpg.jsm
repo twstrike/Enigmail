@@ -51,6 +51,8 @@ Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
+Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 
 const GPG_BATCH_OPT_LIST = [ "--batch", "--no-tty", "--status-fd", "2" ];
 
@@ -229,5 +231,32 @@ const Gpg = {
         }
 
         return groups;
+    },
+
+    /**
+     * Force GnuPG to recalculate the trust db. This is sometimes required after importing keys.
+     *
+     * no return value
+     */
+    recalcTrustDb: function() {
+        Log.DEBUG("enigmailCommon.jsm: recalcTrustDb:\n");
+
+        const command = Gpg.agentPath;
+        const args = Gpg.getStandardArgs(false).
+                  concat(["--check-trustdb"]);
+
+        try {
+            const proc = subprocess.call({
+                command:     Gpg.agentPath,
+                arguments:   args,
+                environment: EnigmailCore.getEnigmailCommon().getEnvList(),
+                charset: null,
+                mergeStderr: false
+            });
+            proc.wait();
+        } catch (ex) {
+            Log.ERROR("enigmailCommon.jsm: recalcTrustDb: subprocess.call failed with '"+ex.toString()+"'\n");
+            throw ex;
+        }
     }
 };

@@ -513,7 +513,7 @@ function setKeyTrustNextKey(keyList, index) {
 
   if (index == keyList.length) {
     // end of list reached
-    Ec.recalcTrustDb();
+    Gpg.recalcTrustDb();
     loadKeys();
     return;
   }

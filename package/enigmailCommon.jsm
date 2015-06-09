@@ -623,39 +623,6 @@ const EnigmailCommon = {
     return proc;
   },
 
-  /**
-   * Force GnuPG to recalculate the trust db. This is sometimes required after importing keys.
-   *
-   * no return value
-   */
-
-  recalcTrustDb: function() {
-    // TODO: move [agent]
-    Log.DEBUG("enigmailCommon.jsm: recalcTrustDb:\n");
-
-    let command = EnigmailGpgAgent.agentPath;
-    let args = Gpg.getStandardArgs(false);
-    args = args.concat(["--check-trustdb"]);
-
-    try {
-      let proc = subprocess.call({
-        command:     EnigmailGpgAgent.agentPath,
-        arguments:   args,
-        environment: this.getEnvList(),
-        charset: null,
-        mergeStderr: false
-      });
-      proc.wait();
-    }
-    catch (ex) {
-      Log.ERROR("enigmailCommon.jsm: recalcTrustDb: subprocess.call failed with '"+ex.toString()+"'\n");
-      throw ex;
-    }
-  },
-
-
-
-
   //////////////// Passphrase Mangagement /////////
 
   getMaxIdleMinutes: function () {
