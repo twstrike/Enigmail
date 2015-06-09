@@ -111,7 +111,6 @@ zip --must-match\
     modules/mimeVerify.jsm \
     modules/installGnuPG.jsm \
     modules/gpgAgentHandler.jsm \
-    modules/enigmailGpg.jsm \
     modules/passwordCheck.jsm \
     modules/rules.jsm \
     modules/filters.jsm \
