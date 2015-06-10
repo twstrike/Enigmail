@@ -20,8 +20,11 @@
  * Copyright (C) 2001 Ramalingam Saravanan. All Rights Reserved.
  *
  * Contributor(s):
- * Patrick Brunschwig <patrick@enigmail.net>
- * Janosch Rux <rux@informatik.uni-luebeck.de>
+ *  Patrick Brunschwig <patrick@enigmail.net>
+ *  Janosch Rux <rux@informatik.uni-luebeck.de>
+ *  Fan Jiang <fanjiang@thoughtworks.com>
+ *  Iván Pazmiño <iapamino@thoughtworks.com>
+ *  Ola Bini <obini@thoughtworks.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or

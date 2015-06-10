@@ -20,8 +20,10 @@
  * Copyright (C) 2012 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
- * Marius Stübs <marius.stuebs@riseup.net>
- * Fan Jiang <fanjiang@thoughtworks.com>
+ *  Marius Stübs <marius.stuebs@riseup.net>
+ *  Fan Jiang <fanjiang@thoughtworks.com>
+ *  Iván Pazmiño <iapamino@thoughtworks.com>
+ *  Ola Bini <obini@thoughtworks.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or

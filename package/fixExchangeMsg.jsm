@@ -20,6 +20,9 @@
  * Copyright (C) 2014 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributors:
+ *  Fan Jiang <fanjiang@thoughtworks.com>
+ *  Iván Pazmiño <iapamino@thoughtworks.com>
+ *  Ola Bini <obini@thoughtworks.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or

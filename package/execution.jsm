@@ -20,6 +20,9 @@
  * Copyright (C) 2010 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
+ *  Ramalingam Saravanan <svn@xmlterm.org>
+ *  Patrick Brunschwig <patrick@enigmail.net>
+ *  Janosch Rux <rux@informatik.uni-luebeck.de>
  *  Fan Jiang <fanjiang@thoughtworks.com>
  *  Iván Pazmiño <iapamino@thoughtworks.com>
  *  Ola Bini <obini@thoughtworks.com>

@@ -20,6 +20,7 @@
  * Copyright (C) 2012 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
+ *  Marius Stübs <marius.stuebs@riseup.net>
  *  Fan Jiang <fanjiang@thoughtworks.com>
  *  Ola Bini <obini@thoughtworks.com>
  *
