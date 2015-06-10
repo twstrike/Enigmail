@@ -72,7 +72,6 @@ const ENIGMAIL_EXTENSION_ID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
 
 // Contract IDs and CIDs used by this module
 const NS_OBSERVERSERVICE_CONTRACTID = "@mozilla.org/observer-service;1";
-const NS_IOSERVICE_CONTRACTID       = "@mozilla.org/network/io-service;1";
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -164,9 +163,6 @@ Enigmail.prototype = {
 
     Log.DEBUG("enigmail.js: Enigmail.initialize: START\n");
     if (this.initialized) return;
-
-    var ioServ = Cc[NS_IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
-
 
     var prefix = this.getLogDirectoryPrefix();
     if (prefix) {
@@ -352,59 +348,7 @@ Enigmail.prototype = {
 
   encryptAttachment: function (parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile,
             exitCodeObj, statusFlagsObj, errorMsgObj) {
-    // TODO: move [encryption]
-    Log.DEBUG("enigmail.js: Enigmail.encryptAttachment infileName="+inFile.path+"\n");
-
-    if (!this.initialized) {
-      Log.ERROR("enigmail.js: Enigmail.encryptAttachment: not yet initialized\n");
-      errorMsgObj.value = Locale.getString("notInit");
-      return "";
-    }
-
-    statusFlagsObj.value = 0;
-    sendFlags |= nsIEnigmail.SEND_ATTACHMENT;
-
-    var asciiArmor = false;
-    try {
-      asciiArmor = Prefs.getPrefBranch().getBoolPref("inlineAttachAsciiArmor");
-    } catch (ex) {}
-    var asciiFlags = (asciiArmor ? ENC_TYPE_ATTACH_ASCII : ENC_TYPE_ATTACH_BINARY);
-
-    var args = Encryption.getEncryptCommand(fromMailAddr, toMailAddr, bccMailAddr, "", sendFlags, asciiFlags, errorMsgObj);
-
-    if (! args)
-        return null;
-
-    var signMessage = (sendFlags & nsIEnigmail.SEND_SIGNED);
-
-    if (signMessage ) {
-      args = args.concat(Ec.passwdCommand());
-    }
-
-      var inFilePath  = Files.getEscapedFilename(Files.getFilePathReadonly(inFile.QueryInterface(Ci.nsIFile)));
-    var outFilePath = Files.getEscapedFilename(Files.getFilePathReadonly(outFile.QueryInterface(Ci.nsIFile)));
-
-    args = args.concat(["--yes", "-o", outFilePath, inFilePath ]);
-
-    var statusMsgObj   = {};
-    var cmdErrorMsgObj = {};
-
-    var msg = Execution.execCmd(EnigmailGpgAgent.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
-
-    if (exitCodeObj.value !== 0) {
-
-      if (cmdErrorMsgObj.value) {
-        errorMsgObj.value = Files.formatCmdLine(EnigmailGpgAgent.agentPath, args);
-        errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
-      }
-      else {
-        errorMsgObj.value = "An unknown error has occurred";
-      }
-
-      return "";
-    }
-
-    return msg;
+      return Encryption.encryptAttachment(parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile, exitCodeObj, statusFlagsObj, errorMsgObj);
   },
 
 

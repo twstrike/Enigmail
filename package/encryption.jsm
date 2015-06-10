@@ -52,6 +52,8 @@ Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global En
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Components.utils.import("resource://enigmail/files.jsm"); /*global Files: false */
+Components.utils.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -407,5 +409,52 @@ var Encryption = {
         // Error processing
         Log.DEBUG("enigmail.js: Enigmail.encryptMessage: command execution exit code: "+exitCodeObj.value+"\n");
         return "";
+    },
+
+    encryptAttachment: function (parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile,
+                                 exitCodeObj, statusFlagsObj, errorMsgObj) {
+        Log.DEBUG("encryption.jsm: Encryption.encryptAttachment infileName="+inFile.path+"\n");
+
+        statusFlagsObj.value = 0;
+        sendFlags |= nsIEnigmail.SEND_ATTACHMENT;
+
+        let asciiArmor = false;
+        try {
+            asciiArmor = Prefs.getPrefBranch().getBoolPref("inlineAttachAsciiArmor");
+        } catch (ex) {}
+
+        const asciiFlags = (asciiArmor ? ENC_TYPE_ATTACH_ASCII : ENC_TYPE_ATTACH_BINARY);
+        let args = Encryption.getEncryptCommand(fromMailAddr, toMailAddr, bccMailAddr, "", sendFlags, asciiFlags, errorMsgObj);
+
+        if (! args) {
+            return null;
+        }
+
+        const signMessage = (sendFlags & nsIEnigmail.SEND_SIGNED);
+
+        if (signMessage ) {
+            args = args.concat(Passwords.command());
+        }
+
+        const inFilePath  = Files.getEscapedFilename(Files.getFilePathReadonly(inFile.QueryInterface(Ci.nsIFile)));
+        const outFilePath = Files.getEscapedFilename(Files.getFilePathReadonly(outFile.QueryInterface(Ci.nsIFile)));
+
+        args = args.concat(["--yes", "-o", outFilePath, inFilePath ]);
+
+        let cmdErrorMsgObj = {};
+
+        const msg = Execution.execCmd(EnigmailGpgAgent.agentPath, args, "", exitCodeObj, statusFlagsObj, {}, cmdErrorMsgObj);
+        if (exitCodeObj.value !== 0) {
+            if (cmdErrorMsgObj.value) {
+                errorMsgObj.value = Files.formatCmdLine(EnigmailGpgAgent.agentPath, args);
+                errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
+            } else {
+                errorMsgObj.value = "An unknown error has occurred";
+            }
+
+            return "";
+        }
+
+        return msg;
     }
 };

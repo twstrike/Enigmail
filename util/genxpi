@@ -140,6 +140,7 @@ zip --must-match\
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \
     modules/commandLine.jsm \
+    modules/passwords.jsm \
     modules/subprocess_worker_win.js \
     modules/subprocess_worker_unix.js \
     wrappers/gpg-agent-wrapper.sh \

@@ -62,6 +62,7 @@ Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -265,28 +266,6 @@ const EnigmailCommon = {
   isEncryptedUri: function (uri) {
     Log.DEBUG("enigmailCommon.jsm: isEncryptedUri: uri="+uri+"\n");
     return gEncryptedUris.indexOf(uri) >= 0;
-  },
-
-  /*
-   * Get GnuPG command line options for receiving the password depending
-   * on the various user and system settings (gpg-agent/no passphrase)
-   *
-   * @return: Array the GnuPG command line options
-   */
-
-  passwdCommand: function () {
-    var commandArgs = [];
-
-    if (EnigmailGpgAgent.useGpgAgent()) {
-       commandArgs.push("--use-agent");
-    }
-    else {
-      if (! Prefs.getPref("noPassphrase")) {
-        commandArgs = commandArgs.concat([ "--passphrase-fd", "0", "--no-use-agent"]);
-      }
-    }
-
-    return commandArgs;
   },
 
   /**
@@ -711,7 +690,7 @@ const EnigmailCommon = {
     Log.DEBUG("enigmailCommon.jsm: getAttachmentFileName\n");
 
     var args = Gpg.getStandardArgs(true);
-    args = args.concat(this.passwdCommand());
+    args = args.concat(Passwords.command());
     args.push("--list-packets");
 
 
