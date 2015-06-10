@@ -496,7 +496,7 @@ function EnigGetTrustCode(keyObj) {
 // sortDirection: 1 = ascending / -1 = descending
 
 function EnigLoadKeyList(refresh, keyListObj, sortColumn, sortDirection) {
-  return EnigmailFuncs.loadKeyList(window, refresh, keyListObj, sortColumn, sortDirection);
+  return KeyRing.loadKeyList(window, refresh, keyListObj, sortColumn, sortDirection);
 }
 
 function EnigEditKeyTrust(userIdArr, keyIdArr) {
@@ -509,7 +509,7 @@ function EnigEditKeyExpiry(userIdArr, keyIdArr) {
 }
 
 function EnigDisplayKeyDetails(keyId, refresh) {
-  return Windows.openKeyDetails(window, keyId, refresh, EnigmailFuncs);
+  return Windows.openKeyDetails(window, keyId, refresh);
 }
 
 function EnigSignKey(userId, keyId) {

@@ -57,17 +57,10 @@ Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
-Cu.import("resource://enigmail/app.jsm"); /*global App: false */
-Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
-Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
-Cu.import("resource://enigmail/enigmailFuncs.jsm"); /*global EnigmailFuncs: false */
-Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
-Cu.import("resource://enigmail/armor.jsm"); /*global Armor: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
-Cu.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 
 /* Implementations supplied by this module */
 const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";

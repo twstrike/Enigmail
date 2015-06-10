@@ -40,6 +40,10 @@
 
 const EXPORTED_SYMBOLS = [ "Key" ];
 
+const Cu = Components.utils;
+
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+
 function KeyEntry(key) {
     if (!(this instanceof KeyEntry)) {
         return new KeyEntry(key);
@@ -135,5 +139,16 @@ const Key = {
         }
 
         return r;
+    },
+
+    // Extract public key from Status Message
+    extractPubkey: function (statusMsg) {
+        const matchb = statusMsg.match(/(^|\n)NO_PUBKEY (\w{8})(\w{8})/);
+        if (matchb && (matchb.length > 3)) {
+            Log.DEBUG("enigmailCommon.jsm:: Enigmail.extractPubkey: NO_PUBKEY 0x"+matchb[3]+"\n");
+            return matchb[2]+matchb[3];
+        } else {
+            return null;
+        }
     }
 };

@@ -3630,7 +3630,7 @@ Enigmail.msg = {
 
         if (openPgpHeaderMode & HEADERMODE_KEYID) {
 
-          var fpr = EnigmailFuncs.getFingerprintForKey(this.identity.getCharAttribute("pgpkeyId"));
+          var fpr = KeyRing.getFingerprintForKey(this.identity.getCharAttribute("pgpkeyId"));
           if (fpr && fpr.length > 0) {
             pgpHeader += "id=" + fpr;
           }

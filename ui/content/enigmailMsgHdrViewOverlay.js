@@ -730,7 +730,7 @@ Enigmail.hdrView = {
     let enigmailSvc = EnigmailCommon.getService();
     let keyId = KeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
-    Windows.openKeyDetails(window, keyId, false, EnigmailFuncs);
+    Windows.openKeyDetails(window, keyId, false);
   },
 
   createRuleFromAddress: function (emailAddressNode)

@@ -46,6 +46,7 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 if (! Enigmail) var Enigmail = {};
 
@@ -328,11 +329,11 @@ Enigmail.hlp = {
       // get list of known keys
       if (!keyList) {
         var keyListObj = {};
-        EnigmailFuncs.loadKeyList(window,
-                                  false,      // refresh key infos if required
-                                  keyListObj,   // returned list
-                                  "validity",   // sorted acc. to key validity
-                                  -1);          // descending
+        KeyRing.loadKeyList(window,
+                            false,      // refresh key infos if required
+                            keyListObj,   // returned list
+                            "validity",   // sorted acc. to key validity
+                            -1);          // descending
         this.enigValidityKeyList = keyListObj.keyList;
         this.enigValidityKeySortList = keyListObj.keySortList;
       }

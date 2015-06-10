@@ -436,12 +436,12 @@ const Windows = {
      *
      * no return value
      */
-    openKeyDetails: function (win, keyId, refresh, funcs) {
+    openKeyDetails: function (win, keyId, refresh) {
         const keyListObj = {};
 
         keyId = keyId.replace(/^0x/, "");
 
-        funcs.loadKeyList(win, refresh, keyListObj);
+        KeyRing.loadKeyList(win, refresh, keyListObj);
 
         const inputObj = {
             keyId:  keyId,

@@ -603,20 +603,6 @@ const EnigmailCommon = {
     return Ci.nsIFile;
   },
 
-  // Extract public key from Status Message
-  extractPubkey: function (statusMsg) {
-    // TODO: move [keys]
-    var keyId = null;
-    var matchb = statusMsg.match(/(^|\n)NO_PUBKEY (\w{8})(\w{8})/);
-
-    if (matchb && (matchb.length > 3)) {
-      Log.DEBUG("enigmailCommon.jsm:: Enigmail.extractPubkey: NO_PUBKEY 0x"+matchb[3]+"\n");
-      keyId = matchb[2]+matchb[3];
-    }
-
-    return keyId;
-  },
-
   determineHashAlgorithm: function (win, uiFlags, fromMailAddr, hashAlgoObj) {
     Log.DEBUG("enigmailCommon.jsm: determineHashAlgorithm\n");
 

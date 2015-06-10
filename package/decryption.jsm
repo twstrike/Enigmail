@@ -59,6 +59,7 @@ Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 Cu.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Cu.import("resource://enigmail/key.jsm"); /*global Key: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 const EC = EnigmailCore;
@@ -418,7 +419,7 @@ const Decryption = {
         }
 
         if (retStatusObj.statusFlags & nsIEnigmail.UNVERIFIED_SIGNATURE) {
-            retStatusObj.keyId = ecom.extractPubkey(statusMsg);
+            retStatusObj.keyId = Key.extractPubkey(statusMsg);
 
             if (retStatusObj.statusFlags & nsIEnigmail.DECRYPTION_OKAY) {
                 exitCode=0;
