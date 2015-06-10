@@ -39,36 +39,22 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Passwords" ];
+const EXPORTED_SYMBOLS = [ "Mime" ];
 
-const Cu = Components.utils;
-
-Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
-Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-
-const Passwords = {
-    /*
-     * Get GnuPG command line options for receiving the password depending
-     * on the various user and system settings (gpg-agent/no passphrase)
+const Mime = {
+    /***
+     * create a string of random characters suitable to use for a boundary in a
+     * MIME message following RFC 2045
      *
-     * @return: Array the GnuPG command line options
+     * @return: string of 33 random characters and digits
      */
-    command: function () {
-        if (EnigmailGpgAgent.useGpgAgent()) {
-            return ["--use-agent"];
-        } else {
-            if (! Prefs.getPref("noPassphrase")) {
-                return ["--passphrase-fd", "0", "--no-use-agent"];
-            }
+    createBoundary: function() {
+        let b = "";
+        let r = 0;
+        for (let i=0; i<33; i++) {
+            r = Math.floor(Math.random() * 58);
+            b += String.fromCharCode((r < 10 ? 48 : (r < 34 ? 55 :  63)) + r);
         }
-        return [];
-    },
-
-    getMaxIdleMinutes: function () {
-        try {
-            return Prefs.getPref("maxIdleMinutes");
-        } catch (ex) {}
-
-        return 5;
+        return b;
     }
 };

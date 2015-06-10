@@ -55,6 +55,8 @@ Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
+Cu.import("resource://enigmail/mime.jsm"); /*global Mime: false */
+Cu.import("resource://enigmail/attachment.jsm"); /*global Attachment: false */
 
 /*global MimeBody: false, MimeUnknown: false, MimeMessageAttachment: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
@@ -439,7 +441,7 @@ decryptAttachment = function(attachment, strippedName) {
 
               // try to get original file name if file does not contain suffix
               if (strippedName.indexOf(".") < 0) {
-                let s = Ec.getAttachmentFileName(null, o.data);
+                let s = Attachment.getFileName(null, o.data);
                 if (s) o.name = s;
               }
 
@@ -698,7 +700,7 @@ decryptPGPMIME = function (mime, part) {
           let ct = m.extractHeader("content-type", false) || "";
 
           let boundary = getBoundary(getHeaderValue(mime, 'content-type'));
-          if (! boundary) boundary = Ec.createMimeBoundary();
+          if (! boundary) boundary = Mime.createBoundary();
 
           // append relevant headers
           mime.headers['content-type'] = "multipart/mixed; boundary=\""+boundary+"\"";
@@ -938,7 +940,7 @@ mimeToString = function (mime, topLevel) {
     for (let j in this.allTasks) {
       if (this.allTasks[j].partName == mime.parts[0].partName) {
 
-        boundary = Ec.createMimeBoundary();
+        boundary = Mime.createBoundary();
 
         msg += getRfc822Headers(mime.headers, ct, "content-type");
         msg += 'Content-Type: multipart/mixed; boundary="'+boundary+'"\r\n\r\n';

@@ -39,13 +39,14 @@
 
 "use strict";
 
-var EXPORTED_SYMBOLS = [ "EnigmailProtocolHandler" ];
+const EXPORTED_SYMBOLS = [ "EnigmailProtocolHandler" ];
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
+Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 
 const NS_SIMPLEURI_CONTRACTID   = "@mozilla.org/network/simple-uri;1";
 const NS_ENIGMAILPROTOCOLHANDLER_CONTRACTID = "@mozilla.org/network/protocol;1?name=enigmail";
@@ -106,8 +107,8 @@ EnigmailProtocolHandler.prototype = {
 
             var contentType, contentCharset, contentData;
 
-            if (EC.getEnigmailService()._messageIdList[messageId]) {
-                var messageUriObj = EC.getEnigmailService()._messageIdList[messageId];
+            if (URIs.getMessageURI(messageId)) {
+                var messageUriObj = URIs.getMessageURI(messageId);
 
                 contentType    = messageUriObj.contentType;
                 contentCharset = messageUriObj.contentCharset;

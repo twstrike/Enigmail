@@ -54,6 +54,7 @@ Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
@@ -347,7 +348,7 @@ Enigmail.msg = {
       Log.DEBUG("enigmailMessengerOverlay.js: Enigmail.msg.getMsgProperties: got exception '"+ex.toString() +"'\n");
     }
 
-    if (EnigmailCommon.isEncryptedUri(msgUri)) {
+    if (URIs.isEncryptedUri(msgUri)) {
       properties |= nsIEnigmail.DECRYPTION_OKAY;
     }
 

@@ -411,15 +411,15 @@ function enigmailKeygenStart() {
    };
 
    try {
-      gKeygenRequest = Ec.generateKey(window,
-                         Data.convertFromUnicode(userName),
-                         Data.convertFromUnicode(comment),
-                         Data.convertFromUnicode(userEmail),
-                         expiryTime,
-                         keySize,
-                         keyType,
-                         Data.convertFromUnicode(passphrase),
-                         listener);
+      gKeygenRequest = KeyRing.generateKey(window,
+                                           Data.convertFromUnicode(userName),
+                                           Data.convertFromUnicode(comment),
+                                           Data.convertFromUnicode(userEmail),
+                                           expiryTime,
+                                           keySize,
+                                           keyType,
+                                           Data.convertFromUnicode(passphrase),
+                                           listener);
    } catch (ex) {
       Log.DEBUG("enigmailKeygen.js: generateKey() failed with "+ex.toString()+"\n"+ex.stack+"\n");
    }

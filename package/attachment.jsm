@@ -1,4 +1,4 @@
-/*global Components: false */
+/*global Components: false, escape: false, unescape: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,36 +39,47 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Passwords" ];
+const EXPORTED_SYMBOLS = [ "Attachment" ];
 
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
+Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 
-const Passwords = {
-    /*
-     * Get GnuPG command line options for receiving the password depending
-     * on the various user and system settings (gpg-agent/no passphrase)
-     *
-     * @return: Array the GnuPG command line options
-     */
-    command: function () {
-        if (EnigmailGpgAgent.useGpgAgent()) {
-            return ["--use-agent"];
-        } else {
-            if (! Prefs.getPref("noPassphrase")) {
-                return ["--passphrase-fd", "0", "--no-use-agent"];
-            }
+const Attachment = {
+    getFileName: function (parent, byteData) {
+        Log.DEBUG("attachment.jsm: getFileName\n");
+
+        const args = Gpg.getStandardArgs(true).
+                  concat(Passwords.command()).
+                  concat(["--list-packets"]);
+
+        const listener = Execution.newSimpleListener(
+            function _stdin (pipe) {
+                Log.DEBUG("attachment.jsm: getFileName: _stdin\n");
+                pipe.write(byteData);
+                pipe.write("\n");
+                pipe.close();
+            });
+
+        const proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, parent, listener, {});
+
+        if (!proc) {
+            return null;
         }
-        return [];
-    },
 
-    getMaxIdleMinutes: function () {
-        try {
-            return Prefs.getPref("maxIdleMinutes");
-        } catch (ex) {}
+        proc.wait();
 
-        return 5;
+        const matches = listener.stdoutData.match(/:literal data packet:\r?\n.*name="(.*)",/m);
+        if (matches && (matches.length > 1)) {
+            var filename = escape(matches[1]).replace(/%5Cx/g, "%");
+            return Data.convertToUnicode(unescape(filename), "utf-8");
+        } else {
+            return null;
+        }
     }
 };

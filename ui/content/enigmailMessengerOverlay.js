@@ -65,6 +65,7 @@ Components.utils.import("resource://enigmail/enigmailConvert.jsm");
 Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/attachment.jsm"); /*global Attachment: false */
 
 const EC = EnigmailCore;
 
@@ -2163,7 +2164,7 @@ Enigmail.msg = {
     var rawFileName=Enigmail.msg.getAttachmentName(callbackArg.attachment).replace(/\.(asc|pgp|gpg)$/i,"");
 
     if (callbackArg.actionType != "importKey") {
-      origFilename = EnigmailCommon.getAttachmentFileName(window, callbackArg.data);
+      origFilename = Attachment.getFileName(window, callbackArg.data);
       if (origFilename && origFilename.length > rawFileName.length) rawFileName = origFilename;
     }
 

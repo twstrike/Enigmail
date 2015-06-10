@@ -1,4 +1,4 @@
-/*global Components: false, escape: false, unescape: false */
+/*global Components: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,29 +39,19 @@
 
 const Cu = Components.utils;
 
-Cu.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
-Cu.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
-Cu.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
-Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
-Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
 Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/app.jsm"); /*global App: false */
-Cu.import("resource://enigmail/timer.jsm"); /*global Timer: false */
-Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
-Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
-Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
@@ -72,17 +62,9 @@ const nsIEnigmail = Ci.nsIEnigmail;
 
 const ENIGMAIL_CONTRACTID = "@mozdev.org/enigmail/enigmail;1";
 
-const KEYTYPE_DSA = 1;
-const KEYTYPE_RSA = 2;
-
-var gEncryptedUris = [];
-
-var gKeyAlgorithms = [];
+const gKeyAlgorithms = [];
 
 const gMimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha512", "sha224", "md5" ];
-
-// various global variables
-var gKeygenProcess = null;
 
 const EnigmailCommon = {
   POSSIBLE_PGPMIME: -2081,
@@ -114,12 +96,6 @@ const EnigmailCommon = {
   // variables
   enigmailSvc: null,
   gpgAgentIsOptional: true,
-
-  // methods
-
-    isGeneratingKey: function() {
-        return gKeygenProcess !== null;
-    },
 
   /**
    * get and or initialize the Enigmail service,
@@ -224,359 +200,12 @@ const EnigmailCommon = {
     this.enigmailSvc = enigmailSvc;
   },
 
-
-  /*
-   * remember the fact a URI is encrypted
-   *
-   * @param String msgUri
-   *
-   * @return null
-   */
-
-  rememberEncryptedUri: function (uri) {
-    Log.DEBUG("enigmailCommon.jsm: rememberEncryptedUri: uri="+uri+"\n");
-    if (gEncryptedUris.indexOf(uri) < 0)
-      gEncryptedUris.push(uri);
-  },
-
-  /*
-   * unremember the fact a URI is encrypted
-   *
-   * @param String msgUri
-   *
-   * @return null
-   */
-
-  forgetEncryptedUri: function (uri) {
-    Log.DEBUG("enigmailCommon.jsm: forgetEncryptedUri: uri="+uri+"\n");
-    var pos = gEncryptedUris.indexOf(uri);
-    if (pos >= 0) {
-      gEncryptedUris.splice(pos, 1);
-    }
-  },
-
-  /*
-   * determine if a URI was remebered as encrypted
-   *
-   * @param String msgUri
-   *
-   * @return: Boolean true if yes, false otherwise
-   */
-
-  isEncryptedUri: function (uri) {
-    Log.DEBUG("enigmailCommon.jsm: isEncryptedUri: uri="+uri+"\n");
-    return gEncryptedUris.indexOf(uri) >= 0;
-  },
-
-  /**
-   * Generate a new key pair with GnuPG
-   *
-   * @parent:     nsIWindow  - parent window (not used anymore)
-   * @name:       String     - name part of UID
-   * @comment:    String     - comment part of UID (brackets are added)
-   * @comment:    String     - email part of UID (<> will be added)
-   * @expiryDate: Number     - Unix timestamp of key expiry date; 0 if no expiry
-   * @keyLength:  Number     - size of key in bytes (e.g 4096)
-   * @keyType:    Number     - 1 = DSA / 2 = RSA
-   * @passphrase: String     - password; null if no password
-   * @listener:   Object     - {
-   *                             function onDataAvailable(data) {...},
-   *                             function onStopRequest(exitCode) {...}
-   *                           }
-   *
-   * @return: handle to process
-   */
-  generateKey: function (parent, name, comment, email, expiryDate, keyLength, keyType,
-            passphrase, listener) {
-    // TODO: move [keys]
-    Log.WRITE("enigmailCommon.jsm: generateKey:\n");
-
-    if (gKeygenProcess) {
-      // key generation already ongoing
-      throw Components.results.NS_ERROR_FAILURE;
-    }
-
-    var args = Gpg.getStandardArgs(true);
-    args.push("--gen-key");
-
-    Log.CONSOLE(Files.formatCmdLine(EnigmailGpgAgent.agentPath, args));
-
-    var inputData = "%echo Generating key\nKey-Type: ";
-
-    switch (keyType) {
-    case KEYTYPE_DSA:
-      inputData += "DSA\nKey-Length: "+keyLength+"\nSubkey-Type: 16\nSubkey-Length: ";
-      break;
-    case KEYTYPE_RSA:
-      inputData += "RSA\nKey-Usage: sign,auth\nKey-Length: "+keyLength;
-      inputData += "\nSubkey-Type: RSA\nSubkey-Usage: encrypt\nSubkey-Length: ";
-      break;
-    default:
-      return null;
-    }
-
-    inputData += keyLength+"\n";
-    if (name.replace(/ /g, "").length)
-      inputData += "Name-Real: "+name+"\n";
-    if (comment && comment.replace(/ /g, "").length)
-      inputData += "Name-Comment: "+comment+"\n";
-    inputData += "Name-Email: "+email+"\n";
-    inputData += "Expire-Date: "+String(expiryDate)+"\n";
-
-    Log.CONSOLE(inputData+" \n");
-
-    if (passphrase.length)
-      inputData += "Passphrase: "+passphrase+"\n";
-
-    inputData += "%commit\n%echo done\n";
-
-    var proc = null;
-    var self = this;
-
-    try {
-      proc = subprocess.call({
-        command:     EnigmailGpgAgent.agentPath,
-        arguments:   args,
-        environment: EnigmailCore.getEnvList(),
-        charset: null,
-        stdin: function (pipe) {
-          pipe.write(inputData);
-          pipe.close();
-        },
-        stderr: function(data) {
-          listener.onDataAvailable(data);
-        },
-        done: function(result) {
-          gKeygenProcess = null;
-          try {
-            if (result.exitCode === 0) {
-              KeyRing.invalidateUserIdList();
-            }
-            listener.onStopRequest(result.exitCode);
-          }
-          catch (ex) {}
-        },
-        mergeStderr: false
-      });
-    } catch (ex) {
-      Log.ERROR("enigmailCommon.jsm: generateKey: subprocess.call failed with '"+ex.toString()+"'\n");
-      throw ex;
-    }
-
-    gKeygenProcess = proc;
-
-    Log.DEBUG("enigmailCommon.jsm: generateKey: subprocess = "+proc+"\n");
-
-    return proc;
-  },
-
   /**
    * get nsIIOService object
    */
   getIoService: function() {
     return Cc[this.IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
   },
-
-  /**
-   * Get a list of all secret keys
-   *
-   *  win:     nsIWindow: optional parent window
-   *  refresh: Boolean:   optional. true ->  re-load keys from gpg
-   *                                false -> use cached values if available
-   */
-  getSecretKeys: function (win, refresh) {
-    // TODO: move [keys]
-    // return a sorted array containing objects of (valid, usable) secret keys.
-    // @return: [ {name: <userId>, id: 0x1234ABCD, created: YYYY-MM-DD },  { ... } ]
-    var enigmailSvc = this.getService(win);
-    if (!enigmailSvc) {
-      return null;
-    }
-    var exitCodeObj = {};
-    var statusFlagsObj = {};
-    var errorMsgObj = {};
-
-    if (refresh === null) refresh = false;
-    var keyList=KeyRing.getUserIdList(true, refresh, exitCodeObj, statusFlagsObj, errorMsgObj);
-
-    if (exitCodeObj.value !== 0 && keyList.length === 0) {
-      Dialog.alert(win, errorMsgObj.value);
-      return null;
-    }
-
-    var userList=keyList.split(/\n/);
-    var secretKeyList = [];
-    var secretKeyCreated = [];
-    var i;
-
-    var keyId = null;
-    var keys = [];
-    for (i=0; i < userList.length; i++) {
-      if (userList[i].substr(0,4) == "sec:") {
-        let aLine=userList[i].split(/:/);
-        keyId = aLine[4];
-        secretKeyCreated[keyId] = Time.getDateTime(aLine[5], true, false);
-        secretKeyList.push(keyId);
-      }
-    }
-
-    keyList = KeyRing.getKeyDetails(secretKeyList.join(" "), false, false);
-    userList=keyList.split(/\n/);
-
-    for (i=0; i < userList.length; i++) {
-      let aLine = userList[i].split(/:/);
-      switch (aLine[0]) {
-      case "pub":
-        if (aLine[1].search(/[muf]/) === 0) keyId = aLine[4]; // public key is valid
-        break;
-      case "uid":
-        if ((keyId !== null) && (aLine[1].search(/[muf]/) === 0)) {
-          // UID is valid
-          keys.push({ name: Data.convertGpgToUnicode(aLine[9]),
-                      id: keyId,
-                      created: secretKeyCreated[keyId]});
-          keyId = null;
-        }
-      }
-    }
-
-    keys.sort(function(a,b) { return a.name == b.name ? (a.id < b.id ? -1 : 1) : (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1); });
-    return keys;
-  },
-
-  /**
-   * search, download or upload key on, from or to a keyserver
-   *
-   * @actionFlags: Integer - flags (bitmap) to determine the required action
-   *                         (see nsIEnigmail - Keyserver action flags for details)
-   * @keyserver:   String  - keyserver URL (optionally incl. protocol)
-   * @searchTerms: String  - space-separated list of search terms or key IDs
-   * @listener:    Object  - execStart Listener Object. See execStart for details.
-   * @errorMsgObj: Object  - object to hold error message in .value
-   *
-   * @return:      Subprocess object, or null in case process could not be started
-   */
-  keyserverAccess: function (actionFlags, keyserver, searchTerms, listener, errorMsgObj) {
-    // TODO: move [keyservers]
-    Log.DEBUG("enigmailCommon.jsm: keyserverAccess: "+searchTerms+"\n");
-
-    if (! (this.enigmailSvc && this.enigmailSvc.initialized)) {
-      Log.ERROR("enigmailCommon.jsm: keyserverAccess: not yet initialized\n");
-      errorMsgObj.value = Locale.getString("notInit");
-      return null;
-    }
-
-    if (!keyserver) {
-      errorMsgObj.value = Locale.getString("failNoServer");
-      return null;
-    }
-
-    if (!searchTerms && ! (actionFlags & nsIEnigmail.REFRESH_KEY)) {
-      errorMsgObj.value = Locale.getString("failNoID");
-      return null;
-    }
-
-    var proxyHost = HttpProxy.getHttpProxy(keyserver);
-    var args = Gpg.getStandardArgs(true);
-
-    if (actionFlags & nsIEnigmail.SEARCH_KEY) {
-      args = Gpg.getStandardArgs(false);
-      args = args.concat(["--command-fd", "0", "--fixed-list", "--with-colons"]);
-    }
-    if (proxyHost) {
-      args = args.concat(["--keyserver-options", "http-proxy="+proxyHost]);
-    }
-    args = args.concat(["--keyserver", keyserver]);
-
-//     if (actionFlags & nsIEnigmail.SEARCH_KEY | nsIEnigmail.DOWNLOAD_KEY | nsIEnigmail.REFRESH_KEY) {
-//       args = args.concat(["--command-fd", "0", "--fixed-list", "--with-colons"]);
-//     }
-
-    var inputData = null;
-    var searchTermsList = searchTerms.split(" ");
-
-    if (actionFlags & nsIEnigmail.DOWNLOAD_KEY) {
-      args.push("--recv-keys");
-      args = args.concat(searchTermsList);
-    }
-    else if (actionFlags & nsIEnigmail.REFRESH_KEY) {
-      args.push("--refresh-keys");
-    }
-    else if (actionFlags & nsIEnigmail.SEARCH_KEY) {
-      args.push("--search-keys");
-      args = args.concat(searchTermsList);
-      inputData = "quit\n";
-    }
-    else if (actionFlags & nsIEnigmail.UPLOAD_KEY) {
-      args.push("--send-keys");
-      args = args.concat(searchTermsList);
-    }
-
-    var isDownload = actionFlags & (nsIEnigmail.REFRESH_KEY | nsIEnigmail.DOWNLOAD_KEY);
-
-    Log.CONSOLE("enigmail> "+Files.formatCmdLine(EnigmailGpgAgent.agentPath, args)+"\n");
-
-    var proc = null;
-    var self = this;
-
-    var exitCode = null;
-
-    try {
-      proc = subprocess.call({
-        command:     EnigmailGpgAgent.agentPath,
-        arguments:   args,
-        environment: EnigmailCore.getEnvList(),
-        charset: null,
-        stdin: inputData,
-        stdout: function(data) {
-          listener.stdout(data);
-        },
-        stderr: function(data) {
-          if (data.search(/^\[GNUPG:\] ERROR/m) >= 0) {
-            exitCode = 4;
-          }
-          listener.stderr(data);
-        },
-        done: function(result) {
-          gKeygenProcess = null;
-          try {
-            if (result.exitCode === 0 && isDownload) {
-              KeyRing.invalidateUserIdList();
-            }
-            if (exitCode === null) {
-              exitCode = result.exitCode;
-            }
-            listener.done(exitCode);
-          }
-          catch (ex) {}
-        },
-        mergeStderr: false
-      });
-    }
-    catch (ex) {
-      Log.ERROR("enigmailCommon.jsm: keyserverAccess: subprocess.call failed with '"+ex.toString()+"'\n");
-      throw ex;
-    }
-
-    if (!proc) {
-      Log.ERROR("enigmailCommon.jsm: keyserverAccess: subprocess failed due to unknown reasons\n");
-      return null;
-    }
-
-    return proc;
-  },
-
-  //////////////// Passphrase Mangagement /////////
-
-  getMaxIdleMinutes: function () {
-    var maxIdleMinutes = 5;
-    try {
-      maxIdleMinutes = Prefs.getPref("maxIdleMinutes");
-    } catch (ex) {}
-
-    return maxIdleMinutes;
-  },
-
 
   getLocalFileApi: function () {
     return Ci.nsIFile;
@@ -684,57 +313,6 @@ const EnigmailCommon = {
     }
 
     return 0;
-  },
-
-  getAttachmentFileName: function (parent, byteData) {
-    Log.DEBUG("enigmailCommon.jsm: getAttachmentFileName\n");
-
-    var args = Gpg.getStandardArgs(true);
-    args = args.concat(Passwords.command());
-    args.push("--list-packets");
-
-
-    var listener = Execution.newSimpleListener(
-      function _stdin (pipe) {
-          Log.DEBUG("enigmailCommon.jsm: getAttachmentFileName: _stdin\n");
-          pipe.write(byteData);
-          pipe.write("\n");
-          pipe.close();
-      });
-
-    var statusFlagsObj = {};
-    var proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, parent,
-                                   listener, statusFlagsObj);
-
-    if (!proc) {
-      return null;
-    }
-
-    proc.wait();
-
-    var matches = listener.stdoutData.match(/:literal data packet:\r?\n.*name="(.*)",/m);
-    if (matches && (matches.length > 1)) {
-      var filename = escape(matches[1]).replace(/%5Cx/g, "%");
-      return Data.convertToUnicode(unescape(filename), "utf-8");
-    }
-    else
-      return null;
-  },
-
-  /***
-   * create a string of random characters suitable to use for a boundary in a
-   * MIME message following RFC 2045
-   *
-   * @return: string of 33 random characters and digits
-   */
-  createMimeBoundary: function() {
-    let b = "";
-    let r = 0;
-    for (let i=0; i<33; i++) {
-      r = Math.floor(Math.random() * 58);
-      b += String.fromCharCode((r < 10 ? 48 : (r < 34 ? 55 :  63)) + r);
-    }
-    return b;
   }
 };
 

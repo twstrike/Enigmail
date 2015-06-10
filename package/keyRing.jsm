@@ -58,6 +58,7 @@ Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
+Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 
@@ -81,8 +82,12 @@ const USERID_ID = 9;
 const SIG_TYPE_ID = 10;
 const KEY_USE_FOR_ID = 11;
 
+const KEYTYPE_DSA = 1;
+const KEYTYPE_RSA = 2;
+
 let userIdList = null;
 let secretKeyList = null;
+let keygenProcess = null;
 
 /**
  * Get key list from GnuPG. If the keys may be pre-cached already
@@ -852,5 +857,171 @@ const KeyRing = {
         }
 
         keyListObj.keySortList.sort(getSortFunction(sortColumn.toLowerCase(), keyListObj, sortDirection));
+    },
+
+    isGeneratingKey: function() {
+        return keygenProcess !== null;
+    },
+
+    /**
+     * Generate a new key pair with GnuPG
+     *
+     * @parent:     nsIWindow  - parent window (not used anymore)
+     * @name:       String     - name part of UID
+     * @comment:    String     - comment part of UID (brackets are added)
+     * @comment:    String     - email part of UID (<> will be added)
+     * @expiryDate: Number     - Unix timestamp of key expiry date; 0 if no expiry
+     * @keyLength:  Number     - size of key in bytes (e.g 4096)
+     * @keyType:    Number     - 1 = DSA / 2 = RSA
+     * @passphrase: String     - password; null if no password
+     * @listener:   Object     - {
+     *                             function onDataAvailable(data) {...},
+     *                             function onStopRequest(exitCode) {...}
+     *                           }
+     *
+     * @return: handle to process
+     */
+    generateKey: function (parent, name, comment, email, expiryDate, keyLength, keyType,
+                           passphrase, listener) {
+        Log.WRITE("keyRing.jsm: generateKey:\n");
+
+        if (KeyRing.isGeneratingKey()) {
+            // key generation already ongoing
+            throw Components.results.NS_ERROR_FAILURE;
+        }
+
+        const args = Gpg.getStandardArgs(true).
+                  concat(["--gen-key"]);
+
+        Log.CONSOLE(Files.formatCmdLine(Gpg.agentPath, args));
+
+        let inputData = "%echo Generating key\nKey-Type: ";
+
+        switch (keyType) {
+        case KEYTYPE_DSA:
+            inputData += "DSA\nKey-Length: "+keyLength+"\nSubkey-Type: 16\nSubkey-Length: ";
+            break;
+        case KEYTYPE_RSA:
+            inputData += "RSA\nKey-Usage: sign,auth\nKey-Length: "+keyLength;
+            inputData += "\nSubkey-Type: RSA\nSubkey-Usage: encrypt\nSubkey-Length: ";
+            break;
+        default:
+            return null;
+        }
+
+        inputData += keyLength+"\n";
+        if (name.replace(/ /g, "").length) {
+            inputData += "Name-Real: "+name+"\n";
+        }
+        if (comment && comment.replace(/ /g, "").length) {
+            inputData += "Name-Comment: "+comment+"\n";
+        }
+        inputData += "Name-Email: "+email+"\n";
+        inputData += "Expire-Date: "+String(expiryDate)+"\n";
+
+        Log.CONSOLE(inputData+" \n");
+
+        if (passphrase.length) {
+            inputData += "Passphrase: "+passphrase+"\n";
+        }
+
+        inputData += "%commit\n%echo done\n";
+
+        let proc = null;
+
+        try {
+            proc = subprocess.call({
+                command:     Gpg.agentPath,
+                arguments:   args,
+                environment: EnigmailCore.getEnvList(),
+                charset: null,
+                stdin: function (pipe) {
+                    pipe.write(inputData);
+                    pipe.close();
+                },
+                stderr: function(data) {
+                    listener.onDataAvailable(data);
+                },
+                done: function(result) {
+                    keygenProcess = null;
+                    try {
+                        if (result.exitCode === 0) {
+                            KeyRing.invalidateUserIdList();
+                        }
+                        listener.onStopRequest(result.exitCode);
+                    }
+                    catch (ex) {}
+                },
+                mergeStderr: false
+            });
+        } catch (ex) {
+            Log.ERROR("keyRing.jsm: generateKey: subprocess.call failed with '"+ex.toString()+"'\n");
+            throw ex;
+        }
+
+        keygenProcess = proc;
+
+        Log.DEBUG("keyRing.jsm: generateKey: subprocess = "+proc+"\n");
+
+        return proc;
+    },
+
+    /**
+     * Get a list of all secret keys
+     *
+     *  win:     nsIWindow: optional parent window
+     *  refresh: Boolean:   optional. true ->  re-load keys from gpg
+     *                                false -> use cached values if available
+     */
+    getSecretKeys: function (win, refresh) {
+        // return a sorted array containing objects of (valid, usable) secret keys.
+        // @return: [ {name: <userId>, id: 0x1234ABCD, created: YYYY-MM-DD },  { ... } ]
+        const exitCodeObj = {};
+        const errorMsgObj = {};
+
+        if (refresh === null) refresh = false;
+        const keyList = KeyRing.getUserIdList(true, refresh, exitCodeObj, {}, errorMsgObj);
+
+        if (exitCodeObj.value !== 0 && keyList.length === 0) {
+            Dialog.alert(win, errorMsgObj.value);
+            return null;
+        }
+
+        const userList = keyList.split(/\n/);
+        const secretKeyList = [];
+        const secretKeyCreated = [];
+
+        let keyId = null;
+        const keys = [];
+        for (let i=0; i < userList.length; i++) {
+            if (userList[i].substr(0,4) == "sec:") {
+                let aLine = userList[i].split(/:/);
+                keyId = aLine[4];
+                secretKeyCreated[keyId] = Time.getDateTime(aLine[5], true, false);
+                secretKeyList.push(keyId);
+            }
+        }
+
+        const userList2 = KeyRing.getKeyDetails(secretKeyList.join(" "), false, false).split(/\n/);
+
+        for (let i=0; i < userList2.length; i++) {
+            let aLine = userList2[i].split(/:/);
+            switch (aLine[0]) {
+            case "pub":
+                if (aLine[1].search(/[muf]/) === 0) keyId = aLine[4]; // public key is valid
+                break;
+            case "uid":
+                if ((keyId !== null) && (aLine[1].search(/[muf]/) === 0)) {
+                    // UID is valid
+                    keys.push({ name: Data.convertGpgToUnicode(aLine[9]),
+                                id: keyId,
+                                created: secretKeyCreated[keyId]});
+                    keyId = null;
+                }
+            }
+        }
+
+        keys.sort(function(a,b) { return a.name == b.name ? (a.id < b.id ? -1 : 1) : (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1); });
+        return keys;
     }
 };

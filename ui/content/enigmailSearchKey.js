@@ -44,6 +44,7 @@ Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/keyserver.jsm"); /*global KeyServer: false */
 
 const Ec = EnigmailCommon;
 
@@ -629,7 +630,7 @@ function enigNewGpgKeysRequest(requestType, callbackFunction) {
   if (gEnigRequest.port) keyServer += ":"+ gEnigRequest.port;
 
   var errorMsgObj = {};
-  gEnigRequest.gpgkeysRequest = Ec.keyserverAccess(requestType,
+  gEnigRequest.gpgkeysRequest = KeyServer.access(requestType,
                                  keyServer,
                                  keyValue,
                                  procListener,

@@ -46,6 +46,7 @@ Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 
 if (! Enigmail) var Enigmail = {};
 
@@ -490,7 +491,7 @@ Enigmail.hdrView = {
       }
 
       if (statusFlags & nsIEnigmail.DECRYPTION_OKAY) {
-        EnigmailCommon.rememberEncryptedUri(this.lastEncryptedMsgKey);
+        URIs.rememberEncryptedUri(this.lastEncryptedMsgKey);
 
         // Display encrypted icon
         gEncryptedUINode.setAttribute("encrypted", "ok");
@@ -748,7 +749,7 @@ Enigmail.hdrView = {
   {
     if (Enigmail.hdrView.lastEncryptedMsgKey)
     {
-      EnigmailCommon.forgetEncryptedUri(Enigmail.hdrView.lastEncryptedMsgKey);
+      URIs.forgetEncryptedUri(Enigmail.hdrView.lastEncryptedMsgKey);
       Enigmail.hdrView.lastEncryptedMsgKey = null;
     }
   },

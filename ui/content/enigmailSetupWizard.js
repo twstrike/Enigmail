@@ -310,7 +310,7 @@ function checkGnupgInstallation() {
  * Check if secret keys are available
  */
 function checkSecretKeys() {
-  var keyList = Ec.getSecretKeys(null, true);
+  var keyList = KeyRing.getSecretKeys(null, true);
   if (keyList && keyList.length > 0) {
     return true;
   }
@@ -702,7 +702,7 @@ function loadKeys() {
   var exitCodeObj = {};
   var statusFlagsObj = {};
   var errorMsgObj = {};
-  var keyList = Ec.getSecretKeys(window, true);
+  var keyList = KeyRing.getSecretKeys(window, true);
   if (keyList === null) {
     return;
   }
@@ -861,15 +861,15 @@ function wizardGenKey() {
   };
 
   try {
-    gKeygenRequest = Ec.generateKey(window,
-                       Data.convertFromUnicode(userName),
-                       "",
-                       Data.convertFromUnicode(userEmail),
-                       365*5 /* 5 years */,
-                       4096,
-                       ENIG_KEYTYPE_RSA,
-                       Data.convertFromUnicode(passphrase),
-                       listener);
+    gKeygenRequest = KeyRing.generateKey(window,
+                                         Data.convertFromUnicode(userName),
+                                         "",
+                                         Data.convertFromUnicode(userEmail),
+                                         365*5 /* 5 years */,
+                                         4096,
+                                         ENIG_KEYTYPE_RSA,
+                                         Data.convertFromUnicode(passphrase),
+                                         listener);
   } catch (ex) {
     Log.DEBUG("enigmailSetupWizard.js: genKey - generateKey() failed with "+ex.toString()+"\n"+ex.stack+"\n");
   }

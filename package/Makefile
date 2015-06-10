@@ -57,7 +57,11 @@ MODFILES = \
            timer.jsm \
            commandLine.jsm \
            time.jsm \
+           attachment.jsm \
+           mime.jsm \
+           keyserver.jsm \
            streams.jsm \
+           uris.jsm \
            httpProxy.jsm \
            glodaUtils.jsm \
            glodaMime.jsm \

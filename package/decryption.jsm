@@ -104,7 +104,7 @@ const Decryption = {
             return null;
         }
 
-        if (ecom.isGeneratingKey()) {
+        if (KeyRing.isGeneratingKey()) {
             errorMsgObj.value = Locale.getString("notComplete");
             return null;
         }
@@ -435,6 +435,25 @@ const Decryption = {
         return exitCode;
     },
 
+    /**
+     *  Decrypts a PGP ciphertext and returns the the plaintext
+     *
+     *in  @parent a window object
+     *in  @uiFlags see flag options in nsIEnigmail.idl, UI_INTERACTIVE, UI_ALLOW_KEY_IMPORT
+     *in  @cipherText a string containing a PGP Block
+     *out @signatureObj
+     *out @exitCodeObj contains the exit code
+     *out @statusFlagsObj see status flags in nslEnigmail.idl, GOOD_SIGNATURE, BAD_SIGNATURE
+     *out @keyIdObj holds the key id
+     *out @userIdObj holds the user id
+     *out @sigDetailsObj
+     *out @errorMsgObj  error string
+     *out @blockSeparationObj
+     *out @encToDetailsObj  returns in details, which keys the mesage was encrypted for (ENC_TO entries)
+     *
+     * @return string plaintext ("" if error)
+     *
+     */
     decryptMessage: function (parent, uiFlags, cipherText,
                               signatureObj, exitCodeObj,
                               statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,

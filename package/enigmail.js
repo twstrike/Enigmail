@@ -61,6 +61,7 @@ Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 
 /* Implementations supplied by this module */
 const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";
@@ -96,7 +97,6 @@ var gKeyAlgorithms = [];
 // Enigmail encryption/decryption service
 ///////////////////////////////////////////////////////////////////////////////
 
-
 function Enigmail() {
     Ec = EC.getEnigmailCommon();
     EnigmailGpgAgent.setEnigmailCommon(Ec);
@@ -111,7 +111,6 @@ Enigmail.prototype = {
   initializationAttempted: false,
   initializationError: "",
 
-  _messageIdList: {},
   _xpcom_factory: {
     createInstance: function (aOuter, iid) {
         // Enigmail is a service -> only instanciate once
@@ -120,7 +119,6 @@ Enigmail.prototype = {
     lockFactory: function (lock) {}
   },
   QueryInterface: XPCOMUtils.generateQI([ nsIEnigmail, nsIObserver, nsISupports ]),
-
 
   observe: function (aSubject, aTopic, aData) {
     Log.DEBUG("enigmail.js: Enigmail.observe: topic='"+aTopic+"' \n");
@@ -291,25 +289,6 @@ Enigmail.prototype = {
       return Armor.extractSignaturePart(signatureBlock, part);
   },
 
-/**
-  *  Decrypts a PGP ciphertext and returns the the plaintext
-  *
-  *in  @parent a window object
-  *in  @uiFlags see flag options in nsIEnigmail.idl, UI_INTERACTIVE, UI_ALLOW_KEY_IMPORT
-  *in  @cipherText a string containing a PGP Block
-  *out @signatureObj
-  *out @exitCodeObj contains the exit code
-  *out @statusFlagsObj see status flags in nslEnigmail.idl, GOOD_SIGNATURE, BAD_SIGNATURE
-  *out @keyIdObj holds the key id
-  *out @userIdObj holds the user id
-  *out @sigDetailsObj
-  *out @errorMsgObj  error string
-  *out @blockSeparationObj
-  *out @encToDetailsObj  returns in details, which keys the mesage was encrypted for (ENC_TO entries)
-  *
-  * @return string plaintext ("" if error)
-  *
-  */
   decryptMessage: function (parent, uiFlags, cipherText,
                             signatureObj, exitCodeObj,
                             statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
@@ -321,36 +300,17 @@ Enigmail.prototype = {
   },
 
   createMessageURI: function (originalUrl, contentType, contentCharset, contentData, persist) {
-    Log.DEBUG("enigmail.js: Enigmail.createMessageURI: "+originalUrl+
-              ", "+contentType+", "+contentCharset+"\n");
-
-    var messageId = "msg" + Math.floor(Math.random()*1.0e9);
-
-    this._messageIdList[messageId] = {originalUrl:originalUrl,
-                                      contentType:contentType,
-                                      contentCharset:contentCharset,
-                                      contentData:contentData,
-                                      persist:persist};
-
-    return "enigmail:message/"+messageId;
+    return URIs.createMessageURI(originalUrl, contentType, contentCharset, contentData, persist);
   },
 
   deleteMessageURI: function (uri) {
-    Log.DEBUG("enigmail.js: Enigmail.deleteMessageURI: "+uri+"\n");
-
-      var messageId = Data.extractMessageId(uri);
-
-    if (!messageId)
-      return false;
-
-    return (delete this._messageIdList[messageId]);
+    return URIs.deleteMessageURI(uri);
   },
 
   encryptAttachment: function (parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile,
             exitCodeObj, statusFlagsObj, errorMsgObj) {
       return Encryption.encryptAttachment(parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile, exitCodeObj, statusFlagsObj, errorMsgObj);
   },
-
 
   verifyAttachment: function (parent, verifyFile, sigFile,
                               statusFlagsObj, errorMsgObj) {
@@ -395,12 +355,9 @@ Enigmail.prototype = {
     return listener.exitCode;
   },
 
-
   decryptAttachment: function (parent, outFile, displayName, byteData, exitCodeObj, statusFlagsObj, errorMsgObj) {
       return Decryption.decryptAttachment(parent, outFile, displayName, byteData, exitCodeObj, statusFlagsObj, errorMsgObj);
   },
-
-  // Methods for handling Per-Recipient Rules
 
   getRulesFile: function () {
       return Rules.getRulesFile();
@@ -425,7 +382,7 @@ Enigmail.prototype = {
   clearRules: function () {
       return Rules.clearRules();
   }
-}; // Enigmail.protoypte
+}; // Enigmail.prototype
 
 // This variable is exported implicitly and should not be refactored or removed
 const NSGetFactory = XPCOMUtils.generateNSGetFactory([Enigmail, EnigmailProtocolHandler, CommandLine.Handler]);

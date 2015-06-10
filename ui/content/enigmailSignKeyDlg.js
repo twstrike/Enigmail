@@ -60,7 +60,7 @@ function onLoad() {
     window.close();
     return;
   }
-  var keys = Ec.getSecretKeys(window);
+  var keys = KeyRing.getSecretKeys(window);
   if (keys.length === 0) {
     Dialog.alert(null, Locale.getString("noTrustedOwnKeys"));
     window.close();

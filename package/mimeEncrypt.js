@@ -16,6 +16,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
+Components.utils.import("resource://enigmail/mime.jsm"); /*global Mime: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -189,7 +190,7 @@ PgpMimeEncrypt.prototype = {
                                                  errorMsgObj);
       if (! this.proc) throw Cr.NS_ERROR_FAILURE;
 
-      this.cryptoBoundary = Ec.createMimeBoundary();
+      this.cryptoBoundary = Mime.createBoundary();
       this.startCryptoHeaders();
 
     }
@@ -314,7 +315,7 @@ PgpMimeEncrypt.prototype = {
           if (this.cryptoMode == MIME_ENCRYPTED) {
             let ct = this.getHeader("content-type", false);
             if ((ct.search(/text\/plain/i) === 0) || (ct.search(/text\/html/i) === 0)) {
-              this.encapsulate = Ec.createMimeBoundary();
+              this.encapsulate = Mime.createBoundary();
               this.writeToPipe('Content-Type: multipart/mixed; boundary="'+
                 this.encapsulate+'"\r\n\r\n');
               this.writeToPipe("--"+this.encapsulate+"\r\n");

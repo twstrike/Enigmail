@@ -46,6 +46,7 @@ testing("enigmailCommon.jsm"); /*global EnigmailCommon: false, EnigmailErrorHand
 component("enigmail/enigmailCore.jsm");
 component("enigmail/prefs.jsm");
 component("enigmail/keyRing.jsm"); /*global KeyRing: fales */
+component("enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 
 test(shouldHandleNoDataErrors);
 test(shouldHandleErrorOutput);
@@ -178,7 +179,7 @@ function shouldGetSecretKeys() {
         "781617319CE311C4",
         5,
         function() {
-            var result = EnigmailCommon.getSecretKeys(window);
+            var result = KeyRing.getSecretKeys(window);
             Assert.equal(result.length, 1);
             Assert.equal(result[0].name, expectedKey[0].name);
             Assert.equal(result[0].id, expectedKey[0].id);

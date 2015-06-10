@@ -39,6 +39,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
+Components.utils.import("resource://enigmail/keyserver.jsm"); /*global KeyServer: false */
 
 const Ec = EnigmailCommon;
 
@@ -166,7 +167,7 @@ function onLoad() {
   gEnigCallbackFunc = inArg.cbFunc;
 
   var errorMsgObj={};
-  gProcess = Ec.keyserverAccess(inArg.accessType, inArg.keyServer, inArg.keyList, procListener, errorMsgObj);
+  gProcess = KeyServer.access(inArg.accessType, inArg.keyServer, inArg.keyList, procListener, errorMsgObj);
   if (gProcess === null) {
     EnigAlert(Locale.getString("sendKeysFailed")+"\n"+EnigConvertGpgToUnicode(errorMsgObj.value));
   }
