@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, XPCOMUtils: false, Data: false, Log: false, Files: false, EnigmailFuncs: false, dump: false, atob: false */
+/*global Components: false, XPCOMUtils: false, Data: false, Log: false, Files: false, EnigmailFuncs: false, dump: false, atob: false */
 /*jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,7 +16,6 @@
 //   - don't attempt to validate forwarded messages unless message is being viewed
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
@@ -27,7 +26,6 @@ const EXPORTED_SYMBOLS = [ "EnigmailVerify" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const Ec = EnigmailCommon;
 
 const APPSHELL_MEDIATOR_CONTRACTID = "@mozilla.org/appshell/window-mediator;1";
 

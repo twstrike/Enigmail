@@ -1,5 +1,5 @@
 /*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false */
-/*global EnigmailCommon: false, EnigmailCore: false, KeyEditor: false, component: false, Cc: false, Ci: false, do_print: false, Prefs: false, withTestGpgHome:false */
+/*global EnigmailCore: false, KeyEditor: false, component: false, Cc: false, Ci: false, do_print: false, Prefs: false, withTestGpgHome:false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -42,8 +42,8 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
-testing("enigmailCommon.jsm"); /*global EnigmailCommon: false, EnigmailErrorHandling: false */
 component("enigmail/enigmailCore.jsm");
+component("enigmail/enigmailErrorHandling.jsm");
 component("enigmail/prefs.jsm");
 component("enigmail/keyRing.jsm"); /*global KeyRing: fales */
 component("enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
@@ -116,7 +116,7 @@ function shouldHandleSuccessfulImport() {
         "gpg:   secret keys imported: 1\n" +
         "[GNUPG:] IMPORT_RES 2 0 1 1 1 0 0 0 0 1 1 0 0 0";
 
-     EnigmailCommon.enigmailSvc = initializeEnigmail();
+     EnigmailCore.setEnigmailService(initializeEnigmail());
      var result = EnigmailErrorHandling.parseErrorOutput(errorOutput, {});
 
      Assert.assertContains(result, "secret key imported");
@@ -167,7 +167,7 @@ function shouldHandleErrors() {
 
 function shouldGetSecretKeys() {
     Components.utils.import("resource://enigmail/keyEditor.jsm");
-    EnigmailCommon.enigmailSvc = initializeEnigmail();
+    EnigmailCore.setEnigmailService(initializeEnigmail());
     var secretKey = do_get_file("resources/dev-strike.sec", false);
     var errorMsgObj = {};
     var importedKeysObj = {};

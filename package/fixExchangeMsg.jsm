@@ -40,13 +40,11 @@ const Cu = Components.utils;
 
 Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
 Cu.import("resource://enigmail/enigmailFuncs.jsm"); /*global EnigmailFuncs: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 
-const Ec = EnigmailCommon;
 const EC = EnigmailCore;
 
 const EXPORTED_SYMBOLS = ["EnigmailFixExchangeMsg"];
@@ -54,6 +52,8 @@ const EXPORTED_SYMBOLS = ["EnigmailFixExchangeMsg"];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const nsIEnigmail = Components.interfaces.nsIEnigmail;
+
+const IOSERVICE_CONTRACTID = "@mozilla.org/network/io-service;1";
 
 /*
  *  Fix a broken message from MS-Exchange and replace it with the original message

@@ -107,7 +107,6 @@ zip --must-match\
     modules/decryption.jsm \
     modules/dialog.jsm \
     modules/encryption.jsm \
-    modules/enigmailCommon.jsm \
     modules/enigmailConvert.jsm \
     modules/enigmailCore.jsm \
     modules/enigmailErrorHandling.jsm \

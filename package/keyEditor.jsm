@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, EnigmailCore: false, Key: false, Log: false, OS: false, Files: false, Locale: false, Data: false, Execution: false */
+/*global Components: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -38,20 +38,19 @@
 
 "use strict";
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/key.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/os.jsm");
-Components.utils.import("resource://enigmail/files.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
-Components.utils.import("resource://enigmail/execution.jsm");
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
+Components.utils.import("resource://enigmail/log.jsm"); /*global Log: false */
+Components.utils.import("resource://enigmail/os.jsm"); /*global OS: false */
+Components.utils.import("resource://enigmail/files.jsm"); /*global Files: false */
+Components.utils.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
+Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 
 const EXPORTED_SYMBOLS = [ "KeyEditor" ];
 
-const Ec = EnigmailCommon;
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
@@ -249,8 +248,7 @@ GpgEditorInterface.prototype = {
 function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, callbackFunc, requestObserver, parentCallback) {
     Log.DEBUG("keyManagmenent.jsm: editKey: parent="+parent+", editCmd="+editCmd+"\n");
 
-    var enigmailSvc = Ec.getService(parent);
-    if (!enigmailSvc) {
+    if (!EnigmailCore.getService(parent)) {
         Log.ERROR("keyManagmenent.jsm: Enigmail.editKey: not yet initialized\n");
         parentCallback(-1, Locale.getString("notInit"));
         return -1;
@@ -538,7 +536,6 @@ const KeyEditor = {
   cardChangePin: function (parent, action, oldPin, newPin, adminPin, pinObserver, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.cardChangePin: parent="+parent+", action="+action+"\n");
     var adminObserver = new EnigCardAdminObserver(pinObserver, OS.isDosLike());
-    var enigmailSvc = Ec.getService(parent);
 
     return editKey(parent, EnigmailGpgAgent.useGpgAgent(), null, "", ["--with-colons", "--card-edit"],
                    { step: 0,

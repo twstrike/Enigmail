@@ -212,7 +212,7 @@ const Windows = {
      * no return value
      */
     openKeyManager: function (win) {
-        EnigmailCore.getEnigmailCommon().getService(win);
+        EnigmailCore.getService(win);
 
         Windows.openWin("enigmail:KeyManager",
                         "chrome://enigmail/content/enigmailKeyManager.xul",
@@ -281,7 +281,7 @@ const Windows = {
     openPrefWindow: function (win, showBasic, selectTab) {
         Log.DEBUG("windows.js: openPrefWindow\n");
 
-        EnigmailCore.getEnigmailCommon().getService(win, true);  // true: starting preferences dialog
+        EnigmailCore.getService(win, true);  // true: starting preferences dialog
 
         win.openDialog("chrome://enigmail/content/pref-enigmail.xul",
                        "_blank", "chrome,resizable=yes",
@@ -300,7 +300,7 @@ const Windows = {
      */
     createNewRule: function (win, emailAddress) {
         // make sure the rules database is loaded
-        const enigmailSvc = EnigmailCore.getEnigmailCommon().getService(win);
+        const enigmailSvc = EnigmailCore.getService(win);
         if (!enigmailSvc) {
             return false;
         }
@@ -386,7 +386,7 @@ const Windows = {
      * no return value
      */
     showPhoto: function (win, keyId, userId, photoNumber) {
-        const enigmailSvc = EnigmailCore.getEnigmailCommon().getService(win);
+        const enigmailSvc = EnigmailCore.getService(win);
         if (enigmailSvc) {
             if (photoNumber === null) photoNumber=0;
 

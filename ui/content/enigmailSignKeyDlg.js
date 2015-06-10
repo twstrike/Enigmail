@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Log: false, Locale: false, Dialog: false */
+/*global Components: false, Log: false, Locale: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -34,15 +34,12 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/keyEditor.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
-
-const Ec = EnigmailCommon;
-
 
 var gExportableSignatureList = null;
 var gLocalSignatureList = null;
@@ -54,7 +51,7 @@ function onLoad() {
 
   window.arguments[1].refresh = false;
 
-  var enigmailSvc = Ec.getService(window);
+  var enigmailSvc = EnigmailCore.getService(window);
   if (!enigmailSvc) {
     Dialog.alert(null, Locale.getString("accessError"));
     window.close();
@@ -164,7 +161,7 @@ function onAccept() {
   var localSig = document.getElementById("localSig");
   var signWithKey = document.getElementById("signWithKey");
 
-  var enigmailSvc = Ec.getService(window);
+  var enigmailSvc = EnigmailCore.getService(window);
   if (!enigmailSvc) {
     Dialog.alert(window, Locale.getString("accessError"));
     return true;
@@ -209,7 +206,7 @@ function enigKeySelCb() {
   if ((doLocalSig.checked) && (gExportableSignatureList[signWithKeyId]>0)) {
     // User tries to locally sign a key he has already signed (at least partially) with an exportable signature
     // Here we display a hint and DISable the OK button
-    alreadySigned.setAttribute("value", Ec.getString("alreadySignedexportable.label", "0x"+ KeyToBeSigned32));
+    alreadySigned.setAttribute("value", Locale.getString("alreadySignedexportable.label", "0x"+ KeyToBeSigned32));
     alreadySigned.removeAttribute("collapsed");
     acceptButton.disabled = true;
   }

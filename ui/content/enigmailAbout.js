@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, App: false, Windows: false */
+/*global Components: false, App: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -37,17 +37,12 @@
 // Uses: chrome://enigmail/content/enigmailCommon.js
 //       chrome://enigmail/content/enigmailBuildDate.js
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-
-// Initialize enigmailCommon
-const Ec = EnigmailCommon;
-
-
 
 function enigAboutLoad() {
     Log.DEBUG("enigmailAbout.js: enigAboutLoad\n");
@@ -61,7 +56,7 @@ function enigAboutLoad() {
   if (versionElement)
     versionElement.firstChild.data = Locale.getString("usingVersion", enigVersion);
 
-  var enigmailSvc = Ec.getService();
+  var enigmailSvc = EnigmailCore.getService();
 
   var agentStr;
   if (enigmailSvc) {

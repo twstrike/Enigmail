@@ -1,4 +1,4 @@
-/*global Components: false */
+/*global Components: false, Enigmail: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -38,7 +38,12 @@
 
 const EXPORTED_SYMBOLS = [ "EnigmailCore" ];
 
-let gEnigmailSvc = null;      // Global Enigmail Service
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
+const enigmailHolder = {
+    svc: null
+};      // Global Enigmail Service
 let envList = null;           // currently filled from enigmail.js
 
 function lazy(importName, name) {
@@ -64,22 +69,45 @@ const EnigmailCore = {
         this.version = enigmailVersion;
     },
 
+    /**
+     * get and or initialize the Enigmail service,
+     * including the handling for upgrading old preferences to new versions
+     *
+     * @win:                - nsIWindow: parent window (optional)
+     * @startingPreferences - Boolean: true - called while switching to new preferences
+     *                        (to avoid re-check for preferences)
+     */
+    getService: function (win, startingPreferences) {
+        // Lazy initialization of Enigmail JS component (for efficiency)
+
+        if (enigmailHolder.svc) {
+            return enigmailHolder.svc.initialized ? enigmailHolder.svc : null;
+        }
+
+        try {
+            enigmailHolder.svc = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
+        } catch (ex) {
+            return null;
+        }
+
+        return Enigmail.getService(enigmailHolder, win, startingPreferences);
+    },
+
     getEnigmailService: function() {
-        return gEnigmailSvc;
+        return enigmailHolder.svc;
     },
 
     setEnigmailService: function(v) {
-        gEnigmailSvc = v;
+        enigmailHolder.svc = v;
     },
 
     ensuredEnigmailService: function(f) {
-        if(gEnigmailSvc === null) {
+        if(enigmailHolder.svc === null) {
             EnigmailCore.setEnigmailService(f());
         }
-        return gEnigmailSvc;
+        return enigmailHolder.svc;
     },
 
-    getEnigmailCommon: lazy("enigmailCommon.jsm", "EnigmailCommon"),
     getKeyRing:        lazy("keyRing.jsm", "KeyRing"),
 
     /**

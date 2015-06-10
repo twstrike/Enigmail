@@ -39,8 +39,7 @@
 /*global MimeBody: false, MimeUnknown: false, MimeMessageAttachment: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
 Components.utils.import("resource://enigmail/glodaMime.jsm");
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
@@ -680,7 +679,7 @@ Enigmail.msg = {
   toggleAttachOwnKey: function ()
   {
     Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.toggleAttachOwnKey\n");
-    EnigmailCommon.getService(window); // make sure Enigmail is loaded and working
+    EnigmailCore.getService(window); // make sure Enigmail is loaded and working
 
     this.attachOwnKeyObj.appendAttachment = !this.attachOwnKeyObj.appendAttachment;
 
@@ -758,7 +757,7 @@ Enigmail.msg = {
   extractAndAttachKey: function (uid)
   {
     Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.attachKey: \n");
-    var enigmailSvc = EnigmailCommon.getService(window);
+    var enigmailSvc = EnigmailCore.getService(window);
     if (!enigmailSvc)
       return null;
 
@@ -966,7 +965,7 @@ Enigmail.msg = {
   goAccountManager: function ()
   {
     Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.goAccountManager:\n");
-    EnigmailCommon.getService(window);
+    EnigmailCore.getService(window);
     var currentId=null;
     var server=null;
     try {
@@ -1001,7 +1000,7 @@ Enigmail.msg = {
       what = this.nextCommandId;
     }
     this.nextCommandId = "";
-    EnigmailCommon.getService(window); // try to access Enigmail to launch the wizard if needed
+    EnigmailCore.getService(window); // try to access Enigmail to launch the wizard if needed
 
     // ignore settings for this account?
     try {
@@ -2674,7 +2673,7 @@ Enigmail.msg = {
       fromAddr = userIdValue;
     }
 
-    let enigmailSvc = EnigmailCommon.getService(window);
+    let enigmailSvc = EnigmailCore.getService(window);
     if (! enigmailSvc) return true;
 
     let useEnigmail = this.preferPgpOverSmime(sendFlags);
@@ -2835,11 +2834,11 @@ Enigmail.msg = {
     }
     this.dirty = 1;
 
-    var enigmailSvc = EnigmailCommon.getService(window);
+    var enigmailSvc = EnigmailCore.getService(window);
     if (!enigmailSvc) {
        var msg=Locale.getString("sendUnencrypted");
-       if (EnigmailCommon.enigmailSvc && EnigmailCommon.enigmailSvc.initializationError) {
-          msg = EnigmailCommon.enigmailSvc.initializationError +"\n\n"+msg;
+        if (EnigmailCore.getEnigmailService() && EnigmailCore.getEnigmailService().initializationError) {
+          msg = EnigmailCore.getEnigmailService().initializationError +"\n\n"+msg;
        }
 
        return Dialog.confirmDlg(window, msg, Locale.getString("msgCompose.button.send"));
@@ -3272,8 +3271,8 @@ Enigmail.msg = {
     } catch (ex) {
        Log.writeException("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptMsg", ex);
        msg=Locale.getString("signFailed");
-       if (EnigmailCommon.enigmailSvc && EnigmailCommon.enigmailSvc.initializationError) {
-          msg += "\n"+EnigmailCommon.enigmailSvc.initializationError;
+       if (EnigmailCore.getEnigmailService() && EnigmailCore.getEnigmailService().initializationError) {
+          msg += "\n"+EnigmailCore.getEnigmailService().initializationError;
        }
        return Dialog.confirmDlg(window, msg, Locale.getString("msgCompose.button.sendUnencrypted"));
     }
@@ -3294,7 +3293,7 @@ Enigmail.msg = {
     const SIGN    = nsIEnigmail.SEND_SIGNED;
     const ENCRYPT = nsIEnigmail.SEND_ENCRYPTED;
 
-    var enigmailSvc = EnigmailCommon.getService(window);
+    var enigmailSvc = EnigmailCore.getService(window);
     if (! enigmailSvc) return false;
 
     if (gMsgCompose.composeHTML) {
@@ -3754,7 +3753,7 @@ Enigmail.msg = {
       return -1;
     }
     Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.encryptAttachments tmpDir=" + tmpDir+"\n");
-    var enigmailSvc = EnigmailCommon.getService(window);
+    var enigmailSvc = EnigmailCore.getService(window);
     if (!enigmailSvc)
       return null;
 
@@ -3880,7 +3879,7 @@ Enigmail.msg = {
     if (gWindowLocked || this.processed)
       return;
 
-    var enigmailSvc = EnigmailCommon.getService(window);
+    var enigmailSvc = EnigmailCore.getService(window);
     if (!enigmailSvc)
       return;
 

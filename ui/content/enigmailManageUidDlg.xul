@@ -84,14 +84,12 @@
   <script type="application/x-javascript">
   <![CDATA[
     Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
-    Components.utils.import("resource://enigmail/enigmailCommon.jsm");
     Components.utils.import("resource://enigmail/keyEditor.jsm");
     Components.utils.import("resource://enigmail/locale.jsm");
     Components.utils.import("resource://enigmail/data.jsm");
     Components.utils.import("resource://enigmail/dialog.jsm");
     Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
-
-    const Ec = EnigmailCommon;
+    Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 
     function onLoad() {
       window.arguments[1].refresh = false;
@@ -112,7 +110,7 @@
         uidList.removeItemAt(0);
       }
 
-      var enigmailSvc = Ec.getService();
+      var enigmailSvc = EnigmailCore.getService();
       if (!enigmailSvc)
         return;
 
@@ -216,7 +214,7 @@
     }
 
     function setPrimaryUid() {
-      var enigmailSvc = Ec.getService();
+      var enigmailSvc = EnigmailCore.getService();
       if (!enigmailSvc)
         return;
       var errorMsgObj = new Object();
@@ -239,7 +237,7 @@
     }
 
     function revokeUid() {
-      var enigmailSvc = Ec.getService();
+      var enigmailSvc = EnigmailCore.getService();
       if (!enigmailSvc)
         return;
       var uidList = document.getElementById("uidList");
@@ -264,7 +262,7 @@
     }
 
     function deleteUid() {
-      var enigmailSvc = Ec.getService();
+      var enigmailSvc = EnigmailCore.getService();
       if (!enigmailSvc)
         return;
       var uidList = document.getElementById("uidList");

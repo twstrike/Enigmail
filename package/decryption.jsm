@@ -93,12 +93,9 @@ const Decryption = {
     decryptMessageStart: function (win, verifyOnly, noOutput, listener,
                                    statusFlagsObj, errorMsgObj, mimeSignatureFile,
                                    maxOutputLength) {
-        const ecom = EnigmailCore.getEnigmailCommon();
-
         Log.DEBUG("enigmailCommon.jsm: decryptMessageStart: verifyOnly="+verifyOnly+"\n");
 
-        ecom.getService(win);
-        if (! (ecom.enigmailSvc)) {
+        if (!EnigmailCore.getService(win)) {
             Log.ERROR("enigmailCommon.jsm: decryptMessageStart: not yet initialized\n");
             errorMsgObj.value = Locale.getString("notInit");
             return null;
@@ -157,7 +154,6 @@ const Decryption = {
 
 
     decryptMessageEnd: function (stderrStr, exitCode, outputLen, verifyOnly, noOutput, uiFlags, retStatusObj) {
-        const ecom = EnigmailCore.getEnigmailCommon();
         Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: uiFlags="+uiFlags+", verifyOnly="+verifyOnly+", noOutput="+noOutput+"\n");
 
         stderrStr = stderrStr.replace(/\r\n/g,"\n");
@@ -459,7 +455,6 @@ const Decryption = {
                               statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
                               blockSeparationObj, encToDetailsObj) {
         const esvc = EnigmailCore.getEnigmailService();
-        const ec = EnigmailCore.getEnigmailCommon();
 
         Log.DEBUG("enigmail.js: Enigmail.decryptMessage: "+cipherText.length+" bytes, "+uiFlags+"\n");
 
@@ -723,7 +718,6 @@ const Decryption = {
     decryptAttachment: function (parent, outFile, displayName, byteData,
                                  exitCodeObj, statusFlagsObj, errorMsgObj) {
         const esvc = EnigmailCore.getEnigmailService();
-        const ec = EnigmailCore.getEnigmailCommon();
 
         Log.DEBUG("enigmail.js: Enigmail.decryptAttachment: parent="+parent+", outFileName="+outFile.path+"\n");
 

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Log: false, Locale: false, Timer: false, Dialog: false */
+/*global Components: false, Log: false, Locale: false, Timer: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -33,15 +33,12 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyEditor.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
-
-const Ec = EnigmailCommon;
 
 var gAlertPopUpIsOpen = false;
 

@@ -1,4 +1,4 @@
-/*global Components: false, Data: false, Files: false, EnigmailCommon: false, EnigmailCore: false, App: false, Dialog: false, Windows: false, Time: false */
+/*global Components: false, Data: false, Files: false, EnigmailCore: false, App: false, Dialog: false, Windows: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -40,7 +40,6 @@
 // WARNING: This module functions must not be loaded in overlays to standard
 // functionality!
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/keyEditor.jsm");
@@ -195,7 +194,7 @@ function EnigInitCommon(id) {
 
 function GetEnigmailSvc() {
   if (! gEnigmailSvc)
-    gEnigmailSvc = EnigmailCommon.getService(window);
+    gEnigmailSvc = EnigmailCore.getService(window);
   return gEnigmailSvc;
 }
 

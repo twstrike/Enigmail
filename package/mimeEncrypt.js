@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Log: false, Dialog: false, dump: false, EnigmailFuncs: false */
+/*global Components: false, Log: false, Dialog: false, dump: false, EnigmailFuncs: false */
 /*jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,6 @@
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false */
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
@@ -22,8 +21,6 @@ Components.utils.import("resource://enigmail/hash.jsm"); /*global Hash: false */
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
-const Ec = EnigmailCommon;
-
 
 const PGPMIME_JS_ENCRYPT_CONTRACTID = "@enigmail.net/enigmail/composesecure;1";
 const PGPMIME_JS_ENCRYPT_CID = Components.ID("{1b040e64-e704-42b9-b05a-942e569afffc}");

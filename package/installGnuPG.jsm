@@ -57,7 +57,6 @@
 const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
@@ -66,7 +65,6 @@ Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const Ec = EnigmailCommon;
 
 const EXEC_FILE_PERMS = 0x1C0; // 0700
 

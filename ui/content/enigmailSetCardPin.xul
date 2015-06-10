@@ -109,14 +109,13 @@
   <script type="application/x-javascript">
   <![CDATA[
 
-  Components.utils.import("resource://enigmail/enigmailCommon.jsm");
   Components.utils.import("resource://enigmail/keyEditor.jsm");
   Components.utils.import("resource://enigmail/log.jsm");
   Components.utils.import("resource://enigmail/locale.jsm");
   Components.utils.import("resource://enigmail/dialog.jsm");
   Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
+  Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 
-  const Ec = EnigmailCommon;
   const nsIEnigmail = Components.interfaces.nsIEnigmail;
   const Ci = Components.interfaces;
 
@@ -131,7 +130,7 @@
   }
 
   function onAccept() {
-    var enigmailSvc = Ec.getService(window);
+    var enigmailSvc = EnigmailCore.getService(window);
     if (!enigmailSvc)
       return false;
 
@@ -207,7 +206,7 @@
   }
 
   function setDlgContent(sel) {
-    var enigmailSvc = Ec.getService(window);
+    var enigmailSvc = EnigmailCore.getService(window);
     if (!enigmailSvc)
       return false;
 

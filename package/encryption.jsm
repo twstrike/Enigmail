@@ -211,8 +211,6 @@ var Encryption = {
 
     encryptMessageStart: function(win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
                                   hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj) {
-        const ecom = EnigmailCore.getEnigmailCommon();
-
         Log.DEBUG("enigmailCommon.jsm: encryptMessageStart: uiFlags="+uiFlags+", from "+fromMailAddr+" to "+toMailAddr+", hashAlgorithm="+hashAlgorithm+" ("+Data.bytesToHex(Data.pack(sendFlags,4))+")\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
@@ -231,8 +229,7 @@ var Encryption = {
             return null;
         }
 
-        ecom.getService(win);
-        if (! (ecom.enigmailSvc)) {
+        if (!EnigmailCore.getService(win)) {
             Log.ERROR("enigmailCommon.jsm: encryptMessageStart: not yet initialized\n");
             errorMsgObj.value = Locale.getString("notInit");
             return null;
@@ -260,8 +257,6 @@ var Encryption = {
     },
 
     encryptMessageEnd: function (stderrStr, exitCode, uiFlags, sendFlags, outputLen, retStatusObj) {
-        const ecom = EnigmailCore.getEnigmailCommon();
-
         Log.DEBUG("enigmailCommon.jsm: encryptMessageEnd: uiFlags="+uiFlags+", sendFlags="+Data.bytesToHex(Data.pack(sendFlags,4))+", outputLen="+outputLen+"\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
@@ -273,7 +268,7 @@ var Encryption = {
         retStatusObj.errorMsg    = "";
         retStatusObj.blockSeparation  = "";
 
-        if (!ecom.enigmailSvc.initialized) {
+        if (!EnigmailCore.getService().initialized) {
             Log.ERROR("enigmailCommon.jsm: encryptMessageEnd: not yet initialized\n");
             retStatusObj.errorMsg = Locale.getString("notInit");
             return -1;

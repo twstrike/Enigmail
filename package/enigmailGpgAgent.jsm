@@ -71,8 +71,6 @@ var nsIWindowsRegKey       = Ci.nsIWindowsRegKey;
 
 var gIsGpgAgent = -1;
 
-var Ec = null;
-
 const DUMMY_AGENT_INFO = "none";
 
 function cloneOrNull(v) {
@@ -102,10 +100,6 @@ const EnigmailGpgAgent = {
     gpgAgentInfo: {preStarted: false, envStr: ""},
     gpgAgentProcess: null,
     gpgAgentIsOptional: true,
-
-    setEnigmailCommon: function(enigCommon) {
-        Ec = enigCommon;
-    },
 
     isDummy: function() {
         return EnigmailGpgAgent.gpgAgentInfo.envStr === DUMMY_AGENT_INFO;
@@ -186,8 +180,7 @@ const EnigmailGpgAgent = {
 
         var pid = -1;
         var exitCode = -1;
-        var svc = Ec.getService();
-        if (! svc) return false;
+        if (! EnigmailCore.getService()) return false;
 
         var proc = {
             command:     EnigmailGpgAgent.connGpgAgentPath,
@@ -232,10 +225,9 @@ const EnigmailGpgAgent = {
 
     getAgentMaxIdle: function() {
         Log.DEBUG("enigmailGpgAgent.jsm: getAgentMaxIdle:\n");
-        var svc = Ec.getService();
         var maxIdle = -1;
 
-        if (! svc) return maxIdle;
+        if (! EnigmailCore.getService()) return maxIdle;
 
         const DEFAULT = 7;
         const CFGVALUE = 9;
@@ -273,9 +265,7 @@ const EnigmailGpgAgent = {
 
     setAgentMaxIdle: function(idleMinutes) {
         Log.DEBUG("enigmailGpgAgent.jsm: setAgentMaxIdle:\n");
-        var svc = Ec.getService();
-
-        if (! svc) return;
+        if (! EnigmailCore.getService()) return;
 
         const RUNTIME = 8;
 
@@ -310,8 +300,7 @@ const EnigmailGpgAgent = {
         let maxIdle = Prefs.getPref("maxIdleMinutes");
 
         try {
-            var svc = Ec.getService(win);
-            if (svc) {
+            if (EnigmailCore.getService(win)) {
                 if (EnigmailGpgAgent.gpgconfPath &&
                     EnigmailGpgAgent.connGpgAgentPath) {
 

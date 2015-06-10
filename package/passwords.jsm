@@ -70,5 +70,9 @@ const Passwords = {
         } catch (ex) {}
 
         return 5;
+    },
+
+    clearPassphrase: function(win) {
+        // TODO: implement this - it's referred to in one place and used to be in EnigmailCommon but has probably disappeared
     }
 };

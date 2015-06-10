@@ -38,7 +38,7 @@
  * helper functions for message composition
  */
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
@@ -117,7 +117,7 @@ Enigmail.hlp = {
 
     const nsIEnigmail = Components.interfaces.nsIEnigmail;
 
-    var enigmailSvc = EnigmailCommon.getService();
+    var enigmailSvc = EnigmailCore.getService();
     if (!enigmailSvc) {
       return false;
     }

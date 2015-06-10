@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Locale: false, Data: false, Dialog: false */
+/*global Components: false, Locale: false, Data: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,7 +35,6 @@
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
@@ -45,8 +44,6 @@ Components.utils.import("resource://enigmail/events.jsm"); /*global Events: fals
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 Components.utils.import("resource://enigmail/keyserver.jsm"); /*global KeyServer: false */
-
-const Ec = EnigmailCommon;
 
 const INPUT = 0;
 const RESULT = 1;

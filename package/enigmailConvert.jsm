@@ -50,7 +50,6 @@ Cu.import("resource://enigmail/glodaUtils.jsm"); /*global GlodaUtils: false */
 Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */
@@ -62,7 +61,6 @@ Cu.import("resource://enigmail/attachment.jsm"); /*global Attachment: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
 Cu.import("resource://enigmail/glodaMime.jsm");
 
-var Ec = EnigmailCommon;
 var EC = EnigmailCore;
 
 const EXPORTED_SYMBOLS = ["EnigmailDecryptPermanently"];
@@ -74,6 +72,8 @@ const nsIEnigmail = Components.interfaces.nsIEnigmail;
 const STATUS_OK = 0;
 const STATUS_FAILURE = 1;
 const STATUS_NOT_REQUIRED = 2;
+
+const IOSERVICE_CONTRACTID = "@mozilla.org/network/io-service;1";
 
 /*
  *  Decrypt a message and copy it to a folder
@@ -424,7 +424,7 @@ decryptAttachment = function(attachment, strippedName) {
             resolve(o);
             return;
           }
-          var enigmailSvc = Ec.getService();
+          var enigmailSvc = EnigmailCore.getService();
           var args = Gpg.getStandardArgs(true);
           args = args.concat(Passwords.command());
           args.push("-d");
@@ -749,7 +749,7 @@ decryptINLINE = function (mime) {
     }
 
 
-    var enigmailSvc = Ec.getService();
+    var enigmailSvc = EnigmailCore.getService();
     var exitCodeObj    = {};
     var statusFlagsObj = {};
     var userIdObj      = {};

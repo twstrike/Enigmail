@@ -35,7 +35,6 @@ MODFILES = \
            decryption.jsm \
            dialog.jsm \
            encryption.jsm \
-           enigmailCommon.jsm \
            enigmailConvert.jsm \
            enigmailCore.jsm \
            enigmailErrorHandling.jsm \

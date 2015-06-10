@@ -163,7 +163,7 @@
   <script type="application/x-javascript">
   <![CDATA[
     Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
-    Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+    Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
     Components.utils.import("resource://enigmail/keyEditor.jsm");
     Components.utils.import("resource://enigmail/log.jsm");
     Components.utils.import("resource://enigmail/locale.jsm");
@@ -269,7 +269,7 @@
     function startKeyGen() {
       Log.DEBUG("enigmailGenCardKey: startKeyGen(): Start\n");
 
-      var enigmailSvc = Ec.getService(window);
+      var enigmailSvc = EnigmailCore.getService(window);
       if (!enigmailSvc) {
         Dialog.alert(window,Locale.getString("accessError"));
         return;

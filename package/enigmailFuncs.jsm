@@ -47,7 +47,6 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 

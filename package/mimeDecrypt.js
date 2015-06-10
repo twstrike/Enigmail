@@ -12,7 +12,7 @@
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/mimeVerify.jsm"); /*global EnigmailVerify: false */
 Components.utils.import("resource://enigmail/log.jsm"); /*global Log: false */
 Components.utils.import("resource://enigmail/locale.jsm"); /*global Locale: false */
@@ -24,7 +24,6 @@ Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const Ec = EnigmailCommon;
 
 const APPSHELL_MEDIATOR_CONTRACTID = "@mozilla.org/appshell/window-mediator;1";
 const PGPMIME_JS_DECRYPTOR_CONTRACTID = "@mozilla.org/mime/pgp-mime-js-decrypt;1";
@@ -79,7 +78,7 @@ PgpMimeDecrypt.prototype = {
   inStream: Cc["@mozilla.org/scriptableinputstream;1"].createInstance(Ci.nsIScriptableInputStream),
 
   onStartRequest: function(request, uri) {
-    if (!Ec.getService()) // Ensure Enigmail is initialized
+    if (!EnigmailCore.getService()) // Ensure Enigmail is initialized
       return;
     Log.DEBUG("mimeDecrypt.js: onStartRequest\n");   // always log this one
 

@@ -33,18 +33,16 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/log.jsm"); /*global Log: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
-
-const Ec = EnigmailCommon;
 
 function enigmailEncryptionDlgLoad() {
   Log.DEBUG("enigmailEncryptionDlgLoad.js: Load\n");
 
   // Get Enigmail service, such that e.g. the wizard can be executed
   // if needed.
-  var enigmailSvc = Ec.getService();
+  var enigmailSvc = EnigmailCore.getService();
   if (!enigmailSvc) {
     window.close();
     return;

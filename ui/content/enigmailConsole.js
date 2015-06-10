@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCommon: false, Data: false, Windows: false */
+/*global Components: false, Data: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -33,20 +33,18 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false*/
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
-
-const   Ec = EnigmailCommon;
 
 function consoleLoad() {
   Log.DEBUG("enigmailConsole.js: consoleLoad\n");
 
   top.controllers.insertControllerAt(0, CommandController);
 
-  Ec.getService(window);
+  EnigmailCore.getService(window);
 
   // Refresh console every 2 seconds
   window.consoleIntervalId = window.setInterval(refreshConsole, 2000);

@@ -80,13 +80,11 @@
   <script type="application/x-javascript">
   <![CDATA[
 
-  Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+  Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
   Components.utils.import("resource://enigmail/keyEditor.jsm");
   Components.utils.import("resource://enigmail/locale.jsm");
   Components.utils.import("resource://enigmail/data.jsm");
   Components.utils.import("resource://enigmail/dialog.jsm");
-
-  const Ec = EnigmailCommon;
 
   function onLoad() {
     var uid = window.window.arguments[0].userId +" - 0x"+ window.arguments[0].keyId.substr(-8,8);
@@ -94,7 +92,7 @@
   }
 
   function onAccept() {
-    var enigmailSvc = Ec.getService();
+    var enigmailSvc = EnigmailCore.getService();
     if (!enigmailSvc)
       return false;
 

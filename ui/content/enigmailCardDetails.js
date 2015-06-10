@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, EnigmailCommon: false, Data: false, Dialog: false, Time: false */
+/*global Components: false, Locale: false, Data: false, Dialog: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -34,7 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/keyEditor.jsm"); /*global KeyEditor: false */
 Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
@@ -46,12 +46,10 @@ Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 Components.utils.import("resource://enigmail/card.jsm"); /*global Card: false */
 
-const Ec = EnigmailCommon;
-
 var gCardData = {};
 
 function onLoad() {
-  var enigmailSvc = Ec.getService(window);
+  var enigmailSvc = EnigmailCore.getService(window);
   if (!enigmailSvc) {
     Events.dispatchEvent(failWithError, 0, Locale.getString("accessError"));
     return;
@@ -162,7 +160,7 @@ function doSaveChanges() {
   document.getElementById("bcEditMode").setAttribute("readonly", "true");
   document.getElementById("bcEnableMode").setAttribute("disabled", "true");
 
-  var enigmailSvc = Ec.getService(window);
+  var enigmailSvc = EnigmailCore.getService(window);
   if (!enigmailSvc) {
     Dialog.alert(window, Locale.getString("accessError"));
     window.close();

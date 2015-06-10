@@ -55,7 +55,7 @@ const XPCOM_APPINFO = "@mozilla.org/xre/app-info;1";
 
 const App = {
     /**
-     * Plattform application name (e.g. Thunderbird)
+     * Platform application name (e.g. Thunderbird)
      */
     getName: function() {
         return Cc[XPCOM_APPINFO].getService(Ci.nsIXULAppInfo).name;
@@ -105,3 +105,5 @@ const App = {
         }
     }
 };
+
+App.initAddon();

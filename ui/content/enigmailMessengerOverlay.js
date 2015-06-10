@@ -45,8 +45,7 @@ catch (ex) {
   Components.utils.import("resource://app/modules/gloda/mimemsg.js");
 }
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/mimeVerify.jsm");
 Components.utils.import("resource://enigmail/fixExchangeMsg.jsm");
@@ -76,7 +75,7 @@ if (! Enigmail) var Enigmail = {};
 
 Enigmail.getEnigmailSvc = function ()
 {
-  return EnigmailCommon.getService(window);
+  return EnigmailCore.getService(window);
 };
 
 const IOSERVICE_CONTRACTID = "@mozilla.org/network/io-service;1";

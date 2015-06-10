@@ -1,5 +1,5 @@
 /*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false, withTestGpgHome:false */
-/*global Ec: false, Cc: false, Ci: false, do_print: false, EnigmailCore: false, KeyEditor: false, EnigmailCommon: false, Components: false, component: false, Prefs: false, Execution: false */
+/*global Ec: false, Cc: false, Ci: false, do_print: false, EnigmailCore: false, KeyEditor: false, Components: false, component: false, Prefs: false, Execution: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -46,7 +46,6 @@ testing("keyEditor.jsm"); /*global editKey: false */
 component("enigmail/prefs.jsm");
 component("enigmail/keyRing.jsm"); /*global KeyRing: false */
 component("enigmail/enigmailCore.jsm");
-component("enigmail/enigmailCommon.jsm");
 component("enigmail/execution.jsm");
 component("enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 component("enigmail/gpg.jsm"); /*global Gpg: false */
@@ -59,7 +58,7 @@ test(withTestGpgHome(shouldSignKey));
 
 function shouldExecCmd() {
     var window = JSUnit.createStubWindow();
-    var enigmailSvc = Ec.getService(window);
+    var enigmailSvc = EnigmailCore.getService(window);
     var command= EnigmailGpgAgent.agentPath;
 
     var args = Gpg.getStandardArgs(false);

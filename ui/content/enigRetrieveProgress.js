@@ -1,4 +1,4 @@
-/*global Components EnigmailCommon */
+/*global Components: false*/
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,13 +35,10 @@
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Components.utils.import("resource://enigmail/keyserver.jsm"); /*global KeyServer: false */
-
-const Ec = EnigmailCommon;
 
 var msgCompDeliverMode = Components.interfaces.nsIMsgCompDeliverMode;
 

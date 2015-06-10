@@ -58,6 +58,10 @@ Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Cu.import("resource://enigmail/verify.jsm"); /*global Verify: false */
+Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
+Cu.import("resource://enigmail/app.jsm"); /*global App: false */
 
 /* Implementations supplied by this module */
 const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";
@@ -83,9 +87,7 @@ const NS_XPCOM_SHUTDOWN_OBSERVER_ID = "xpcom-shutdown";
 // Enigmail encryption/decryption service
 ///////////////////////////////////////////////////////////////////////////////
 
-function Enigmail() {
-    EnigmailGpgAgent.setEnigmailCommon(EnigmailCore.getEnigmailCommon());
-}
+function Enigmail() {}
 
 Enigmail.prototype = {
   classDescription: "Enigmail",
@@ -153,7 +155,7 @@ Enigmail.prototype = {
       Log.DEBUG("enigmail.js: Logging debug output to "+prefix+"/enigdbug.txt\n");
     }
 
-    EnigmailCore.getEnigmailCommon().enigmailSvc = this;
+    EnigmailCore.setEnigmailService(this);
 
     var environment;
     try {
@@ -256,6 +258,72 @@ Enigmail.prototype = {
     this.initialized = true;
   }
 }; // Enigmail.prototype
+
+Enigmail.getService = function (holder, win, startingPreferences) {
+    if (! win) {
+        win = Windows.getBestParentWin();
+    }
+
+    Log.DEBUG("enigmail.js: svc = "+holder.svc+"\n");
+
+    if (!holder.svc.initialized) {
+        const firstInitialization = !holder.svc.initializationAttempted;
+
+        try {
+            // Initialize enigmail
+            EnigmailCore.init(App.getVersion());
+            holder.svc.initialize(win, App.getVersion());
+
+            try {
+                // Reset alert count to default value
+                Prefs.getPrefBranch().clearUserPref("initAlert");
+            } catch(ex) { }
+        } catch (ex) {
+            if (firstInitialization) {
+                // Display initialization error alert
+                const errMsg = (holder.svc.initializationError ? holder.svc.initializationError : Locale.getString("accessError")) +
+                          "\n\n"+Locale.getString("initErr.howToFixIt");
+
+                const checkedObj = {value: false};
+                if (Prefs.getPref("initAlert")) {
+                    const r = Dialog.longAlert(win, "Enigmail: "+errMsg,
+                                               Locale.getString("dlgNoPrompt"),
+                                               null, Locale.getString("initErr.setupWizard.button"),
+                                               null, checkedObj);
+                    if (r >= 0 && checkedObj.value) {
+                        Prefs.setPref("initAlert", false);
+                    }
+                    if (r == 1) {
+                        // start setup wizard
+                        Windows.openSetupWizard(win, false);
+                        return Enigmail.getService(holder, win);
+                    }
+                }
+                if (Prefs.getPref("initAlert")) {
+                    holder.svc.initializationAttempted = false;
+                    holder.svc = null;
+                }
+            }
+
+            return null;
+        }
+
+        const configuredVersion = Prefs.getPref("configuredVersion");
+
+        Log.DEBUG("enigmailCommon.jsm: getService: "+configuredVersion+"\n");
+
+        if (firstInitialization && holder.svc.initialized &&
+            EnigmailGpgAgent.agentType === "pgp") {
+            Dialog.alert(win, Locale.getString("pgpNotSupported"));
+        }
+
+        if (holder.svc.initialized && (App.getVersion() != configuredVersion)) {
+            Configure.configureEnigmail(win, startingPreferences);
+        }
+    }
+
+    return holder.svc.initialized ? holder.svc : null;
+};
 
 Armor.registerOn(Enigmail.prototype);
 Decryption.registerOn(Enigmail.prototype);
