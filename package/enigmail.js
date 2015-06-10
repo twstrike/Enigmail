@@ -153,7 +153,7 @@ Enigmail.prototype = {
       Log.DEBUG("enigmail.js: Logging debug output to "+prefix+"/enigdbug.txt\n");
     }
 
-    EnigmailCore.getEnigmailCommon().initialize(this, Log.getLogLevel());
+    EnigmailCore.getEnigmailCommon().enigmailSvc = this;
 
     var environment;
     try {

@@ -66,6 +66,9 @@ Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: fa
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 Components.utils.import("resource://enigmail/attachment.jsm"); /*global Attachment: false */
+Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
+
+const Ci = Components.interfaces;
 
 const EC = EnigmailCore;
 
@@ -76,6 +79,8 @@ Enigmail.getEnigmailSvc = function ()
   return EnigmailCommon.getService(window);
 };
 
+const IOSERVICE_CONTRACTID = "@mozilla.org/network/io-service;1";
+const LOCAL_FILE_CONTRACTID = "@mozilla.org/file/local;1";
 
 Enigmail.msg = {
   createdURIs:      [],
@@ -722,7 +727,7 @@ Enigmail.msg = {
 
           if (signedMsg ||
               ((!encrypedMsg) && (embeddedSigned || embeddedEncrypted))) {
-            Enigmail.hdrView.updateHdrIcons(EnigmailCommon.POSSIBLE_PGPMIME, 0, // exitCode, statusFlags
+            Enigmail.hdrView.updateHdrIcons(Constants.POSSIBLE_PGPMIME, 0, // exitCode, statusFlags
                                             "", "",       // keyId, userId
                                             "",           // sigDetails
                                             Locale.getString("possiblyPgpMime"),  // errorMsg
@@ -1889,7 +1894,7 @@ Enigmail.msg = {
 
     var bufferListener = Streams.newStringStreamListener(requestCallback);
 
-    var ioServ = Components.classes[EnigmailCommon.IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
+    var ioServ = Components.classes[IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
 
     var channel = ioServ.newChannelFromURI(msgUrl);
 
@@ -2030,8 +2035,8 @@ Enigmail.msg = {
     // open
     var tmpDir = Files.getTempDir();
     var outFile1, outFile2;
-    outFile1 = Components.classes[EnigmailCommon.LOCAL_FILE_CONTRACTID].
-      createInstance(EnigmailCommon.getLocalFileApi());
+    outFile1 = Components.classes[LOCAL_FILE_CONTRACTID].
+      createInstance(Ci.nsIFile);
     outFile1.initWithPath(tmpDir);
     if (!(outFile1.isDirectory() && outFile1.isWritable())) {
       Dialog.alert(window, Locale.getString("noTempDir"));
@@ -2041,8 +2046,8 @@ Enigmail.msg = {
     outFile1.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
     this.writeUrlToFile(origAtt.url, outFile1);
 
-    outFile2 = Components.classes[EnigmailCommon.LOCAL_FILE_CONTRACTID].
-      createInstance(EnigmailCommon.getLocalFileApi());
+    outFile2 = Components.classes[LOCAL_FILE_CONTRACTID].
+      createInstance(Ci.nsIFile);
     outFile2.initWithPath(tmpDir);
     outFile2.append(this.getAttachmentName(signatureAtt));
     outFile2.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
@@ -2064,7 +2069,7 @@ Enigmail.msg = {
 
   writeUrlToFile: function(srcUrl, outFile) {
     Log.DEBUG("enigmailMessengerOverlay.js: writeUrlToFile: outFile="+outFile.path+"\n");
-     var ioServ = Components.classes[EnigmailCommon.IOSERVICE_CONTRACTID].
+     var ioServ = Components.classes[IOSERVICE_CONTRACTID].
       getService(Components.interfaces.nsIIOService);
     var msgUri = ioServ.newURI(srcUrl, null, null);
     var channel = ioServ.newChannelFromURI(msgUri);
@@ -2110,7 +2115,7 @@ Enigmail.msg = {
     };
 
     var bufferListener = Streams.newStringStreamListener(f);
-    var ioServ = Components.classes[EnigmailCommon.IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
+    var ioServ = Components.classes[IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
     var msgUri = ioServ.newURI(argumentsObj.attachment.url, null, null);
 
     var channel = ioServ.newChannelFromURI(msgUri);
@@ -2185,7 +2190,7 @@ Enigmail.msg = {
       // open
       var tmpDir = Files.getTempDir();
       try {
-        outFile = Components.classes[EnigmailCommon.LOCAL_FILE_CONTRACTID].createInstance(EnigmailCommon.getLocalFileApi());
+        outFile = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
         outFile.initWithPath(tmpDir);
         if (!(outFile.isDirectory() && outFile.isWritable())) {
           errorMsgObj.value=Locale.getString("noTempDir");
@@ -2247,15 +2252,15 @@ Enigmail.msg = {
       }
       else if ((statusFlagsObj.value & nsIEnigmail.DISPLAY_MESSAGE) ||
                (callbackArg.actionType == "openAttachment")) {
-        var ioServ = Components.classes[EnigmailCommon.IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
+        var ioServ = Components.classes[IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
         var outFileUri = ioServ.newFileURI(outFile);
         var fileExt = outFile.leafName.replace(/(.*\.)(\w+)$/, "$2");
         if (fileExt && ! callbackArg.forceBrowser) {
-          var extAppLauncher = Components.classes[EnigmailCommon.MIME_CONTRACTID].getService(Components.interfaces.nsPIExternalAppLauncher);
+          var extAppLauncher = Components.classes["@mozilla.org/mime;1"].getService(Components.interfaces.nsPIExternalAppLauncher);
           extAppLauncher.deleteTemporaryFileOnExit(outFile);
 
           try {
-            var mimeService = Components.classes[EnigmailCommon.MIME_CONTRACTID].getService(Components.interfaces.nsIMIMEService);
+            var mimeService = Components.classes["@mozilla.org/mime;1"].getService(Components.interfaces.nsIMIMEService);
             var fileMimeType = mimeService.getTypeFromFile(outFile);
             var fileMimeInfo = mimeService.getFromTypeAndExtension(fileMimeType, fileExt);
 

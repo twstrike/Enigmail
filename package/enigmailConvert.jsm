@@ -395,7 +395,7 @@ readAttachment = function (attachment, strippedName) {
 
       try {
         var bufferListener = Streams.newStringStreamListener(f);
-        var ioServ = Cc[EnigmailCommon.IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
+        var ioServ = Cc[IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
         var msgUri = ioServ.newURI(attachment.url, null, null);
 
         var channel = ioServ.newChannelFromURI(msgUri);
@@ -724,7 +724,7 @@ decryptPGPMIME = function (mime, part) {
         }
       );
 
-      var ioServ = Components.classes[Ec.IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
+      var ioServ = Components.classes[IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
       try {
         var channel = ioServ.newChannel(url, null, null);
         channel.asyncOpen(s, null);

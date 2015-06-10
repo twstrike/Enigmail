@@ -30,6 +30,7 @@ MODFILES = \
            attachment.jsm \
            commandLine.jsm \
            configure.jsm \
+           constants.jsm \
            data.jsm \
            decryption.jsm \
            dialog.jsm \

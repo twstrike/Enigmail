@@ -102,6 +102,7 @@ zip --must-match\
     modules/attachment.jsm \
     modules/commandLine.jsm \
     modules/configure.jsm \
+    modules/constants.jsm \
     modules/data.jsm \
     modules/decryption.jsm \
     modules/dialog.jsm \

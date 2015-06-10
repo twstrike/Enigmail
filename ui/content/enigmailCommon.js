@@ -58,6 +58,10 @@ Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
+Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
 
 const EC = EnigmailCore;
 
@@ -147,7 +151,7 @@ const PGP_MIME_NEVER    = 0;
 const PGP_MIME_POSSIBLE = 1;
 const PGP_MIME_ALWAYS   = 2;
 
-const ENIG_POSSIBLE_PGPMIME = -2081;
+const ENIG_POSSIBLE_PGPMIME = Constants.POSSIBLE_PGPMIME;
 const ENIG_PGP_DESKTOP_ATT  = -2082;
 
 var gUsePGPMimeOptionList = ["usePGPMimeNever",
@@ -587,7 +591,7 @@ function EnigRevokeKey(keyId, userId, callbackFunc) {
 }
 
 function EnigGetLocalFileApi() {
-  return EnigmailCommon.getLocalFileApi();
+  return Ci.nsIFile;
 }
 
 function EnigShowPhoto (keyId, userId, photoNumber) {
@@ -772,7 +776,7 @@ function EnigGetHttpUri (aEvent) {
 
   Log.DEBUG("enigmailAbout.js: interpretHtmlClick: href='"+href+"'\n");
 
-  var ioServ = EnigmailCommon.getIoService();
+  var ioServ = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
   var uri = ioServ.newURI(href, null, null);
 
   if (Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]

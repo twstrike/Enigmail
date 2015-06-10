@@ -170,7 +170,7 @@ const EnigmailFixExchangeMsg = {
           }
         );
 
-        var ioServ = Components.classes[Ec.IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
+        var ioServ = Components.classes[IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
         try {
           var channel = ioServ.newChannel(url, null, null);
           channel.asyncOpen(s, null);

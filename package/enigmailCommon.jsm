@@ -54,36 +54,7 @@ const EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
-const ENIGMAIL_CONTRACTID = "@mozdev.org/enigmail/enigmail;1";
-
 const EnigmailCommon = {
-    POSSIBLE_PGPMIME: -2081,
-
-    IOSERVICE_CONTRACTID: "@mozilla.org/network/io-service;1",
-    LOCAL_FILE_CONTRACTID: "@mozilla.org/file/local;1",
-    MIME_CONTRACTID: "@mozilla.org/mime;1",
-
-    // possible values for
-    // - encryptByRule, signByRules, pgpmimeByRules
-    // - encryptForced, signForced, pgpmimeForced (except CONFLICT)
-    // NOTE:
-    // - values 0/1/2 are used with this fixed semantics in the persistent rules
-    // - see also enigmailEncryptionDlg.xul
-    ENIG_NEVER:        0,
-    ENIG_UNDEF:        1,
-    ENIG_ALWAYS:       2,
-    ENIG_AUTO_ALWAYS: 22,
-    ENIG_CONFLICT:    99,
-
-    ENIG_FINAL_UNDEF:    -1,
-    ENIG_FINAL_NO:        0,
-    ENIG_FINAL_YES:       1,
-    ENIG_FINAL_FORCENO:  10,
-    ENIG_FINAL_FORCEYES: 11,
-    ENIG_FINAL_SMIME_DISABLED: 98,  // disabled to to preferring S/MIME
-    ENIG_FINAL_CONFLICT: 99,
-
-    // variables
     enigmailSvc: null,
     gpgAgentIsOptional: true,
 
@@ -103,7 +74,7 @@ const EnigmailCommon = {
         }
 
         try {
-            this.enigmailSvc = Cc[ENIGMAIL_CONTRACTID].createInstance(Ci.nsIEnigmail);
+            this.enigmailSvc = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
         } catch (ex) {
             Log.ERROR("enigmailCommon.jsm: Error in instantiating EnigmailService: "+ex+"\n");
             return null;
@@ -175,25 +146,6 @@ const EnigmailCommon = {
         }
 
         return this.enigmailSvc.initialized ? this.enigmailSvc : null;
-    },
-
-
-    /**
-     * initialize this module
-     */
-    initialize: function (enigmailSvc) {
-        this.enigmailSvc = enigmailSvc;
-    },
-
-    /**
-     * get nsIIOService object
-     */
-    getIoService: function() {
-        return Cc[this.IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
-    },
-
-    getLocalFileApi: function () {
-        return Ci.nsIFile;
     }
 };
 
