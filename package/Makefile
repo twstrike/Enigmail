@@ -25,55 +25,55 @@ COMPFILES = \
 PREFFILES = prefs/enigmail.js
 
 MODFILES = \
-           enigmailFuncs.jsm \
-           enigmailGpgAgent.jsm \
-           gpg.jsm \
-           keyEditor.jsm \
-           key.jsm \
-           keyRing.jsm \
-           pipeConsole.jsm \
-           encryption.jsm \
-           decryption.jsm \
+           app.jsm \
+           armor.jsm \
+           attachment.jsm \
+           commandLine.jsm \
+           configure.jsm \
            data.jsm \
-           enigmailCore.jsm \
+           decryption.jsm \
+           dialog.jsm \
+           encryption.jsm \
            enigmailCommon.jsm \
            enigmailConvert.jsm \
+           enigmailCore.jsm \
            enigmailErrorHandling.jsm \
+           enigmailFuncs.jsm \
+           enigmailGpgAgent.jsm \
            enigmailProtocolHandler.jsm \
-           passwordCheck.jsm \
-           rules.jsm \
-           filters.jsm \
-           files.jsm \
-           trust.jsm \
-           armor.jsm \
-           verify.jsm \
-           log.jsm \
-           app.jsm \
-           os.jsm \
-           prefs.jsm \
-           locale.jsm \
-           execution.jsm \
-           configure.jsm \
-           dialog.jsm \
-           timer.jsm \
-           commandLine.jsm \
-           time.jsm \
-           attachment.jsm \
-           mime.jsm \
-           keyserver.jsm \
-           streams.jsm \
-           uris.jsm \
-           httpProxy.jsm \
-           glodaUtils.jsm \
-           glodaMime.jsm \
-           promise.jsm \
            events.jsm \
-           passwords.jsm \
-           windows.jsm \
-           hash.jsm \
-           installGnuPG.jsm \
+           execution.jsm \
+           files.jsm \
+           filters.jsm \
            fixExchangeMsg.jsm \
-           mimeVerify.jsm
+           glodaMime.jsm \
+           glodaUtils.jsm \
+           gpg.jsm \
+           hash.jsm \
+           httpProxy.jsm \
+           installGnuPG.jsm \
+           key.jsm \
+           keyEditor.jsm \
+           keyRing.jsm \
+           keyserver.jsm \
+           locale.jsm \
+           log.jsm \
+           mime.jsm \
+           mimeVerify.jsm \
+           os.jsm \
+           passwordCheck.jsm \
+           passwords.jsm \
+           pipeConsole.jsm \
+           prefs.jsm \
+           promise.jsm \
+           rules.jsm \
+           streams.jsm \
+           time.jsm \
+           timer.jsm \
+           trust.jsm \
+           uris.jsm \
+           verify.jsm \
+           windows.jsm
 
 all: deploy $(TST)
 
