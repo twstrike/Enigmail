@@ -11,12 +11,13 @@
  *  implemented as XPCOM component
  */
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false */
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
 Components.utils.import("resource://enigmail/mime.jsm"); /*global Mime: false */
+Components.utils.import("resource://enigmail/hash.jsm"); /*global Hash: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -163,10 +164,10 @@ PgpMimeEncrypt.prototype = {
           this.cryptoMode = MIME_SIGNED;
 
           let hashAlgoObj = {};
-          if (Ec.determineHashAlgorithm(this.win,
-                    this.enigSecurityInfo.UIFlags,
-                    this.enigSecurityInfo.senderEmailAddr,
-                    hashAlgoObj) === 0) {
+          if (Hash.determineAlgorithm(this.win,
+                                      this.enigSecurityInfo.UIFlags,
+                                      this.enigSecurityInfo.senderEmailAddr,
+                                      hashAlgoObj) === 0) {
             this.hashAlgorithm = hashAlgoObj.value;
           }
           else

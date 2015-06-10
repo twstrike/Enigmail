@@ -140,6 +140,7 @@ zip --must-match\
     modules/mime.jsm \
     modules/attachment.jsm \
     modules/uris.jsm \
+    modules/hash.jsm \
     modules/enigmailFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \

@@ -40,31 +40,21 @@
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
-Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
-Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/app.jsm"); /*global App: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
-Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const nsIEnigmail = Ci.nsIEnigmail;
 
 const ENIGMAIL_CONTRACTID = "@mozdev.org/enigmail/enigmail;1";
-
-const gKeyAlgorithms = [];
-
-const gMimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha512", "sha224", "md5" ];
 
 const EnigmailCommon = {
   POSSIBLE_PGPMIME: -2081,
@@ -209,110 +199,6 @@ const EnigmailCommon = {
 
   getLocalFileApi: function () {
     return Ci.nsIFile;
-  },
-
-  determineHashAlgorithm: function (win, uiFlags, fromMailAddr, hashAlgoObj) {
-    Log.DEBUG("enigmailCommon.jsm: determineHashAlgorithm\n");
-
-    if (! win) {
-      win = Windows.getMostRecentWindow();
-    }
-
-    this.getService(win);
-    if (! (this.enigmailSvc)) {
-      Log.ERROR("enigmailCommon.jsm: determineHashAlgorithm: not yet initialized\n");
-      errorMsgObj.value = Locale.getString("notInit");
-      return 2;
-    }
-
-    var sendFlags = nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_SIGNED;
-
-    var hashAlgo = gMimeHashAlgorithms[Prefs.getPref("mimeHashAlgorithm")];
-
-    if (typeof(gKeyAlgorithms[fromMailAddr]) != "string") {
-      // hash algorithm not yet known
-
-      var testUiFlags = nsIEnigmail.UI_TEST;
-
-      var listener = {
-        stdoutData: "",
-        stderrData: "",
-        exitCode: -1,
-        stdin: function(pipe) {
-            pipe.write("Dummy Test");
-            pipe.close();
-        },
-        stdout: function(data) {
-          this.stdoutData += data;
-        },
-        stderr: function (data) {
-          this.stderrData += data;
-        },
-        done: function(exitCode) {
-          this.exitCode = exitCode;
-        }
-      };
-
-      var statusFlagsObj = {};
-      var errorMsgObj = {};
-      var proc = Encryption.encryptMessageStart(win, testUiFlags, fromMailAddr, "",
-                                                "", hashAlgo, sendFlags,
-                                                listener, statusFlagsObj, errorMsgObj);
-
-      if (!proc) {
-        return 1;
-      }
-
-      proc.wait();
-
-      var msgText = listener.stdoutData;
-      var exitCode = listener.exitCode;
-
-      var retStatusObj = {};
-      exitCode = Encryption.encryptMessageEnd(listener.stderrData, exitCode,
-                                              testUiFlags, sendFlags, 10,
-                                              retStatusObj);
-
-      if ((exitCode === 0) && !msgText) exitCode = 1;
-      // if (exitCode > 0) exitCode = -exitCode;
-
-      if (exitCode !== 0) {
-        // Abormal return
-        if (retStatusObj.statusFlags & nsIEnigmail.BAD_PASSPHRASE) {
-          // "Unremember" passphrase on error return
-          retStatusObj.errorMsg = Locale.getString("badPhrase");
-        }
-        Dialog.alert(win, retStatusObj.errorMsg);
-        return exitCode;
-      }
-
-      var hashAlgorithm = "sha1"; // default as defined in RFC 4880, section 7 is MD5 -- but that's outdated
-
-      var m = msgText.match(/^(Hash: )(.*)$/m);
-      if (m && (m.length > 2) && (m[1] == "Hash: ")) {
-        hashAlgorithm = m[2].toLowerCase();
-      }
-      else
-        Log.DEBUG("enigmailCommon.jsm: determineHashAlgorithm: no hashAlgorithm specified - using MD5\n");
-
-      for (var i=1; i < gMimeHashAlgorithms.length; i++) {
-        if (gMimeHashAlgorithms[i] == hashAlgorithm) {
-          Log.DEBUG("enigmailCommon.jsm: determineHashAlgorithm: found hashAlgorithm "+hashAlgorithm+"\n");
-          gKeyAlgorithms[fromMailAddr] = hashAlgorithm;
-          hashAlgoObj.value = hashAlgorithm;
-          return 0;
-        }
-      }
-
-      Log.ERROR("enigmailCommon.jsm: determineHashAlgorithm: no hashAlgorithm found\n");
-      return 2;
-    }
-    else {
-      Log.DEBUG("enigmailCommon.jsm: determineHashAlgorithm: hashAlgorithm "+gKeyAlgorithms[fromMailAddr]+" is cached\n");
-      hashAlgoObj.value = gKeyAlgorithms[fromMailAddr];
-    }
-
-    return 0;
   }
 };
 

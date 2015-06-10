@@ -69,6 +69,7 @@ MODFILES = \
            events.jsm \
            passwords.jsm \
            windows.jsm \
+           hash.jsm \
            installGnuPG.jsm \
            fixExchangeMsg.jsm \
            mimeVerify.jsm
