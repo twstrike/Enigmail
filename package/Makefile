@@ -25,7 +25,7 @@ COMPFILES = \
 PREFFILES = prefs/enigmail.js
 
 MODFILES = \
-           commonFuncs.jsm \
+           enigmailFuncs.jsm \
            enigmailGpgAgent.jsm \
            gpg.jsm \
            keyEditor.jsm \

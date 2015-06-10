@@ -37,7 +37,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/keyEditor.jsm");
 Components.utils.import("resource://enigmail/installGnuPG.jsm");
-Components.utils.import("resource://enigmail/commonFuncs.jsm");
+Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/passwordCheck.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");

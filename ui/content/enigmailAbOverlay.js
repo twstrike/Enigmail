@@ -33,7 +33,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 
-Components.utils.import("resource://enigmail/commonFuncs.jsm");
+Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 
 var Enigmail = {
   createRuleFromAddress: function (emailAddressNode)

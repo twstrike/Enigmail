@@ -41,7 +41,7 @@ const Cu = Components.utils;
 Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
-Cu.import("resource://enigmail/commonFuncs.jsm"); /*global EnigmailFuncs: false */
+Cu.import("resource://enigmail/enigmailFuncs.jsm"); /*global EnigmailFuncs: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */

@@ -27,3 +27,6 @@ ipc/src/libsubprocess-*.so
 
 # vagrant files:
 provisioning/.vagrant
+
+# other local configuration files:
+.ackrc

@@ -135,7 +135,7 @@ zip --must-match\
     modules/glodaMime.jsm \
     modules/promise.jsm \
     modules/windows.jsm \
-    modules/commonFuncs.jsm \
+    modules/enigmailFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \
     modules/commandLine.jsm \

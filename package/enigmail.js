@@ -62,7 +62,7 @@ Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
-Cu.import("resource://enigmail/commonFuncs.jsm"); /*global EnigmailFuncs: false */
+Cu.import("resource://enigmail/enigmailFuncs.jsm"); /*global EnigmailFuncs: false */
 Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global Armor: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */

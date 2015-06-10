@@ -134,7 +134,7 @@ const EnigmailFuncs = {
   downloadKeys: function (win, inputObj, resultObj)
   {
     // TODO: move [keys]
-    Log.DEBUG("commonFuncs.jsm: downloadKeys: searchList="+inputObj.searchList+"\n");
+    Log.DEBUG("enigmailFuncs.jsm: downloadKeys: searchList="+inputObj.searchList+"\n");
 
     resultObj.importedKeys=0;
 
@@ -221,7 +221,7 @@ const EnigmailFuncs = {
     while ((qStart = mailAddrs.indexOf('"')) != -1) {
        qEnd = mailAddrs.indexOf('"', qStart+1);
        if (qEnd == -1) {
-         Log.ERROR("commonFuncs.jsm: stripEmail: Unmatched quote in mail address: "+mailAddrs+"\n");
+         Log.ERROR("enigmailFuncs.jsm: stripEmail: Unmatched quote in mail address: "+mailAddrs+"\n");
          throw Components.results.NS_ERROR_FAILURE;
        }
 
@@ -252,7 +252,7 @@ const EnigmailFuncs = {
 
   collapseAdvanced: function (obj, attribute, dummy)
   {
-    Log.DEBUG("commonFuncs.jsm: collapseAdvanced:\n");
+    Log.DEBUG("enigmailFuncs.jsm: collapseAdvanced:\n");
 
     var advancedUser = Prefs.getPref("advancedUser");
 

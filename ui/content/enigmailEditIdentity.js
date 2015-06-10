@@ -34,7 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/commonFuncs.jsm");
+Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 
 if (! Enigmail) var Enigmail = {};
