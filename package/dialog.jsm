@@ -393,3 +393,5 @@ const Dialog = {
         return gPromptSvc;
     }
 };
+
+Windows.alert = Dialog.alert;

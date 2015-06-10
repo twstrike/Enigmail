@@ -274,7 +274,7 @@ const Configure = {
                                                          Locale.getString("dlg.button.close"));
                             if (!startingPreferences && doIt) {
                                 // same as:
-                                // - EnigmailFuncs.openPrefWindow(window, true, 'sendingTab');
+                                // - Windows.openPrefWindow(window, true, 'sendingTab');
                                 // but
                                 // - without starting the service again because we do that right now
                                 // - and modal (waiting for its end)

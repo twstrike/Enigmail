@@ -1,4 +1,4 @@
-/*global Components: false, Log: false */
+/*global Components: false, escape: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -45,10 +45,15 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/log.jsm");
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
 
 const APPSHELL_MEDIATOR_CONTRACTID = "@mozilla.org/appshell/window-mediator;1";
 const APPSHSVC_CONTRACTID = "@mozilla.org/appshell/appShellService;1";
+
+const LOCAL_FILE_CONTRACTID = "@mozilla.org/file/local;1";
+const IOSERVICE_CONTRACTID = "@mozilla.org/network/io-service;1";
 
 const Windows = {
     /**
@@ -161,5 +166,294 @@ const Windows = {
     getMostRecentWindow: function() {
         var windowManager = Cc[APPSHELL_MEDIATOR_CONTRACTID].getService(Ci.nsIWindowMediator);
         return windowManager.getMostRecentWindow(null);
-    }
+    },
+
+
+    /**
+     * Display the key help window
+     *
+     * @source - |string| containing the name of the file to display
+     *
+     * no return value
+     */
+
+    openHelpWindow: function (source) {
+        Windows.openWin("enigmail:help",
+                        "chrome://enigmail/content/enigmailHelp.xul?src="+source,
+                        "centerscreen,resizable");
+    },
+
+    /**
+     * Display the "About Enigmail" window
+     *
+     * no return value
+     */
+    openAboutWindow: function () {
+        Windows.openWin("about:enigmail",
+                        "chrome://enigmail/content/enigmailAbout.xul",
+                        "resizable,centerscreen");
+    },
+
+    /**
+     * Display the Per-Recipient Rules editor window
+     *
+     * no return value
+     */
+    openRulesEditor: function () {
+        Windows.openWin("enigmail:rulesEditor",
+                        "chrome://enigmail/content/enigmailRulesEditor.xul",
+                        "dialog,centerscreen,resizable");
+    },
+
+    /**
+     * Display the OpenPGP key manager window
+     *
+     * no return value
+     */
+    openKeyManager: function (win) {
+        EnigmailCore.ensuredEnigmailCommon().getService(win);
+
+        Windows.openWin("enigmail:KeyManager",
+                        "chrome://enigmail/content/enigmailKeyManager.xul",
+                        "resizable");
+    },
+
+    /**
+     * Display the key creation window
+     *
+     * no return value
+     */
+    openKeyGen: function () {
+        Windows.openWin("enigmail:generateKey",
+                        "chrome://enigmail/content/enigmailKeygen.xul",
+                        "chrome,modal,resizable=yes");
+    },
+
+    /**
+     * Display the card details window
+     *
+     * no return value
+     */
+    openCardDetails: function () {
+        Windows.openWin("enigmail:cardDetails",
+                        "chrome://enigmail/content/enigmailCardDetails.xul",
+                        "centerscreen");
+    },
+
+
+    /**
+     * Display the console log window
+     *
+     * @win       - |object| holding the parent window for the dialog
+     *
+     * no return value
+     */
+    openConsoleWindow: function () {
+        Windows.openWin("enigmail:console",
+                        "chrome://enigmail/content/enigmailConsole.xul",
+                        "resizable,centerscreen");
+    },
+
+    /**
+     * Display the window for the debug log file
+     *
+     * @win       - |object| holding the parent window for the dialog
+     *
+     * no return value
+     */
+    openDebugLog: function(win) {
+        Windows.openWin("enigmail:logFile",
+                        "chrome://enigmail/content/enigmailViewFile.xul?viewLog=1&title="+escape(Locale.getString("debugLog.title")),
+                        "resizable,centerscreen");
+    },
+
+    /**
+     * Display the preferences dialog
+     *
+     * @win       - |object| holding the parent window for the dialog
+     * @showBasic - |boolean| true if only the 1st page of the preferences window
+     *              should be displayed / false otherwise
+     * @selectTab - |string| ID of the tab element (in XUL) to display when opening
+     *
+     * no return value
+     */
+    openPrefWindow: function (win, showBasic, selectTab) {
+        Log.DEBUG("windows.js: openPrefWindow\n");
+
+        EnigmailCore.ensuredEnigmailCommon().getService(win, true);  // true: starting preferences dialog
+
+        win.openDialog("chrome://enigmail/content/pref-enigmail.xul",
+                       "_blank", "chrome,resizable=yes",
+                       {'showBasic': showBasic,
+                        'clientType': 'thunderbird',
+                        'selectTab': selectTab});
+    },
+
+    /**
+     * Display the dialog for creating a new per-recipient rule
+     *
+     * @win          - |object| holding the parent window for the dialog
+     * @emailAddress - |string| containing the email address for the rule
+     *
+     * @return       - always true
+     */
+    createNewRule: function (win, emailAddress) {
+        // make sure the rules database is loaded
+        const enigmailSvc = EnigmailCore.ensuredEnigmailCommon().getService(win);
+        if (!enigmailSvc) {
+            return false;
+        }
+
+        // open rule dialog
+        enigmailSvc.getRulesData({});
+
+        const inputObj = {
+            toAddress: "{"+emailAddress+"}",
+            options: "",
+            command: "add"
+        };
+        win.openDialog("chrome://enigmail/content/enigmailSingleRcptSettings.xul","",
+                       "dialog,modal,centerscreen,resizable", inputObj, {});
+        return true;
+    },
+
+    /**
+     * Display the dialog for changing the expiry date of one or several keys
+     *
+     * @win        - |object| holding the parent window for the dialog
+     * @userIdArr  - |array| of |strings| containing the User IDs
+     * @keyIdArr   - |array| of |strings| containing the key IDs (eg. "0x12345678") to change
+     * no return value
+     */
+    editKeyExpiry: function (win, userIdArr, keyIdArr) {
+        const inputObj = {
+            keyId: keyIdArr,
+            userId: userIdArr
+        };
+        const resultObj = { refresh: false };
+        win.openDialog("chrome://enigmail/content/enigmailEditKeyExpiryDlg.xul","",
+                       "dialog,modal,centerscreen,resizable", inputObj, resultObj);
+        return resultObj.refresh;
+    },
+
+    /**
+     * Display the dialog for changing key trust of one or several keys
+     *
+     * @win        - |object| holding the parent window for the dialog
+     * @userIdArr  - |array| of |strings| containing the User IDs
+     * @keyIdArr   - |array| of |strings| containing the key IDs (eg. "0x12345678") to change
+     * no return value
+     */
+    editKeyTrust: function (win, userIdArr, keyIdArr) {
+        const inputObj = {
+            keyId: keyIdArr,
+            userId: userIdArr
+        };
+        const resultObj = { refresh: false };
+        win.openDialog("chrome://enigmail/content/enigmailEditKeyTrustDlg.xul","",
+                       "dialog,modal,centerscreen,resizable", inputObj, resultObj);
+        return resultObj.refresh;
+    },
+
+
+    /**
+     * Display the dialog for signing a key
+     *
+     * @win        - |object| holding the parent window for the dialog
+     * @userId     - |string| containing the User ID (for displaing in the dialog only)
+     * @keyId      - |string| containing the key ID (eg. "0x12345678")
+     * no return value
+     */
+    signKey: function (win, userId, keyId) {
+        const inputObj = {
+            keyId: keyId,
+            userId: userId
+        };
+        const resultObj = { refresh: false };
+        win.openDialog("chrome://enigmail/content/enigmailSignKeyDlg.xul","",
+                       "dialog,modal,centerscreen,resizable", inputObj, resultObj);
+        return resultObj.refresh;
+    },
+
+    /**
+     * Display the photo ID associated with a key
+     *
+     * @win        - |object| holding the parent window for the dialog
+     * @keyId      - |string| containing the key ID (eg. "0x12345678")
+     * @userId     - |string| containing the User ID (for displaing in the dialog only)
+     * @photoNumber - |number| UAT entry in the squence of appearance in the key listing, starting with 0
+     * no return value
+     */
+    showPhoto: function (win, keyId, userId, photoNumber) {
+        const enigmailSvc = EnigmailCore.ensuredEnigmailCommon().getService(win);
+        if (enigmailSvc) {
+            if (photoNumber === null) photoNumber=0;
+
+            if (keyId.search(/^0x/) < 0) {
+                keyId = "0x" + keyId;
+            }
+
+            const exitCodeObj = {};
+            const photoPath = enigmailSvc.showKeyPhoto(keyId, photoNumber, exitCodeObj, {});
+
+            if (photoPath && exitCodeObj.value===0) {
+                const photoFile = Cc[LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
+                photoFile.initWithPath(photoPath);
+
+                if (! (photoFile.isFile() && photoFile.isReadable())) {
+                    Windows.alert(win, Locale.getString("error.photoPathNotReadable", photoPath));
+                } else {
+                    const photoUri = Cc[IOSERVICE_CONTRACTID].getService(Ci.nsIIOService).
+                              newFileURI(photoFile).spec;
+                    const argsObj = {
+                        photoUri: photoUri,
+                        userId: userId,
+                        keyId: keyId
+                    };
+
+                    win.openDialog("chrome://enigmail/content/enigmailDispPhoto.xul",
+                                   photoUri,
+                                   "chrome,modal,resizable,dialog,centerscreen",
+                                   argsObj);
+                    try {
+                        // delete the photo file
+                        photoFile.remove(false);
+                    } catch (ex) {}
+                }
+            } else {
+                Windows.alert(win, Locale.getString("noPhotoAvailable"));
+            }
+        }
+    },
+
+    /**
+     * Display the OpenPGP Key Details window
+     *
+     * @win        - |object| holding the parent window for the dialog
+     * @keyId      - |string| containing the key ID (eg. "0x12345678")
+     * @refresh    - |boolean| if true, cache is cleared and the key data is loaded from GnuPG
+     *
+     * no return value
+     */
+    openKeyDetails: function (win, keyId, refresh, funcs) {
+        const keyListObj = {};
+
+        keyId = keyId.replace(/^0x/, "");
+
+        funcs.loadKeyList(win, refresh, keyListObj);
+
+        const inputObj = {
+            keyId:  keyId,
+            keyListArr: keyListObj.keyList,
+            secKey: keyListObj.keyList[ keyId ].secretAvailable
+        };
+        const resultObj = { refresh: false };
+        win.openDialog("chrome://enigmail/content/enigmailKeyDetailsDlg.xul", "",
+                       "dialog,modal,centerscreen,resizable", inputObj, resultObj);
+        if(resultObj.refresh) {
+            // TODO: look at this usage - it doesn't seem to refer to any function here
+            /*global enigmailRefreshKeys: false */
+            enigmailRefreshKeys();
+        }
+    },
 };

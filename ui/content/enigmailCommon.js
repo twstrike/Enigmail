@@ -286,12 +286,12 @@ function EnigError(mesg) {
 
 function EnigPrefWindow(showBasic, clientType, selectTab) {
   Log.DEBUG("enigmailCommon.js: EnigPrefWindow\n");
-  EnigmailFuncs.openPrefWindow(window, showBasic, selectTab);
+  Windows.openPrefWindow(window, showBasic, selectTab);
 }
 
 
 function EnigHelpWindow(source) {
-  EnigmailFuncs.openHelpWindow(source);
+  Windows.openHelpWindow(source);
 }
 
 
@@ -426,15 +426,15 @@ function EnigGetWindowOptions() {
 }
 
 function EnigRulesEditor() {
-  EnigmailFuncs.openRulesEditor();
+  Windows.openRulesEditor();
 }
 
 function EngmailCardDetails() {
-  EnigmailFuncs.openCardDetails();
+  Windows.openCardDetails();
 }
 
 function EnigKeygen() {
-  EnigmailFuncs.openKeyGen();
+  Windows.openKeyGen();
 
 }
 
@@ -483,7 +483,7 @@ function EnigDownloadKeys(inputObj, resultObj) {
 
 // create new PGP Rule
 function EnigNewRule(emailAddress) {
-  return EnigmailFuncs.createNewRule(window, emailAddress);
+  return Windows.createNewRule(window, emailAddress);
 }
 
 function EnigGetTrustCode(keyObj) {
@@ -498,20 +498,20 @@ function EnigLoadKeyList(refresh, keyListObj, sortColumn, sortDirection) {
 }
 
 function EnigEditKeyTrust(userIdArr, keyIdArr) {
-  return EnigmailFuncs.editKeyTrust(window, userIdArr, keyIdArr);
+  return Windows.editKeyTrust(window, userIdArr, keyIdArr);
 }
 
 
 function EnigEditKeyExpiry(userIdArr, keyIdArr) {
-  return EnigmailFuncs.editKeyExpiry(window, userIdArr, keyIdArr);
+  return Windows.editKeyExpiry(window, userIdArr, keyIdArr);
 }
 
 function EnigDisplayKeyDetails(keyId, refresh) {
-  return EnigmailFuncs.openKeyDetails(window, keyId, refresh);
+  return Windows.openKeyDetails(window, keyId, refresh, EnigmailFuncs);
 }
 
 function EnigSignKey(userId, keyId) {
-  return EnigmailFuncs.signKey(window, userId, keyId);
+  return Windows.signKey(window, userId, keyId);
 }
 
 
@@ -589,7 +589,7 @@ function EnigGetLocalFileApi() {
 }
 
 function EnigShowPhoto (keyId, userId, photoNumber) {
-  EnigmailFuncs.showPhoto(window, keyId, userId, photoNumber);
+  Windows.showPhoto(window, keyId, userId, photoNumber);
 }
 
 function EnigGetFilePath (nsFileObj) {

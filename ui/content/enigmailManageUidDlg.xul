@@ -157,7 +157,7 @@
         var selValue=uidList.selectedItem.value;
         var uidType = selValue.substr(0,3);
         if (uidType=="uat" || uidType=="rat") {
-          EnigmailFuncs.showPhoto(window, window.arguments[0].keyId, window.enigmailUid);
+          Windows.showPhoto(window, window.arguments[0].keyId, window.enigmailUid);
         }
       }
     }

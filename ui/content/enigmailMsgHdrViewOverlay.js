@@ -606,7 +606,7 @@ Enigmail.hdrView = {
 
   editKeyExpiry: function ()
   {
-    EnigmailFuncs.editKeyExpiry(window, [Enigmail.msg.securityInfo.userId], [Enigmail.msg.securityInfo.keyId]);
+    Windows.editKeyExpiry(window, [Enigmail.msg.securityInfo.userId], [Enigmail.msg.securityInfo.keyId]);
     gDBView.reloadMessageWithAllParts();
   },
 
@@ -615,7 +615,7 @@ Enigmail.hdrView = {
     let enigmailSvc = EnigmailCommon.getService();
     let keyId = enigmailSvc.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
-    EnigmailFuncs.editKeyTrust(window, [Enigmail.msg.securityInfo.userId], [keyId]);
+    Windows.editKeyTrust(window, [Enigmail.msg.securityInfo.userId], [keyId]);
     gDBView.reloadMessageWithAllParts();
   },
 
@@ -624,7 +624,7 @@ Enigmail.hdrView = {
     let enigmailSvc = EnigmailCommon.getService();
     let keyId = enigmailSvc.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
-    EnigmailFuncs.signKey(window, Enigmail.msg.securityInfo.userId, keyId, null);
+    Windows.signKey(window, Enigmail.msg.securityInfo.userId, keyId, null);
     gDBView.reloadMessageWithAllParts();
   },
 
@@ -717,7 +717,7 @@ Enigmail.hdrView = {
     let enigmailSvc = EnigmailCommon.getService();
     let keyId = enigmailSvc.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
-    EnigmailFuncs.showPhoto(window, keyId, Enigmail.msg.securityInfo.userId);
+    Windows.showPhoto(window, keyId, Enigmail.msg.securityInfo.userId);
   },
 
 
@@ -728,7 +728,7 @@ Enigmail.hdrView = {
     let enigmailSvc = EnigmailCommon.getService();
     let keyId = enigmailSvc.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
-    EnigmailFuncs.openKeyDetails(window, keyId, false);
+    Windows.openKeyDetails(window, keyId, false, EnigmailFuncs);
   },
 
   createRuleFromAddress: function (emailAddressNode)
@@ -738,7 +738,7 @@ Enigmail.hdrView = {
       if (typeof(findEmailNodeFromPopupNode)=="function") {
         emailAddressNode = findEmailNodeFromPopupNode(emailAddressNode, 'emailAddressPopup');
       }
-      EnigmailFuncs.createNewRule(window, emailAddressNode.getAttribute("emailAddress"));
+      Windows.createNewRule(window, emailAddressNode.getAttribute("emailAddress"));
     }
   },
 
