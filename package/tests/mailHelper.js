@@ -21,7 +21,7 @@
  *
  * Contributor(s):
  *  Fan Jiang <fanjiang@thoughtworks.com>
- *  Iván Pazmiño <iapamino@thoughtworks.com>
+ *  Iván Pazmiño <iapazmino@thoughtworks.com>
  *  Ola Bini <obini@thoughtworks.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -40,6 +40,7 @@
 "use strict";
 
 Components.utils.import("resource:///modules/mailServices.js");
+component("enigmail/files.jsm"); /*global Files: false */
 
 const MailHelper = {
     init: function() {
@@ -74,11 +75,14 @@ const MailHelper = {
         return testFolder;
     },
 
-    createHeader: function() {
-        let folder = MailHelper.createFolder("forTestingSomething");
-        let db = folder.msgDatabase;
-        let hdr = db.CreateNewHdr(123);
-        db.AddNewHdrToDB(hdr, false);
-        return hdr;
+    loadEmailToMailFolder: function(emailFilePath, mailFolder) {
+        let emailFile = do_get_file(emailFilePath, false);
+        MailServices.copy.CopyFileMessage(emailFile, mailFolder, null, false, 0, null, null, null);
+    },
+
+    fetchFirstMessageHeaderIn: function(mailFolder) {
+        let msgDb = mailFolder.msgDatabase;
+        let enumerator = msgDb.EnumerateMessages();
+        return enumerator.getNext().QueryInterface(Ci.nsIMsgDBHdr);
     }
 };
