@@ -57,149 +57,144 @@ const Ci = Components.interfaces;
 const ENIGMAIL_CONTRACTID = "@mozdev.org/enigmail/enigmail;1";
 
 const EnigmailCommon = {
-  POSSIBLE_PGPMIME: -2081,
+    POSSIBLE_PGPMIME: -2081,
 
-  IOSERVICE_CONTRACTID: "@mozilla.org/network/io-service;1",
-  LOCAL_FILE_CONTRACTID: "@mozilla.org/file/local;1",
-  MIME_CONTRACTID: "@mozilla.org/mime;1",
+    IOSERVICE_CONTRACTID: "@mozilla.org/network/io-service;1",
+    LOCAL_FILE_CONTRACTID: "@mozilla.org/file/local;1",
+    MIME_CONTRACTID: "@mozilla.org/mime;1",
 
-  // possible values for
-  // - encryptByRule, signByRules, pgpmimeByRules
-  // - encryptForced, signForced, pgpmimeForced (except CONFLICT)
-  // NOTE:
-  // - values 0/1/2 are used with this fixed semantics in the persistent rules
-  // - see also enigmailEncryptionDlg.xul
-  ENIG_NEVER:        0,
-  ENIG_UNDEF:        1,
-  ENIG_ALWAYS:       2,
-  ENIG_AUTO_ALWAYS: 22,
-  ENIG_CONFLICT:    99,
+    // possible values for
+    // - encryptByRule, signByRules, pgpmimeByRules
+    // - encryptForced, signForced, pgpmimeForced (except CONFLICT)
+    // NOTE:
+    // - values 0/1/2 are used with this fixed semantics in the persistent rules
+    // - see also enigmailEncryptionDlg.xul
+    ENIG_NEVER:        0,
+    ENIG_UNDEF:        1,
+    ENIG_ALWAYS:       2,
+    ENIG_AUTO_ALWAYS: 22,
+    ENIG_CONFLICT:    99,
 
-  ENIG_FINAL_UNDEF:    -1,
-  ENIG_FINAL_NO:        0,
-  ENIG_FINAL_YES:       1,
-  ENIG_FINAL_FORCENO:  10,
-  ENIG_FINAL_FORCEYES: 11,
-  ENIG_FINAL_SMIME_DISABLED: 98,  // disabled to to preferring S/MIME
-  ENIG_FINAL_CONFLICT: 99,
+    ENIG_FINAL_UNDEF:    -1,
+    ENIG_FINAL_NO:        0,
+    ENIG_FINAL_YES:       1,
+    ENIG_FINAL_FORCENO:  10,
+    ENIG_FINAL_FORCEYES: 11,
+    ENIG_FINAL_SMIME_DISABLED: 98,  // disabled to to preferring S/MIME
+    ENIG_FINAL_CONFLICT: 99,
 
-  // variables
-  enigmailSvc: null,
-  gpgAgentIsOptional: true,
+    // variables
+    enigmailSvc: null,
+    gpgAgentIsOptional: true,
 
-  /**
-   * get and or initialize the Enigmail service,
-   * including the handling for upgrading old preferences to new versions
-   *
-   * @win:                - nsIWindow: parent window (optional)
-   * @startingPreferences - Boolean: true - called while switching to new preferences
-   *                        (to avoid re-check for preferences)
-   */
-  getService: function (win, startingPreferences) {
-    // Lazy initialization of Enigmail JS component (for efficiency)
+    /**
+     * get and or initialize the Enigmail service,
+     * including the handling for upgrading old preferences to new versions
+     *
+     * @win:                - nsIWindow: parent window (optional)
+     * @startingPreferences - Boolean: true - called while switching to new preferences
+     *                        (to avoid re-check for preferences)
+     */
+    getService: function (win, startingPreferences) {
+        // Lazy initialization of Enigmail JS component (for efficiency)
 
-    if (this.enigmailSvc) {
-      return this.enigmailSvc.initialized ? this.enigmailSvc : null;
-    }
-
-    try {
-      this.enigmailSvc = Cc[ENIGMAIL_CONTRACTID].createInstance(Ci.nsIEnigmail);
-    }
-    catch (ex) {
-      Log.ERROR("enigmailCommon.jsm: Error in instantiating EnigmailService: "+ex+"\n");
-      return null;
-    }
-
-    if (! win) {
-      win = Windows.getBestParentWin();
-    }
-
-    Log.DEBUG("enigmailCommon.jsm: this.enigmailSvc = "+this.enigmailSvc+"\n");
-
-    if (!this.enigmailSvc.initialized) {
-      // Initialize enigmail
-
-      var firstInitialization = !this.enigmailSvc.initializationAttempted;
-
-      try {
-        // Initialize enigmail
-        EnigmailCore.init(App.getVersion());
-        this.enigmailSvc.initialize(win, App.getVersion());
+        if (this.enigmailSvc) {
+            return this.enigmailSvc.initialized ? this.enigmailSvc : null;
+        }
 
         try {
-          // Reset alert count to default value
-          Prefs.getPrefBranch().clearUserPref("initAlert");
-        }
-        catch(ex) { }
-
-      }
-      catch (ex) {
-
-        if (firstInitialization) {
-          // Display initialization error alert
-          var errMsg = this.enigmailSvc.initializationError ? this.enigmailSvc.initializationError : Locale.getString("accessError");
-
-          errMsg += "\n\n"+Locale.getString("initErr.howToFixIt");
-
-          var checkedObj = {value: false};
-          if (Prefs.getPref("initAlert")) {
-            var r = Dialog.longAlert(win, "Enigmail: "+errMsg,
-                                     Locale.getString("dlgNoPrompt"),
-                                     null, Locale.getString("initErr.setupWizard.button"),
-                                     null, checkedObj);
-            if (r >= 0 && checkedObj.value) {
-              Prefs.setPref("initAlert", false);
-            }
-            if (r == 1) {
-              // start setup wizard
-              Windows.openSetupWizard(win, false);
-              return this.getService(win);
-            }
-          }
-          if (Prefs.getPref("initAlert")) {
-            this.enigmailSvc.initializationAttempted = false;
-            this.enigmailSvc = null;
-          }
+            this.enigmailSvc = Cc[ENIGMAIL_CONTRACTID].createInstance(Ci.nsIEnigmail);
+        } catch (ex) {
+            Log.ERROR("enigmailCommon.jsm: Error in instantiating EnigmailService: "+ex+"\n");
+            return null;
         }
 
-        return null;
-      }
+        if (! win) {
+            win = Windows.getBestParentWin();
+        }
 
-      var configuredVersion = Prefs.getPref("configuredVersion");
+        Log.DEBUG("enigmailCommon.jsm: this.enigmailSvc = "+this.enigmailSvc+"\n");
 
-      Log.DEBUG("enigmailCommon.jsm: getService: "+configuredVersion+"\n");
+        if (!this.enigmailSvc.initialized) {
+            // Initialize enigmail
 
-      if (firstInitialization && this.enigmailSvc.initialized &&
-          EnigmailGpgAgent.agentType === "pgp") {
-        Dialog.alert(win, Locale.getString("pgpNotSupported"));
-      }
+            const firstInitialization = !this.enigmailSvc.initializationAttempted;
 
-      if (this.enigmailSvc.initialized && (App.getVersion() != configuredVersion)) {
-        Configure.configureEnigmail(win, startingPreferences);
-      }
+            try {
+                // Initialize enigmail
+                EnigmailCore.init(App.getVersion());
+                this.enigmailSvc.initialize(win, App.getVersion());
+
+                try {
+                    // Reset alert count to default value
+                    Prefs.getPrefBranch().clearUserPref("initAlert");
+                } catch(ex) { }
+
+            } catch (ex) {
+                if (firstInitialization) {
+                    // Display initialization error alert
+                    const errMsg = (this.enigmailSvc.initializationError ? this.enigmailSvc.initializationError : Locale.getString("accessError")) +
+                              "\n\n"+Locale.getString("initErr.howToFixIt");
+
+                    const checkedObj = {value: false};
+                    if (Prefs.getPref("initAlert")) {
+                        const r = Dialog.longAlert(win, "Enigmail: "+errMsg,
+                                                   Locale.getString("dlgNoPrompt"),
+                                                   null, Locale.getString("initErr.setupWizard.button"),
+                                                   null, checkedObj);
+                        if (r >= 0 && checkedObj.value) {
+                            Prefs.setPref("initAlert", false);
+                        }
+                        if (r == 1) {
+                            // start setup wizard
+                            Windows.openSetupWizard(win, false);
+                            return this.getService(win);
+                        }
+                    }
+                    if (Prefs.getPref("initAlert")) {
+                        this.enigmailSvc.initializationAttempted = false;
+                        this.enigmailSvc = null;
+                    }
+                }
+
+                return null;
+            }
+
+            const configuredVersion = Prefs.getPref("configuredVersion");
+
+            Log.DEBUG("enigmailCommon.jsm: getService: "+configuredVersion+"\n");
+
+            if (firstInitialization && this.enigmailSvc.initialized &&
+                EnigmailGpgAgent.agentType === "pgp") {
+                Dialog.alert(win, Locale.getString("pgpNotSupported"));
+            }
+
+            if (this.enigmailSvc.initialized && (App.getVersion() != configuredVersion)) {
+                Configure.configureEnigmail(win, startingPreferences);
+            }
+        }
+
+        return this.enigmailSvc.initialized ? this.enigmailSvc : null;
+    },
+
+
+    /**
+     * initialize this module
+     */
+    initialize: function (enigmailSvc) {
+        this.enigmailSvc = enigmailSvc;
+    },
+
+    /**
+     * get nsIIOService object
+     */
+    getIoService: function() {
+        return Cc[this.IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
+    },
+
+    getLocalFileApi: function () {
+        return Ci.nsIFile;
     }
-
-    return this.enigmailSvc.initialized ? this.enigmailSvc : null;
-  },
-
-
-  /**
-   * initialize this module
-   */
-  initialize: function (enigmailSvc) {
-    this.enigmailSvc = enigmailSvc;
-  },
-
-  /**
-   * get nsIIOService object
-   */
-  getIoService: function() {
-    return Cc[this.IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
-  },
-
-  getLocalFileApi: function () {
-    return Ci.nsIFile;
-  }
 };
 
 App.initAddon();
