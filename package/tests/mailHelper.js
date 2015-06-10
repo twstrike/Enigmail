@@ -1,4 +1,4 @@
-/*global do_load_module: false, do_get_cwd: false, Components: false, MailServices: false */
+/*global do_load_module: false, do_get_cwd: false, component: false, do_get_file: false, Components: false  */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -39,7 +39,7 @@
 
 "use strict";
 
-Components.utils.import("resource:///modules/mailServices.js");
+component("/modules/mailServices.js"); /*global MailServices: false */
 component("enigmail/files.jsm"); /*global Files: false */
 
 const MailHelper = {
@@ -83,6 +83,6 @@ const MailHelper = {
     fetchFirstMessageHeaderIn: function(mailFolder) {
         let msgDb = mailFolder.msgDatabase;
         let enumerator = msgDb.EnumerateMessages();
-        return enumerator.getNext().QueryInterface(Ci.nsIMsgDBHdr);
+        return enumerator.getNext().QueryInterface(Components.interfaces.nsIMsgDBHdr);
     }
 };
