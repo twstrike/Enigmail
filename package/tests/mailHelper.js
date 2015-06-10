@@ -67,12 +67,12 @@ const MailHelper = {
         }
     },
 
-    createFolder: function(name) {
+    createMailFolder: function(name) {
         MailHelper.init();
         let localRoot = MailHelper.rootFolder.QueryInterface(Components.interfaces.nsIMsgLocalMailFolder);
-        let testFolder = localRoot.createLocalSubfolder(name);
-        testFolder.setFlag(Components.interfaces.nsMsgFolderFlags.Mail);
-        return testFolder;
+        let mailFolder = localRoot.createLocalSubfolder(name);
+        mailFolder.setFlag(Components.interfaces.nsMsgFolderFlags.Mail);
+        return mailFolder;
     },
 
     loadEmailToMailFolder: function(emailFilePath, mailFolder) {

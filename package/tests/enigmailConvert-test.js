@@ -48,11 +48,11 @@ component("enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 test(withTestGpgHome(function messageIsCopiedToTempDir() {
     loadSecretKey();
-    let sourceFolder = MailHelper.createFolder("source-box");
+    let sourceFolder = MailHelper.createMailFolder("source-box");
     MailHelper.loadEmailToMailFolder("resources/encrypted-email.eml", sourceFolder);
 
     let header = MailHelper.fetchFirstMessageHeaderIn(sourceFolder);
-    let targetFolder = MailHelper.createFolder("target-box");
+    let targetFolder = MailHelper.createMailFolder("target-box");
     let move = false;
     let reqSync = true;
     EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
