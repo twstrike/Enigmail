@@ -37,7 +37,7 @@
 
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
+Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
@@ -180,7 +180,7 @@ function prefOnLoad()
      enigShowUserModeButtons(gAdvancedMode);
   }
 
-  if (! EnigmailCommon.gpgAgentIsOptional) {
+  if (! EnigmailGpgAgent.gpgAgentIsOptional) {
     document.getElementById("enigmail_noPassphrase").setAttribute("collapsed", true);
     document.getElementById("enigmail_useGpgAgent").setAttribute("collapsed", true);
   }

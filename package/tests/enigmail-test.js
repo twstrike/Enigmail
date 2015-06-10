@@ -484,7 +484,7 @@ test(function detectGpgAgentSetsAgentInfoFromEnvironmentVariable() {
 
             Assert.ok(EnigmailGpgAgent.gpgAgentInfo.preStarted);
             Assert.equal("a happy agent", EnigmailGpgAgent.gpgAgentInfo.envStr);
-            Assert.ok(!EnigmailCore.getEnigmailCommon().gpgAgentIsOptional);
+            Assert.ok(!EnigmailGpgAgent.gpgAgentIsOptional);
         });
     });
 });
@@ -496,7 +496,7 @@ test(function detectGpgAgentWithNoAgentInfoInEnvironment() {
             EnigmailGpgAgent.detectGpgAgent(JSUnit.createStubWindow(), enigmail);
 
             Assert.ok(!EnigmailGpgAgent.gpgAgentInfo.preStarted);
-            Assert.ok(!EnigmailCore.getEnigmailCommon().gpgAgentIsOptional);
+            Assert.ok(!EnigmailGpgAgent.gpgAgentIsOptional);
         });
     });
 });

@@ -56,7 +56,6 @@ const Ci = Components.interfaces;
 
 const EnigmailCommon = {
     enigmailSvc: null,
-    gpgAgentIsOptional: true,
 
     /**
      * get and or initialize the Enigmail service,

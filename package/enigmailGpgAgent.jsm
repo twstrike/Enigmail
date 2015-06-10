@@ -101,6 +101,7 @@ const EnigmailGpgAgent = {
     gpgconfPath: null,
     gpgAgentInfo: {preStarted: false, envStr: ""},
     gpgAgentProcess: null,
+    gpgAgentIsOptional: true,
 
     setEnigmailCommon: function(enigCommon) {
         Ec = enigCommon;
@@ -545,7 +546,7 @@ const EnigmailGpgAgent = {
             // env. variable suggests running gpg-agent
             EnigmailGpgAgent.gpgAgentInfo.preStarted = true;
             EnigmailGpgAgent.gpgAgentInfo.envStr = gpgAgentInfo;
-            Ec.gpgAgentIsOptional = false;
+            EnigmailGpgAgent.gpgAgentIsOptional = false;
         }
         else {
             Log.DEBUG("enigmail.js: detectGpgAgent: no GPG_AGENT_INFO variable set\n");
@@ -555,7 +556,7 @@ const EnigmailGpgAgent = {
             var outStr = "";
             var errorStr = "";
             var exitCode = -1;
-            Ec.gpgAgentIsOptional = false;
+            EnigmailGpgAgent.gpgAgentIsOptional = false;
             if (Gpg.getGpgFeature("autostart-gpg-agent")) {
                 Log.DEBUG("enigmail.js: detectGpgAgent: gpg 2.0.16 or newer - not starting agent\n");
             }
