@@ -213,11 +213,7 @@ function shouldDecryptMessage() {
     var secretKey = do_get_file("resources/dev-strike.sec", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-<<<<<<< HEAD
-    enigmail.importKeyFromFile(JSUnit.createStubWindow(), secretKey, errorMsgObj, importedKeysObj);
-=======
-    KeyRing.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
->>>>>>> Move a lot of key functions from Enigmail.js to keyRing.jsm
+    KeyRing.importKeyFromFile(JSUnit.createStubWindow(), secretKey, errorMsgObj, importedKeysObj);
     var encryptResult = "-----BEGIN PGP MESSAGE-----\n"+
         "Version: GnuPG v2.0.22 (GNU/Linux)\n"+
         "\n"+
