@@ -39,6 +39,8 @@ Components.utils.import("resource://enigmail/keyEditor.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+
 const Ec = EnigmailCommon;
 
 
@@ -84,7 +86,7 @@ function onLoad() {
     gUidCount = [];
     var keyId = null;
     fingerprint = "";
-    var sigListStr = enigmailSvc.getKeySig("0x"+window.arguments[0].keyId, exitCodeObj, errorMsgObj);
+    var sigListStr = KeyRing.getKeySig("0x"+window.arguments[0].keyId, exitCodeObj, errorMsgObj);
 
     if (exitCodeObj.value === 0) {
       var sigList = sigListStr.split(/[\n\r]+/);

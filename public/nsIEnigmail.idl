@@ -156,42 +156,7 @@ interface nsIEnigmail : nsISupports
 
 /*** key handling functions ***/
 
-  string getKeySig (in string keyId,
-                    out long exitCode,
-                    out wstring errorMsg);
-
-  string getKeyDetails (in string keyId,
-                        in boolean uidOnly,
-                        in boolean withUserAttr);
-
-  string showKeyPhoto (in string keyId,
-                       in long photoNumber,
-                       out long exitCode,
-                       out wstring errorMsg);
-
   const long EXTRACT_SECRET_KEY = 0x01;
-
-  string extractKey(in nsIDOMWindow parent,
-                    in unsigned long exportFlags,
-                    in string userId,
-                    in nsIFile outputFile,
-                    out long   exitCode,
-                    out wstring errorMsg);
-
-  long importKey(in nsIDOMWindow parent,
-                 in unsigned long uiFlags,
-                 in string msgText,
-                 in string keyId,
-                 out wstring errorMsg);
-
-  long importKeyFromFile(in nsIDOMWindow parent,
-                 in nsIFile inputFile,
-                 out string errorMsg,
-                 out wstring importedKeys);
-
-  string getFirstUserIdOfKey(in string keyId);
-
-  string getPubKeyIdForSubkey(in string keyId);
 
   /* Keyserver Action Flags */
   const long SEARCH_KEY       = 0x01;
@@ -204,17 +169,6 @@ interface nsIEnigmail : nsISupports
                           in string contentCharset,
                           in string contentData,
                           in boolean persist);
-
-  /* manage GPG key list cache */
-
-  string getUserIdList (in boolean secretOnly,
-                        in boolean refresh,
-                        out long exitCode,
-                        out unsigned long statusFlags,
-                        out wstring errorMsg);
-
-  void invalidateUserIdList();
-
 
   /* attachment handling */
 

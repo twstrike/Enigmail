@@ -57,6 +57,7 @@ Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/trust.jsm"); /*global Trust: false */
+Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailFuncs" ];
 
@@ -160,7 +161,7 @@ const EnigmailFuncs = {
     // TODO: move [keys]
 
     let enigmailSvc = EnigmailCommon.getService();
-    let keyList = enigmailSvc.getKeyListEntryOfKey(keyId);
+    let keyList = KeyRing.getKeyListEntryOfKey(keyId);
     let keyListObj = {};
     this.createKeyObjects(keyList.replace(/(\r\n|\r)/g, "\n").split(/\n/), keyListObj);
 
@@ -402,7 +403,7 @@ const EnigmailFuncs = {
       var enigmailSvc = EnigmailCommon.getService(win);
       if (! enigmailSvc) return null;
 
-      userList = enigmailSvc.getUserIdList(secretOnly,
+      userList = KeyRing.getUserIdList(secretOnly,
                                            refresh,
                                            exitCodeObj,
                                            statusFlagsObj,

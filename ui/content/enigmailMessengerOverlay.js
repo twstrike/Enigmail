@@ -64,6 +64,7 @@ Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/enigmailConvert.jsm");
 Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 const EC = EnigmailCore;
 
@@ -974,8 +975,8 @@ Enigmail.msg = {
     if (importOnly) {
       // Import public key
       var importFlags = nsIEnigmail.UI_INTERACTIVE;
-      exitCode = enigmailSvc.importKey(window, importFlags, msgText, "",
-                                       errorMsgObj);
+      exitCode = KeyRing.importKey(window, importFlags, msgText, "",
+                                   errorMsgObj);
 
     }
     else {
@@ -2200,7 +2201,7 @@ Enigmail.msg = {
 
     if (callbackArg.actionType == "importKey") {
       try {
-        exitStatus = enigmailSvc.importKey(parent, 0, callbackArg.data, "", errorMsgObj);
+        exitStatus = KeyRing.importKey(parent, 0, callbackArg.data, "", errorMsgObj);
       }
       catch (ex) {}
       if (exitStatus === 0) {

@@ -89,6 +89,7 @@
     Components.utils.import("resource://enigmail/locale.jsm");
     Components.utils.import("resource://enigmail/data.jsm");
     Components.utils.import("resource://enigmail/dialog.jsm");
+    Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
     const Ec = EnigmailCommon;
 
@@ -115,7 +116,7 @@
       if (!enigmailSvc)
         return;
 
-      var keyData = enigmailSvc.getKeyDetails("0x"+window.arguments[0].keyId, false);
+      var keyData = KeyRing.getKeyDetails("0x"+window.arguments[0].keyId, false);
       var uidTxt = "";
 
       var keyList=keyData.split(/[\n\r]+/);

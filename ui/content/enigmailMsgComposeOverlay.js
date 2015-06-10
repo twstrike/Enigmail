@@ -53,6 +53,7 @@ Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
@@ -773,7 +774,7 @@ Enigmail.msg = {
     var exitCodeObj= {};
     var errorMsgObj = {};
 
-    enigmailSvc.extractKey(window, 0, uid.join(" "), tmpFile /*.path */, exitCodeObj, errorMsgObj);
+    KeyRing.extractKey(window, 0, uid.join(" "), tmpFile /*.path */, exitCodeObj, errorMsgObj);
     if (exitCodeObj.value !== 0) {
       Dialog.alert(window, errorMsgObj.value);
       return  null;

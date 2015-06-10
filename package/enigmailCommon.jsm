@@ -61,6 +61,7 @@ Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailCommon" ];
 
@@ -370,7 +371,7 @@ const EnigmailCommon = {
           gKeygenProcess = null;
           try {
             if (result.exitCode === 0) {
-              self.enigmailSvc.invalidateUserIdList();
+              KeyRing.invalidateUserIdList();
             }
             listener.onStopRequest(result.exitCode);
           }
@@ -417,7 +418,7 @@ const EnigmailCommon = {
     var errorMsgObj = {};
 
     if (refresh === null) refresh = false;
-    var keyList=enigmailSvc.getUserIdList(true, refresh, exitCodeObj, statusFlagsObj, errorMsgObj);
+    var keyList=KeyRing.getUserIdList(true, refresh, exitCodeObj, statusFlagsObj, errorMsgObj);
 
     if (exitCodeObj.value !== 0 && keyList.length === 0) {
       Dialog.alert(win, errorMsgObj.value);
@@ -440,7 +441,7 @@ const EnigmailCommon = {
       }
     }
 
-    keyList = enigmailSvc.getKeyDetails(secretKeyList.join(" "), false, false);
+    keyList = KeyRing.getKeyDetails(secretKeyList.join(" "), false, false);
     userList=keyList.split(/\n/);
 
     for (i=0; i < userList.length; i++) {
@@ -561,7 +562,7 @@ const EnigmailCommon = {
           gKeygenProcess = null;
           try {
             if (result.exitCode === 0 && isDownload) {
-              self.enigmailSvc.invalidateUserIdList();
+              KeyRing.invalidateUserIdList();
             }
             if (exitCode === null) {
               exitCode = result.exitCode;

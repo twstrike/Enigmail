@@ -900,8 +900,7 @@ function wizardKeygenTerminate(exitCode)
 
 
   enigmailKeygenCloseRequest();
-  var enigmailSvc = enigGetSvc(false);
-  enigmailSvc.invalidateUserIdList();
+  KeyRing.invalidateUserIdList();
 
   document.getElementById("revCertBox").removeAttribute("hidden");
 }

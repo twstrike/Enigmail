@@ -261,18 +261,14 @@ function enigSetKeys(keyList) {
     encryptionList.appendItem(EnigGetString("noKeyToUse"),"");
   }
   else {
-    var enigmailSvc = GetEnigmailSvc();
-    if (!enigmailSvc)
-      return;
-
     var exitCodeObj= {};
     var statusFlagsObj = {};
     var errorMsgObj = {};
-    var userListTxt = enigmailSvc.getUserIdList(false,
-                                               false,
-                                               exitCodeObj,
-                                               statusFlagsObj,
-                                               errorMsgObj);
+    var userListTxt = KeyRing.getUserIdList(false,
+                                            false,
+                                            exitCodeObj,
+                                            statusFlagsObj,
+                                            errorMsgObj);
     if (exitCodeObj.value !== 0) {
       EnigAlert(errorMsgObj.value);
       return;

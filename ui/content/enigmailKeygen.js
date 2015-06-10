@@ -46,6 +46,7 @@ Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 const Ec = EnigmailCommon;
 
@@ -253,8 +254,7 @@ function saveRevCert(inputKeyFile, keyId, uid, resolve, reject) {
 }
 
 function closeAndReset() {
-  var enigmailSvc = GetEnigmailSvc();
-  enigmailSvc.invalidateUserIdList();
+  KeyRing.invalidateUserIdList();
   window.close();
 }
 

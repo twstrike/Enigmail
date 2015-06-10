@@ -48,6 +48,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 const APPSHELL_MEDIATOR_CONTRACTID = "@mozilla.org/appshell/window-mediator;1";
 const APPSHSVC_CONTRACTID = "@mozilla.org/appshell/appShellService;1";
@@ -211,7 +212,7 @@ const Windows = {
      * no return value
      */
     openKeyManager: function (win) {
-        EnigmailCore.ensuredEnigmailCommon().getService(win);
+        EnigmailCore.getEnigmailCommon().getService(win);
 
         Windows.openWin("enigmail:KeyManager",
                         "chrome://enigmail/content/enigmailKeyManager.xul",
@@ -280,7 +281,7 @@ const Windows = {
     openPrefWindow: function (win, showBasic, selectTab) {
         Log.DEBUG("windows.js: openPrefWindow\n");
 
-        EnigmailCore.ensuredEnigmailCommon().getService(win, true);  // true: starting preferences dialog
+        EnigmailCore.getEnigmailCommon().getService(win, true);  // true: starting preferences dialog
 
         win.openDialog("chrome://enigmail/content/pref-enigmail.xul",
                        "_blank", "chrome,resizable=yes",
@@ -299,7 +300,7 @@ const Windows = {
      */
     createNewRule: function (win, emailAddress) {
         // make sure the rules database is loaded
-        const enigmailSvc = EnigmailCore.ensuredEnigmailCommon().getService(win);
+        const enigmailSvc = EnigmailCore.getEnigmailCommon().getService(win);
         if (!enigmailSvc) {
             return false;
         }
@@ -385,7 +386,7 @@ const Windows = {
      * no return value
      */
     showPhoto: function (win, keyId, userId, photoNumber) {
-        const enigmailSvc = EnigmailCore.ensuredEnigmailCommon().getService(win);
+        const enigmailSvc = EnigmailCore.getEnigmailCommon().getService(win);
         if (enigmailSvc) {
             if (photoNumber === null) photoNumber=0;
 
@@ -394,7 +395,7 @@ const Windows = {
             }
 
             const exitCodeObj = {};
-            const photoPath = enigmailSvc.showKeyPhoto(keyId, photoNumber, exitCodeObj, {});
+            const photoPath = KeyRing.showKeyPhoto(keyId, photoNumber, exitCodeObj, {});
 
             if (photoPath && exitCodeObj.value===0) {
                 const photoFile = Cc[LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);

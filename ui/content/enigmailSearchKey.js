@@ -43,6 +43,7 @@ Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 const Ec = EnigmailCommon;
 
@@ -250,8 +251,7 @@ function enigStatusError () {
 
 function enigCloseDialog() {
   if (window.arguments[RESULT].importedKeys > 0) {
-    var enigmailSvc = GetEnigmailSvc();
-    enigmailSvc.invalidateUserIdList();
+    KeyRing.invalidateUserIdList();
   }
 
   document.getElementById("enigmailSearchKeyDlg").cancelDialog();
@@ -326,9 +326,9 @@ function enigImportHtmlKeys(txt) {
     return false;
 
   var uiFlags = nsIEnigmail.UI_ALLOW_KEY_IMPORT;
-  var r = enigmailSvc.importKey(window, uiFlags, txt,
-                        gEnigRequest.dlKeyList[gEnigRequest.keyNum-1],
-                        errorMsgObj);
+  var r = KeyRing.importKey(window, uiFlags, txt,
+                            gEnigRequest.dlKeyList[gEnigRequest.keyNum-1],
+                            errorMsgObj);
   if (errorMsgObj.value)
     Dialog.alert(window, errorMsgObj.value);
   if (r === 0) {

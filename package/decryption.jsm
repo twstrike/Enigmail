@@ -58,6 +58,7 @@ Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 Cu.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
+Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 const EC = EnigmailCore;
@@ -339,7 +340,7 @@ const Decryption = {
         }
 
         if (sigUserId && sigKeyId && Prefs.getPref("displaySecondaryUid")) {
-            let uids = ecom.enigmailSvc.getKeyDetails(sigKeyId, true, true);
+            let uids = KeyRing.getKeyDetails(sigKeyId, true, true);
             if (uids) {
                 sigUserId = uids;
             }
@@ -369,7 +370,7 @@ const Decryption = {
                 var localKeyId = encToArray[encIdx];
                 // except for ID 00000000, which signals hidden keys
                 if (localKeyId != "0x0000000000000000") {
-                    var localUserId = ecom.enigmailSvc.getFirstUserIdOfKey(localKeyId);
+                    var localUserId = KeyRing.getFirstUserIdOfKey(localKeyId);
                     if (localUserId) {
                         localUserId = Data.convertToUnicode(localUserId, "UTF-8");
                         encToArray[encIdx] += " (" + localUserId + ")";
@@ -508,8 +509,8 @@ const Decryption = {
 
             // Import public key
             var importFlags = nsIEnigmail.UI_INTERACTIVE;
-            exitCodeObj.value = esvc.importKey(parent, importFlags, pgpBlock, "",
-                                               errorMsgObj);
+            exitCodeObj.value = KeyRing.importKey(parent, importFlags, pgpBlock, "",
+                                                  errorMsgObj);
             if (exitCodeObj.value === 0) {
                 statusFlagsObj.value |= nsIEnigmail.IMPORTED_KEY;
             }
@@ -642,8 +643,8 @@ const Decryption = {
                 if (innerKeyBlock) {
                     var importErrorMsgObj = {};
                     var importFlags2 = nsIEnigmail.UI_INTERACTIVE;
-                    var exitStatus = esvc.importKey(parent, importFlags2, innerKeyBlock,
-                                                    pubKeyId, importErrorMsgObj);
+                    var exitStatus = KeyRing.importKey(parent, importFlags2, innerKeyBlock,
+                                                       pubKeyId, importErrorMsgObj);
 
                     importedKey = (exitStatus === 0);
 
@@ -711,7 +712,7 @@ const Decryption = {
 
             if (Dialog.confirmDlg(parent, Locale.getString("attachmentPgpKey", [ displayName ]),
                                   Locale.getString("keyMan.button.import"), Locale.getString("dlg.button.view"))) {
-                exitCodeObj.value = esvc.importKey(parent, 0, byteData, "", errorMsgObj);
+                exitCodeObj.value = KeyRing.importKey(parent, 0, byteData, "", errorMsgObj);
                 statusFlagsObj.value = nsIEnigmail.IMPORTED_KEY;
             }
             else {

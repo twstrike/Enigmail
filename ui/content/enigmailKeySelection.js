@@ -39,6 +39,7 @@ Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeySelection");
@@ -113,14 +114,11 @@ function enigGetUserList(secretOnly, refresh)
     var statusFlagsObj = {};
     var errorMsgObj = {};
 
-    var enigmailSvc = GetEnigmailSvc();
-    if (! enigmailSvc)
-      return null;
-    userList = enigmailSvc.getUserIdList(secretOnly,
-                                             refresh,
-                                             exitCodeObj,
-                                             statusFlagsObj,
-                                             errorMsgObj);
+    userList = KeyRing.getUserIdList(secretOnly,
+                                     refresh,
+                                     exitCodeObj,
+                                     statusFlagsObj,
+                                     errorMsgObj);
     if (exitCodeObj.value !== 0) {
       EnigAlert(errorMsgObj.value);
       return null;
@@ -156,12 +154,7 @@ function getPubkeysFromSecretKeys(keyString)
     }
   }
 
-  var enigmailSvc = GetEnigmailSvc();
-  if (! enigmailSvc) {
-    return null;
-  }
-  var pubkeys = enigmailSvc.getKeyDetails(aSecretKeys.join(" "), false);
-  return pubkeys;
+  return KeyRing.getKeyDetails(aSecretKeys.join(" "), false);
 }
 
 

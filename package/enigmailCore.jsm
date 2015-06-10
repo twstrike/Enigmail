@@ -38,9 +38,24 @@
 
 const EXPORTED_SYMBOLS = [ "EnigmailCore" ];
 
-var gEnigmailSvc = null;      // Global Enigmail Service
-var gEnigmailCommon = null;   // Global Enigmail Common instance, to avoid circular dependencies
-var envList = null;           // currently filled from enigmail.js
+let gEnigmailSvc = null;      // Global Enigmail Service
+let envList = null;           // currently filled from enigmail.js
+
+function lazy(importName, name) {
+    let holder = null;
+    return function(f) {
+        if(holder === null) {
+            if(f) {
+                holder = f();
+            } else {
+                const result = {};
+                Components.utils.import("resource://enigmail/" + importName, result);
+                holder = result[name];
+            }
+        }
+        return holder;
+    };
+}
 
 const EnigmailCore = {
     version: "",
@@ -64,24 +79,8 @@ const EnigmailCore = {
         return gEnigmailSvc;
     },
 
-    getEnigmailCommon: function() {
-        return gEnigmailCommon;
-    },
-
-    ensuredEnigmailCommon: function(f) {
-        if(!f) {
-            f = EnigmailCore.defaultEnigmailCommonCreation;
-        }
-        if(!gEnigmailCommon) {
-            gEnigmailCommon = f();
-        }
-        return gEnigmailCommon;
-    },
-
-    defaultEnigmailCommonCreation: function() {
-        Components.utils.import("resource://enigmail/enigmailCommon.jsm"); /*global EnigmailCommon: false */
-        return EnigmailCommon;
-    },
+    getEnigmailCommon: lazy("enigmailCommon.jsm", "EnigmailCommon"),
+    getKeyRing:        lazy("keyRing.jsm", "KeyRing"),
 
     /**
      * obtain a list of all environment variables
@@ -94,7 +93,7 @@ const EnigmailCore = {
     },
 
     addToEnvList: function(str) {
-        envList.push(str);
+        EnigmailCore.getEnvList().push(str);
     },
 
     initEnvList: function() {

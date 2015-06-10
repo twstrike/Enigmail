@@ -124,6 +124,7 @@
 
     EnigInitCommon("enigmailViewKeySigDlg");
     Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+    Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
     var gKeyListArr;
 
@@ -160,7 +161,7 @@
       var exitCodeObj = {};
       var errorMsgObj = {};
 
-      var sigList = enigmailSvc.getKeySig("0x"+keyId, exitCodeObj, errorMsgObj);
+      var sigList = KeyRing.getKeySig("0x"+keyId, exitCodeObj, errorMsgObj);
 
       if (exitCodeObj.value != 0) {
         EnigAlert(errorMsgObj.value);
