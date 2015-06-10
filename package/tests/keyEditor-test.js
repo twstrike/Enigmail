@@ -82,8 +82,6 @@ function shouldExecCmd() {
     Assert.assertContains(output,":user ID packet:");
     Assert.assertContains(output,":signature packet:");
     Assert.assertContains(output,":public sub key packet:");
-    Assert.assertContains(output,":signature packet:");
-    Assert.assertContains(output,":secret key packet:");
 }
 
 function shouldEditKey() {
@@ -148,10 +146,13 @@ function importKeyForEdit() {
     initializeEnigmail();
     var window = JSUnit.createStubWindow();
     var publicKey = do_get_file("resources/dev-strike.asc", false);
+    var secretKey = do_get_file("resources/dev-strike.sec", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-    var importResult = KeyRing.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
-    Assert.equal(importResult, 0);
+    var publicImportResult = KeyRing.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
+    var secretImportResult = KeyRing.importKeyFromFile(window, secretKey, errorMsgObj, importedKeysObj);
+    Assert.equal(publicImportResult, 0);
+    Assert.equal(secretImportResult, 0);
 }
 
 function initializeEnigmail() {

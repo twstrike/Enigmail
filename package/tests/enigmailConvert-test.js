@@ -58,9 +58,9 @@ test(withTestGpgHome(function messageIsCopiedToTempDir() {
 var loadSecretKey = function() {
     let enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     let win = JSUnit.createStubWindow();
-    let publicKey = do_get_file("resources/dev-strike.asc", false);
+    let secretKey = do_get_file("resources/dev-strike.sec", false);
     let errorMsgObj = {};
     let importedKeysObj = {};
     enigmail.initialize(win, "");
-    enigmail.importKeyFromFile(win, publicKey, errorMsgObj, importedKeysObj);
+    enigmail.importKeyFromFile(win, secretKey, errorMsgObj, importedKeysObj);
 };

@@ -167,11 +167,11 @@ function shouldHandleErrors() {
 function shouldGetSecretKeys() {
     Components.utils.import("resource://enigmail/keyEditor.jsm");
     EnigmailCommon.enigmailSvc = initializeEnigmail();
-    var publicKey = do_get_file("resources/dev-strike.asc", false);
+    var secretKey = do_get_file("resources/dev-strike.sec", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
     var window = JSUnit.createStubWindow();
-    var importResult = KeyRing.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
+    var importResult = KeyRing.importKeyFromFile(window, secretKey, errorMsgObj, importedKeysObj);
     var expectedKey = [{"name": "anonymous strike <strike.devtest@gmail.com>", "id": "781617319CE311C4", "created": "05/04/2015"}];
     do_test_pending();
     KeyEditor.setKeyTrust(window,

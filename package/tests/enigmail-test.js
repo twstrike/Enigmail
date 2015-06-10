@@ -148,10 +148,10 @@ function shouldGetKeyDetails() {
 function shouldSignMessage() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initializeService(enigmail);
-    var publicKey = do_get_file("resources/dev-strike.asc", false);
+    var secretKey = do_get_file("resources/dev-strike.sec", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-    enigmail.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
+    enigmail.importKeyFromFile(JSUnit.createStubWindow(), secretKey, errorMsgObj, importedKeysObj);
     var parentWindow = JSUnit.createStubWindow();
     var plainText = "Hello there!";
     var strikeAccount = "strike.devtest@gmail.com";
@@ -208,10 +208,10 @@ function shouldEncryptMessage() {
 function shouldDecryptMessage() {
     var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     enigmail = initializeService(enigmail);
-    var publicKey = do_get_file("resources/dev-strike.asc", false);
+    var secretKey = do_get_file("resources/dev-strike.sec", false);
     var errorMsgObj = {};
     var importedKeysObj = {};
-    enigmail.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
+    enigmail.importKeyFromFile(JSUnit.createStubWindow(), secretKey, errorMsgObj, importedKeysObj);
     var encryptResult = "-----BEGIN PGP MESSAGE-----\n"+
         "Version: GnuPG v2.0.22 (GNU/Linux)\n"+
         "\n"+
