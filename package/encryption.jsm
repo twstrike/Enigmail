@@ -450,5 +450,10 @@ var Encryption = {
         }
 
         return msg;
+    },
+
+    registerOn: function(target) {
+        target.encryptMessage = Encryption.encryptMessage;
+        target.encryptAttachment = Encryption.encryptAttachment;
     }
 };

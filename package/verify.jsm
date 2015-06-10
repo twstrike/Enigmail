@@ -90,5 +90,9 @@ const Verify = {
         }
 
         return listener.exitCode;
+    },
+
+    registerOn: function(target) {
+        target.verifyAttachment = Verify.attachment;
     }
 };

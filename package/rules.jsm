@@ -164,28 +164,11 @@ const Rules = {
     },
 
     registerOn: function(target) {
-        target.getRulesFile = function() {
-            return Rules.getRulesFile();
-        };
-
-        target.loadRulesFile = function() {
-            return Rules.loadRulesFile();
-        };
-
-        target.saveRulesFile = function() {
-            return Rules.saveRulesFile();
-        };
-
-        target.getRulesData = function(rulesListObj) {
-            return Rules.getRulesData(rulesListObj);
-        };
-
-        target.addRule = function(appendToEnd, toAddress, keyList, sign, encrypt, pgpMime, flags) {
-            return Rules.addRule(appendToEnd, toAddress, keyList, sign, encrypt, pgpMime, flags);
-        };
-
-        target.clearRules = function() {
-            return Rules.clearRules();
-        };
+        target.getRulesFile = Rules.getRulesFile;
+        target.loadRulesFile = Rules.loadRulesFile;
+        target.saveRulesFile = Rules.saveRulesFile;
+        target.getRulesData = Rules.getRulesData;
+        target.addRule = Rules.addRule;
+        target.clearRules = Rules.clearRules;
     }
 };

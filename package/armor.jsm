@@ -229,5 +229,11 @@ const Armor = {
                 });
             });
         });
+    },
+
+    registerOn: function(target) {
+        target.locateArmoredBlock = Armor.locateArmoredBlock;
+        target.locateArmoredBlocks = Armor.locateArmoredBlocks;
+        target.extractSignaturePart = Armor.extractSignaturePart;
     }
 };

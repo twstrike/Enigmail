@@ -254,58 +254,15 @@ Enigmail.prototype = {
     EnigmailConsole.write("Reinitializing Enigmail service ...\n");
     EnigmailGpgAgent.setAgentPath(null, this);
     this.initialized = true;
-  },
-
-  encryptMessage: function (parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags,
-                            exitCodeObj, statusFlagsObj, errorMsgObj) {
-      return Encryption.encryptMessage(parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, exitCodeObj, statusFlagsObj, errorMsgObj);
-  },
-
-  locateArmoredBlock: function (text, offset, indentStr, beginIndexObj, endIndexObj, indentStrObj) {
-      return Armor.locateArmoredBlock(text, offset, indentStr, beginIndexObj, endIndexObj, indentStrObj);
-  },
-
-  locateArmoredBlocks: function(text) {
-      return Armor.locateArmoredBlocks(text);
-  },
-
-  extractSignaturePart: function (signatureBlock, part) {
-      return Armor.extractSignaturePart(signatureBlock, part);
-  },
-
-  decryptMessage: function (parent, uiFlags, cipherText,
-                            signatureObj, exitCodeObj,
-                            statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
-                            blockSeparationObj, encToDetailsObj) {
-      return Decryption.decryptMessage(parent, uiFlags, cipherText,
-                                       signatureObj, exitCodeObj,
-                                       statusFlagsObj, keyIdObj, userIdObj, sigDetailsObj, errorMsgObj,
-                                       blockSeparationObj, encToDetailsObj);
-  },
-
-  createMessageURI: function (originalUrl, contentType, contentCharset, contentData, persist) {
-    return URIs.createMessageURI(originalUrl, contentType, contentCharset, contentData, persist);
-  },
-
-  deleteMessageURI: function (uri) {
-    return URIs.deleteMessageURI(uri);
-  },
-
-  encryptAttachment: function (parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile,
-            exitCodeObj, statusFlagsObj, errorMsgObj) {
-      return Encryption.encryptAttachment(parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile, exitCodeObj, statusFlagsObj, errorMsgObj);
-  },
-
-  verifyAttachment: function (parent, verifyFile, sigFile, statusFlagsObj, errorMsgObj) {
-      return Verify.attachment(parent, verifyFile, sigFile, statusFlagsObj, errorMsgObj);
-  },
-
-  decryptAttachment: function (parent, outFile, displayName, byteData, exitCodeObj, statusFlagsObj, errorMsgObj) {
-      return Decryption.decryptAttachment(parent, outFile, displayName, byteData, exitCodeObj, statusFlagsObj, errorMsgObj);
   }
 }; // Enigmail.prototype
 
+Armor.registerOn(Enigmail.prototype);
+Decryption.registerOn(Enigmail.prototype);
+Encryption.registerOn(Enigmail.prototype);
 Rules.registerOn(Enigmail.prototype);
+URIs.registerOn(Enigmail.prototype);
+Verify.registerOn(Enigmail.prototype);
 
 // This variable is exported implicitly and should not be refactored or removed
 const NSGetFactory = XPCOMUtils.generateNSGetFactory([Enigmail, EnigmailProtocolHandler, CommandLine.Handler]);

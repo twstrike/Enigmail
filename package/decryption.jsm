@@ -776,6 +776,10 @@ const Decryption = {
         exitCodeObj.value = Execution.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
 
         return true;
+    },
 
+    registerOn: function(target) {
+        target.decryptMessage = Decryption.decryptMessage;
+        target.decryptAttachment = Decryption.decryptAttachment;
     }
 };

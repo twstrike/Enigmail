@@ -120,5 +120,10 @@ const URIs = {
     isEncryptedUri: function (uri) {
         Log.DEBUG("uris.jsm: isEncryptedUri: uri="+uri+"\n");
         return encryptedUris.indexOf(uri) >= 0;
+    },
+
+    registerOn: function(target) {
+        target.createMessageURI = URIs.createMessageURI;
+        target.deleteMessageURI = URIs.deleteMessageURI;
     }
 };
