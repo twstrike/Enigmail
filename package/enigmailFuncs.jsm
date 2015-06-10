@@ -189,24 +189,6 @@ const EnigmailFuncs = {
           "", "dialog,modal,centerscreen", inputObj, resultObj);
   },
 
-  /**
-   * Format a key fingerprint
-   * @fingerprint |string|  -  unformated OpenPGP fingerprint
-   *
-   * @return |string| - formatted string
-   */
-  formatFpr: function (fingerprint)
-  {
-    // format key fingerprint
-    var r="";
-    var fpr = fingerprint.match(/(....)(....)(....)(....)(....)(....)(....)(....)(....)?(....)?/);
-    if (fpr && fpr.length > 2) {
-      fpr.shift();
-      r=fpr.join(" ");
-    }
-
-    return r;
-  },
 
   /**
    * get a list of plain email addresses without name or surrounding <>

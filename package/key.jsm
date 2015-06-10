@@ -20,7 +20,8 @@
  * Copyright (C) 2012 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
- * Fan Jiang <fanjiang@thoughtworks.com>
+ *  Fan Jiang <fanjiang@thoughtworks.com>
+ *  Ola Bini <obini@thoughtworks.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -39,9 +40,9 @@
 
 const EXPORTED_SYMBOLS = [ "Key" ];
 
-function Key(key) {
-    if (!(this instanceof Key)) {
-        return new Key(key);
+function KeyEntry(key) {
+    if (!(this instanceof KeyEntry)) {
+        return new KeyEntry(key);
     }
     // same data as in packetlist but in structured form
     this.primaryKey = null;
@@ -56,7 +57,7 @@ function Key(key) {
     return this;
 }
 
-Key.prototype = {
+KeyEntry.prototype = {
     parsePackets: function(key) {
         const packetHeaders = [":public key packet:",
             ":user ID packet:",
@@ -112,5 +113,27 @@ Key.prototype = {
                     break;
             }
         }
+    }
+};
+
+const Key = {
+    Entry: KeyEntry,
+
+    /**
+     * Format a key fingerprint
+     * @fingerprint |string|  -  unformated OpenPGP fingerprint
+     *
+     * @return |string| - formatted string
+     */
+    formatFpr: function (fingerprint) {
+        // format key fingerprint
+        let r="";
+        const fpr = fingerprint.match(/(....)(....)(....)(....)(....)(....)(....)(....)(....)?(....)?/);
+        if (fpr && fpr.length > 2) {
+            fpr.shift();
+            r=fpr.join(" ");
+        }
+
+        return r;
     }
 };

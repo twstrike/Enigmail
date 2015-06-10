@@ -557,7 +557,7 @@ const KeyEditor = {
 
 function keyReadCallback(outputData, ret) {
 
-  outputData.keyObj = new Key(outputData.key);
+  outputData.keyObj = new Key.Entry(outputData.key);
   ret.exitCode = 0;
 }
 

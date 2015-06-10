@@ -36,6 +36,7 @@
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/keyEditor.jsm");
+Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
@@ -87,9 +88,9 @@ function onLoad() {
         setValue(l[0], l[1]+" / "+l[2]+" / "+l[3]);
         break;
       case "fpr":
-        setValue("key_fpr_1", EnigmailFuncs.formatFpr(l[1]));
-        setValue("key_fpr_2", EnigmailFuncs.formatFpr(l[2]));
-        setValue("key_fpr_3", EnigmailFuncs.formatFpr(l[3]));
+        setValue("key_fpr_1", Key.formatFpr(l[1]));
+        setValue("key_fpr_2", Key.formatFpr(l[2]));
+        setValue("key_fpr_3", Key.formatFpr(l[3]));
         break;
       case "fprtime":
         setValue("key_created_1", Time.getDateTime(l[1], true, false));
