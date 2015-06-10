@@ -44,6 +44,7 @@ MODFILES = \
            rules.jsm \
            filters.jsm \
            files.jsm \
+           trust.jsm \
            armor.jsm \
            log.jsm \
            app.jsm \

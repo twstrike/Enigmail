@@ -57,6 +57,7 @@ Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 
 const EC = EnigmailCore;
 
@@ -479,7 +480,7 @@ function EnigFilePicker(title, displayDir, save, defaultExtension, defaultName, 
 
 // get keys from keyserver
 function EnigDownloadKeys(inputObj, resultObj) {
-  return EnigmailFuncs.downloadKeys(window, inputObj, resultObj);
+  return Windows.downloadKeys(window, inputObj, resultObj);
 }
 
 // create new PGP Rule
@@ -488,7 +489,7 @@ function EnigNewRule(emailAddress) {
 }
 
 function EnigGetTrustCode(keyObj) {
-  return EnigmailFuncs.getTrustCode(keyObj);
+  return Trust.getTrustCode(keyObj);
 }
 
 // Load the key list into memory

@@ -38,6 +38,7 @@
 Components.utils.import("resource://enigmail/enigmailCommon.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeySelection");
@@ -169,7 +170,7 @@ function enigmailBuildList(refresh)
    Log.DEBUG("=====> enigmailBuildList()\n");
    Log.DEBUG("enigmailKeySelection.js: enigmailBuildList\n");
 
-   const TRUSTLEVELS_SORTED = EnigmailFuncs.trustlevelsSorted();
+   const TRUSTLEVELS_SORTED = Trust.trustLevelsSorted();
 
    // sorting criterion for dialog entries
    // - note: for active state we have values:

@@ -2355,7 +2355,7 @@ Enigmail.msg = {
       searchList : [ pubKeyId ]
     };
     var resultObj = {};
-    EnigmailFuncs.downloadKeys(window, inputObj, resultObj);
+    Windows.downloadKeys(window, inputObj, resultObj);
 
     if (resultObj.importedKeys > 0) {
       this.messageReload(false);

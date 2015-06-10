@@ -40,6 +40,7 @@ Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: fa
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+Components.utils.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeyManager");
@@ -1163,7 +1164,7 @@ function enigmailDowloadContactKeysEngine() {
   };
   var resultObj = {};
 
-  EnigmailFuncs.downloadKeys(window, inputObj, resultObj);
+  Windows.downloadKeys(window, inputObj, resultObj);
 
   if (resultObj.importedKeys > 0) {
     enigmailRefreshKeys();

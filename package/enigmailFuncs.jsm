@@ -56,6 +56,7 @@ Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailFuncs" ];
 
@@ -72,124 +73,9 @@ const USERID_ID = 9;
 const SIG_TYPE_ID = 10;
 const KEY_USE_FOR_ID = 11;
 
-
-// trust flags according to GPG documentation:
-// - http://www.gnupg.org/documentation/manuals/gnupg.pdf
-// - sources: doc/DETAILS
-// In the order of trustworthy:
-//  ---------------------------------------------------------
-//  i = The key is invalid (e.g. due to a missing self-signature)
-//  n = The key is not valid / Never trust this key
-//  d/D = The key has been disabled
-//  r = The key has been revoked
-//  e = The key has expired
-//  g = group (???)
-//  ---------------------------------------------------------
-//  ? = INTERNAL VALUE to separate invalid from unknown keys
-//      see validKeysForAllRecipients() in enigmailMsgComposeHelper.js
-//  ---------------------------------------------------------
-//  o = Unknown (this key is new to the system)
-//  - = Unknown validity (i.e. no value assigned)
-//  q = Undefined validity (Not enough information for calculation)
-//      '-' and 'q' may safely be treated as the same value for most purposes
-//  ---------------------------------------------------------
-//  m = Marginally trusted
-//  ---------------------------------------------------------
-//  f = Fully trusted / valid key
-//  u = Ultimately trusted
-//  ---------------------------------------------------------
-const TRUSTLEVELS_SORTED = "indDreg?o-qmfu";
-const TRUSTLEVELS_SORTED_IDX_UNKNOWN = 7;   // index of '?'
-
-
 var gTxtConverter = null;
 
 const EnigmailFuncs = {
-
-  /**
-   * @return - |string| containing the order of trust/validity values
-   */
-  trustlevelsSorted: function ()
-  {
-    return TRUSTLEVELS_SORTED;
-  },
-
-  /**
-   * @return - |boolean| whether the flag is invalid (neither unknown nor valid)
-   */
-  isInvalid: function (flag)
-  {
-    return TRUSTLEVELS_SORTED.indexOf(flag) < TRUSTLEVELS_SORTED_IDX_UNKNOWN;
-  },
-
-  /**
-   * Display the dialog to search and/or download key(s) from a keyserver
-   *
-   * @win        - |object| holding the parent window for the dialog
-   * @inputObj   - |object| with member searchList (|string| containing the keys to search)
-   * @resultObj  - |object| with member importedKeys (|number| containing the number of imporeted keys)
-   *
-   * no return value
-   */
-
-  downloadKeys: function (win, inputObj, resultObj)
-  {
-    // TODO: move [keys]
-    Log.DEBUG("enigmailFuncs.jsm: downloadKeys: searchList="+inputObj.searchList+"\n");
-
-    resultObj.importedKeys=0;
-
-    var ioService = Cc[IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
-    if (ioService && ioService.offline) {
-      Dialog.alert(win, Locale.getString("needOnline"));
-      return;
-    }
-
-    var valueObj = {};
-    if (inputObj.searchList) {
-      valueObj = { keyId: "<"+inputObj.searchList.join("> <")+">" };
-    }
-
-    var keysrvObj = {};
-
-    win.openDialog("chrome://enigmail/content/enigmailKeyserverDlg.xul",
-          "", "dialog,modal,centerscreen", valueObj, keysrvObj);
-    if (! keysrvObj.value) {
-      return;
-    }
-
-    inputObj.keyserver = keysrvObj.value;
-
-    if (! inputObj.searchList) {
-      var searchval = keysrvObj.email;
-      searchval = searchval.replace(/^(\s*)(.*)/, "$2").replace(/\s+$/,"");  // trim spaces
-      // special handling to convert fingerprints with spaces into fingerprint without spaces
-        if (searchval.length == 49 && searchval.match(/^[0-9a-fA-F ]*$/) &&
-            searchval[4]==' ' && searchval[9]==' ' && searchval[14]==' ' &&
-            searchval[19]==' ' && searchval[24]==' ' && searchval[29]==' ' &&
-            searchval[34]==' ' && searchval[39]==' ' && searchval[44]==' ') {
-        inputObj.searchList = [ "0x" + searchval.replace(/ /g,"") ];
-      }
-      else if (searchval.length == 40 && searchval.match(/^[0-9a-fA-F ]*$/)) {
-        inputObj.searchList = [ "0x" + searchval ];
-      }
-      // special handling to add the required leading 0x when searching for keys
-      else if (searchval.length == 8 && searchval.match(/^[0-9a-fA-F]*$/)) {
-        inputObj.searchList = [ "0x" + searchval ];
-      }
-      else if (searchval.length == 16 && searchval.match(/^[0-9a-fA-F]*$/)) {
-        inputObj.searchList = [ "0x" + searchval ];
-      }
-      else {
-        inputObj.searchList = searchval.split(/[,; ]+/);
-      }
-    }
-
-    win.openDialog("chrome://enigmail/content/enigmailSearchKey.xul",
-          "", "dialog,modal,centerscreen", inputObj, resultObj);
-  },
-
-
   /**
    * get a list of plain email addresses without name or surrounding <>
    * @mailAddrs |string| - address-list as specified in RFC 2822, 3.4
@@ -307,6 +193,8 @@ const EnigmailFuncs = {
     var i;
     var uatNum=0; // counter for photos (counts per key)
 
+    const TRUSTLEVELS_SORTED = Trust.trustLevelsSorted();
+
     for (i=0; i<keyListString.length; i++) {
       var listRow=keyListString[i].split(/:/);
       if (listRow.length>=0) {
@@ -402,6 +290,8 @@ const EnigmailFuncs = {
     if (! sortColumn) sortColumn = "userid";
     if (! sortDirection) sortDirection = 1;
 
+    const TRUSTLEVELS_SORTED = Trust.trustLevelsSorted();
+
     var sortByKeyId = function (a, b) {
       return (a.keyId < b.keyId) ? -sortDirection : sortDirection;
     };
@@ -424,7 +314,7 @@ const EnigmailFuncs = {
 
 
     var sortByValidity = function (a, b) {
-      return (TRUSTLEVELS_SORTED.indexOf(EnigmailFuncs.getTrustCode(keyListObj.keyList[a.keyId])) < TRUSTLEVELS_SORTED.indexOf(EnigmailFuncs.getTrustCode(keyListObj.keyList[b.keyId]))) ? -sortDirection : sortDirection;
+      return (TRUSTLEVELS_SORTED.indexOf(Trust.getTrustCode(keyListObj.keyList[a.keyId])) < TRUSTLEVELS_SORTED.indexOf(Trust.getTrustCode(keyListObj.keyList[b.keyId]))) ? -sortDirection : sortDirection;
     };
 
     var sortByTrust = function (a, b) {
@@ -488,23 +378,6 @@ const EnigmailFuncs = {
       keyListObj.keySortList.sort(sortByUserId);
     }
   },
-
-  /**
-   * return a merged value of trust level "key disabled"
-   *
-   * @keyObj - |object| containing the key data
-   *
-   * @return - |string| containing the trust value or "D" for disabled keys
-   */
-
-  getTrustCode: function (keyObj)
-  {
-    if (keyObj.keyUseFor.indexOf("D")>=0)
-      return "D";
-    else
-      return keyObj.keyTrust;
-  },
-
 
   /**
    * Get key list from GnuPG. If the keys may be pre-cached already

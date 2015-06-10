@@ -67,6 +67,7 @@ Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global Armor: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 
 /* Implementations supplied by this module */
 const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";
@@ -665,7 +666,7 @@ Enigmail.prototype = {
     }
     listText=listText.replace(/(\r\n|\r)/g, "\n");
 
-    const TRUSTLEVELS_SORTED = EnigmailFuncs.trustlevelsSorted();
+    const TRUSTLEVELS_SORTED = Trust.trustLevelsSorted();
     var maxTrustLevel = -1;
 
     if (uidOnly) {
@@ -684,7 +685,7 @@ Enigmail.prototype = {
         var lineTokens = lineArr[i].split(/:/);
         switch (lineTokens[0]) {
           case "pub":
-            if (EnigmailFuncs.isInvalid(lineTokens[1])) {
+            if (Trust.isInvalid(lineTokens[1])) {
               // pub key not valid (anymore)-> display all UID's
               hideInvalidUid = false;
             }
@@ -701,14 +702,14 @@ Enigmail.prototype = {
               }
               // else do not add uid
             }
-            else if (!EnigmailFuncs.isInvalid(lineTokens[1]) || !hideInvalidUid) {
+            else if (!Trust.isInvalid(lineTokens[1]) || !hideInvalidUid) {
               // UID valid  OR  key not valid, but invalid keys allowed
               userList += lineTokens[9] + "\n";
             }
             break;
           case "uat":
             if (withUserAttributes) {
-              if (!EnigmailFuncs.isInvalid(lineTokens[1]) || !hideInvalidUid) {
+              if (!Trust.isInvalid(lineTokens[1]) || !hideInvalidUid) {
                 // IF  UID valid  OR  key not valid and invalid keys allowed
                 userList += "uat:jpegPhoto:" + lineTokens[4] + "\n";
               }

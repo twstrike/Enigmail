@@ -456,4 +456,65 @@ const Windows = {
             enigmailRefreshKeys();
         }
     },
+
+    /**
+     * Display the dialog to search and/or download key(s) from a keyserver
+     *
+     * @win        - |object| holding the parent window for the dialog
+     * @inputObj   - |object| with member searchList (|string| containing the keys to search)
+     * @resultObj  - |object| with member importedKeys (|number| containing the number of imporeted keys)
+     *
+     * no return value
+     */
+    downloadKeys: function (win, inputObj, resultObj) {
+        Log.DEBUG("windows.jsm: downloadKeys: searchList="+inputObj.searchList+"\n");
+
+        resultObj.importedKeys=0;
+
+        const ioService = Cc[IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
+        if (ioService && ioService.offline) {
+            Windows.alert(win, Locale.getString("needOnline"));
+            return;
+        }
+
+        let valueObj = {};
+        if (inputObj.searchList) {
+            valueObj = { keyId: "<"+inputObj.searchList.join("> <")+">" };
+        }
+
+        const keysrvObj = {};
+
+        win.openDialog("chrome://enigmail/content/enigmailKeyserverDlg.xul",
+                       "", "dialog,modal,centerscreen", valueObj, keysrvObj);
+        if (!keysrvObj.value) {
+            return;
+        }
+
+        inputObj.keyserver = keysrvObj.value;
+
+        if (! inputObj.searchList) {
+            const searchval = keysrvObj.email.
+                      replace(/^(\s*)(.*)/, "$2").
+                      replace(/\s+$/,"");  // trim spaces
+            // special handling to convert fingerprints with spaces into fingerprint without spaces
+            if (searchval.length == 49 && searchval.match(/^[0-9a-fA-F ]*$/) &&
+                searchval[4]==' ' && searchval[9]==' ' && searchval[14]==' ' &&
+                searchval[19]==' ' && searchval[24]==' ' && searchval[29]==' ' &&
+                searchval[34]==' ' && searchval[39]==' ' && searchval[44]==' ') {
+                inputObj.searchList = [ "0x" + searchval.replace(/ /g,"") ];
+            } else if (searchval.length == 40 && searchval.match(/^[0-9a-fA-F ]*$/)) {
+                inputObj.searchList = [ "0x" + searchval ];
+            } else if (searchval.length == 8 && searchval.match(/^[0-9a-fA-F]*$/)) {
+                // special handling to add the required leading 0x when searching for keys
+                inputObj.searchList = [ "0x" + searchval ];
+            } else if (searchval.length == 16 && searchval.match(/^[0-9a-fA-F]*$/)) {
+                inputObj.searchList = [ "0x" + searchval ];
+            } else {
+                inputObj.searchList = searchval.split(/[,; ]+/);
+            }
+        }
+
+        win.openDialog("chrome://enigmail/content/enigmailSearchKey.xul",
+                       "", "dialog,modal,centerscreen", inputObj, resultObj);
+    }
 };

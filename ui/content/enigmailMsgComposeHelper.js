@@ -45,6 +45,7 @@ Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 
 if (! Enigmail) var Enigmail = {};
 
@@ -317,7 +318,7 @@ Enigmail.hlp = {
         return null;
     }
 
-    const TRUSTLEVELS_SORTED = EnigmailFuncs.trustlevelsSorted();
+    const TRUSTLEVELS_SORTED = Trust.trustLevelsSorted();
     var minTrustLevelIndex = TRUSTLEVELS_SORTED.indexOf(minTrustLevel);
     Log.DEBUG("enigmailMsgComposeHelper.js: doValidKeysForAllRecipients(): find keys with minTrustLevel=\""+minTrustLevel+"\"\n");
 
@@ -454,7 +455,7 @@ Enigmail.hlp = {
   getValidKeyForRecipient: function (emailAddr, minTrustLevelIndex, keyList, keySortList, details)
   {
     Log.DEBUG("enigmailMsgComposeHelper.js: getValidKeyForRecipient(): emailAddr=\""+emailAddr+"\"\n");
-    const TRUSTLEVELS_SORTED = EnigmailFuncs.trustlevelsSorted();
+    const TRUSTLEVELS_SORTED = Trust.trustLevelsSorted();
     const fullTrustIndex = TRUSTLEVELS_SORTED.indexOf("f");
 
     emailAddr = emailAddr.toLowerCase();
