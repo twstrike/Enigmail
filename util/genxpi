@@ -141,6 +141,7 @@ zip --must-match\
     modules/attachment.jsm \
     modules/uris.jsm \
     modules/hash.jsm \
+    modules/verify.jsm \
     modules/enigmailFuncs.jsm \
     modules/fixExchangeMsg.jsm \
     modules/subprocess.jsm \

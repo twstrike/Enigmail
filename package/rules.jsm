@@ -161,5 +161,31 @@ const Rules = {
 
     clearRules: function () {
         rulesListHolder.rulesList = null;
+    },
+
+    registerOn: function(target) {
+        target.getRulesFile = function() {
+            return Rules.getRulesFile();
+        };
+
+        target.loadRulesFile = function() {
+            return Rules.loadRulesFile();
+        };
+
+        target.saveRulesFile = function() {
+            return Rules.saveRulesFile();
+        };
+
+        target.getRulesData = function(rulesListObj) {
+            return Rules.getRulesData(rulesListObj);
+        };
+
+        target.addRule = function(appendToEnd, toAddress, keyList, sign, encrypt, pgpMime, flags) {
+            return Rules.addRule(appendToEnd, toAddress, keyList, sign, encrypt, pgpMime, flags);
+        };
+
+        target.clearRules = function() {
+            return Rules.clearRules();
+        };
     }
 };

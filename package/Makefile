@@ -46,6 +46,7 @@ MODFILES = \
            files.jsm \
            trust.jsm \
            armor.jsm \
+           verify.jsm \
            log.jsm \
            app.jsm \
            os.jsm \

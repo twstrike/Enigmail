@@ -72,7 +72,6 @@ var nsIWindowsRegKey       = Ci.nsIWindowsRegKey;
 var gIsGpgAgent = -1;
 
 var Ec = null;
-const EC = EnigmailCore;
 
 const DUMMY_AGENT_INFO = "none";
 
@@ -532,7 +531,7 @@ const EnigmailGpgAgent = {
             }
         }
 
-        var foundPath = Files.resolvePath(fileName, EC.getEnigmailService().environment.get("PATH"), OS.isDosLike());
+        var foundPath = Files.resolvePath(fileName, EnigmailCore.getEnigmailService().environment.get("PATH"), OS.isDosLike());
         if (foundPath !== null) { foundPath.normalize(); }
         return foundPath;
     },

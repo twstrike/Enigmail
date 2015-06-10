@@ -45,31 +45,25 @@ Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/pipeConsole.jsm"); /*global EnigmailConsole: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
 Cu.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
 Cu.import("resource://enigmail/enigmailProtocolHandler.jsm"); /*global EnigmailProtocolHandler: false */
 Cu.import("resource://enigmail/rules.jsm"); /*global Rules: false */
 Cu.import("resource://enigmail/filters.jsm"); /*global Filters: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global Armor: false */
-Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
-Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
-Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
-Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/uris.jsm"); /*global URIs: false */
+Cu.import("resource://enigmail/verify.jsm"); /*global Verify: false */
 
 /* Implementations supplied by this module */
 const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";
 
 const NS_ENIGMAIL_CID =
   Components.ID("{847b3a01-7ab1-11d4-8f02-006008948af5}");
-
-const ENIGMAIL_EXTENSION_ID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
 
 // Contract IDs and CIDs used by this module
 const NS_OBSERVERSERVICE_CONTRACTID = "@mozilla.org/observer-service;1";
@@ -85,21 +79,12 @@ const nsIEnigmail            = Ci.nsIEnigmail;
 
 const NS_XPCOM_SHUTDOWN_OBSERVER_ID = "xpcom-shutdown";
 
-var Ec = null;
-var EC = EnigmailCore;
-
-const ENC_TYPE_ATTACH_BINARY = 1;
-const ENC_TYPE_ATTACH_ASCII = 2;
-
-var gKeyAlgorithms = [];
-
 ///////////////////////////////////////////////////////////////////////////////
 // Enigmail encryption/decryption service
 ///////////////////////////////////////////////////////////////////////////////
 
 function Enigmail() {
-    Ec = EC.getEnigmailCommon();
-    EnigmailGpgAgent.setEnigmailCommon(Ec);
+    EnigmailGpgAgent.setEnigmailCommon(EnigmailCore.getEnigmailCommon());
 }
 
 Enigmail.prototype = {
@@ -114,7 +99,7 @@ Enigmail.prototype = {
   _xpcom_factory: {
     createInstance: function (aOuter, iid) {
         // Enigmail is a service -> only instanciate once
-        return EC.ensuredEnigmailService(function() { return new Enigmail(); });
+        return EnigmailCore.ensuredEnigmailService(function() { return new Enigmail(); });
     },
     lockFactory: function (lock) {}
   },
@@ -140,7 +125,6 @@ Enigmail.prototype = {
       return "";
     }
   },
-
 
   finalize: function () {
     Log.DEBUG("enigmail.js: Enigmail.finalize:\n");
@@ -169,7 +153,7 @@ Enigmail.prototype = {
       Log.DEBUG("enigmail.js: Logging debug output to "+prefix+"/enigdbug.txt\n");
     }
 
-    Ec.initialize(this, Log.getLogLevel());
+    EnigmailCore.getEnigmailCommon().initialize(this, Log.getLogLevel());
 
     var environment;
     try {
@@ -274,7 +258,7 @@ Enigmail.prototype = {
 
   encryptMessage: function (parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags,
                             exitCodeObj, statusFlagsObj, errorMsgObj) {
-      return Encryption.encryptMessage(this, Ec, parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, exitCodeObj, statusFlagsObj, errorMsgObj);
+      return Encryption.encryptMessage(parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, exitCodeObj, statusFlagsObj, errorMsgObj);
   },
 
   locateArmoredBlock: function (text, offset, indentStr, beginIndexObj, endIndexObj, indentStrObj) {
@@ -312,77 +296,16 @@ Enigmail.prototype = {
       return Encryption.encryptAttachment(parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile, exitCodeObj, statusFlagsObj, errorMsgObj);
   },
 
-  verifyAttachment: function (parent, verifyFile, sigFile,
-                              statusFlagsObj, errorMsgObj) {
-    // TODO: move [verification]
-    Log.DEBUG("enigmail.js: Enigmail.verifyAttachment:\n");
-
-    var exitCode        = -1;
-    var verifyFilePath  = Files.getEscapedFilename(Files.getFilePathReadonly(verifyFile.QueryInterface(Ci.nsIFile)));
-    var sigFilePath     = Files.getEscapedFilename(Files.getFilePathReadonly(sigFile.QueryInterface(Ci.nsIFile)));
-
-    var args = Gpg.getStandardArgs(true);
-    args.push("--verify");
-    args.push(sigFilePath);
-    args.push(verifyFilePath);
-
-    var listener = Execution.newSimpleListener();
-
-    var proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, parent,
-                                   listener, statusFlagsObj);
-
-    if (!proc) {
-      return -1;
-    }
-    proc.wait();
-
-    var retObj = {};
-
-    Decryption.decryptMessageEnd (listener.stderrData, listener.exitCode, 1, true, true, nsIEnigmail.UI_INTERACTIVE, retObj);
-
-    if (listener.exitCode === 0) {
-      var detailArr = retObj.sigDetails.split(/ /);
-      var dateTime = Time.getDateTime(detailArr[2], true, true);
-      var msg1 = retObj.errorMsg.split(/\n/)[0];
-
-      var msg2 = Locale.getString("keyAndSigDate", ["0x"+retObj.keyId.substr(-8, 8), dateTime ]);
-      errorMsgObj.value = msg1 + "\n" + msg2;
-    }
-    else {
-      errorMsgObj.value = retObj.errorMsg;
-    }
-
-    return listener.exitCode;
+  verifyAttachment: function (parent, verifyFile, sigFile, statusFlagsObj, errorMsgObj) {
+      return Verify.attachment(parent, verifyFile, sigFile, statusFlagsObj, errorMsgObj);
   },
 
   decryptAttachment: function (parent, outFile, displayName, byteData, exitCodeObj, statusFlagsObj, errorMsgObj) {
       return Decryption.decryptAttachment(parent, outFile, displayName, byteData, exitCodeObj, statusFlagsObj, errorMsgObj);
-  },
-
-  getRulesFile: function () {
-      return Rules.getRulesFile();
-  },
-
-  loadRulesFile: function () {
-      return Rules.loadRulesFile();
-  },
-
-  saveRulesFile: function () {
-      return Rules.saveRulesFile();
-  },
-
-  getRulesData: function (rulesListObj) {
-      return Rules.getRulesData(rulesListObj);
-  },
-
-  addRule: function (appendToEnd, toAddress, keyList, sign, encrypt, pgpMime, flags) {
-      return Rules.addRule(appendToEnd, toAddress, keyList, sign, encrypt, pgpMime, flags);
-  },
-
-  clearRules: function () {
-      return Rules.clearRules();
   }
 }; // Enigmail.prototype
+
+Rules.registerOn(Enigmail.prototype);
 
 // This variable is exported implicitly and should not be refactored or removed
 const NSGetFactory = XPCOMUtils.generateNSGetFactory([Enigmail, EnigmailProtocolHandler, CommandLine.Handler]);

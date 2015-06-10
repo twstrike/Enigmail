@@ -45,6 +45,7 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("enigmail.js");
 component("enigmail/enigmailCommon.jsm");
+component("enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 component("enigmail/prefs.jsm");
 component("enigmail/os.jsm");
 component("enigmail/armor.jsm");
@@ -483,7 +484,7 @@ test(function detectGpgAgentSetsAgentInfoFromEnvironmentVariable() {
 
             Assert.ok(EnigmailGpgAgent.gpgAgentInfo.preStarted);
             Assert.equal("a happy agent", EnigmailGpgAgent.gpgAgentInfo.envStr);
-            Assert.ok(!Ec.gpgAgentIsOptional);
+            Assert.ok(!EnigmailCore.getEnigmailCommon().gpgAgentIsOptional);
         });
     });
 });
@@ -495,7 +496,7 @@ test(function detectGpgAgentWithNoAgentInfoInEnvironment() {
             EnigmailGpgAgent.detectGpgAgent(JSUnit.createStubWindow(), enigmail);
 
             Assert.ok(!EnigmailGpgAgent.gpgAgentInfo.preStarted);
-            Assert.ok(!Ec.gpgAgentIsOptional);
+            Assert.ok(!EnigmailCore.getEnigmailCommon().gpgAgentIsOptional);
         });
     });
 });

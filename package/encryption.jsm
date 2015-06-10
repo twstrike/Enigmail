@@ -325,7 +325,7 @@ var Encryption = {
         return exitCode;
     },
 
-    encryptMessage: function (esvc, ec, parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags,
+    encryptMessage: function (parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags,
                               exitCodeObj, statusFlagsObj, errorMsgObj) {
         Log.DEBUG("enigmail.js: Enigmail.encryptMessage: "+plainText.length+" bytes from "+fromMailAddr+" to "+toMailAddr+" ("+sendFlags+")\n");
 
@@ -338,12 +338,6 @@ var Encryption = {
             exitCodeObj.value = 0;
             Log.DEBUG("  <=== encryptMessage()\n");
             return plainText;
-        }
-
-        if (!esvc.initialized) {
-            Log.ERROR("enigmail.js: Enigmail.encryptMessage: not yet initialized\n");
-            errorMsgObj.value = Locale.getString("notInit");
-            return "";
         }
 
         var defaultSend = sendFlags & nsIEnigmail.SEND_DEFAULT;
