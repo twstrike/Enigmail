@@ -57,6 +57,7 @@ const MailHelper = {
             localAccount.defaultIdentity = identity;
             MailHelper.incomingServer = MailServices.accounts.localFoldersServer;
             MailHelper.rootFolder = MailHelper.incomingServer.rootMsgFolder;
+            MailHelper.rootFolder.recursiveDelete(true, null);
             MailHelper.rootFolder.createSubfolder("Inbox", null);
             MailHelper.inboxFolder = MailHelper.rootFolder.getChildNamed("Inbox");
             MailHelper.inboxFolder.setFlag(Components.interfaces.nsMsgFolderFlags.Mail);
