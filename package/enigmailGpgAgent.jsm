@@ -349,7 +349,7 @@ const EnigmailGpgAgent = {
             }
 
             try {
-                let pathDir = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
+                const pathDir = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
 
                 if (! Files.isAbsolutePath(agentPath, OS.isDosLike())) {
                     // path relative to Mozilla installation dir
