@@ -47,6 +47,7 @@ testing("decryptPermanently.jsm"); /*global DecryptPermanently: false */
 component("enigmail/keyRing.jsm"); /*global KeyRing: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
 component("enigmail/glodaMime.jsm");
+component("enigmail/streams.jsm"); /*global Streams: false */
 
 test(withTestGpgHome(function messageIsCopiedToNewDir() {
     loadSecretKey();
@@ -58,7 +59,7 @@ test(withTestGpgHome(function messageIsCopiedToNewDir() {
     const targetFolder = MailHelper.createMailFolder("target-box");
     const move = false;
     const reqSync = true;
-    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 1);
@@ -74,7 +75,7 @@ test(withTestGpgHome(function messageIsMovedToNewDir() {
     const targetFolder = MailHelper.createMailFolder("target-box");
     const move = true;
     const reqSync = true;
-    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 0);
@@ -90,7 +91,7 @@ test(withTestGpgHome(function messageIsMovedAndDecrypted() {
     const targetFolder = MailHelper.createMailFolder("target-box");
     const move = true;
     const reqSync = true;
-    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     const dispatchedHeader = MailHelper.fetchFirstMessageHeaderIn(targetFolder);
     do_test_pending();
@@ -106,6 +107,35 @@ test(withTestGpgHome(function messageIsMovedAndDecrypted() {
     );
 }));
 
+test(withTestGpgHome(function messageWithAttachemntIsMovedAndDecrypted() {
+    loadSecretKey();
+    MailHelper.cleanMailFolder(MailHelper.getRootFolder());
+    const sourceFolder = MailHelper.createMailFolder("source-box");
+    MailHelper.loadEmailToMailFolder("resources/encrypted-email-with-attachment.eml", sourceFolder);
+
+    const header = MailHelper.fetchFirstMessageHeaderIn(sourceFolder);
+    const targetFolder = MailHelper.createMailFolder("target-box");
+    const move = true;
+    const reqSync = true;
+    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+
+    const dispatchedHeader = MailHelper.fetchFirstMessageHeaderIn(targetFolder);
+    do_test_pending();
+    msgHdrToMimeMessage(
+        dispatchedHeader,
+        null,
+        function(header, mime) {
+            Assert.ok(!mime.isEncrypted);
+            Assert.assertContains(mime.parts[0].parts[0].body, "This is encrypted");
+            const atts = extractAttachments(mime);
+            Assert.equal(atts[0].name, "attachment.txt");
+            Assert.assertContains(atts[0].body, "This is an attachment.");
+            do_test_finished();
+        },
+        false
+    );
+}));
+
 var loadSecretKey = function() {
     const enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
     const win = JSUnit.createStubWindow();
@@ -115,3 +145,41 @@ var loadSecretKey = function() {
     enigmail.initialize(win, "");
     KeyRing.importKeyFromFile(win, secretKey, errorMsgObj, importedKeysObj);
 };
+
+function stringFromUrl(url) {
+    const inspector = Cc["@mozilla.org/jsinspector;1"].getService(Ci.nsIJSInspector);
+    let result = null;
+    const p = new Promise(function(resolve, reject) {
+        const iOService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+        const uri = iOService.newURI(url, null, null);
+        const attChannel = iOService.newChannelFromURI(uri);
+        const listener = Streams.newStringStreamListener(function(data) {
+        result = data;
+        inspector.exitNestedEventLoop();
+        resolve();
+        });
+        attChannel.asyncOpen(listener, uri);
+    });
+
+    if(!result) {
+        inspector.enterNestedEventLoop({value : 0});
+    }
+    return result;
+}
+
+function extractAttachment(att) {
+    const name = att.name;
+    const body = stringFromUrl(att.url);
+    return {
+        name: name,
+        body: body
+    };
+}
+
+function extractAttachments(msg) {
+    const result = [];
+    for(let i=0; i < msg.allAttachments.length; i++){
+        result.push(extractAttachment(msg.allAttachments[i]));
+    }
+    return result;
+}

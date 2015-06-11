@@ -1,4 +1,4 @@
-/*global Components: false */
+/*global Components: false, dump: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -20,7 +20,6 @@
  * Copyright (C) 2010 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
- *  Ramalingam Saravanan <svn@xmlterm.org>
  *  Fan Jiang <fanjiang@thoughtworks.com>
  *  Iván Pazmiño <iapamino@thoughtworks.com>
  *  Ola Bini <obini@thoughtworks.com>
@@ -40,42 +39,18 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Passwords" ];
+const EXPORTED_SYMBOLS = [ "Lazy" ];
 
-const Cu = Components.utils;
-
-Cu.import("resource://enigmail/lazy.jsm");  /*global Lazy: false */
-Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
-
-const gpgAgent = Lazy.loader("enigmail/enigmailGpgAgent.jsm", "EnigmailGpgAgent");
-
-const Passwords = {
-    /*
-     * Get GnuPG command line options for receiving the password depending
-     * on the various user and system settings (gpg-agent/no passphrase)
-     *
-     * @return: Array the GnuPG command line options
-     */
-    command: function () {
-      if (gpgAgent().useGpgAgent()) {
-            return ["--use-agent"];
-        } else {
-            if (! Prefs.getPref("noPassphrase")) {
-                return ["--passphrase-fd", "0", "--no-use-agent"];
-            }
-        }
-        return [];
-    },
-
-    getMaxIdleMinutes: function () {
-        try {
-            return Prefs.getPref("maxIdleMinutes");
-        } catch (ex) {}
-
-        return 5;
-    },
-
-    clearPassphrase: function(win) {
-        // TODO: implement this - it's referred to in one place and used to be in EnigmailCommon but has probably disappeared
-    }
+const Lazy = {
+  loader: function(component, name) {
+    let holder = null;
+    return function() {
+      if(!holder) {
+        const into = {};
+        Components.utils.import("resource://" + component, into);
+        holder = into[name];
+      }
+      return holder;
+    };
+  }
 };
