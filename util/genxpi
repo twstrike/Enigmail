@@ -128,6 +128,7 @@ zip --must-match\
     modules/keyEditor.jsm \
     modules/keyRing.jsm \
     modules/keyserver.jsm \
+    modules/lazy.jsm \
     modules/locale.jsm \
     modules/log.jsm \
     modules/mime.jsm \
