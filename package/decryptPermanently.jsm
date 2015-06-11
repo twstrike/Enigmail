@@ -119,8 +119,7 @@ const DecryptPermanently = {
       aMsgHdrs.splice(0,1);
       if (aMsgHdrs.length > 0) {
         DecryptPermanently.dispatchMessages(aMsgHdrs, targetFolder, move, false);
-      }
-      else {
+      } else {
         // last message was finished processing
         done = true;
         Log.DEBUG("decryptPermanently.jsm: dispatchMessage: exit nested loop\n");
@@ -150,16 +149,15 @@ const DecryptPermanently = {
 
         Log.DEBUG("decryptPermanently.jsm: decryptMessage: MessageUri: "+msgUriSpec+"\n");
 
-        var messenger = Cc["@mozilla.org/messenger;1"].createInstance(Ci.nsIMessenger);
-        var msgSvc = messenger.messageServiceFromURI(msgUriSpec);
+        const msgSvc = Cc["@mozilla.org/messenger;1"].createInstance(Ci.nsIMessenger).
+                  messageServiceFromURI(msgUriSpec);
 
-        var decrypt = new DecryptMessageIntoFolder(destFolder, move, resolve);
+        const decrypt = new DecryptMessageIntoFolder(destFolder, move, resolve);
 
         Log.DEBUG("decryptPermanently.jsm: DecryptPermanently: Calling msgHdrToMimeMessage\n");
         try {
           msgHdrToMimeMessage(hdr, decrypt, decrypt.messageParseCallback, true, {examineEncryptedParts: false, partsOnDemand: false});
-        }
-        catch (ex) {
+        } catch (ex) {
           Log.ERROR("decryptPermanently.jsm: msgHdrToMimeMessage failed: "+ex.toString()+"\n");
           reject("msgHdrToMimeMessage failed");
         }
@@ -170,22 +168,19 @@ const DecryptPermanently = {
 };
 
 function DecryptMessageIntoFolder(destFolder, move, resolve) {
-  this.destFolder = destFolder;
-  this.move = move;
-  this.resolve = resolve;
+    this.destFolder = destFolder;
+    this.move = move;
+    this.resolve = resolve;
 
-  this.foundPGP = 0;
-  this.mime = null;
-  this.hdr = null;
-  this.decryptionTasks = [];
-  this.subject = "";
+    this.foundPGP = 0;
+    this.mime = null;
+    this.hdr = null;
+    this.decryptionTasks = [];
+    this.subject = "";
 }
 
 DecryptMessageIntoFolder.prototype = {
-};
-
-DecryptMessageIntoFolder.prototype.
-messageParseCallback = function (hdr, mime) {
+    messageParseCallback: function (hdr, mime) {
   Log.DEBUG("decryptPermanently.jsm: messageParseCallback: started\n");
   this.hdr = hdr;
   this.mime = mime;
@@ -375,10 +370,9 @@ messageParseCallback = function (hdr, mime) {
     Log.DEBUG("decryptPermanently.jsm: messageParseCallback: caught error "+ex.toString()+"\n");
     self.resolve(false);
   }
-};
+    },
 
-DecryptMessageIntoFolder.prototype.
-readAttachment = function (attachment, strippedName) {
+    readAttachment: function (attachment, strippedName) {
   return new Promise(
     function(resolve, reject) {
       Log.DEBUG("decryptPermanently.jsm: readAttachment\n");
@@ -409,11 +403,9 @@ readAttachment = function (attachment, strippedName) {
       }
     }
   );
-};
+    },
 
-
-DecryptMessageIntoFolder.prototype.
-decryptAttachment = function(attachment, strippedName) {
+    decryptAttachment: function(attachment, strippedName) {
   var self = this;
 
   return new Promise(
@@ -515,7 +507,7 @@ decryptAttachment = function(attachment, strippedName) {
       );
     }
   );
-};
+    },
 
 
 /*
@@ -524,8 +516,7 @@ decryptAttachment = function(attachment, strippedName) {
 
 // the sunny world of PGP/MIME
 
-DecryptMessageIntoFolder.prototype.
-walkMimeTree = function(mime, parent) {
+    walkMimeTree: function(mime, parent) {
   Log.DEBUG("decryptPermanently.jsm: walkMimeTree:\n");
   let ct = getContentType(getHeaderValue(mime, 'content-type'));
 
@@ -553,7 +544,7 @@ walkMimeTree = function(mime, parent) {
   for (var i in mime.parts) {
     this.walkMimeTree(mime.parts[i], mime);
   }
-};
+    },
 
 /***
  *
@@ -567,8 +558,7 @@ walkMimeTree = function(mime, parent) {
  *  - http://sourceforge.net/p/enigmail/forum/support/thread/4add2b69/
  */
 
-DecryptMessageIntoFolder.prototype.
-isBrokenByExchange = function(mime) {
+    isBrokenByExchange: function(mime) {
   Log.DEBUG("decryptPermanently.jsm: isBrokenByExchange:\n");
 
   try {
@@ -592,11 +582,9 @@ isBrokenByExchange = function(mime) {
   }
 
   return false;
-};
+    },
 
-
-DecryptMessageIntoFolder.prototype.
-isPgpMime = function(mime) {
+    isPgpMime: function(mime) {
   Log.DEBUG("decryptPermanently.jsm: isPgpMime:\n");
   try {
     var ct = mime.contentType;
@@ -614,11 +602,10 @@ isPgpMime = function(mime) {
     //Log.DEBUG("decryptPermanently.jsm: isPgpMime:"+ex+"\n");
   }
   return false;
-};
+    },
 
 // smime-type=enveloped-data
-DecryptMessageIntoFolder.prototype.
-isSMime = function(mime) {
+    isSMime: function(mime) {
   Log.DEBUG("decryptPermanently.jsm: isSMime:\n");
   try {
     var ct = mime.contentType;
@@ -636,10 +623,9 @@ isSMime = function(mime) {
     Log.DEBUG("decryptPermanently.jsm: isSMime:"+ex+"\n");
   }
   return false;
-};
+    },
 
-DecryptMessageIntoFolder.prototype.
-decryptPGPMIME = function (mime, part) {
+    decryptPGPMIME: function (mime, part) {
   Log.DEBUG("decryptPermanently.jsm: decryptPGPMIME: part="+part+"\n");
 
   var self = this;
@@ -737,12 +723,10 @@ decryptPGPMIME = function (mime, part) {
       }
     }
   );
-};
-
+    },
 
 //inline wonderland
-DecryptMessageIntoFolder.prototype.
-decryptINLINE = function (mime) {
+    decryptINLINE: function (mime) {
   Log.DEBUG("decryptPermanently.jsm: decryptINLINE:\n");
   if (typeof mime.body !== 'undefined') {
     let ct = getContentType(getHeaderValue(mime, 'content-type'));
@@ -887,10 +871,9 @@ decryptINLINE = function (mime) {
   Log.DEBUG("decryptPermanently.jsm: Decryption skipped:  "+ct+"\n");
 
   return 0;
-};
+    },
 
-DecryptMessageIntoFolder.prototype.
-stripHTMLFromArmoredBlocks = function(text) {
+    stripHTMLFromArmoredBlocks: function(text) {
 
   var index = 0;
   var begin = text.indexOf("-----BEGIN PGP");
@@ -910,7 +893,7 @@ stripHTMLFromArmoredBlocks = function(text) {
   }
 
   return text;
-};
+    },
 
 
 /******
@@ -922,8 +905,7 @@ stripHTMLFromArmoredBlocks = function(text) {
  *
  ******/
 
-DecryptMessageIntoFolder.prototype.
-mimeToString = function (mime, topLevel) {
+    mimeToString: function (mime, topLevel) {
   Log.DEBUG("decryptPermanently.jsm: mimeToString: part: '"+mime.partName+"'\n");
 
   let ct = getContentType(getHeaderValue(mime, 'content-type'));
@@ -1051,6 +1033,7 @@ mimeToString = function (mime, topLevel) {
     }
   }
   return msg;
+    }
 };
 
 
