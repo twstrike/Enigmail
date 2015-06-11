@@ -107,7 +107,7 @@ test(withTestGpgHome(function messageIsMovedAndDecrypted() {
     );
 }));
 
-test(withTestGpgHome(function messageWithAttachemntIsMovedAndDecrypted() {
+test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecrypted() {
     loadSecretKey();
     MailHelper.cleanMailFolder(MailHelper.getRootFolder());
     const sourceFolder = MailHelper.createMailFolder("source-box");
@@ -135,7 +135,7 @@ test(withTestGpgHome(function messageWithAttachemntIsMovedAndDecrypted() {
         },
         false
     );
-}));
+})));
 
 var loadSecretKey = function() {
     const enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
