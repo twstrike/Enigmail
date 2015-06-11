@@ -77,11 +77,11 @@ var gIsGpgAgent = -1;
 const DUMMY_AGENT_INFO = "none";
 
 function cloneOrNull(v) {
-  if(v !== null && typeof v.clone === "function") {
-    return v.clone();
-  } else {
-    return v;
-  }
+    if(v !== null && typeof v.clone === "function") {
+        return v.clone();
+    } else {
+        return v;
+    }
 }
 
 function extractAgentInfo(fullStr) {
@@ -109,7 +109,7 @@ const EnigmailGpgAgent = {
     },
 
     useGpgAgent: function() {
-        var useAgent = false;
+        let useAgent = false;
 
         try {
             if (OS.isDosLike() && !Gpg.getGpgFeature("supports-gpg-agent")) {
@@ -119,13 +119,11 @@ const EnigmailGpgAgent = {
                 if (Gpg.getGpgFeature("autostart-gpg-agent")) {
                     useAgent = true;
                     Log.DEBUG("enigmail.js: Setting useAgent to "+useAgent+" for gpg2 >= 2.0.16\n");
-                }
-                else {
+                } else {
                     useAgent = (EnigmailGpgAgent.gpgAgentInfo.envStr.length>0 || Prefs.getPrefBranch().getBoolPref("useGpgAgent"));
                 }
             }
-        }
-        catch (ex) {}
+        } catch (ex) {}
         return useAgent;
     },
 
@@ -137,17 +135,17 @@ const EnigmailGpgAgent = {
     isCmdGpgAgent: function(pid) {
         Log.DEBUG("enigmailGpgAgent.jsm: isCmdGpgAgent:\n");
 
-        var environment = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
-        var ret = false;
+        const environment = Cc["@mozilla.org/process/environment;1"].getService(Ci.nsIEnvironment);
+        let ret = false;
 
-        var path = environment.get("PATH");
+        let path = environment.get("PATH");
         if (! path || path.length === 0) {
             path = "/bin:/usr/bin:/usr/local/bin";
         }
 
-        var psCmd = Files.resolvePath("ps", path, false);
+        const psCmd = Files.resolvePath("ps", path, false);
 
-        var proc = {
+        const proc = {
             command:     psCmd,
             arguments:   [ "-o", "comm", "-p", pid ],
             environment: EnigmailCore.getEnvList(),
@@ -155,15 +153,15 @@ const EnigmailGpgAgent = {
             done: function(result) {
                 Log.DEBUG("enigmailGpgAgent.jsm: isCmdGpgAgent: got data: '"+result.stdout+"'\n");
                 var data = result.stdout.replace(/[\r\n]/g, " ");
-                if (data.search(/gpg-agent/) >= 0)
+                if (data.search(/gpg-agent/) >= 0) {
                     ret = true;
+                }
             }
         };
 
         try {
             subprocess.call(proc).wait();
-        }
-        catch (ex) {}
+        } catch (ex) {}
 
         return ret;
 
@@ -181,11 +179,11 @@ const EnigmailGpgAgent = {
             return gIsGpgAgent == 1;
         }
 
-        var pid = -1;
-        var exitCode = -1;
+        let pid = -1;
+        let exitCode = -1;
         if (! EnigmailCore.getService()) return false;
 
-        var proc = {
+        const proc = {
             command:     EnigmailGpgAgent.connGpgAgentPath,
             arguments:   [],
             charset: null,
@@ -199,7 +197,7 @@ const EnigmailGpgAgent = {
             },
             done: function(result) {
                 exitCode = result.exitCode;
-                var data = result.stdout.replace(/[\r\n]/g, "");
+                const data = result.stdout.replace(/[\r\n]/g, "");
                 if (data.search(/^pid: [0-9]+$/) === 0) {
                     pid = data.replace(/^pid: /, "");
                 }
@@ -209,51 +207,48 @@ const EnigmailGpgAgent = {
         try {
             subprocess.call(proc).wait();
             if (exitCode) pid = -2;
-        }
-        catch (ex) {}
+        } catch (ex) {}
 
         Log.DEBUG("enigmailGpgAgent.jsm: isAgentTypeGpgAgent: pid="+pid+"\n");
 
         EnigmailGpgAgent.isCmdGpgAgent(pid);
-        var isAgent = false;
+        let isAgent = false;
 
         try {
             isAgent = EnigmailGpgAgent.isCmdGpgAgent(pid);
             gIsGpgAgent = isAgent ? 1 : 0;
-        }
-        catch(ex) {}
+        } catch(ex) {}
 
         return isAgent;
     },
 
     getAgentMaxIdle: function() {
         Log.DEBUG("enigmailGpgAgent.jsm: getAgentMaxIdle:\n");
-        var maxIdle = -1;
+        let maxIdle = -1;
 
         if (! EnigmailCore.getService()) return maxIdle;
 
         const DEFAULT = 7;
         const CFGVALUE = 9;
 
-        var proc = {
+        const proc = {
             command:     EnigmailGpgAgent.gpgconfPath,
             arguments:   [ "--list-options", "gpg-agent" ],
             charset: null,
             environment: EnigmailCore.getEnvList(),
             done: function(result) {
-                var lines = result.stdout.split(/[\r\n]/);
-                var i;
+                const lines = result.stdout.split(/[\r\n]/);
 
-                for (i=0; i < lines.length; i++) {
+                for (let i=0; i < lines.length; i++) {
                     Log.DEBUG("enigmailGpgAgent.jsm: getAgentMaxIdle: line: "+lines[i]+"\n");
 
                     if (lines[i].search(/^default-cache-ttl:/) === 0) {
-                        var m = lines[i].split(/:/);
+                        const m = lines[i].split(/:/);
                         if (m[CFGVALUE].length === 0) {
                             maxIdle = Math.round(m[DEFAULT] / 60);
-                        }
-                        else
+                        } else {
                             maxIdle = Math.round(m[CFGVALUE] / 60);
+                        }
 
                         break;
                     }
@@ -262,7 +257,6 @@ const EnigmailGpgAgent = {
         };
 
         subprocess.call(proc).wait();
-
         return maxIdle;
     },
 
@@ -272,7 +266,7 @@ const EnigmailGpgAgent = {
 
         const RUNTIME = 8;
 
-        var proc = {
+        const proc = {
             command:     EnigmailGpgAgent.gpgconfPath,
             arguments:   [ "--runtime", "--change-options", "gpg-agent" ],
             environment: EnigmailCore.getEnvList(),
@@ -293,8 +287,7 @@ const EnigmailGpgAgent = {
 
         try {
             subprocess.call(proc);
-        }
-        catch (ex) {
+        } catch (ex) {
             Log.DEBUG("enigmailGpgAgent.jsm: setAgentMaxIdle: exception: "+ex.toString()+"\n");
         }
     },
@@ -308,14 +301,13 @@ const EnigmailGpgAgent = {
                     EnigmailGpgAgent.connGpgAgentPath) {
 
                     if (EnigmailGpgAgent.isAgentTypeGpgAgent()) {
-                        let m = EnigmailGpgAgent.getAgentMaxIdle();
+                        const m = EnigmailGpgAgent.getAgentMaxIdle();
                         if (m > -1) maxIdle = m;
                     }
 
                 }
             }
-        }
-        catch(ex) {}
+        } catch(ex) {}
 
         return maxIdle;
     },
@@ -331,7 +323,7 @@ const EnigmailGpgAgent = {
     },
 
     setAgentPath: function (domWindow, esvc) {
-        var agentPath = "";
+        let agentPath = "";
         try {
             agentPath = Prefs.getPrefBranch().getCharPref("agentPath");
         } catch (ex) {}
@@ -343,8 +335,7 @@ const EnigmailGpgAgent = {
 
         if (OS.isDosLike()) {
             agentName = "gpg2.exe;gpg.exe;gpg1.exe";
-        }
-        else {
+        } else {
             agentName = "gpg2;gpg;gpg1";
         }
 
@@ -353,32 +344,33 @@ const EnigmailGpgAgent = {
             // Locate GnuPG executable
 
             // Append default .exe extension for DOS-Like systems, if needed
-            if (OS.isDosLike() && (agentPath.search(/\.\w+$/) < 0))
+            if (OS.isDosLike() && (agentPath.search(/\.\w+$/) < 0)) {
                 agentPath += ".exe";
+            }
 
             try {
-                var pathDir = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
+                const pathDir = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
 
                 if (! Files.isAbsolutePath(agentPath, OS.isDosLike())) {
                     // path relative to Mozilla installation dir
-                    var ds = Cc[DIR_SERV_CONTRACTID].getService();
-                    var dsprops = ds.QueryInterface(Ci.nsIProperties);
+                    const  ds = Cc[DIR_SERV_CONTRACTID].getService();
+                    const dsprops = ds.QueryInterface(Ci.nsIProperties);
                     pathDir = dsprops.get("CurProcD", Ci.nsIFile);
 
-                    var dirs=agentPath.split(new RegExp(OS.isDosLike() ? "\\\\" : "/"));
-                    for (var i=0; i< dirs.length; i++) {
+                    const dirs=agentPath.split(new RegExp(OS.isDosLike() ? "\\\\" : "/"));
+                    for (let i=0; i< dirs.length; i++) {
                         if (dirs[i]!=".") {
                             pathDir.append(dirs[i]);
                         }
                     }
                     pathDir.normalize();
-                }
-                else {
+                } else {
                     // absolute path
                     Files.initPath(pathDir, agentPath);
                 }
-                if (! (pathDir.isFile() /* && pathDir.isExecutable()*/))
+                if (! (pathDir.isFile() /* && pathDir.isExecutable()*/)) {
                     throw Components.results.NS_ERROR_FAILURE;
+                }
                 agentPath = pathDir.QueryInterface(Ci.nsIFile);
 
             } catch (ex) {
@@ -386,11 +378,9 @@ const EnigmailGpgAgent = {
                 Log.ERROR("enigmail.js: Enigmail.initialize: Error - "+esvc.initializationError+"\n");
                 throw Components.results.NS_ERROR_FAILURE;
             }
-
         } else {
             // Resolve relative path using PATH environment variable
-            var envPath = esvc.environment.get("PATH");
-
+            const envPath = esvc.environment.get("PATH");
             agentPath = Files.resolvePath(agentName, envPath, OS.isDosLike());
 
             if (!agentPath && OS.isDosLike()) {
@@ -404,8 +394,7 @@ const EnigmailGpgAgent = {
                 try {
                     let gpgPath = OS.getWinRegistryString("Software\\GNU\\GNUPG", "Install Directory", nsIWindowsRegKey.ROOT_KEY_LOCAL_MACHINE);
                     agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
-                }
-                catch (ex) {}
+                } catch (ex) {}
 
                 if (! agentPath) {
                     let gpgPath = gpgPath + "\\pub";
@@ -434,20 +423,20 @@ const EnigmailGpgAgent = {
         Gpg.agentPath = agentPath;
         Execution.agentType = agentType;
 
-        var command = agentPath;
-        var args = [];
+        const command = agentPath;
+        let args = [];
         if (agentType == "gpg") {
             args = [ "--version", "--version", "--batch", "--no-tty", "--charset", "utf-8", "--display-charset", "utf-8" ];
         }
 
-        var exitCode = -1;
-        var outStr = "";
-        var errStr = "";
+        let exitCode = -1;
+        let outStr = "";
+        let errStr = "";
         Log.DEBUG("enigmail.js: Enigmail.setAgentPath: calling subprocess with '"+command.path+"'\n");
 
         Log.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
 
-        var proc = {
+        const proc = {
             command:     command,
             arguments:   args,
             environment: EnigmailCore.getEnvList(),
@@ -478,8 +467,8 @@ const EnigmailGpgAgent = {
 
         // detection for Gpg4Win wrapper
         if (outStr.search(/^gpgwrap.*;/) === 0) {
-            var outLines = outStr.split(/[\n\r]+/);
-            var firstLine = outLines[0];
+            const outLines = outStr.split(/[\n\r]+/);
+            const firstLine = outLines[0];
             outLines.splice(0,1);
             outStr = outLines.join("\n");
             agentPath = firstLine.replace(/^.*;[ \t]*/, "");
@@ -487,8 +476,8 @@ const EnigmailGpgAgent = {
             Log.CONSOLE("gpg4win-gpgwrapper detected; EnigmailAgentPath="+agentPath+"\n\n");
         }
 
-        var versionParts = outStr.replace(/[\r\n].*/g,"").replace(/ *\(gpg4win.*\)/i, "").split(/ /);
-        var gpgVersion = versionParts[versionParts.length-1];
+        const versionParts = outStr.replace(/[\r\n].*/g,"").replace(/ *\(gpg4win.*\)/i, "").split(/ /);
+        const gpgVersion = versionParts[versionParts.length-1];
 
         Log.DEBUG("enigmail.js: detected GnuPG version '"+gpgVersion+"'\n");
         Gpg.agentVersion = gpgVersion;
@@ -513,7 +502,7 @@ const EnigmailGpgAgent = {
             fileName += ".exe";
         }
 
-        var filePath = cloneOrNull(EnigmailGpgAgent.agentPath);
+        let filePath = cloneOrNull(EnigmailGpgAgent.agentPath);
 
         if (filePath) filePath = filePath.parent;
         if (filePath) {
@@ -524,7 +513,7 @@ const EnigmailGpgAgent = {
             }
         }
 
-        var foundPath = Files.resolvePath(fileName, EnigmailCore.getEnigmailService().environment.get("PATH"), OS.isDosLike());
+        const foundPath = Files.resolvePath(fileName, EnigmailCore.getEnigmailService().environment.get("PATH"), OS.isDosLike());
         if (foundPath !== null) { foundPath.normalize(); }
         return foundPath;
     },
@@ -687,19 +676,13 @@ const EnigmailGpgAgent = {
     },
 
     determineGpgHomeDir: function (esvc) {
-        var homeDir = "";
-
-        homeDir = esvc.environment.get("GNUPGHOME");
+        let homeDir = esvc.environment.get("GNUPGHOME");
 
         if (! homeDir && OS.isWin32) {
             homeDir=OS.getWinRegistryString("Software\\GNU\\GNUPG", "HomeDir", nsIWindowsRegKey.ROOT_KEY_CURRENT_USER);
 
             if (! homeDir) {
-                homeDir = esvc.environment.get("USERPROFILE");
-
-                if (! homeDir) {
-                    homeDir = esvc.environment.get("SystemRoot");
-                }
+                homeDir = esvc.environment.get("USERPROFILE") || esvc.environment.get("SystemRoot");
 
                 if (homeDir) homeDir += "\\Application Data\\GnuPG";
             }
@@ -716,15 +699,14 @@ const EnigmailGpgAgent = {
         if (EnigmailGpgAgent.gpgAgentProcess !== null) {
             Log.DEBUG("enigmailGpgAgent.jsm: EnigmailGpgAgent.finalize: stopping gpg-agent PID="+EnigmailGpgAgent.gpgAgentProcess+"\n");
             try {
-                var libName=subprocess.getPlatformValue(0);
-                var libc = ctypes.open(libName);
+                const libc = ctypes.open(subprocess.getPlatformValue(0));
 
                 //int kill(pid_t pid, int sig);
-                var kill = libc.declare("kill",
-                                        ctypes.default_abi,
-                                        ctypes.int,
-                                        ctypes.int32_t,
-                                        ctypes.int);
+                const kill = libc.declare("kill",
+                                          ctypes.default_abi,
+                                          ctypes.int,
+                                          ctypes.int32_t,
+                                          ctypes.int);
 
                 kill(parseInt(EnigmailGpgAgent.gpgAgentProcess), 15);
             } catch (ex) {
