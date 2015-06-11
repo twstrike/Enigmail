@@ -36,6 +36,8 @@
 
 EnigInitCommon("enigmailKeyDetailsDlg");
 
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+
 var gKeyId = null;
 var gUserId = null;
 var gKeyList = null;
@@ -80,7 +82,7 @@ function reloadData() {
   EnigCleanGuiList(treeChildren);
   EnigCleanGuiList(uidList);
 
-  var sigListStr = enigmailSvc.getKeySig("0x"+gKeyId, exitCodeObj, errorMsgObj);
+  var sigListStr = KeyRing.getKeySig("0x"+gKeyId, exitCodeObj, errorMsgObj);
   if (exitCodeObj.value === 0) {
     var keyDetails = EnigGetKeyDetails(sigListStr);
 

@@ -1,3 +1,4 @@
+/*global Components: false, App: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -36,33 +37,32 @@
 // Uses: chrome://enigmail/content/enigmailCommon.js
 //       chrome://enigmail/content/enigmailBuildDate.js
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-
-// Initialize enigmailCommon
-const Ec = EnigmailCommon;
-
-
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/app.jsm");
+Components.utils.import("resource://enigmail/windows.jsm");
+Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 
 function enigAboutLoad() {
-  DEBUG_LOG("enigmailAbout.js: enigAboutLoad\n");
+    Log.DEBUG("enigmailAbout.js: enigAboutLoad\n");
 
-  var contentFrame = Ec.getFrame(window, "contentFrame");
+  var contentFrame = Windows.getFrame(window, "contentFrame");
   if (!contentFrame)
     return;
 
-  var enigVersion=Ec.getVersion()+" ("+EnigBuildDate+")";
+  var enigVersion=App.getVersion()+" ("+EnigBuildDate+")";
   var versionElement = contentFrame.document.getElementById('version');
   if (versionElement)
-    versionElement.firstChild.data = Ec.getString("usingVersion", enigVersion);
+    versionElement.firstChild.data = Locale.getString("usingVersion", enigVersion);
 
-  var enigmailSvc = Ec.getService();
+  var enigmailSvc = EnigmailCore.getService();
 
   var agentStr;
   if (enigmailSvc) {
-    agentStr = Ec.getString("usingAgent", [enigmailSvc.agentType, enigmailSvc.agentPath.path]);
-
+    agentStr = Locale.getString("usingAgent", [EnigmailGpgAgent.agentType, EnigmailGpgAgent.agentPath.path]);
   } else {
-    agentStr = Ec.getString("agentError");
+    agentStr = Locale.getString("agentError");
 
     if (enigmailSvc && enigmailSvc.initializationError)
       agentStr += "\n" + enigmailSvc.initializationError;
@@ -87,4 +87,3 @@ function contentAreaClick(event)
 
   return true;
 }
-

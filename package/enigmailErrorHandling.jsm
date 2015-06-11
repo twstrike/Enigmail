@@ -1,4 +1,5 @@
-/*global Components EnigmailCommon */
+/*global Components: false, Log: false, Locale: false, Data: false, EnigmailCore: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -19,6 +20,8 @@
  * Copyright (C) 2010 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
+ *  Patrick Brunschwig <patrick@enigmail.net>
+ *  Janosch Rux <rux@informatik.uni-luebeck.de>
  *  Fan Jiang <fanjiang@thoughtworks.com>
  *  Iván Pazmiño <iapamino@thoughtworks.com>
  *  Ola Bini <obini@thoughtworks.com>
@@ -36,12 +39,53 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-var EXPORTED_SYMBOLS = [ "EnigmailErrorHandling" ];
+"use strict";
 
 const Ci = Components.interfaces;
+const Cu = Components.utils;
 
-const STATUS_INV_SGNR  = 0x100000000;
-const STATUS_IMPORT_OK = 0x200000000;
+Cu.import("resource://enigmail/log.jsm");
+Cu.import("resource://enigmail/locale.jsm");
+Cu.import("resource://enigmail/data.jsm");
+Cu.import("resource://enigmail/enigmailCore.jsm");
+
+const EXPORTED_SYMBOLS = [ "EnigmailErrorHandling" ];
+
+const nsIEnigmail = Ci.nsIEnigmail;
+
+const gStatusFlags = {
+    GOODSIG:         nsIEnigmail.GOOD_SIGNATURE,
+    BADSIG:          nsIEnigmail.BAD_SIGNATURE,
+    ERRSIG:          nsIEnigmail.UNVERIFIED_SIGNATURE,
+    EXPSIG:          nsIEnigmail.EXPIRED_SIGNATURE,
+    REVKEYSIG:       nsIEnigmail.GOOD_SIGNATURE,
+    EXPKEYSIG:       nsIEnigmail.EXPIRED_KEY_SIGNATURE,
+    KEYEXPIRED:      nsIEnigmail.EXPIRED_KEY,
+    KEYREVOKED:      nsIEnigmail.REVOKED_KEY,
+    NO_PUBKEY:       nsIEnigmail.NO_PUBKEY,
+    NO_SECKEY:       nsIEnigmail.NO_SECKEY,
+    IMPORTED:        nsIEnigmail.IMPORTED_KEY,
+    INV_RECP:        nsIEnigmail.INVALID_RECIPIENT,
+    MISSING_PASSPHRASE: nsIEnigmail.MISSING_PASSPHRASE,
+    BAD_PASSPHRASE:  nsIEnigmail.BAD_PASSPHRASE,
+    BADARMOR:        nsIEnigmail.BAD_ARMOR,
+    NODATA:          nsIEnigmail.NODATA,
+    ERROR:           nsIEnigmail.BAD_SIGNATURE | nsIEnigmail.DECRYPTION_FAILED,
+    DECRYPTION_FAILED: nsIEnigmail.DECRYPTION_FAILED,
+    DECRYPTION_OKAY: nsIEnigmail.DECRYPTION_OKAY,
+    TRUST_UNDEFINED: nsIEnigmail.UNTRUSTED_IDENTITY,
+    TRUST_NEVER:     nsIEnigmail.UNTRUSTED_IDENTITY,
+    TRUST_MARGINAL:  nsIEnigmail.UNTRUSTED_IDENTITY,
+    TRUST_FULLY:     nsIEnigmail.TRUSTED_IDENTITY,
+    TRUST_ULTIMATE:  nsIEnigmail.TRUSTED_IDENTITY,
+    CARDCTRL:        nsIEnigmail.CARDCTRL,
+    SC_OP_FAILURE:   nsIEnigmail.SC_OP_FAILURE,
+    UNKNOWN_ALGO:    nsIEnigmail.UNKNOWN_ALGO,
+    SIG_CREATED:     nsIEnigmail.SIG_CREATED,
+    END_ENCRYPTION:  nsIEnigmail.END_ENCRYPTION,
+    INV_SGNR:        0x100000000,
+    IMPORT_OK:       0x200000000
+};
 
 function handleError(c) {
   // special treatment for some ERROR messages (currently only check_hijacking)
@@ -60,7 +104,7 @@ function missingPassphrase(c) {
   c.statusFlags |= Ci.nsIEnigmail.MISSING_PASSPHRASE;
   c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   c.flag = 0;
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: missing passphrase"+"\n");
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: missing passphrase"+"\n");
   c.retStatusObj.statusMsg += "Missing Passphrase\n";
 }
 
@@ -68,22 +112,22 @@ function invalidSignature(c) {
   var lineSplit = c.statusLine.split(/ +/);
   c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   c.flag = 0;
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: detected invalid sender: "+lineSplit[2]+" / code: "+lineSplit[1]+"\n");
-  c.retStatusObj.statusMsg += c.ec.getString("gnupg.invalidKey.desc", [ lineSplit[2] ]);
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: detected invalid sender: "+lineSplit[2]+" / code: "+lineSplit[1]+"\n");
+  c.retStatusObj.statusMsg += Locale.getString("gnupg.invalidKey.desc", [ lineSplit[2] ]);
 }
 
 function importOk(c) {
   var lineSplit = c.statusLine.split(/ +/);
   if (lineSplit.length > 1) {
-    c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: key imported: "+ lineSplit[2]+ "\n");
+    Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: key imported: "+ lineSplit[2]+ "\n");
   }
   else {
-    c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: key without FPR imported\n");
+    Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: key without FPR imported\n");
   }
 
   let importFlag = Number(lineSplit[1]);
   if (importFlag & (1 | 2 | 8)) {
-    c.ec.enigmailSvc.invalidateUserIdList();
+    EnigmailCore.getKeyRing().invalidateUserIdList();
   }
 }
 
@@ -123,8 +167,8 @@ function setupFailureLookup() {
   result[Ci.nsIEnigmail.CARDCTRL]             = cardControl;
   result[Ci.nsIEnigmail.UNVERIFIED_SIGNATURE] = unverifiedSignature;
   result[Ci.nsIEnigmail.MISSING_PASSPHRASE]   = missingPassphrase;
-  result[STATUS_INV_SGNR]                     = invalidSignature;
-  result[STATUS_IMPORT_OK]                    = importOk;
+  result[gStatusFlags.INV_SGNR]               = invalidSignature;
+  result[gStatusFlags.IMPORT_OK]              = importOk;
   return result;
 }
 
@@ -133,7 +177,7 @@ function ignore() {}
 const failureLookup = setupFailureLookup();
 
 function handleFailure(c, errorFlag) {
-  c.flag = c.statusFlagLookup[errorFlag];  // yields known flag or undefined
+  c.flag = gStatusFlags[errorFlag];  // yields known flag or undefined
 
   (failureLookup[c.flag] || ignore)(c);
 
@@ -143,14 +187,12 @@ function handleFailure(c, errorFlag) {
   }
 }
 
-function newContext(ecom, statusFlagLookup, errOutput, retStatusObj) {
+function newContext(errOutput, retStatusObj) {
   retStatusObj.statusMsg = "";
   retStatusObj.extendedStatus = "";
   retStatusObj.blockSeparation = "";
 
   return {
-    ec: ecom,
-    statusFlagLookup: statusFlagLookup,
     errOutput: errOutput,
     retStatusObj: retStatusObj,
     errArray: [],
@@ -233,32 +275,32 @@ function detectForgedInsets(c) {
   }
 }
 
-function buildErrorMessageForCardCtrl(errCode, detectedCard) {
+function buildErrorMessageForCardCtrl(c, errCode, detectedCard) {
     var errorMsg = "";
     switch (errCode) {
     case 1:
       if (detectedCard) {
-        errorMsg = c.ec.getString("sc.wrongCardAvailable", [ c.detectedCard, c.requestedCard ]);
+        errorMsg = Locale.getString("sc.wrongCardAvailable", [ c.detectedCard, c.requestedCard ]);
       }
       else {
-        errorMsg = c.ec.getString("sc.insertCard", [ c.requestedCard ]);
+        errorMsg = Locale.getString("sc.insertCard", [ c.requestedCard ]);
       }
       break;
     case 2:
-      errorMsg = c.ec.getString("sc.removeCard");
+      errorMsg = Locale.getString("sc.removeCard");
       break;
     case 4:
-      errorMsg = c.ec.getString("sc.noCardAvailable");
+      errorMsg = Locale.getString("sc.noCardAvailable");
       break;
     case 5:
-      errorMsg = c.ec.getString("sc.noReaderAvailable");
+      errorMsg = Locale.getString("sc.noReaderAvailable");
       break;
     }
     return errorMsg;
 }
 
 function parseErrorOutputWith(c) {
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+c.errOutput+"\n");
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: status message: \n"+c.errOutput+"\n");
 
   c.errLines = splitErrorOutput(c.errOutput);
 
@@ -275,23 +317,23 @@ function parseErrorOutputWith(c) {
   c.retStatusObj.statusFlags = c.statusFlags;
   if (c.retStatusObj.statusMsg.length === 0) c.retStatusObj.statusMsg = c.statusArray.join("\n");
   if (c.errorMsg.length === 0) {
-    c.errorMsg = c.errArray.map(c.ec.convertGpgToUnicode, c.ec).join("\n");
+    c.errorMsg = c.errArray.map(Data.convertGpgToUnicode, Data).join("\n");
   }
 
   if ((c.statusFlags & Ci.nsIEnigmail.CARDCTRL) && c.errCode >0) {
-      c.errorMsg = buildErrorMessageForCardCtrl(c.errCode, c.detectedCard);
+      c.errorMsg = buildErrorMessageForCardCtrl(c, c.errCode, c.detectedCard);
       c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   }
 
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+c.ec.bytesToHex(c.ec.pack(c.statusFlags,4))+"\n");
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+Data.bytesToHex(Data.pack(c.statusFlags,4))+"\n");
 
-  c.ec.DEBUG_LOG("enigmailCommon.jsm: parseErrorOutput(): return with c.errorMsg = "+c.errorMsg+"\n");
+  Log.DEBUG("enigmailCommon.jsm: parseErrorOutput(): return with c.errorMsg = "+c.errorMsg+"\n");
   return c.errorMsg;
 }
 
 var EnigmailErrorHandling = {
-  parseErrorOutput: function(ecom, statusFlagLookup, errOutput, retStatusObj) {
-    var context = newContext(ecom, statusFlagLookup, errOutput, retStatusObj);
-    return parseErrorOutputWith(context);
-  }
+    parseErrorOutput: function(errOutput, retStatusObj) {
+        var context = newContext(errOutput, retStatusObj);
+        return parseErrorOutputWith(context);
+    }
 };

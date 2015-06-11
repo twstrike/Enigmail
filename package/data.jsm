@@ -1,4 +1,5 @@
-/*global Components */
+/*global Components: false, Log: false, unescape: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -19,6 +20,7 @@
  * Copyright (C) 2010 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
+ *  Ramalingam Saravanan <svn@xmlterm.org>
  *  Fan Jiang <fanjiang@thoughtworks.com>
  *  Iván Pazmiño <iapamino@thoughtworks.com>
  *  Ola Bini <obini@thoughtworks.com>
@@ -36,10 +38,22 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-var EXPORTED_SYMBOLS = [ "Data" ];
+"use strict";
+
+const EXPORTED_SYMBOLS = [ "Data" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+
+const SCRIPTABLEUNICODECONVERTER_CONTRACTID = "@mozilla.org/intl/scriptableunicodeconverter";
+
+const HEX_TABLE = "0123456789abcdef";
+
+function converter(charset) {
+    let unicodeConv = Cc[SCRIPTABLEUNICODECONVERTER_CONTRACTID].getService(Ci.nsIScriptableUnicodeConverter);
+    unicodeConv.charset = charset || "utf-8";
+    return unicodeConv;
+}
 
 const Data = {
     getUnicodeData: function(data) {
@@ -73,5 +87,88 @@ const Data = {
         }
 
         return messageId;
+    },
+
+    decodeQuotedPrintable: function(str) {
+        return unescape(str.replace(/%/g, "=25").replace(/=/g,'%'));
+    },
+
+    convertToUnicode: function (text, charset) {
+        if (!text || (charset && (charset.toLowerCase() == "iso-8859-1"))) {
+            return text;
+        }
+
+        // Encode plaintext
+        try {
+            return converter(charset).ConvertToUnicode(text);
+        } catch (ex) {
+            return text;
+        }
+    },
+
+    convertFromUnicode: function (text, charset) {
+        if (!text) {
+            return "";
+        }
+
+        try {
+            return converter(charset).ConvertFromUnicode(text);
+        } catch (ex) {
+            return text;
+        }
+    },
+
+    convertGpgToUnicode: function (text) {
+        if(typeof(text) === "string") {
+            text = text.replace(/\\x3a/ig, "\\e3A");
+            var a=text.search(/\\x[0-9a-fA-F]{2}/);
+            while(a>=0) {
+                var ch = unescape('%'+text.substr(a+2,2));
+                var r = new RegExp("\\"+text.substr(a,4));
+                text=text.replace(r, ch);
+
+                a=text.search(/\\x[0-9a-fA-F]{2}/);
+            }
+
+            text = Data.convertToUnicode(text, "utf-8").replace(/\\e3A/g, ":");
+        }
+
+        return text;
+    },
+
+    pack: function (value, bytes) {
+        let str = '';
+        let mask = 0xff;
+        for (let j=0; j < bytes; j++) {
+            str = String.fromCharCode( (value & mask) >> j*8 ) + str;
+            mask <<= 8;
+        }
+
+        return str;
+    },
+
+    unpack: function (str) {
+        let len = str.length;
+        let value = 0;
+
+        for (let j=0; j < len; j++) {
+            value <<= 8;
+            value  |= str.charCodeAt(j);
+        }
+
+        return value;
+    },
+
+    bytesToHex: function (str) {
+        let len = str.length;
+
+        let hex = '';
+        for (let j=0; j < len; j++) {
+            let charCode = str.charCodeAt(j);
+            hex += HEX_TABLE.charAt((charCode & 0xf0) >> 4) +
+                HEX_TABLE.charAt((charCode & 0x0f));
+        }
+
+        return hex;
     }
 };

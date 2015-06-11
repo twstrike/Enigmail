@@ -25,23 +25,55 @@ COMPFILES = \
 PREFFILES = prefs/enigmail.js
 
 MODFILES = \
-           commonFuncs.jsm \
-           gpgAgentHandler.jsm \
-           keyManagement.jsm \
-           pipeConsole.jsm \
-           encryption.jsm \
-           decryption.jsm \
+           app.jsm \
+           armor.jsm \
+           attachment.jsm \
+           commandLine.jsm \
+           configure.jsm \
+           constants.jsm \
            data.jsm \
-           enigmailCore.jsm \
-           enigmailCommon.jsm \
+           decryption.jsm \
+           dialog.jsm \
+           encryption.jsm \
            enigmailConvert.jsm \
+           enigmailCore.jsm \
            enigmailErrorHandling.jsm \
-           enigmailGpg.jsm \
+           enigmailFuncs.jsm \
+           enigmailGpgAgent.jsm \
            enigmailProtocolHandler.jsm \
-           passwordCheck.jsm \
-           installGnuPG.jsm \
+           events.jsm \
+           execution.jsm \
+           files.jsm \
+           filters.jsm \
            fixExchangeMsg.jsm \
-           mimeVerify.jsm
+           glodaMime.jsm \
+           glodaUtils.jsm \
+           gpg.jsm \
+           hash.jsm \
+           httpProxy.jsm \
+           installGnuPG.jsm \
+           key.jsm \
+           keyEditor.jsm \
+           keyRing.jsm \
+           keyserver.jsm \
+           locale.jsm \
+           log.jsm \
+           mime.jsm \
+           mimeVerify.jsm \
+           os.jsm \
+           passwordCheck.jsm \
+           passwords.jsm \
+           pipeConsole.jsm \
+           prefs.jsm \
+           promise.jsm \
+           rules.jsm \
+           streams.jsm \
+           time.jsm \
+           timer.jsm \
+           trust.jsm \
+           uris.jsm \
+           verify.jsm \
+           windows.jsm
 
 all: deploy $(TST)
 

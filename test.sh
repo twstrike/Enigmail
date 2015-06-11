@@ -14,5 +14,4 @@ fi
 RESULT=$?
 
 killall Xvfb
-
 exit $RESULT

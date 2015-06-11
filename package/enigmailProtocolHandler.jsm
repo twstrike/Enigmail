@@ -1,4 +1,5 @@
-/*global Components EnigmailCore XPCOMUtils Data */
+/*global Components: false, EnigmailCore: false, XPCOMUtils: false, Data: false, Log: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -19,6 +20,8 @@
  * Copyright (C) 2010 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
+ *  Patrick Brunschwig <patrick@enigmail.net>
+ *  Janosch Rux <rux@informatik.uni-luebeck.de>
  *  Fan Jiang <fanjiang@thoughtworks.com>
  *  Iván Pazmiño <iapamino@thoughtworks.com>
  *  Ola Bini <obini@thoughtworks.com>
@@ -36,11 +39,16 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-var EXPORTED_SYMBOLS = [ "EnigmailProtocolHandler" ];
+"use strict";
+
+const EXPORTED_SYMBOLS = [ "EnigmailProtocolHandler" ];
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
+Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 
 const NS_SIMPLEURI_CONTRACTID   = "@mozilla.org/network/simple-uri;1";
 const NS_ENIGMAILPROTOCOLHANDLER_CONTRACTID = "@mozilla.org/network/protocol;1?name=enigmail";
@@ -58,9 +66,7 @@ var EC = EnigmailCore;
 const gDummyPKCS7 = 'Content-Type: multipart/mixed;\r\n boundary="------------060503030402050102040303\r\n\r\nThis is a multi-part message in MIME format.\r\n--------------060503030402050102040303\r\nContent-Type: application/x-pkcs7-mime\r\nContent-Transfer-Encoding: 8bit\r\n\r\n\r\n--------------060503030402050102040303\r\nContent-Type: application/x-enigmail-dummy\r\nContent-Transfer-Encoding: 8bit\r\n\r\n\r\n--------------060503030402050102040303--\r\n';
 
 
-function EnigmailProtocolHandler()
-{
-}
+function EnigmailProtocolHandler() {}
 
 EnigmailProtocolHandler.prototype = {
     classDescription: "Enigmail Protocol Handler",
@@ -77,7 +83,7 @@ EnigmailProtocolHandler.prototype = {
     QueryInterface: XPCOMUtils.generateQI([nsIProtocolHandler]),
 
     newURI: function (aSpec, originCharset, aBaseURI) {
-        EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.newURI: aSpec='"+aSpec+"'\n");
+        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.newURI: aSpec='"+aSpec+"'\n");
 
         // cut of any parameters potentially added to the URI; these cannot be handled
         if (aSpec.substr(0,14) == "enigmail:dummy") aSpec = "enigmail:dummy";
@@ -89,7 +95,7 @@ EnigmailProtocolHandler.prototype = {
     },
 
     newChannel: function (aURI) {
-        EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.newChannel: URI='"+aURI.spec+"'\n");
+        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.newChannel: URI='"+aURI.spec+"'\n");
 
         var messageId = Data.extractMessageId(aURI.spec);
         var mimeMessageId = Data.extractMimeMessageId(aURI.spec);
@@ -103,14 +109,14 @@ EnigmailProtocolHandler.prototype = {
 
             var contentType, contentCharset, contentData;
 
-            if (EC.getEnigmailService()._messageIdList[messageId]) {
-                var messageUriObj = EC.getEnigmailService()._messageIdList[messageId];
+            if (URIs.getMessageURI(messageId)) {
+                var messageUriObj = URIs.getMessageURI(messageId);
 
                 contentType    = messageUriObj.contentType;
                 contentCharset = messageUriObj.contentCharset;
                 contentData    = messageUriObj.contentData;
 
-                EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.newChannel: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
+                Log.DEBUG("enigmail.js: EnigmailProtocolHandler.newChannel: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
 
                 // do NOT delete the messageUriObj now from the list, this will be done once the message is unloaded (fix for bug 9730).
 
@@ -125,20 +131,21 @@ EnigmailProtocolHandler.prototype = {
                 contentData = "Enigmail error: invalid URI "+aURI.spec;
             }
 
-            var channel = EC.getEnigmailCommon().newStringChannel(aURI, contentType, "UTF-8", contentData);
+            var channel = Streams.newStringChannel(aURI, contentType, "UTF-8", contentData);
 
             return channel;
         }
 
         if (aURI.spec == aURI.scheme+":dummy") {
             // Dummy PKCS7 content (to access mimeEncryptedClass)
-            return EC.getEnigmailCommon().newStringChannel(aURI, "message/rfc822", "", gDummyPKCS7);
+            return Streams.newStringChannel(aURI, "message/rfc822", "", gDummyPKCS7);
         }
 
         var winName, spec;
         if (aURI.spec == "about:"+aURI.scheme) {
             // About Enigmail
-            winName = "about:"+enigmail;
+            //            winName = "about:"+enigmail;
+            winName = "about:enigmail";
             spec = "chrome://enigmail/content/enigmailAbout.xul";
 
         } else if (aURI.spec == aURI.scheme+":console") {
@@ -181,7 +188,8 @@ EnigmailProtocolHandler.prototype = {
     },
 
     handleMimeMessage: function (messageId) {
-        EC.DEBUG_LOG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
+        //        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
+        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL=, content length=, , \n");
     },
 
     allowPort: function (port, scheme) {

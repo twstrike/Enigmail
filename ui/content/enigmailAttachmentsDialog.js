@@ -1,4 +1,4 @@
-/*global EnigInitCommon EnigGetString DEBUG_LOG */
+/*global EnigInitCommon EnigGetString Log */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,6 +35,8 @@
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
+Components.utils.import("resource://enigmail/log.jsm");
+
 // Initialize enigmailCommon
 EnigInitCommon("enigmailAttachmentsDialog");
 
@@ -44,7 +46,7 @@ const ENIG_INPUT=0;
 const ENIG_RESULT=1;
 
 function enigmailAttachDlgLoad() {
-   DEBUG_LOG("enigmailAttachmentsDialog.js: Load\n");
+   Log.DEBUG("enigmailAttachmentsDialog.js: Load\n");
 
    var dialog=document.getElementById("attachmentsDialog");
    dialog.setAttribute("title", EnigGetString("enigPrompt"));
@@ -120,7 +122,7 @@ function enigmailAttachDlgLoad() {
 
 
 function enigmailAttachDlgAccept() {
-  DEBUG_LOG("enigmailAttachDlgAccept.js: Accept\n");
+  Log.DEBUG("enigmailAttachDlgAccept.js: Accept\n");
 
   var optionSel=document.getElementById("enigmailAttachOptions");
   var skipDlg=document.getElementById("enigmailAttachSkipDlg");

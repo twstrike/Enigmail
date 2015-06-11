@@ -1,4 +1,4 @@
-/*global Components EnigmailCommon */
+/*global Components: false, Locale: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -33,8 +33,8 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-Components.utils.import("resource://enigmail/commonFuncs.jsm");
+Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
+Components.utils.import("resource://enigmail/locale.jsm");
 
 if (! Enigmail) var Enigmail = {};
 
@@ -128,7 +128,7 @@ Enigmail.edit = {
     }
 
     if (this.identity) {
-      var idLabel = EnigmailCommon.getString("identityName", [ this.identity.identityName ]);
+      var idLabel = Locale.getString("identityName", [ this.identity.identityName ]);
       document.getElementById("enigmail_identityName").value = idLabel;
     }
 
@@ -212,7 +212,7 @@ Enigmail.edit = {
   {
     var resultObj = {};
     var inputObj = {};
-    inputObj.dialogHeader = EnigmailCommon.getString("encryptKeyHeader");
+    inputObj.dialogHeader = Locale.getString("encryptKeyHeader");
     inputObj.options = "single,hidexpired,private,nosending";
     var button = document.getElementById("enigmail_selectPgpKey");
     var label = button.getAttribute("label");
@@ -223,7 +223,7 @@ Enigmail.edit = {
     try {
       if (resultObj.cancelled) return;
       var selKey = resultObj.userList[0];
-      selKey = "0x"+selKey.substring(10,18);
+      //selKey = "0x"+selKey.substring(10,18);
       this.pgpKeyId.value = selKey;
     } catch (ex) {
       // cancel pressed -> don't send mail

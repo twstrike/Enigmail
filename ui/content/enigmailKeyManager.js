@@ -1,4 +1,4 @@
-/*global Components EnigInitCommon */
+/*global Components: false, EnigInitCommon: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -35,7 +35,12 @@
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
-Components.utils.import("resource://enigmail/keyManagement.jsm");
+Components.utils.import("resource://enigmail/keyEditor.jsm");
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/log.jsm");
+Components.utils.import("resource://enigmail/dialog.jsm");
+Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+Components.utils.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeyManager");
@@ -64,7 +69,7 @@ var gShowUntrustedKeys = null;
 var gShowOthersKeys = null;
 
 function enigmailKeyManagerLoad() {
-  DEBUG_LOG("enigmailKeyManager.js: enigmailKeyManagerLoad\n");
+  Log.DEBUG("enigmailKeyManager.js: enigmailKeyManagerLoad\n");
   gUserList = document.getElementById("pgpKeyList");
   gSearchInput = document.getElementById("filterKey");
   gShowAllKeysElement = document.getElementById("showAllKeys");
@@ -85,7 +90,7 @@ function enigmailKeyManagerLoad() {
   document.getElementById("pleaseWait").showPopup(gSearchInput, -1, -1, "tooltip", "after_end", "");
   document.getElementById("statusText").value = EnigGetString("keyMan.loadingKeys");
   document.getElementById("progressBar").removeAttribute("collapsed");
-  EnigmailCommon.dispatchEvent(loadkeyList, 100, null);
+  Events.dispatchEvent(loadkeyList, 100, null);
   gSearchInput.focus();
 }
 
@@ -94,7 +99,7 @@ function displayFullList() {
 }
 
 function loadkeyList() {
-  DEBUG_LOG("enigmailKeyManager.js: loadkeyList\n");
+  Log.DEBUG("enigmailKeyManager.js: loadkeyList\n");
 
   //enigmailBuildList(false);
   sortTree();
@@ -105,7 +110,7 @@ function loadkeyList() {
 }
 
 function enigmailRefreshKeys() {
-  DEBUG_LOG("enigmailKeyManager.js: enigmailRefreshKeys\n");
+  Log.DEBUG("enigmailKeyManager.js: enigmailRefreshKeys\n");
   var keyList = enigmailGetSelectedKeys();
   gEnigLastSelectedKeys = [];
   for (var i=0; i<keyList.length; i++) {
@@ -125,7 +130,7 @@ function enigmailClearTree() {
 }
 
 function enigmailBuildList(refresh) {
-  DEBUG_LOG("enigmailKeyManager.js: enigmailBuildList\n");
+  Log.DEBUG("enigmailKeyManager.js: enigmailBuildList\n");
 
   var keyListObj = {};
 
@@ -503,7 +508,7 @@ function enigmailDeleteKey() {
     fprArr.push("0x" + gKeyList[keyList[j]].fpr);
   }
 
-  EnigmailKeyMgmt.deleteKey(window, fprArr.join(" "), deleteSecret,
+  KeyEditor.deleteKey(window, fprArr.join(" "), deleteSecret,
     function(exitCode, errorMsg) {
       if (exitCode !== 0) {
         EnigAlert(EnigGetString("deleteKeyFailed")+"\n\n"+errorMsg);
@@ -525,7 +530,7 @@ function enigmailEnableKey() {
 
   var keyIndex = 0;
   function processNextKey() {
-    EnigmailKeyMgmt.enableDisableKey(window, "0x"+keyList[keyIndex], disableKey, function _enDisCb(exitCode, errorMsg) {
+    KeyEditor.enableDisableKey(window, "0x"+keyList[keyIndex], disableKey, function _enDisCb(exitCode, errorMsg) {
       if (exitCode === 0) {
         ++keyIndex;
         if (keyIndex < keyList.length) {
@@ -626,7 +631,7 @@ function keyMgrAddPhoto(userId, keyId) {
 
   if (!argsObj.okPressed) return;
 
-  EnigmailKeyMgmt.addPhoto(window, "0x"+keyId, inFile,
+  KeyEditor.addPhoto(window, "0x"+keyId, inFile,
     function(exitCode, errorMsg) {
       if (exitCode !== 0) {
         EnigAlert(EnigGetString("keyMan.addphoto.failed")+"\n\n"+errorMsg);
@@ -665,7 +670,7 @@ function enigCreateKeyMsg() {
   // save file
   var exitCodeObj= {};
   var errorMsgObj = {};
-  enigmailSvc.extractKey(window, 0, "0x"+keyList.join(" 0x"), tmpFile, exitCodeObj, errorMsgObj);
+  KeyRing.extractKey(window, 0, "0x"+keyList.join(" 0x"), tmpFile, exitCodeObj, errorMsgObj);
   if (exitCodeObj.value !== 0) {
     EnigAlert(errorMsgObj.value);
     return;
@@ -885,7 +890,7 @@ function enigmailExportKeys() {
   var keyListStr = "0x"+keyList.join(" 0x");
   var exitCodeObj = {};
   var errorMsgObj = {};
-  enigmailSvc.extractKey(window, exportFlags, keyListStr, outFile, exitCodeObj, errorMsgObj);
+  KeyRing.extractKey(window, exportFlags, keyListStr, outFile, exitCodeObj, errorMsgObj);
   if (exitCodeObj.value !== 0) {
     EnigAlert(EnigGetString("saveKeysFailed")+"\n\n"+errorMsgObj.value);
   }
@@ -907,7 +912,7 @@ function enigmailImportKeysFromFile() {
 
   var errorMsgObj = {};
   var keyListObj = {};
-  var exitCode = enigmailSvc.importKeyFromFile(window, inFile, errorMsgObj, keyListObj);
+  var exitCode = KeyRing.importKeyFromFile(window, inFile, errorMsgObj, keyListObj);
   if (exitCode !== 0) {
     EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
   }
@@ -971,7 +976,7 @@ function enigmailChangePwd() {
 
 
 function enigGetClipboard() {
-  DEBUG_LOG("enigmailKeyManager.js: enigGetClipboard:\n");
+  Log.DEBUG("enigmailKeyManager.js: enigGetClipboard:\n");
   var cBoardContent = "";
   var clipBoard = Cc[ENIG_CLIPBOARD_CONTRACTID].getService(Ci.nsIClipboard);
   try {
@@ -983,7 +988,7 @@ function enigGetClipboard() {
     var length = {};
     transferable.getAnyTransferData(flavour, data, length);
     cBoardContent=data.value.QueryInterface(Ci.nsISupportsString).data;
-    DEBUG_LOG("enigmailKeyManager.js: enigGetClipboard: got data\n");
+    Log.DEBUG("enigmailKeyManager.js: enigGetClipboard: got data\n");
   }
   catch(ex) {}
   return cBoardContent;
@@ -1000,7 +1005,7 @@ function enigmailImportFromClipbrd() {
 
   var cBoardContent = enigGetClipboard();
   var errorMsgObj = {};
-  var r=enigmailSvc.importKey(window, 0, cBoardContent, "", errorMsgObj);
+  var r=KeyRing.importKey(window, 0, cBoardContent, "", errorMsgObj);
   EnigLongAlert(errorMsgObj.value);
   enigmailRefreshKeys();
 }
@@ -1017,7 +1022,7 @@ function enigmailCopyToClipbrd() {
   }
   var exitCodeObj={};
   var errorMsgObj={};
-  var keyData = enigmailSvc.extractKey(window, 0, "0x"+keyList.join(" 0x"), null, exitCodeObj, errorMsgObj);
+  var keyData = KeyRing.extractKey(window, 0, "0x"+keyList.join(" 0x"), null, exitCodeObj, errorMsgObj);
   if (exitCodeObj.value !== 0) {
     EnigAlert(EnigGetString("copyToClipbrdFailed")+"\n\n"+errorMsgObj.value);
     return;
@@ -1029,7 +1034,7 @@ function enigmailCopyToClipbrd() {
     if (clipBoard.supportsSelectionClipboard()) {
       clipBoardHlp.copyStringToClipboard(keyData, clipBoard.kSelectionClipboard);
     }
-    DEBUG_LOG("enigmailKeyManager.js: enigmailImportFromClipbrd: got data from clipboard");
+    Log.DEBUG("enigmailKeyManager.js: enigmailImportFromClipbrd: got data from clipboard");
     EnigAlert(EnigGetString("copyToClipbrdOK"));
   }
   catch(ex) {
@@ -1101,7 +1106,7 @@ function enigmailDowloadContactKeysEngine() {
 
     if (addressBook instanceof Ci.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
       // ask for confirmation for each address book:
-      var doIt = EnigmailCommon.confirmDlg(window,
+      var doIt = Dialog.confirmDlg(window,
                    EnigGetString("downloadContactsKeys.importFrom", addressBook.dirName),
                    EnigGetString("dlgYes"),
                    EnigGetString("dlg.button.skip"));
@@ -1159,7 +1164,7 @@ function enigmailDowloadContactKeysEngine() {
   };
   var resultObj = {};
 
-  EnigmailFuncs.downloadKeys(window, inputObj, resultObj);
+  Windows.downloadKeys(window, inputObj, resultObj);
 
   if (resultObj.importedKeys > 0) {
     enigmailRefreshKeys();
@@ -1168,7 +1173,7 @@ function enigmailDowloadContactKeysEngine() {
 
 function enigmailDownloadContactKeys() {
 
-  var doIt = EnigmailCommon.confirmPref(window,
+  var doIt = Dialog.confirmPref(window,
     EnigGetString("downloadContactsKeys.warn"),
     "warnDownloadContactKeys",
     EnigGetString("dlg.button.continue"),
@@ -1182,14 +1187,14 @@ function displayResult(arrayOfMsgText) {
 }
 
 function enigmailReceiveKeyCb(exitCode, errorMsg, msgBox) {
-  DEBUG_LOG("enigmailKeyManager.js: enigmailReceiveKeyCb\n");
+  Log.DEBUG("enigmailKeyManager.js: enigmailReceiveKeyCb\n");
   if (msgBox) {
     if (exitCode===0) {
       enigmailRefreshKeys();
-      EnigmailCommon.dispatchEvent(displayResult, 100, [ EnigGetString("receiveKeysOk"), errorMsg ]);
+      Events.dispatchEvent(displayResult, 100, [ EnigGetString("receiveKeysOk"), errorMsg ]);
     }
     else {
-      EnigmailCommon.dispatchEvent(displayResult, 100, [ EnigGetString("receiveKeysFailed"), errorMsg ]);
+      Events.dispatchEvent(displayResult, 100, [ EnigGetString("receiveKeysFailed"), errorMsg ]);
     }
   }
   else {

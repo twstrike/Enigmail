@@ -33,16 +33,16 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/enigmailCommon.jsm");
-
-const Ec = EnigmailCommon;
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Components.utils.import("resource://enigmail/log.jsm"); /*global Log: false */
+Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
 
 function enigmailEncryptionDlgLoad() {
-  Ec.DEBUG_LOG("enigmailEncryptionDlgLoad.js: Load\n");
+  Log.DEBUG("enigmailEncryptionDlgLoad.js: Load\n");
 
   // Get Enigmail service, such that e.g. the wizard can be executed
   // if needed.
-  var enigmailSvc = Ec.getService();
+  var enigmailSvc = EnigmailCore.getService();
   if (!enigmailSvc) {
     window.close();
     return;
@@ -52,8 +52,8 @@ function enigmailEncryptionDlgLoad() {
 
   var signElement = document.getElementById("signMsg");
   switch(inputObj.statusSigned) {
-    case EnigmailCommon.ENIG_FINAL_FORCEYES:
-    case EnigmailCommon.ENIG_FINAL_YES:
+    case Constants.ENIG_FINAL_FORCEYES:
+    case Constants.ENIG_FINAL_YES:
       signElement.setAttribute("checked", true);
       break;
     default:
@@ -62,8 +62,8 @@ function enigmailEncryptionDlgLoad() {
 
   var encElement = document.getElementById("encryptMsg");
   switch(inputObj.statusEncrypted) {
-    case EnigmailCommon.ENIG_FINAL_FORCEYES:
-    case EnigmailCommon.ENIG_FINAL_YES:
+    case Constants.ENIG_FINAL_FORCEYES:
+    case Constants.ENIG_FINAL_YES:
       encElement.setAttribute("checked", true);
       break;
     default:
@@ -72,8 +72,8 @@ function enigmailEncryptionDlgLoad() {
 
   var pgpmimeElement = document.getElementById("pgpmimeGroup");
   switch(inputObj.statusPGPMime) {
-    case EnigmailCommon.ENIG_FINAL_FORCEYES:
-    case EnigmailCommon.ENIG_FINAL_YES:
+    case Constants.ENIG_FINAL_FORCEYES:
+    case Constants.ENIG_FINAL_YES:
       pgpmimeElement.selectedItem = document.getElementById("usePgpMime");
       break;
     default:
@@ -86,9 +86,9 @@ function resetDefaults() {
   var resultObj = window.arguments[0];
 
   resultObj.success = true;
-  resultObj.sign = EnigmailCommon.ENIG_UNDEF;
-  resultObj.encrypt = EnigmailCommon.ENIG_UNDEF;
-  resultObj.pgpmime = EnigmailCommon.ENIG_UNDEF;
+  resultObj.sign = Constants.ENIG_UNDEF;
+  resultObj.encrypt = Constants.ENIG_UNDEF;
+  resultObj.pgpmime = Constants.ENIG_UNDEF;
   resultObj.resetDefaults = true;
   window.close();
 }
@@ -96,10 +96,10 @@ function resetDefaults() {
 
 function getResultStatus(newStatus) {
   if (newStatus) {
-    return EnigmailCommon.ENIG_ALWAYS;
+    return Constants.ENIG_ALWAYS;
   }
   else {
-    return EnigmailCommon.ENIG_NEVER;
+    return Constants.ENIG_NEVER;
   }
 }
 
@@ -117,4 +117,3 @@ function enigmailEncryptionDlgAccept () {
 
   resultObj.success = true;
 }
-

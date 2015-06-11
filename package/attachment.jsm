@@ -1,3 +1,5 @@
+/*global Components: false, escape: false, unescape: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -18,6 +20,7 @@
  * Copyright (C) 2010 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
+ *  Ramalingam Saravanan <svn@xmlterm.org>
  *  Fan Jiang <fanjiang@thoughtworks.com>
  *  Iván Pazmiño <iapamino@thoughtworks.com>
  *  Ola Bini <obini@thoughtworks.com>
@@ -35,36 +38,49 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
+"use strict";
 
-testing("enigmailCore.jsm");
+const EXPORTED_SYMBOLS = [ "Attachment" ];
 
-test(shouldReadProperty);
-test(shouldSetGetPreference);
-test(shouldCreateLogFile);
+const Cu = Components.utils;
 
-function shouldReadProperty() {
-    var importBtnProp = "enigHeader";
-    var importBtnValue = EnigmailCore.getString(importBtnProp);
-    Assert.equal("Enigmail:", importBtnValue);
-}
+Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
+Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 
-function shouldSetGetPreference() {
-    var prefName = "mypref";
-    EnigmailCore.setPref(prefName, "yourpref");
-    Assert.equal("yourpref", EnigmailCore.getPref(prefName));
-}
+const Attachment = {
+    getFileName: function (parent, byteData) {
+        Log.DEBUG("attachment.jsm: getFileName\n");
 
-function shouldCreateLogFile() {
-    EnigmailCore.setLogDirectory(do_get_cwd().path);
-    EnigmailCore.setLogLevel(5);
-    EnigmailCore.createLogFiles();
-    var filePath = EnigmailCore._logDirectory + "enigdbug.txt";
-    var localFile = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-    initPath(localFile, filePath);
+        const args = Gpg.getStandardArgs(true).
+                  concat(Passwords.command()).
+                  concat(["--list-packets"]);
 
-    Assert.equal(localFile.exists(), true);
-    if (localFile.exists()) {
-        localFile.remove(false);
+        const listener = Execution.newSimpleListener(
+            function _stdin (pipe) {
+                Log.DEBUG("attachment.jsm: getFileName: _stdin\n");
+                pipe.write(byteData);
+                pipe.write("\n");
+                pipe.close();
+            });
+
+        const proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, parent, listener, {});
+
+        if (!proc) {
+            return null;
+        }
+
+        proc.wait();
+
+        const matches = listener.stdoutData.match(/:literal data packet:\r?\n.*name="(.*)",/m);
+        if (matches && (matches.length > 1)) {
+            var filename = escape(matches[1]).replace(/%5Cx/g, "%");
+            return Data.convertToUnicode(unescape(filename), "utf-8");
+        } else {
+            return null;
+        }
     }
-}
+};

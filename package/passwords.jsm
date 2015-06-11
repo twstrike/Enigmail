@@ -1,4 +1,5 @@
-/*global Components */
+/*global Components: false */
+/*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -19,6 +20,7 @@
  * Copyright (C) 2010 Patrick Brunschwig. All Rights Reserved.
  *
  * Contributor(s):
+ *  Ramalingam Saravanan <svn@xmlterm.org>
  *  Fan Jiang <fanjiang@thoughtworks.com>
  *  Iván Pazmiño <iapamino@thoughtworks.com>
  *  Ola Bini <obini@thoughtworks.com>
@@ -36,56 +38,42 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-var EXPORTED_SYMBOLS = [ "EnigmailGPG" ];
+"use strict";
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
+const EXPORTED_SYMBOLS = [ "Passwords" ];
 
-// Making this a var makes it possible to test windows things on linux
-var nsIWindowsRegKey       = Ci.nsIWindowsRegKey;
+const Cu = Components.utils;
 
-// get a Windows registry value (string)
-// @ keyPath: the path of the registry (e.g. Software\\GNU\\GnuPG)
-// @ keyName: the name of the key to get (e.g. InstallDir)
-// @ rootKey: HKLM, HKCU, etc. (according to constants in nsIWindowsRegKey)
-function getWinRegistryString(keyPath, keyName, rootKey) {
-  var registry = Cc["@mozilla.org/windows-registry-key;1"].createInstance(Ci.nsIWindowsRegKey);
+Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 
-  var retval = "";
-  try {
-    registry.open(rootKey, keyPath, registry.ACCESS_READ);
-    retval = registry.readStringValue(keyName);
-    registry.close();
-  }
-  catch (ex) {}
-
-  return retval;
-}
-
-const EnigmailGPG = {
-    determineGpgHomeDir: function (esvc) {
-        var homeDir = "";
-
-        homeDir = esvc.environment.get("GNUPGHOME");
-
-        if (! homeDir && esvc.isWin32) {
-            homeDir=getWinRegistryString("Software\\GNU\\GNUPG", "HomeDir", nsIWindowsRegKey.ROOT_KEY_CURRENT_USER);
-
-            if (! homeDir) {
-                homeDir = esvc.environment.get("USERPROFILE");
-
-                if (! homeDir) {
-                    homeDir = esvc.environment.get("SystemRoot");
-                }
-
-                if (homeDir) homeDir += "\\Application Data\\GnuPG";
+const Passwords = {
+    /*
+     * Get GnuPG command line options for receiving the password depending
+     * on the various user and system settings (gpg-agent/no passphrase)
+     *
+     * @return: Array the GnuPG command line options
+     */
+    command: function () {
+        if (EnigmailGpgAgent.useGpgAgent()) {
+            return ["--use-agent"];
+        } else {
+            if (! Prefs.getPref("noPassphrase")) {
+                return ["--passphrase-fd", "0", "--no-use-agent"];
             }
-
-            if (! homeDir) homeDir = "C:\\gnupg";
         }
+        return [];
+    },
 
-        if (! homeDir) homeDir = esvc.environment.get("HOME")+"/.gnupg";
+    getMaxIdleMinutes: function () {
+        try {
+            return Prefs.getPref("maxIdleMinutes");
+        } catch (ex) {}
 
-        return homeDir;
+        return 5;
+    },
+
+    clearPassphrase: function(win) {
+        // TODO: implement this - it's referred to in one place and used to be in EnigmailCommon but has probably disappeared
     }
 };

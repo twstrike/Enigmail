@@ -106,6 +106,7 @@ class TestRunner:
         def ret(str):
             if self.test_output:
                 self.test_output.write(str + "\n")
+                self.test_output.flush()
         return ret
 
     def combine(self, left, right):
