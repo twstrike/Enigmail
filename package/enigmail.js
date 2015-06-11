@@ -104,9 +104,7 @@ Enigmail.prototype = {
   _xpcom_factory: {
     createInstance: function (aOuter, iid) {
         // Enigmail is a service -> only instanciate once
-      dump("ENIGMAIL: instantiating\n");
         return EnigmailCore.ensuredEnigmailService(function() {
-            dump("ENIGMAIL: NEW ENIGMAIL()\n");
             return new Enigmail(); });
     },
     lockFactory: function (lock) {}

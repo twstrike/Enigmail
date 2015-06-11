@@ -62,14 +62,18 @@ const NS_CREATE_FILE = 0x08;
 const NS_TRUNCATE    = 0x20;
 const DEFAULT_FILE_PERMS = 0x180; // equals 0600
 
-const Files = {
-    lazyLog: function() {
-        if(!Files.log) {
+const lazyLog = (function() {
+    let log = null;
+    return function() {
+        if (!log) {
             Components.utils.import("resource://enigmail/log.jsm");
-            Files.log = Log;
+            log = Log;
         }
-        return Files.log;
-    },
+        return log;
+    };
+})();
+
+const Files = {
 
     isAbsolutePath: function (filePath, isDosLike) {
         // Check if absolute path
@@ -82,7 +86,7 @@ const Files = {
     },
 
     resolvePath: function (filePath, envPath, isDosLike) {
-        Files.lazyLog().DEBUG("files.jsm: resolvePath: filePath="+filePath+"\n");
+        lazyLog().DEBUG("files.jsm: resolvePath: filePath="+filePath+"\n");
 
         if (Files.isAbsolutePath(filePath, isDosLike))
             return filePath;
@@ -99,7 +103,7 @@ const Files = {
                 try {
                     var pathDir = Cc[NS_FILE_CONTRACTID].createInstance(Ci.nsIFile);
 
-                    Files.lazyLog().DEBUG("files.jsm: resolvePath: checking for "+pathDirs[j]+"/"+fileNames[i]+"\n");
+                    lazyLog().DEBUG("files.jsm: resolvePath: checking for "+pathDirs[j]+"/"+fileNames[i]+"\n");
 
                     Files.initPath(pathDir, pathDirs[j]);
 
@@ -152,7 +156,7 @@ const Files = {
             return fileStream;
 
         } catch (ex) {
-            Files.lazyLog().ERROR("enigmailCore.jsm: createFileStream: Failed to create "+filePath+"\n");
+            lazyLog().ERROR("enigmailCore.jsm: createFileStream: Failed to create "+filePath+"\n");
             return null;
         }
     },
