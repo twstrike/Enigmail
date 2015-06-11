@@ -62,3 +62,9 @@ test(function readFileReturnsEmptyStringForNonExistingFile() {
     var result = Files.readFile(md);
     Assert.equal("", result);
 });
+
+test(function shouldFormatCmdLine(){
+    var md = do_get_cwd();
+
+    Assert.equal(Files.formatCmdLine(md,["1","2","3"]),"/enigmail-src/package/tests 1 2 3")
+});
