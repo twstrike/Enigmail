@@ -10,8 +10,8 @@
 do_subtest("armor-test.js");
 do_subtest("data-test.js");
 do_subtest("decryption-test.js");
+do_subtest("decryptPermanently-test.js");
 do_subtest("encryption-test.js");
-do_subtest("enigmailConvert-test.js");
 do_subtest("enigmailErrorHandling-test.js");
 do_subtest("enigmailGpgAgent-test.js");
 do_subtest("enigmail-test.js");
