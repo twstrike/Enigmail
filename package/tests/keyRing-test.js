@@ -43,7 +43,7 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global withE
 
 testing("keyRing.jsm"); /*global KeyRing: false */
 
-test(withEnigmail(function shouldGetKeyDetails() {
+test(withTestGpgHome(withEnigmail(function shouldGetKeyDetails() {
     const publicKey = do_get_file("resources/dev-strike.asc", false);
     const errorMsgObj = {};
     const importedKeysObj = {};
@@ -51,4 +51,4 @@ test(withEnigmail(function shouldGetKeyDetails() {
     Assert.equal(importResult, 0, errorMsgObj);
     const keyDetails = KeyRing.getKeyDetails("0xD535623BB60E9E71", false, true);
     Assert.assertContains(keyDetails, "strike.devtest@gmail.com");
-}));
+})));
