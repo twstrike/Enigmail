@@ -1,4 +1,4 @@
-/*global do_load_module: false, do_get_cwd: false, Components: false, Assert: false,  CustomAssert: false, FileUtils: false, JSUnit: false */
+/*global do_load_module: false, do_get_cwd: false, Components: false, Assert: false,  CustomAssert: false, FileUtils: false, JSUnit: false, Files: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -83,8 +83,8 @@ var TestHelper = {
     },
 
     initalizeGpgHome: function() {
-        // TODO: We should put this inside of the test resources directory, not the home directory
-        var homedir = osUtils.OS.Path.join(osUtils.OS.Constants.Path.homeDir, ".gnupgTest");
+        component("enigmail/files.jsm");
+        var homedir = osUtils.OS.Path.join(Files.getTempDir(), ".gnupgTest");
         var workingDirectory = new osUtils.FileUtils.File(homedir);
         if (!workingDirectory.exists()) {
             workingDirectory.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 448);
