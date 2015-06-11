@@ -129,6 +129,7 @@ test(withTestGpgHome(function messageWithAttachemntIsMovedAndDecrypted() {
             Assert.assertContains(mime.parts[0].parts[0].body, "This is encrypted");
             const atts = extractAttachments(mime);
             Assert.equal(atts[0].name, "attachment.txt");
+            Assert.ok(!atts[0].isEncrypted);
             Assert.assertContains(atts[0].body, "This is an attachment.");
             do_test_finished();
         },
@@ -170,9 +171,11 @@ function stringFromUrl(url) {
 function extractAttachment(att) {
     const name = att.name;
     const body = stringFromUrl(att.url);
+    const isEncrypted = att.isEncrypted;
     return {
         name: name,
-        body: body
+        body: body,
+        isEncrypted: isEncrypted
     };
 }
 
