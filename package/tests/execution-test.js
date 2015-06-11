@@ -39,16 +39,32 @@
 
 "use strict";
 
-do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global withEnigmail: false */
+do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global withEnigmail: false, withTestGpgHome: false */
 
-testing("keyRing.jsm"); /*global KeyRing: false */
+testing("execution.jsm"); /*global Execution: false */
+component("enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+component("enigmail/gpg.jsm"); /*global Gpg: false */
 
-test(withEnigmail(function shouldGetKeyDetails() {
-    const publicKey = do_get_file("resources/dev-strike.asc", false);
-    const errorMsgObj = {};
-    const importedKeysObj = {};
-    const importResult = KeyRing.importKeyFromFile(JSUnit.createStubWindow(), publicKey, errorMsgObj, importedKeysObj);
-    Assert.equal(importResult, 0, errorMsgObj);
-    const keyDetails = KeyRing.getKeyDetails("0xD535623BB60E9E71", false, true);
-    Assert.assertContains(keyDetails, "strike.devtest@gmail.com");
-}));
+test(withTestGpgHome(withEnigmail(function shouldExecCmd() {
+    const command = EnigmailGpgAgent.agentPath;
+
+    const args = Gpg.getStandardArgs(false).
+              concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]).
+              concat(["--list-packets", "resources/dev-strike.asc"]);
+    let output = "";
+    Execution.execCmd2(command, args,
+                       function (pipe) {
+                           //Assert.equal(stdin, 0);
+                       },
+                       function (stdout) {
+                           output+=stdout;
+                       },
+                       function (result) {
+                           Assert.deepEqual(result, {"exitCode":0,"stdout":"","stderr":""});
+                       }
+                      );
+    Assert.assertContains(output,":public key packet:");
+    Assert.assertContains(output,":user ID packet:");
+    Assert.assertContains(output,":signature packet:");
+    Assert.assertContains(output,":public sub key packet:");
+})));

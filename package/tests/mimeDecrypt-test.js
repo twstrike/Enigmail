@@ -12,13 +12,12 @@
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
 testing("mimeDecrypt.js");
-test(getBoundary_test);
 
-function getBoundary_test() {
+test(function getBoundaryTest() {
   var got = getBoundary("content-type: application/pgp-encrypted;\n  boundary='abc'; procol='any'\n");
   Assert.equal(got, "abc", "get boundary 1");
   got = getBoundary("content-type: application/pgp-encrypted; boundary='abc'; protocol='any'");
   Assert.equal(got, "abc", "get boundary 2");
   got = getBoundary('content-type: application/pgp-encrypted; boundary="abc"; protocol="any"');
   Assert.equal(got, "abc", "get boundary 2");
-}
+});

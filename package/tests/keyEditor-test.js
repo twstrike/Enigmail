@@ -43,37 +43,7 @@
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global withEnigmail: false */
 
 testing("keyEditor.jsm"); /*global editKey: false */
-component("enigmail/prefs.jsm");
 component("enigmail/keyRing.jsm"); /*global KeyRing: false */
-component("enigmail/enigmailCore.jsm");
-component("enigmail/execution.jsm");
-component("enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-component("enigmail/gpg.jsm"); /*global Gpg: false */
-
-test(withTestGpgHome(withEnigmail(function shouldExecCmd() {
-    const command = EnigmailGpgAgent.agentPath;
-
-    const args = Gpg.getStandardArgs(false).
-            concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]).
-            concat(["--list-packets", "resources/dev-strike.asc"]);
-    let output = "";
-    Execution.execCmd2(command, args,
-                       function (pipe) {
-                           //Assert.equal(stdin, 0);
-                       },
-                       function (stdout) {
-                           output+=stdout;
-                       },
-                       function (result) {
-                           Assert.deepEqual(result, {"exitCode":0,"stdout":"","stderr":""});
-                       }
-                      );
-    do_print(output);
-    Assert.assertContains(output,":public key packet:");
-    Assert.assertContains(output,":user ID packet:");
-    Assert.assertContains(output,":signature packet:");
-    Assert.assertContains(output,":public sub key packet:");
-})));
 
 test(withTestGpgHome(withEnigmail(function shouldEditKey() {
     importKeys();
