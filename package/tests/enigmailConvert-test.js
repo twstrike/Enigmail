@@ -46,8 +46,9 @@ TestHelper.loadDirectly("tests/mailHelper.js"); /*global MailHelper: false */
 testing("enigmailConvert.jsm"); /*global EnigmailDecryptPermanently: false */
 component("enigmail/keyRing.jsm"); /*global KeyRing: false */
 
-test(withTestGpgHome(function messageIsCopiedToTempDir() {
+test(withTestGpgHome(function messageIsCopiedToNewDir() {
     loadSecretKey();
+    MailHelper.cleanMailFolder(MailHelper.getRootFolder());
     let sourceFolder = MailHelper.createMailFolder("source-box");
     MailHelper.loadEmailToMailFolder("resources/encrypted-email.eml", sourceFolder);
 
@@ -59,6 +60,22 @@ test(withTestGpgHome(function messageIsCopiedToTempDir() {
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 1);
+}));
+
+test(withTestGpgHome(function messageIsMovedToNewDir() {
+    loadSecretKey();
+    MailHelper.cleanMailFolder(MailHelper.rootFolder);
+    let sourceFolder = MailHelper.createMailFolder("source-box");
+    MailHelper.loadEmailToMailFolder("resources/encrypted-email.eml", sourceFolder);
+
+    let header = MailHelper.fetchFirstMessageHeaderIn(sourceFolder);
+    let targetFolder = MailHelper.createMailFolder("target-box");
+    let move = true;
+    let reqSync = true;
+    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+
+    Assert.equal(targetFolder.getTotalMessages(false), 1);
+    Assert.equal(sourceFolder.getTotalMessages(false), 0);
 }));
 
 var loadSecretKey = function() {

@@ -41,6 +41,7 @@
 
 component("/modules/mailServices.js"); /*global MailServices: false */
 component("enigmail/files.jsm"); /*global Files: false */
+component("/modules/iteratorUtils.jsm");
 
 const MailHelper = {
     init: function() {
@@ -58,13 +59,19 @@ const MailHelper = {
             localAccount.defaultIdentity = identity;
             MailHelper.incomingServer = MailServices.accounts.localFoldersServer;
             MailHelper.rootFolder = MailHelper.incomingServer.rootMsgFolder;
-            MailHelper.rootFolder.recursiveDelete(true, null);
-            MailHelper.rootFolder.createSubfolder("Inbox", null);
-            MailHelper.inboxFolder = MailHelper.rootFolder.getChildNamed("Inbox");
-            MailHelper.inboxFolder.setFlag(Components.interfaces.nsMsgFolderFlags.Mail);
-            MailHelper.inboxFolder.setFlag(Components.interfaces.nsMsgFolderFlags.Inbox);
+            if(!MailHelper.rootFolder.containsChildNamed("Inbox")) {
+                MailHelper.rootFolder.createSubfolder("Inbox", null);
+                MailHelper.inboxFolder = MailHelper.rootFolder.getChildNamed("Inbox");
+                MailHelper.inboxFolder.setFlag(Components.interfaces.nsMsgFolderFlags.Mail);
+                MailHelper.inboxFolder.setFlag(Components.interfaces.nsMsgFolderFlags.Inbox);
+            }
             MailHelper.initialized = true;
         }
+    },
+
+    getRootFolder: function() {
+        MailHelper.init();
+        return MailHelper.rootFolder;
     },
 
     createMailFolder: function(name) {
@@ -73,6 +80,14 @@ const MailHelper = {
         let mailFolder = localRoot.createLocalSubfolder(name);
         mailFolder.setFlag(Components.interfaces.nsMsgFolderFlags.Mail);
         return mailFolder;
+    },
+
+    cleanMailFolder: function(mailFolder) {
+        MailHelper.init();
+        let it = mailFolder.subFolders;
+        while(it.hasMoreElements()) {
+            mailFolder.propagateDelete(it.getNext(), true, null);
+        }
     },
 
     loadEmailToMailFolder: function(emailFilePath, mailFolder) {
