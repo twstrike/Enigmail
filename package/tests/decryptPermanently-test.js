@@ -49,14 +49,14 @@ component("enigmail/keyRing.jsm"); /*global KeyRing: false */
 test(withTestGpgHome(function messageIsCopiedToNewDir() {
     loadSecretKey();
     MailHelper.cleanMailFolder(MailHelper.getRootFolder());
-    let sourceFolder = MailHelper.createMailFolder("source-box");
+    const sourceFolder = MailHelper.createMailFolder("source-box");
     MailHelper.loadEmailToMailFolder("resources/encrypted-email.eml", sourceFolder);
 
-    let header = MailHelper.fetchFirstMessageHeaderIn(sourceFolder);
-    let targetFolder = MailHelper.createMailFolder("target-box");
-    let move = false;
-    let reqSync = true;
-    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    const header = MailHelper.fetchFirstMessageHeaderIn(sourceFolder);
+    const targetFolder = MailHelper.createMailFolder("target-box");
+    const move = false;
+    const reqSync = true;
+    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 1);
@@ -65,25 +65,25 @@ test(withTestGpgHome(function messageIsCopiedToNewDir() {
 test(withTestGpgHome(function messageIsMovedToNewDir() {
     loadSecretKey();
     MailHelper.cleanMailFolder(MailHelper.rootFolder);
-    let sourceFolder = MailHelper.createMailFolder("source-box");
+    const sourceFolder = MailHelper.createMailFolder("source-box");
     MailHelper.loadEmailToMailFolder("resources/encrypted-email.eml", sourceFolder);
 
-    let header = MailHelper.fetchFirstMessageHeaderIn(sourceFolder);
-    let targetFolder = MailHelper.createMailFolder("target-box");
-    let move = true;
-    let reqSync = true;
-    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    const header = MailHelper.fetchFirstMessageHeaderIn(sourceFolder);
+    const targetFolder = MailHelper.createMailFolder("target-box");
+    const move = true;
+    const reqSync = true;
+    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 0);
 }));
 
 var loadSecretKey = function() {
-    let enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    let win = JSUnit.createStubWindow();
-    let secretKey = do_get_file("resources/dev-strike.sec", false);
-    let errorMsgObj = {};
-    let importedKeysObj = {};
+    const enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
+    const win = JSUnit.createStubWindow();
+    const secretKey = do_get_file("resources/dev-strike.sec", false);
+    const errorMsgObj = {};
+    const importedKeysObj = {};
     enigmail.initialize(win, "");
     KeyRing.importKeyFromFile(win, secretKey, errorMsgObj, importedKeysObj);
 };
