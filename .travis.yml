@@ -5,6 +5,7 @@ compiler:
 install:
   ./provision.sh
 script:
+  - ./configure --enable-tests --with-tb-path=$(which thunderbird)
+  - make
   - ./build.sh
   - ./test.sh
-  - ./make.sh
