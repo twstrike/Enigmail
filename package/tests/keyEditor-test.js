@@ -160,3 +160,26 @@ function initializeEnigmail() {
     enigmail.initialize(window, "");
     return enigmail;
 }
+
+
+test(withTestGpgHome(function shouldGetSecretKeys() {
+    const secretKey = do_get_file("resources/dev-strike.sec", false);
+    const errorMsgObj = {};
+    const importedKeysObj = {};
+    const window = JSUnit.createStubWindow();
+    const importResult = KeyRing.importKeyFromFile(window, secretKey, errorMsgObj, importedKeysObj);
+    const expectedKey = [{"name": "anonymous strike <strike.devtest@gmail.com>", "id": "781617319CE311C4", "created": "05/04/2015"}];
+    do_test_pending();
+    KeyEditor.setKeyTrust(window,
+        "781617319CE311C4",
+        5,
+        function() {
+            const result = KeyRing.getSecretKeys(window);
+            Assert.equal(result.length, 1);
+            Assert.equal(result[0].name, expectedKey[0].name);
+            Assert.equal(result[0].id, expectedKey[0].id);
+            Assert.equal(result[0].created, expectedKey[0].created);
+            do_test_finished();
+        }
+    );
+}));
