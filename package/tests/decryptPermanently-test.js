@@ -43,7 +43,7 @@
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestHelper: false, component: false, withTestGpgHome: false */
 TestHelper.loadDirectly("tests/mailHelper.js"); /*global MailHelper: false */
 
-testing("decryptPermanently.jsm"); /*global DecryptPermanently: false */
+testing("decryptPermanently.jsm"); /*global EnigmailDecryptPermanently: false */
 component("enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 test(withTestGpgHome(function messageIsCopiedToNewDir() {
