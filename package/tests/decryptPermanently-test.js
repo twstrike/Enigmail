@@ -43,7 +43,7 @@
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestHelper: false, component: false, withTestGpgHome: false */
 TestHelper.loadDirectly("tests/mailHelper.js"); /*global MailHelper: false */
 
-testing("decryptPermanently.jsm"); /*global EnigmailDecryptPermanently: false */
+testing("decryptPermanently.jsm"); /*global DecryptPermanently: false */
 component("enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 test(withTestGpgHome(function messageIsCopiedToNewDir() {
@@ -56,7 +56,7 @@ test(withTestGpgHome(function messageIsCopiedToNewDir() {
     let targetFolder = MailHelper.createMailFolder("target-box");
     let move = false;
     let reqSync = true;
-    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 1);
@@ -72,7 +72,7 @@ test(withTestGpgHome(function messageIsMovedToNewDir() {
     let targetFolder = MailHelper.createMailFolder("target-box");
     let move = true;
     let reqSync = true;
-    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 0);
