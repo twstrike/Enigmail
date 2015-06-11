@@ -183,6 +183,65 @@ function getSortFunction(type, keyListObj, sortDirection) {
     return (sortFunctions[type] || sortByUserId)(keyListObj, sortDirection);
 }
 
+/**
+ * Return string with all colon-separated data of key list entry of given key.
+ * - key may be pub or sub key.
+ *
+ * @param  String  keyId of 8 or 16 chars key with optionally leading 0x
+ * @return String  entry of first found user IDs with keyId or null if none
+ */
+function getKeyListEntryOfKey(keyId) {
+    keyId = keyId.replace(/^0x/, "");
+
+    let statusFlags = {};
+    let errorMsg = {};
+    let exitCodeObj = {};
+    let listText = KeyRing.getUserIdList(false, false, exitCodeObj, statusFlags, errorMsg);
+
+    // listText contains lines such as:
+    // tru::0:1407688184:1424970931:3:1:5
+    // pub:f:1024:17:D581C6F8EBB80E50:1107251639:::-:::scESC:
+    // fpr:::::::::492A198AEA5EBE5574A1CE00D581C6F8EBB80E50:
+    // uid:f::::1107251639::2D505D1F6E744365B3B35FF11F32A19779E3A417::Giosue Vitaglione <gvi@whitestein.com>:
+    // sub:f:2048:16:2223D7E0301A66C6:1107251647::::::e:
+
+    // search for key or subkey
+    let regexKey = new RegExp("^(pub|sub):[^:]*:[^:]*:[^:]*:[A-Fa-f0-9]*" + keyId + ":", "m");
+    let foundPos = listText.search(regexKey);
+    if (foundPos < 0) {
+        return null;
+    }
+
+    // find area of key entries in key list
+    // note: if subkey matches, key entry starts before
+    let regexPub = new RegExp("^pub:", "ym");
+    let startPos;
+
+    if (listText[foundPos] == "p") {  // ^pub:
+        // KEY matches
+        startPos = foundPos;
+    } else {
+        // SUBKEY matches
+        // search for pub entry right before sub entry
+        startPos = 0;
+        let match = regexPub.exec(listText.substr(0, foundPos));
+        while (match && match.index < foundPos) {
+            startPos = match.index;
+            match = regexPub.exec(listText);
+        }
+    }
+    // find end of entry (next pub entry or end):
+    let match = regexPub.exec(listText.substr(startPos+1));
+    let res;
+    if (match && match.index) {
+        res = listText.substring(startPos,  startPos+1 + match.index);
+    } else {
+        res = listText.substring(startPos);
+    }
+    dump(res);
+    return res
+}
+
 const KeyRing = {
     importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj){
         var command= Gpg.agentPath;
@@ -242,7 +301,7 @@ const KeyRing = {
      * @return String  public key ID, or null if key not found
      */
     getPubKeyIdForSubkey: function (keyId) {
-        const entry = KeyRing.getKeyListEntryOfKey(keyId);
+        const entry = getKeyListEntryOfKey(keyId);
         if (entry === null) {
             return null;
         }
@@ -258,61 +317,6 @@ const KeyRing = {
     },
 
     /**
-     * Return string with all colon-separated data of key list entry of given key.
-     * - key may be pub or sub key.
-     *
-     * @param  String  keyId of 8 or 16 chars key with optionally leading 0x
-     * @return String  entry of first found user IDs with keyId or null if none
-     */
-    getKeyListEntryOfKey: function (keyId) {
-        keyId = keyId.replace(/^0x/, "");
-
-        let statusFlags = {};
-        let errorMsg = {};
-        let exitCodeObj = {};
-        let listText = KeyRing.getUserIdList(false, false, exitCodeObj, statusFlags, errorMsg);
-
-        // listText contains lines such as:
-        // tru::0:1407688184:1424970931:3:1:5
-        // pub:f:1024:17:D581C6F8EBB80E50:1107251639:::-:::scESC:
-        // fpr:::::::::492A198AEA5EBE5574A1CE00D581C6F8EBB80E50:
-        // uid:f::::1107251639::2D505D1F6E744365B3B35FF11F32A19779E3A417::Giosue Vitaglione <gvi@whitestein.com>:
-        // sub:f:2048:16:2223D7E0301A66C6:1107251647::::::e:
-
-        // search for key or subkey
-        let regexKey = new RegExp("^(pub|sub):[^:]*:[^:]*:[^:]*:[A-Fa-f0-9]*" + keyId + ":", "m");
-        let foundPos = listText.search(regexKey);
-        if (foundPos < 0) {
-            return null;
-        }
-
-        // find area of key entries in key list
-        // note: if subkey matches, key entry starts before
-        let regexPub = new RegExp("^pub:", "ym");
-        let startPos;
-        if (listText[foundPos] == "p") {  // ^pub:
-            // KEY matches
-            startPos = foundPos;
-        } else {
-            // SUBKEY matches
-            // search for pub entry right before sub entry
-            startPos = 0;
-            let match = regexPub.exec(listText.substr(0, foundPos));
-            while (match && match.index < foundPos) {
-                startPos = match.index;
-                match = regexPub.exec(listText);
-            }
-        }
-        // find end of entry (next pub entry or end):
-        let match = regexPub.exec(listText.substr(startPos+1));
-        if (match && match.index) {
-            return listText.substring(startPos,  startPos+1 + match.index);
-        } else {
-            return listText.substring(startPos);
-        }
-    },
-
-    /**
      * Return first found userId of given key.
      * - key may be pub or sub key.
      * @param  String  keyId key with leading 0x
@@ -321,7 +325,7 @@ const KeyRing = {
     getFirstUserIdOfKey: function (keyId) {
         Log.DEBUG("enigmail.js: Enigmail.getFirstUserIdOfKey() keyId='"+ keyId +"'\n");
 
-        const entry = KeyRing.getKeyListEntryOfKey(keyId);
+        const entry = getKeyListEntryOfKey(keyId);
         if (entry === null) {
             return null;
         }
@@ -711,7 +715,7 @@ const KeyRing = {
      * @return: String containing the fingerprint or null if key not found
      */
     getFingerprintForKey: function(keyId) {
-        const keyList = KeyRing.getKeyListEntryOfKey(keyId);
+        const keyList = getKeyListEntryOfKey(keyId);
         const keyListObj = {};
         KeyRing.createKeyObjects(keyList.replace(/(\r\n|\r)/g, "\n").split(/\n/), keyListObj);
 

@@ -52,3 +52,39 @@ test(withTestGpgHome(withEnigmail(function shouldGetKeyDetails() {
     const keyDetails = KeyRing.getKeyDetails("0xD535623BB60E9E71", false, true);
     Assert.assertContains(keyDetails, "strike.devtest@gmail.com");
 })));
+
+test(withTestGpgHome(withEnigmail(function shouldGetKeyListEntryOfKey() {
+    const publicKey = do_get_file("resources/dev-strike.asc", false);
+    const importResult = KeyRing.importKeyFromFile(JSUnit.createStubWindow(), publicKey, {}, {});
+    const keyDetails = getKeyListEntryOfKey("0xD535623BB60E9E71");
+    Assert.equal(keyDetails,
+        "pub:-:4096:1:781617319CE311C4:1430756251:1556986651::-:::scESC:\n" +
+        "fpr:::::::::65537E212DC19025AD38EDB2781617319CE311C4:\n" +
+        "uid:-::::1430756251::DB54FB278F6AE719DE0DE881B17D4C762F5752A9::anonymous strike <strike.devtest@gmail.com>:\n" +
+        "sub:-:4096:1:D535623BB60E9E71:1430756251:1556986651:::::e:\n");
+})));
+
+test(withTestGpgHome(withEnigmail(function shouldGetUserIdList(){
+    const publicKey = do_get_file("resources/dev-strike.asc", false);
+    const secretKey = do_get_file("resources/dev-strike.sec", false);
+    KeyRing.importKeyFromFile(JSUnit.createStubWindow(), publicKey, {}, {});
+    KeyRing.importKeyFromFile(JSUnit.createStubWindow(), secretKey, {}, {});
+    KeyRing.getUserIdList(false, false, {}, {}, {});
+    Assert.equal(secretKeyList, null);
+    Assert.notEqual(userIdList, null);
+    KeyRing.getUserIdList(true, false, {}, {}, {});
+    Assert.notEqual(secretKeyList, null);
+    Assert.notEqual(userIdList, null);
+})));
+
+test(withTestGpgHome(withEnigmail(function shouldCleanupInvalidateUserIdList(){
+    const publicKey = do_get_file("resources/dev-strike.asc", false);
+    const secretKey = do_get_file("resources/dev-strike.sec", false);
+    KeyRing.importKeyFromFile(JSUnit.createStubWindow(), publicKey, {}, {});
+    KeyRing.importKeyFromFile(JSUnit.createStubWindow(), secretKey, {}, {});
+    KeyRing.getUserIdList(false, false, {}, {}, {});
+    KeyRing.getUserIdList(true, false, {}, {}, {});
+    KeyRing.invalidateUserIdList();
+    Assert.equal(secretKeyList, null);
+    Assert.equal(userIdList, null);
+})));
