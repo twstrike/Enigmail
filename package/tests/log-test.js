@@ -1,5 +1,4 @@
-/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false, component: false */
-/*global EnigmailCore: false, Cc: false, Ci: false, Files: false, Log: false, Prefs: false, Locale: false */
+/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false, component: false, Cc: false, Ci: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -42,38 +41,21 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
 
-testing("enigmailCore.jsm");
-component("enigmail/files.jsm");
-component("enigmail/prefs.jsm");
-component("enigmail/log.jsm");
-component("enigmail/locale.jsm");
+testing("log.jsm"); /*global Log: false */
+component("enigmail/files.jsm"); /*global Files: false */
 
-test(shouldReadProperty);
-test(shouldSetGetPreference);
-test(shouldCreateLogFile);
-
-function shouldReadProperty() {
-    var importBtnProp = "enigHeader";
-    var importBtnValue = Locale.getString(importBtnProp);
-    Assert.equal("Enigmail:", importBtnValue);
-}
-
-function shouldSetGetPreference() {
-    var prefName = "mypref";
-    Prefs.setPref(prefName, "yourpref");
-    Assert.equal("yourpref", Prefs.getPref(prefName));
-}
-
-function shouldCreateLogFile() {
+test(function shouldCreateLogFile() {
     Log.setLogDirectory(do_get_cwd().path);
     Log.setLogLevel(5);
     Log.createLogFiles();
-    var filePath = Log.directory + "enigdbug.txt";
-    var localFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+    const filePath = Log.directory + "enigdbug.txt";
+    const localFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
     Files.initPath(localFile, filePath);
-
-    Assert.equal(localFile.exists(), true);
-    if (localFile.exists()) {
-        localFile.remove(false);
+    try {
+        Assert.equal(localFile.exists(), true);
+    } finally {
+        if (localFile.exists()) {
+            localFile.remove(false);
+        }
     }
-}
+});
