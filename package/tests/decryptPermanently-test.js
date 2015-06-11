@@ -40,7 +40,7 @@
 
 "use strict";
 
-do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestHelper: false, component: false, withTestGpgHome: false */
+do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestHelper: false, component: false, withTestGpgHome: false, withEnigmail: false */
 TestHelper.loadDirectly("tests/mailHelper.js"); /*global MailHelper: false */
 
 testing("decryptPermanently.jsm"); /*global DecryptPermanently: false */
@@ -49,7 +49,7 @@ component("enigmail/keyRing.jsm"); /*global KeyRing: false */
 component("enigmail/glodaMime.jsm");
 component("enigmail/streams.jsm"); /*global Streams: false */
 
-test(withTestGpgHome(function messageIsCopiedToNewDir() {
+test(withTestGpgHome(withEnigmail(function messageIsCopiedToNewDir() {
     loadSecretKey();
     MailHelper.cleanMailFolder(MailHelper.getRootFolder());
     const sourceFolder = MailHelper.createMailFolder("source-box");
@@ -63,9 +63,9 @@ test(withTestGpgHome(function messageIsCopiedToNewDir() {
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 1);
-}));
+})));
 
-test(withTestGpgHome(function messageIsMovedToNewDir() {
+test(withTestGpgHome(withEnigmail(function messageIsMovedToNewDir() {
     loadSecretKey();
     MailHelper.cleanMailFolder(MailHelper.rootFolder);
     const sourceFolder = MailHelper.createMailFolder("source-box");
@@ -79,9 +79,9 @@ test(withTestGpgHome(function messageIsMovedToNewDir() {
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 0);
-}));
+})));
 
-test(withTestGpgHome(function messageIsMovedAndDecrypted() {
+test(withTestGpgHome(withEnigmail(function messageIsMovedAndDecrypted() {
     loadSecretKey();
     MailHelper.cleanMailFolder(MailHelper.rootFolder);
     const sourceFolder = MailHelper.createMailFolder("source-box");
@@ -105,7 +105,7 @@ test(withTestGpgHome(function messageIsMovedAndDecrypted() {
         },
         false
     );
-}));
+})));
 
 test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecrypted() {
     loadSecretKey();
@@ -138,13 +138,8 @@ test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecryp
 })));
 
 var loadSecretKey = function() {
-    const enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    const win = JSUnit.createStubWindow();
     const secretKey = do_get_file("resources/dev-strike.sec", false);
-    const errorMsgObj = {};
-    const importedKeysObj = {};
-    enigmail.initialize(win, "");
-    KeyRing.importKeyFromFile(win, secretKey, errorMsgObj, importedKeysObj);
+    KeyRing.importKeyFromFile(null, secretKey, [], {});
 };
 
 function stringFromUrl(url) {
