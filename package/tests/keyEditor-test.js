@@ -40,7 +40,7 @@
 
 "use strict";
 
-do_load_module("file://" + do_get_cwd().path + "/testHelper.js");
+do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global withEnigmail: false */
 
 testing("keyEditor.jsm"); /*global editKey: false */
 component("enigmail/prefs.jsm");
@@ -50,41 +50,33 @@ component("enigmail/execution.jsm");
 component("enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 component("enigmail/gpg.jsm"); /*global Gpg: false */
 
-test(withTestGpgHome(importKeyForEdit));
-test(withTestGpgHome(shouldExecCmd));
-test(withTestGpgHome(shouldEditKey));
-test(withTestGpgHome(shouldSetTrust));
-test(withTestGpgHome(shouldSignKey));
+test(withTestGpgHome(withEnigmail(function shouldExecCmd() {
+    const command = EnigmailGpgAgent.agentPath;
 
-function shouldExecCmd() {
-    var window = JSUnit.createStubWindow();
-    var enigmailSvc = EnigmailCore.getService(window);
-    var command= EnigmailGpgAgent.agentPath;
-
-    var args = Gpg.getStandardArgs(false);
-    args=args.concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]);
-    args=args.concat(["--list-packets", "resources/dev-strike.asc"]);
-    var output = "";
+    const args = Gpg.getStandardArgs(false).
+            concat(["--no-tty", "--status-fd", "1", "--logger-fd", "1", "--command-fd", "0"]).
+            concat(["--list-packets", "resources/dev-strike.asc"]);
+    let output = "";
     Execution.execCmd2(command, args,
-        function (pipe) {
-            //Assert.equal(stdin, 0);
-        },
-        function (stdout) {
-            output+=stdout;
-        },
-        function (result) {
-            Assert.deepEqual(result, {"exitCode":0,"stdout":"","stderr":""});
-        }
-    );
+                       function (pipe) {
+                           //Assert.equal(stdin, 0);
+                       },
+                       function (stdout) {
+                           output+=stdout;
+                       },
+                       function (result) {
+                           Assert.deepEqual(result, {"exitCode":0,"stdout":"","stderr":""});
+                       }
+                      );
     do_print(output);
     Assert.assertContains(output,":public key packet:");
     Assert.assertContains(output,":user ID packet:");
     Assert.assertContains(output,":signature packet:");
     Assert.assertContains(output,":public sub key packet:");
-}
+})));
 
-function shouldEditKey() {
-    importKeyForEdit();
+test(withTestGpgHome(withEnigmail(function shouldEditKey() {
+    importKeys();
     do_test_pending();
     var window = JSUnit.createStubWindow();
     editKey(
@@ -107,62 +99,48 @@ function shouldEditKey() {
             do_test_finished();
         }
     );
-}
+})));
 
-function shouldSetTrust() {
-    importKeyForEdit();
+test(withTestGpgHome(withEnigmail(function shouldSetTrust() {
+    importKeys();
     do_test_pending();
     var window = JSUnit.createStubWindow();
     KeyEditor.setKeyTrust(window,
-        "781617319CE311C4",
-        5,
-        function (exitCode, errorMsg) {
-            Assert.equal(exitCode, 0);
-            Assert.equal("", errorMsg);
-            do_test_finished();
-        }
-    );
-}
+                          "781617319CE311C4",
+                          5,
+                          function (exitCode, errorMsg) {
+                              Assert.equal(exitCode, 0);
+                              Assert.equal("", errorMsg);
+                              do_test_finished();
+                          }
+                         );
+})));
 
-function shouldSignKey() {
-    importKeyForEdit();
+test(withTestGpgHome(withEnigmail(function shouldSignKey() {
+    importKeys();
     do_test_pending();
     var window = JSUnit.createStubWindow();
     KeyEditor.signKey(window,
-        "anonymous strike <strike.devtest@gmail.com>",
-        "781617319CE311C4",
-        false,
-        5,
-        function (exitCode, errorMsg) {
-            Assert.equal(exitCode, 0);
-            Assert.equal("The key is already signed, you cannot sign it twice.",errorMsg);
-            do_test_finished();
-        }
-    );
-}
+                      "anonymous strike <strike.devtest@gmail.com>",
+                      "781617319CE311C4",
+                      false,
+                      5,
+                      function (exitCode, errorMsg) {
+                          Assert.equal(exitCode, 0);
+                          Assert.equal("The key is already signed, you cannot sign it twice.",errorMsg);
+                          do_test_finished();
+                      }
+                     );
+})));
 
-function importKeyForEdit() {
-    initializeEnigmail();
-    var window = JSUnit.createStubWindow();
-    var publicKey = do_get_file("resources/dev-strike.asc", false);
-    var secretKey = do_get_file("resources/dev-strike.sec", false);
-    var errorMsgObj = {};
-    var importedKeysObj = {};
-    var publicImportResult = KeyRing.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
-    var secretImportResult = KeyRing.importKeyFromFile(window, secretKey, errorMsgObj, importedKeysObj);
-    Assert.equal(publicImportResult, 0);
-    Assert.equal(secretImportResult, 0);
-}
-
-function initializeEnigmail() {
-    var enigmail = Cc["@mozdev.org/enigmail/enigmail;1"].createInstance(Ci.nsIEnigmail);
-    var window = JSUnit.createStubWindow();
-    enigmail.initialize(window, "");
-    return enigmail;
-}
+test(withTestGpgHome(function importKeyForEdit() {
+    const result = importKeys();
+    Assert.equal(result[0], 0);
+    Assert.equal(result[1], 0);
+}));
 
 
-test(withTestGpgHome(function shouldGetSecretKeys() {
+test(withTestGpgHome(withEnigmail(function shouldGetSecretKeys() {
     const secretKey = do_get_file("resources/dev-strike.sec", false);
     const errorMsgObj = {};
     const importedKeysObj = {};
@@ -182,4 +160,15 @@ test(withTestGpgHome(function shouldGetSecretKeys() {
             do_test_finished();
         }
     );
-}));
+})));
+
+function importKeys() {
+    var window = JSUnit.createStubWindow();
+    var publicKey = do_get_file("resources/dev-strike.asc", false);
+    var secretKey = do_get_file("resources/dev-strike.sec", false);
+    var errorMsgObj = {};
+    var importedKeysObj = {};
+    var publicImportResult = KeyRing.importKeyFromFile(window, publicKey, errorMsgObj, importedKeysObj);
+    var secretImportResult = KeyRing.importKeyFromFile(window, secretKey, errorMsgObj, importedKeysObj);
+    return [publicImportResult, secretImportResult];
+}

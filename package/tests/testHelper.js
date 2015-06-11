@@ -1,4 +1,4 @@
-/*global do_load_module: false, do_get_cwd: false, Components: false, Assert: false,  CustomAssert: false, FileUtils: false */
+/*global do_load_module: false, do_get_cwd: false, Components: false, Assert: false,  CustomAssert: false, FileUtils: false, JSUnit: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -144,12 +144,26 @@ function withEnvironment(vals, f) {
 
 function withTestGpgHome(f){
     return function(){
-        var homedir = initalizeGpgHome();
+        const homedir = initalizeGpgHome();
         try{
             f();
-        }
-        finally{
+        } finally {
             removeGpgHome(homedir);
+        }
+    };
+}
+
+Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+function withEnigmail(f) {
+    return function() {
+        try {
+            const enigmail = Components.classes["@mozdev.org/enigmail/enigmail;1"].
+                      createInstance(Components.interfaces.nsIEnigmail);
+            const window = JSUnit.createStubWindow();
+            enigmail.initialize(window, "");
+            return f(enigmail, window);
+        } finally {
+            EnigmailCore.setEnigmailService(null);
         }
     };
 }

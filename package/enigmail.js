@@ -104,7 +104,10 @@ Enigmail.prototype = {
   _xpcom_factory: {
     createInstance: function (aOuter, iid) {
         // Enigmail is a service -> only instanciate once
-        return EnigmailCore.ensuredEnigmailService(function() { return new Enigmail(); });
+      dump("ENIGMAIL: instantiating\n");
+        return EnigmailCore.ensuredEnigmailService(function() {
+            dump("ENIGMAIL: NEW ENIGMAIL()\n");
+            return new Enigmail(); });
     },
     lockFactory: function (lock) {}
   },
@@ -150,6 +153,8 @@ Enigmail.prototype = {
 
     Log.DEBUG("enigmail.js: Enigmail.initialize: START\n");
     if (this.initialized) return;
+
+      dump("ENIGMAIL: doing initialization\n");
 
     var prefix = this.getLogDirectoryPrefix();
     if (prefix) {
