@@ -201,9 +201,9 @@ const Files = {
             }
         }
 
-        var rStr = getQuoted(Files.getFilePathDesc(command)) +" ";
-        let i;
-        return rStr + [getQuoted(args[i]) for (i in args)].join(" ").replace(/\\\\/g, '\\');
+        var cmdStr = getQuoted(Files.getFilePathDesc(command)) +" ";
+        var argStr = args.map(getQuoted).join(" ").replace(/\\\\/g, '\\');
+        return cmdStr + argStr;
     },
 
     getFilePathDesc: function (nsFileObj) {
