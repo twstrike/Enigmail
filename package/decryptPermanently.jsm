@@ -123,7 +123,7 @@ const EnigmailDecryptPermanently = {
       else {
         // last message was finished processing
         done = true;
-        Log.DEBUG("enigmailConvert.jsm: dispatchMessage: exit nested loop\n");
+        Log.DEBUG("decryptPermanently.jsm: dispatchMessage: exit nested loop\n");
         inspector.exitNestedEventLoop();
       }
     };
@@ -131,14 +131,14 @@ const EnigmailDecryptPermanently = {
     promise.then(processNext);
 
     promise.catch(function(err) {
-      Log.ERROR("enigmailConvert.jsm: dispatchMessage: caught error: "+err+"\n");
+      Log.ERROR("decryptPermanently.jsm: dispatchMessage: caught error: "+err+"\n");
       processNext(null);
     });
 
     if (requireSync && ! done) {
       // wait here until all messages processed, such that the function returns
       // synchronously
-      Log.DEBUG("enigmailConvert.jsm: dispatchMessage: enter nested loop\n");
+      Log.DEBUG("decryptPermanently.jsm: dispatchMessage: enter nested loop\n");
       inspector.enterNestedEventLoop({value : 0});
     }
   },
@@ -148,19 +148,19 @@ const EnigmailDecryptPermanently = {
       function(resolve, reject) {
         let msgUriSpec = hdr.folder.getUriForMsg(hdr);
 
-        Log.DEBUG("enigmailConvert.jsm: decryptMessage: MessageUri: "+msgUriSpec+"\n");
+        Log.DEBUG("decryptPermanently.jsm: decryptMessage: MessageUri: "+msgUriSpec+"\n");
 
         var messenger = Cc["@mozilla.org/messenger;1"].createInstance(Ci.nsIMessenger);
         var msgSvc = messenger.messageServiceFromURI(msgUriSpec);
 
         var decrypt = new DecryptMessageIntoFolder(destFolder, move, resolve);
 
-        Log.DEBUG("enigmailConvert.jsm: EnigmailDecryptPermanently: Calling msgHdrToMimeMessage\n");
+        Log.DEBUG("decryptPermanently.jsm: EnigmailDecryptPermanently: Calling msgHdrToMimeMessage\n");
         try {
           msgHdrToMimeMessage(hdr, decrypt, decrypt.messageParseCallback, true, {examineEncryptedParts: false, partsOnDemand: false});
         }
         catch (ex) {
-          Log.ERROR("enigmailConvert.jsm: msgHdrToMimeMessage failed: "+ex.toString()+"\n");
+          Log.ERROR("decryptPermanently.jsm: msgHdrToMimeMessage failed: "+ex.toString()+"\n");
           reject("msgHdrToMimeMessage failed");
         }
         return;
@@ -186,14 +186,14 @@ DecryptMessageIntoFolder.prototype = {
 
 DecryptMessageIntoFolder.prototype.
 messageParseCallback = function (hdr, mime) {
-  Log.DEBUG("enigmailConvert.jsm: messageParseCallback: started\n");
+  Log.DEBUG("decryptPermanently.jsm: messageParseCallback: started\n");
   this.hdr = hdr;
   this.mime = mime;
   var self = this;
 
   try {
     if (mime === null) {
-      Log.DEBUG("enigmailConvert.jsm: messageParseCallback: MimeMessage is null\n");
+      Log.DEBUG("decryptPermanently.jsm: messageParseCallback: MimeMessage is null\n");
       this.resolve(true);
       return;
     }
@@ -204,7 +204,7 @@ messageParseCallback = function (hdr, mime) {
     this.subject = GlodaUtils.deMime(getHeaderValue(mime, 'subject'));
 
     if (ct === null) {
-      Log.DEBUG("enigmailConvert.jsm: messageParseCallback: content-type is null\n");
+      Log.DEBUG("decryptPermanently.jsm: messageParseCallback: content-type is null\n");
       this.resolve(true);
       return;
     }
@@ -242,7 +242,7 @@ messageParseCallback = function (hdr, mime) {
 
     Promise.all(this.decryptionTasks).then(
       function (tasks) {
-        Log.DEBUG("enigmailConvert.jsm: all attachments done\n");
+        Log.DEBUG("decryptPermanently.jsm: all attachments done\n");
 
         self.allTasks = tasks;
         for (let a in tasks) {
@@ -265,7 +265,7 @@ messageParseCallback = function (hdr, mime) {
         }
 
         if (self.foundPGP === 0) {
-          Log.DEBUG("enigmailConvert.jsm: Appears to be no PGP message\n");
+          Log.DEBUG("decryptPermanently.jsm: Appears to be no PGP message\n");
           self.resolve(true);
           return;
         }
@@ -310,7 +310,7 @@ messageParseCallback = function (hdr, mime) {
             if (iid.equals(Ci.nsIMsgCopyServiceListener) ||iid.equals(Ci.nsISupports)){
               return this;
             }
-            Log.DEBUG("enigmailConvert.jsm: copyListener error\n");
+            Log.DEBUG("decryptPermanently.jsm: copyListener error\n");
             throw Components.results.NS_NOINTERFACE;
           },
           GetMessageId: function (messageId) {},
@@ -320,7 +320,7 @@ messageParseCallback = function (hdr, mime) {
           OnStopCopy: function (statusCode) {
             if (statusCode !== 0) {
               //XXX complain?
-              Log.DEBUG("enigmailConvert.jsm: Error copying message: "+ statusCode + "\n");
+              Log.DEBUG("decryptPermanently.jsm: Error copying message: "+ statusCode + "\n");
               try {
                 tempFile.remove(false);
               }
@@ -329,16 +329,16 @@ messageParseCallback = function (hdr, mime) {
                   fileSpec.remove(false);
                 }
                 catch(e2) {
-                  Log.DEBUG("enigmailConvert.jsm: Could not delete temp file\n");
+                  Log.DEBUG("decryptPermanently.jsm: Could not delete temp file\n");
                 }
               }
               self.resolve(true);
               return;
             }
-            Log.DEBUG("enigmailConvert.jsm: Copy complete\n");
+            Log.DEBUG("decryptPermanently.jsm: Copy complete\n");
 
             if (self.move) {
-              Log.DEBUG("enigmailConvert.jsm: Delete original\n");
+              Log.DEBUG("decryptPermanently.jsm: Delete original\n");
               var folderInfoObj = {};
               self.hdr.folder.getDBFolderInfoAndDB(folderInfoObj).DeleteMessage(self.hdr.messageKey, null, true);
             }
@@ -351,11 +351,11 @@ messageParseCallback = function (hdr, mime) {
                 fileSpec.remove(false);
               }
               catch(e2) {
-                Log.DEBUG("enigmailConvert.jsm: Could not delete temp file\n");
+                Log.DEBUG("decryptPermanently.jsm: Could not delete temp file\n");
               }
             }
 
-            Log.DEBUG("enigmailConvert.jsm: Cave Johnson. We're done\n");
+            Log.DEBUG("decryptPermanently.jsm: Cave Johnson. We're done\n");
             self.resolve(true);
           }
         };
@@ -365,14 +365,14 @@ messageParseCallback = function (hdr, mime) {
       }
     ).catch(
       function catchErr(errorMsg) {
-        Log.DEBUG("enigmailConvert.jsm: Promise.catchErr: "+errorMsg+"\n");
+        Log.DEBUG("decryptPermanently.jsm: Promise.catchErr: "+errorMsg+"\n");
         self.resolve(false);
       }
     );
 
   }
   catch(ex) {
-    Log.DEBUG("enigmailConvert.jsm: messageParseCallback: caught error "+ex.toString()+"\n");
+    Log.DEBUG("decryptPermanently.jsm: messageParseCallback: caught error "+ex.toString()+"\n");
     self.resolve(false);
   }
 };
@@ -381,10 +381,10 @@ DecryptMessageIntoFolder.prototype.
 readAttachment = function (attachment, strippedName) {
   return new Promise(
     function(resolve, reject) {
-      Log.DEBUG("enigmailConvert.jsm: readAttachment\n");
+      Log.DEBUG("decryptPermanently.jsm: readAttachment\n");
       let o;
       var f = function _cb(data) {
-          Log.DEBUG("enigmailConvert.jsm: readAttachment - got data ("+ data.length+")\n");
+          Log.DEBUG("decryptPermanently.jsm: readAttachment - got data ("+ data.length+")\n");
           o = {
             type: "attachment",
             data: data,
@@ -418,7 +418,7 @@ decryptAttachment = function(attachment, strippedName) {
 
   return new Promise(
     function(resolve, reject) {
-      Log.DEBUG("enigmailConvert.jsm: decryptAttachment\n");
+      Log.DEBUG("decryptPermanently.jsm: decryptAttachment\n");
       self.readAttachment(attachment, strippedName).then(
         function (o) {
           var attachmentHead = o.data.substr(0,30);
@@ -468,11 +468,11 @@ decryptAttachment = function(attachment, strippedName) {
 
             if ((listener.stdoutData && listener.stdoutData.length > 0) ||
                 (statusFlagsObj.value & nsIEnigmail.DECRYPTION_OKAY)) {
-              Log.DEBUG("enigmailConvert.jsm: decryptAttachment: decryption OK\n");
+              Log.DEBUG("decryptPermanently.jsm: decryptAttachment: decryption OK\n");
               exitCode = 0;
             }
             else if (statusFlagsObj.value & nsIEnigmail.DECRYPTION_FAILED) {
-              Log.DEBUG("enigmailConvert.jsm: decryptAttachment: decryption failed\n");
+              Log.DEBUG("decryptPermanently.jsm: decryptAttachment: decryption failed\n");
               if (EnigmailGpgAgent.useGpgAgent()) {
                 // since we cannot find out if the user wants to cancel
                 // we should ask
@@ -489,14 +489,14 @@ decryptAttachment = function(attachment, strippedName) {
             }
             else if (statusFlagsObj.value & nsIEnigmail.DECRYPTION_INCOMPLETE) {
               // failure; message not complete
-              Log.DEBUG("enigmailConvert.jsm: decryptAttachment: decryption incomplete\n");
+              Log.DEBUG("decryptPermanently.jsm: decryptAttachment: decryption incomplete\n");
               o.status = STATUS_FAILURE;
               resolve(o);
               return;
             }
             else {
               // there is nothing to be decrypted
-              Log.DEBUG("enigmailConvert.jsm: decryptAttachment: no decryption required\n");
+              Log.DEBUG("decryptPermanently.jsm: decryptAttachment: no decryption required\n");
               o.status = STATUS_NOT_REQUIRED;
               resolve(o);
               return;
@@ -505,7 +505,7 @@ decryptAttachment = function(attachment, strippedName) {
           } while (exitCode !== 0);
 
 
-          Log.DEBUG("enigmailConvert.jsm: decryptAttachment: decrypted to "+listener.stdoutData.length +" bytes\n");
+          Log.DEBUG("decryptPermanently.jsm: decryptAttachment: decrypted to "+listener.stdoutData.length +" bytes\n");
 
           o.data = listener.stdoutData;
           o.status = STATUS_OK;
@@ -526,10 +526,10 @@ decryptAttachment = function(attachment, strippedName) {
 
 DecryptMessageIntoFolder.prototype.
 walkMimeTree = function(mime, parent) {
-  Log.DEBUG("enigmailConvert.jsm: walkMimeTree:\n");
+  Log.DEBUG("decryptPermanently.jsm: walkMimeTree:\n");
   let ct = getContentType(getHeaderValue(mime, 'content-type'));
 
-  Log.DEBUG("enigmailConvert.jsm: walkMimeTree: part="+mime.partName+" - "+ ct+"\n");
+  Log.DEBUG("decryptPermanently.jsm: walkMimeTree: part="+mime.partName+" - "+ ct+"\n");
 
   // assign part name on lowest possible level -> that's where the attachment
   // really belongs to
@@ -569,7 +569,7 @@ walkMimeTree = function(mime, parent) {
 
 DecryptMessageIntoFolder.prototype.
 isBrokenByExchange = function(mime) {
-  Log.DEBUG("enigmailConvert.jsm: isBrokenByExchange:\n");
+  Log.DEBUG("decryptPermanently.jsm: isBrokenByExchange:\n");
 
   try {
     if (mime.parts && mime.parts.length && mime.parts.length == 1 &&
@@ -584,7 +584,7 @@ isBrokenByExchange = function(mime) {
         mime.parts[0].parts[2].headers["content-type"][0].indexOf("application/octet-stream") >= 0 &&
         mime.parts[0].parts[2].headers["content-type"][0].indexOf("encrypted.asc") >= 0) {
 
-      Log.DEBUG("enigmailConvert.jsm: isBrokenByExchange: found message broken by MS-Exchange\n");
+      Log.DEBUG("decryptPermanently.jsm: isBrokenByExchange: found message broken by MS-Exchange\n");
       return true;
     }
   }
@@ -597,7 +597,7 @@ isBrokenByExchange = function(mime) {
 
 DecryptMessageIntoFolder.prototype.
 isPgpMime = function(mime) {
-  Log.DEBUG("enigmailConvert.jsm: isPgpMime:\n");
+  Log.DEBUG("decryptPermanently.jsm: isPgpMime:\n");
   try {
     var ct = mime.contentType;
     if (!ct || ct === undefined) return false;
@@ -611,7 +611,7 @@ isPgpMime = function(mime) {
     }
   }
   catch(ex) {
-    //Log.DEBUG("enigmailConvert.jsm: isPgpMime:"+ex+"\n");
+    //Log.DEBUG("decryptPermanently.jsm: isPgpMime:"+ex+"\n");
   }
   return false;
 };
@@ -619,7 +619,7 @@ isPgpMime = function(mime) {
 // smime-type=enveloped-data
 DecryptMessageIntoFolder.prototype.
 isSMime = function(mime) {
-  Log.DEBUG("enigmailConvert.jsm: isSMime:\n");
+  Log.DEBUG("decryptPermanently.jsm: isSMime:\n");
   try {
     var ct = mime.contentType;
     if (!ct || ct === undefined) return false;
@@ -633,14 +633,14 @@ isSMime = function(mime) {
     }
   }
   catch(ex) {
-    Log.DEBUG("enigmailConvert.jsm: isSMime:"+ex+"\n");
+    Log.DEBUG("decryptPermanently.jsm: isSMime:"+ex+"\n");
   }
   return false;
 };
 
 DecryptMessageIntoFolder.prototype.
 decryptPGPMIME = function (mime, part) {
-  Log.DEBUG("enigmailConvert.jsm: decryptPGPMIME: part="+part+"\n");
+  Log.DEBUG("decryptPermanently.jsm: decryptPGPMIME: part="+part+"\n");
 
   var self = this;
 
@@ -656,11 +656,11 @@ decryptPGPMIME = function (mime, part) {
       let op = (u.value.spec.indexOf("?") > 0 ? "&" : "?");
       let url = u.value.spec + op + 'part=' + part+"&header=enigmailConvert";
 
-      Log.DEBUG("enigmailConvert.jsm: getting data from URL " + url +"\n");
+      Log.DEBUG("decryptPermanently.jsm: getting data from URL " + url +"\n");
 
       let s = Streams.newStringStreamListener(
         function analyzeDecryptedData(data) {
-          Log.DEBUG("enigmailConvert.jsm: analyzeDecryptedData: got " + data.length +" bytes\n");
+          Log.DEBUG("decryptPermanently.jsm: analyzeDecryptedData: got " + data.length +" bytes\n");
 
           if (Log.getLogLevel() > 5) {
             Log.DEBUG("*** start data ***\n'" + data +"'\n***end data***\n");
@@ -733,7 +733,7 @@ decryptPGPMIME = function (mime, part) {
         channel.asyncOpen(s, null);
       }
       catch(e) {
-        Log.DEBUG("enigmailConvert.jsm: decryptPGPMIME: exception " + e +"\n");
+        Log.DEBUG("decryptPermanently.jsm: decryptPGPMIME: exception " + e +"\n");
       }
     }
   );
@@ -743,7 +743,7 @@ decryptPGPMIME = function (mime, part) {
 //inline wonderland
 DecryptMessageIntoFolder.prototype.
 decryptINLINE = function (mime) {
-  Log.DEBUG("enigmailConvert.jsm: decryptINLINE:\n");
+  Log.DEBUG("decryptPermanently.jsm: decryptINLINE:\n");
   if (typeof mime.body !== 'undefined') {
     let ct = getContentType(getHeaderValue(mime, 'content-type'));
 
@@ -884,7 +884,7 @@ decryptINLINE = function (mime) {
   }
 
   let ct = getContentType(getHeaderValue(mime, 'content-type'));
-  Log.DEBUG("enigmailConvert.jsm: Decryption skipped:  "+ct+"\n");
+  Log.DEBUG("decryptPermanently.jsm: Decryption skipped:  "+ct+"\n");
 
   return 0;
 };
@@ -924,7 +924,7 @@ stripHTMLFromArmoredBlocks = function(text) {
 
 DecryptMessageIntoFolder.prototype.
 mimeToString = function (mime, topLevel) {
-  Log.DEBUG("enigmailConvert.jsm: mimeToString: part: '"+mime.partName+"'\n");
+  Log.DEBUG("decryptPermanently.jsm: mimeToString: part: '"+mime.partName+"'\n");
 
   let ct = getContentType(getHeaderValue(mime, 'content-type'));
 
@@ -939,7 +939,7 @@ mimeToString = function (mime, topLevel) {
 
 
   if (mime.isBrokenByExchange !== undefined) {
-    Log.DEBUG("enigmailConvert.jsm: mimeToString: MS-Exchange fix\n");
+    Log.DEBUG("decryptPermanently.jsm: mimeToString: MS-Exchange fix\n");
     for (let j in this.allTasks) {
       if (this.allTasks[j].partName == mime.parts[0].partName) {
 
@@ -963,7 +963,7 @@ mimeToString = function (mime, topLevel) {
            this.allTasks[j].origName == mime.name) {
 
         let a = this.allTasks[j];
-        Log.DEBUG("enigmailConvert.jsm: mimeToString: attaching "+ j + " as '"+ a.name +"'\n");
+        Log.DEBUG("decryptPermanently.jsm: mimeToString: attaching "+ j + " as '"+ a.name +"'\n");
 
         for (let header in mime.headers) {
           if (! (a.status == STATUS_OK && header == "content-type")) {
@@ -1140,7 +1140,7 @@ function prettyPrintHeader(headerLabel, headerData) {
 }
 
 function getHeaderValue(mimeStruct, header) {
-  Log.DEBUG("enigmailConvert.jsm: getHeaderValue: '" + header +"'\n");
+  Log.DEBUG("decryptPermanently.jsm: getHeaderValue: '" + header +"'\n");
 
   try {
     if (header in mimeStruct.headers) {
@@ -1155,7 +1155,7 @@ function getHeaderValue(mimeStruct, header) {
       return "";
   }
   catch(ex) {
-    Log.DEBUG("enigmailConvert.jsm: getHeaderValue: header not present\n");
+    Log.DEBUG("decryptPermanently.jsm: getHeaderValue: header not present\n");
     return "";
   }
 }
@@ -1202,7 +1202,7 @@ function getContentType(shdr) {
     return shdr.match(/([A-z-]+\/[A-z-]+)/)[1].toLowerCase();
   }
   catch (e) {
-    Log.DEBUG("enigmailConvert.jsm: getContentType: "+e+"\n");
+    Log.DEBUG("decryptPermanently.jsm: getContentType: "+e+"\n");
     return null;
   }
 }
@@ -1215,7 +1215,7 @@ function getBoundary(shdr) {
     return shdr.match(/boundary="?([A-z0-9'()+_,-.\/:=?]+)"?/i)[1];
   }
   catch (e) {
-    Log.DEBUG("enigmailConvert.jsm: getBoundary: "+e+"\n");
+    Log.DEBUG("decryptPermanently.jsm: getBoundary: "+e+"\n");
     return null;
   }
 }
@@ -1226,7 +1226,7 @@ function getCharset(shdr) {
     return shdr.match(/charset="?([A-z0-9'()+_,-.\/:=?]+)"?/)[1].toLowerCase();
   }
   catch (e) {
-    Log.DEBUG("enigmailConvert.jsm: getCharset: "+e+"\n");
+    Log.DEBUG("decryptPermanently.jsm: getCharset: "+e+"\n");
     return null;
   }
 }
@@ -1238,7 +1238,7 @@ function getProtocol(shdr) {
     return shdr.match(/protocol="?([A-z0-9'()+_,-.\/:=?]+)"?/)[1].toLowerCase();
   }
   catch (e) {
-    Log.DEBUG("enigmailConvert.jsm: getProtocol: "+e+"\n");
+    Log.DEBUG("decryptPermanently.jsm: getProtocol: "+e+"\n");
     return "";
   }
 }
@@ -1249,7 +1249,7 @@ function getSMimeProtocol(shdr) {
     return shdr.match(/smime-type="?([A-z0-9'()+_,-.\/:=?]+)"?/)[1].toLowerCase();
   }
   catch (e) {
-    Log.DEBUG("enigmailConvert.jsm: getSMimeProtocol: "+e+"\n");
+    Log.DEBUG("decryptPermanently.jsm: getSMimeProtocol: "+e+"\n");
     return "";
   }
 }
