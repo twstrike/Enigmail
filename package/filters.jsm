@@ -44,7 +44,7 @@
 var EXPORTED_SYMBOLS = [ "Filters" ];
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/enigmailConvert.jsm");
+Components.utils.import("resource://enigmail/decryptPermanently.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");

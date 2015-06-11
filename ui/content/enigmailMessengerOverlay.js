@@ -60,7 +60,7 @@ Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
-Components.utils.import("resource://enigmail/enigmailConvert.jsm");
+Components.utils.import("resource://enigmail/decryptPermanently.jsm");
 Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */

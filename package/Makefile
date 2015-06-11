@@ -33,9 +33,9 @@ MODFILES = \
            constants.jsm \
            data.jsm \
            decryption.jsm \
+           decryptPermanently.jsm \
            dialog.jsm \
            encryption.jsm \
-           enigmailConvert.jsm \
            enigmailCore.jsm \
            enigmailErrorHandling.jsm \
            enigmailFuncs.jsm \
