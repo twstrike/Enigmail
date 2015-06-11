@@ -161,7 +161,7 @@ function withEnigmail(f) {
                       createInstance(Components.interfaces.nsIEnigmail);
             const window = JSUnit.createStubWindow();
             enigmail.initialize(window, "");
-            return f(enigmail, window);
+            return f(EnigmailCore.getEnigmailService(), window);
         } finally {
             EnigmailCore.setEnigmailService(null);
         }
