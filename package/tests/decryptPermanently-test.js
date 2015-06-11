@@ -45,6 +45,8 @@ TestHelper.loadDirectly("tests/mailHelper.js"); /*global MailHelper: false */
 
 testing("decryptPermanently.jsm"); /*global DecryptPermanently: false */
 component("enigmail/keyRing.jsm"); /*global KeyRing: false */
+/*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
+component("enigmail/glodaMime.jsm");
 
 test(withTestGpgHome(function messageIsCopiedToNewDir() {
     loadSecretKey();
@@ -76,6 +78,32 @@ test(withTestGpgHome(function messageIsMovedToNewDir() {
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 0);
+}));
+
+test(withTestGpgHome(function messageIsMovedAndDecrypted() {
+    loadSecretKey();
+    MailHelper.cleanMailFolder(MailHelper.rootFolder);
+    const sourceFolder = MailHelper.createMailFolder("source-box");
+    MailHelper.loadEmailToMailFolder("resources/encrypted-email.eml", sourceFolder);
+
+    const header = MailHelper.fetchFirstMessageHeaderIn(sourceFolder);
+    const targetFolder = MailHelper.createMailFolder("target-box");
+    const move = true;
+    const reqSync = true;
+    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+
+    const dispatchedHeader = MailHelper.fetchFirstMessageHeaderIn(targetFolder);
+    do_test_pending();
+    msgHdrToMimeMessage(
+        dispatchedHeader,
+        null,
+        function(header, mime) {
+            Assert.ok(!mime.isEncrypted);
+            Assert.assertContains(mime.parts[0].body, "This is encrypted");
+             do_test_finished();
+        },
+        false
+    );
 }));
 
 var loadSecretKey = function() {
