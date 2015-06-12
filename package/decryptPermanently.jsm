@@ -122,7 +122,6 @@ const DecryptPermanently = {
       } else {
         // last message was finished processing
         done = true;
-        Log.DEBUG("decryptPermanently.jsm: dispatchMessage: exit nested loop\n");
         inspector.exitNestedEventLoop();
       }
     };
@@ -130,14 +129,12 @@ const DecryptPermanently = {
     promise.then(processNext);
 
     promise.catch(function(err) {
-      Log.ERROR("decryptPermanently.jsm: dispatchMessage: caught error: "+err+"\n");
       processNext(null);
     });
 
     if (requireSync && ! done) {
       // wait here until all messages processed, such that the function returns
       // synchronously
-      Log.DEBUG("decryptPermanently.jsm: dispatchMessage: enter nested loop\n");
       inspector.enterNestedEventLoop({value : 0});
     }
   },
@@ -147,18 +144,14 @@ const DecryptPermanently = {
       function(resolve, reject) {
         let msgUriSpec = hdr.folder.getUriForMsg(hdr);
 
-        Log.DEBUG("decryptPermanently.jsm: decryptMessage: MessageUri: "+msgUriSpec+"\n");
-
         const msgSvc = Cc["@mozilla.org/messenger;1"].createInstance(Ci.nsIMessenger).
                   messageServiceFromURI(msgUriSpec);
 
         const decrypt = new DecryptMessageIntoFolder(destFolder, move, resolve);
 
-        Log.DEBUG("decryptPermanently.jsm: DecryptPermanently: Calling msgHdrToMimeMessage\n");
         try {
           msgHdrToMimeMessage(hdr, decrypt, decrypt.messageParseCallback, true, {examineEncryptedParts: false, partsOnDemand: false});
         } catch (ex) {
-          Log.ERROR("decryptPermanently.jsm: msgHdrToMimeMessage failed: "+ex.toString()+"\n");
           reject("msgHdrToMimeMessage failed");
         }
         return;
@@ -181,15 +174,12 @@ function DecryptMessageIntoFolder(destFolder, move, resolve) {
 
 DecryptMessageIntoFolder.prototype = {
     messageParseCallback: function (hdr, mime) {
-        Log.DEBUG("decryptPermanently.jsm: messageParseCallback: started\n");
-        dump("ALL MIME.hdr: \n" + "\nALL MIME.mime: \n" + JSON.stringify(mime) + "\n");
         this.hdr = hdr;
         this.mime = mime;
         var self = this;
 
         try {
             if (mime === null) {
-                Log.DEBUG("decryptPermanently.jsm: messageParseCallback: MimeMessage is null\n");
                 this.resolve(true);
                 return;
             }
@@ -200,7 +190,6 @@ DecryptMessageIntoFolder.prototype = {
             this.subject = GlodaUtils.deMime(getHeaderValue(mime, 'subject'));
 
             if (ct === null) {
-                Log.DEBUG("decryptPermanently.jsm: messageParseCallback: content-type is null\n");
                 this.resolve(true);
                 return;
             }
@@ -210,7 +199,6 @@ DecryptMessageIntoFolder.prototype = {
 
             this.decryptINLINE(this.mime);
             if (this.foundPGP < 0) {
-                Log.DEBUG("decryptPermanently.jsm: messageParseCallback: PGP not found. Decryption failed.\n");
                 // decryption failed
                 this.resolve(true);
                 return;
@@ -219,7 +207,6 @@ DecryptMessageIntoFolder.prototype = {
 
             for (let i in this.mime.allAttachments) {
                 let a =  this.mime.allAttachments[i];
-                dump("attachment name: " + a.name.toLowerCase() + ", content-type: " + a.contentType + "\n");
                 let suffixIndexEnd = a.name.toLowerCase().lastIndexOf('.pgp');
                 if (suffixIndexEnd < 0) {
                     suffixIndexEnd = a.name.toLowerCase().lastIndexOf('.asc');
@@ -229,7 +216,6 @@ DecryptMessageIntoFolder.prototype = {
                     a.contentType.search(/application\/pgp-signature/i) < 0) {
 
                     // possible OpenPGP attachment
-                    Log.DEBUG("decryptPermanently.jsm: messageParseCallback: PossiblePGP attachment.\n");
                     let p = self.decryptAttachment(a, a.name.substring(0, suffixIndexEnd));
                     this.decryptionTasks.push(p);
                 }
@@ -241,12 +227,8 @@ DecryptMessageIntoFolder.prototype = {
 
             Promise.all(this.decryptionTasks).then(
                 function (tasks) {
-                    Log.DEBUG("decryptPermanently.jsm: all attachments done\n");
-
                     self.allTasks = tasks;
                     for (let a in tasks) {
-                        Log.DEBUG("decryptPermanently.jsm: task under evaluation: " + a + "\n");
-
                         switch (tasks[a].status) {
                         case STATUS_NOT_REQUIRED:
                             tasks[a].name = tasks[a].origName;
@@ -265,7 +247,6 @@ DecryptMessageIntoFolder.prototype = {
                     }
 
                     if (self.foundPGP === 0) {
-                        Log.DEBUG("decryptPermanently.jsm: Appears to be no PGP message\n");
                         self.resolve(true);
                         return;
                     }
