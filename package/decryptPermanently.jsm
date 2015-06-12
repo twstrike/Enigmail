@@ -244,6 +244,7 @@ DecryptMessageIntoFolder.prototype = {
 
                     self.allTasks = tasks;
                     for (let a in tasks) {
+                        Log.DEBUG("decryptPermanently.jsm: task under evaluation: " + a + "\n");
 
                         switch (tasks[a].status) {
                         case STATUS_NOT_REQUIRED:
@@ -267,7 +268,6 @@ DecryptMessageIntoFolder.prototype = {
                         self.resolve(true);
                         return;
                     }
-
 
                     var msg = self.mimeToString(self.mime, true);
 
@@ -909,7 +909,7 @@ DecryptMessageIntoFolder.prototype = {
      ******/
 
     mimeToString: function (mime, topLevel) {
-        Log.DEBUG("decryptPermanently.jsm: mimeToString: part: '"+mime.partName+"'\n");
+        Log.DEBUG("decryptPermanently.jsm: mimeToString: part: '"+mime.partName+"', is of type '" + typeof(mime) + "'\n");
 
         let ct = getContentType(getHeaderValue(mime, 'content-type'));
 
@@ -920,8 +920,6 @@ DecryptMessageIntoFolder.prototype = {
         let boundary = getBoundary(getHeaderValue(mime, 'content-type'));
 
         let msg = "";
-
-
 
         if (mime.isBrokenByExchange !== undefined) {
             Log.DEBUG("decryptPermanently.jsm: mimeToString: MS-Exchange fix\n");
