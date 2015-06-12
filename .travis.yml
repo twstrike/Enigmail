@@ -11,7 +11,7 @@ script:
   - export DISPLAY=:99
   - ./configure --enable-tests --with-tb-path=$(which thunderbird)
   - make
-  - ./build.sh > /dev/null 2>&0
+  - ./build.sh
   - ./test.sh
 after_failure:
   - cat test_output.log
