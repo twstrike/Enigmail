@@ -39,7 +39,7 @@
 
 "use strict";
 
-do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global withEnigmail: false, withTestGpgHome: false */
+do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global withEnigmail: false, withTestGpgHome: false, getKeyListEntryOfKey: false, secretKeyList: false, userIdList: false */
 
 testing("keyRing.jsm"); /*global KeyRing: false */
 

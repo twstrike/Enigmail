@@ -43,7 +43,7 @@
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestHelper: false, component: false, withTestGpgHome: false, withEnigmail: false */
 TestHelper.loadDirectly("tests/mailHelper.js"); /*global MailHelper: false */
 
-testing("decryptPermanently.jsm"); /*global DecryptPermanently: false */
+testing("decryptPermanently.jsm"); /*global DecryptPermanently: false, Promise: false */
 component("enigmail/keyRing.jsm"); /*global KeyRing: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
 component("enigmail/glodaMime.jsm");

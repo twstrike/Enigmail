@@ -238,8 +238,7 @@ function getKeyListEntryOfKey(keyId) {
     } else {
         res = listText.substring(startPos);
     }
-    dump(res);
-    return res
+    return res;
 }
 
 const KeyRing = {
