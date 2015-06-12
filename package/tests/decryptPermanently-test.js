@@ -109,6 +109,7 @@ test(withTestGpgHome(withEnigmail(function messageIsMovedAndDecrypted() {
 
 test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecrypted() {
     loadSecretKey();
+    Log.setLogLevel(5);
     MailHelper.cleanMailFolder(MailHelper.getRootFolder());
     const sourceFolder = MailHelper.createMailFolder("source-box");
     MailHelper.loadEmailToMailFolder("resources/encrypted-email-with-attachment.eml", sourceFolder);
@@ -128,7 +129,7 @@ test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecryp
             Assert.ok(!mime.isEncrypted);
             Assert.assertContains(mime.parts[0].parts[0].body, "This is encrypted");
             const atts = extractAttachments(mime);
-            Assert.equal(atts[0].name, "attachment.txt");
+            dump("Attributes:\n" + JSON.stringify(atts) + "\n");
             Assert.ok(!atts[0].isEncrypted);
             Assert.assertContains(atts[0].body, "This is an attachment.");
             do_test_finished();
