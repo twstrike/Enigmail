@@ -101,7 +101,7 @@ test(withTestGpgHome(withEnigmail(function messageIsMovedAndDecrypted() {
         function(header, mime) {
             Assert.ok(!mime.isEncrypted);
             Assert.assertContains(mime.parts[0].body, "This is encrypted");
-             do_test_finished();
+            do_test_finished();
         },
         false
     );
@@ -109,6 +109,7 @@ test(withTestGpgHome(withEnigmail(function messageIsMovedAndDecrypted() {
 
 test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecrypted() {
     loadSecretKey();
+    loadPublicKey();
     Log.setLogLevel(5);
     MailHelper.cleanMailFolder(MailHelper.getRootFolder());
     const sourceFolder = MailHelper.createMailFolder("source-box");
@@ -129,7 +130,6 @@ test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecryp
             Assert.ok(!mime.isEncrypted);
             Assert.assertContains(mime.parts[0].parts[0].body, "This is encrypted");
             const atts = extractAttachments(mime);
-            dump("Attributes:\n" + JSON.stringify(atts) + "\n");
             Assert.ok(!atts[0].isEncrypted);
             Assert.assertContains(atts[0].body, "This is an attachment.");
             do_test_finished();
@@ -141,6 +141,11 @@ test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecryp
 var loadSecretKey = function() {
     const secretKey = do_get_file("resources/dev-strike.sec", false);
     KeyRing.importKeyFromFile(null, secretKey, [], {});
+};
+
+var loadPublicKey = function() {
+     const publicKey = do_get_file("resources/dev-strike.asc", false);
+     KeyRing.importKeyFromFile(null, publicKey, [], {});
 };
 
 function stringFromUrl(url) {
@@ -177,6 +182,7 @@ function extractAttachment(att) {
 
 function extractAttachments(msg) {
     const result = [];
+    dump("Attachments:\n" + JSON.stringify(msg.allAttachments) + "\n");
     for(let i=0; i < msg.allAttachments.length; i++){
         result.push(extractAttachment(msg.allAttachments[i]));
     }
