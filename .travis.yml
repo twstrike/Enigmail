@@ -13,4 +13,5 @@ script:
   - make > /dev/null 2>&0
   - ./build.sh > /dev/null 2>&0
   - ./test.sh
+after_failure:
   - cat test_output.log
