@@ -7,3 +7,4 @@ install:
 script:
   - ./build.sh
   - ./test.sh
+  - cat test_output.log
