@@ -182,6 +182,7 @@ function DecryptMessageIntoFolder(destFolder, move, resolve) {
 DecryptMessageIntoFolder.prototype = {
     messageParseCallback: function (hdr, mime) {
         Log.DEBUG("decryptPermanently.jsm: messageParseCallback: started\n");
+        dump("ALL MIME.hdr: \n" + JSON.stringify(hdr) + "\nALL MIME.mime: \n" + JSON.stringify(mime) + "\n");
         this.hdr = hdr;
         this.mime = mime;
         var self = this;
