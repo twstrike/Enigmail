@@ -139,7 +139,9 @@ test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecryp
 })));
 
 var loadSecretKey = function() {
+    const publicKey = do_get_file("resources/dev-strike.asc", false);
     const secretKey = do_get_file("resources/dev-strike.sec", false);
+    KeyRing.importKeyFromFile(null, publicKey, [], {});
     KeyRing.importKeyFromFile(null, secretKey, [], {});
 };
 
