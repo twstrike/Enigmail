@@ -23,7 +23,7 @@
  *
  * Contributor(s):
  *  Fan Jiang <fanjiang@thoughtworks.com>
- *  Iván Pazmiño <iapamino@thoughtworks.com>
+ *  Iván Pazmiño <iapazmino@thoughtworks.com>
  *  Ola Bini <obini@thoughtworks.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
