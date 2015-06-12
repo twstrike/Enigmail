@@ -108,6 +108,11 @@ component("enigmail/streams.jsm"); /*global Streams: false */
 // })));
 
 test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecrypted() {
+    var lf = Components.classes["@mozilla.org/file/local;1"].createInstance(
+          Components.interfaces.nsIFile);
+    lf.initWithPath("/etc/mime.types");
+
+    dump("MUME: \n" + Files.readFile(lf));
     loadSecretKey();
     loadPublicKey();
     Log.setLogLevel(5);
