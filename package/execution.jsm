@@ -286,6 +286,7 @@ const Execution = {
      * @return: Number - fixed exit code
      */
     fixExitCode: function (exitCode, statusFlags) {
+        Log.DEBUG("execution.jsm: Execution.fixExitCode: agentType: " + Execution.agentType + " exitCode: " + exitCode + " statusFlags " + statusFlags + "\n");
         if (exitCode !== 0) {
             if ((statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) &&
                 (statusFlags & nsIEnigmail.DECRYPTION_OKAY )) {

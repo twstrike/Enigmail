@@ -132,7 +132,7 @@ test(function shouldHandleFailedEncryption() {
     const errorOutput = "gpg: encrypted with 4096-bit RSA key, ID B60E9E71, created 2015-05-04\n" +
               "\"anonymous strike <strike.devtest@gmail.com>\"\n" +
               "[GNUPG:] BEGIN_DECRYPTION\n" +
-              "[GNUPG:] DECRYPTION_INFO 2 9\n" +
+             "[GNUPG:] DECRYPTION_INFO 2 9\n" +
               "[GNUPG:] PLAINTEXT 62 1431644287 text.txt\n" +
               "[GNUPG:] PLAINTEXT_LENGTH 15\n" +
               "File `textd.txt' exists. Overwrite? (y/N) y\n" +
