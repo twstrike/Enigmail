@@ -209,6 +209,7 @@ DecryptMessageIntoFolder.prototype = {
 
             this.decryptINLINE(this.mime);
             if (this.foundPGP < 0) {
+                Log.DEBUG("decryptPermanently.jsm: messageParseCallback: PGP not found. Decryption failed.\n");
                 // decryption failed
                 this.resolve(true);
                 return;
@@ -217,6 +218,7 @@ DecryptMessageIntoFolder.prototype = {
 
             for (let i in this.mime.allAttachments) {
                 let a =  this.mime.allAttachments[i];
+                dump("attachment name: " + a.name.toLowerCase() + ", content-type: " + a.contentType + "\n");
                 let suffixIndexEnd = a.name.toLowerCase().lastIndexOf('.pgp');
                 if (suffixIndexEnd < 0) {
                     suffixIndexEnd = a.name.toLowerCase().lastIndexOf('.asc');
@@ -226,6 +228,7 @@ DecryptMessageIntoFolder.prototype = {
                     a.contentType.search(/application\/pgp-signature/i) < 0) {
 
                     // possible OpenPGP attachment
+                    Log.DEBUG("decryptPermanently.jsm: messageParseCallback: PossiblePGP attachment.\n");
                     let p = self.decryptAttachment(a, a.name.substring(0, suffixIndexEnd));
                     this.decryptionTasks.push(p);
                 }
