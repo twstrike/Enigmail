@@ -3,7 +3,7 @@ sudo: required
 compiler:
   - gcc
 install:
-  ./provision.sh
+  provisioning/provision-travis.sh
 script:
   - ./configure
   - make > /dev/null 2>&1
