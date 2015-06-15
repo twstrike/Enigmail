@@ -44,7 +44,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global Enigma
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
-Components.utils.import("resource://enigmail/os.jsm");
+const EnigmailOS = Components.utils.import("resource://enigmail/os.jsm").OS;
 Components.utils.import("resource://enigmail/armor.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
@@ -437,7 +437,7 @@ Enigmail.msg = {
     this.disableSmime = false;
 
     var toobarElem = document.getElementById("composeToolbar2");
-    if (toobarElem && (OS.getOS() == "Darwin")) {
+    if (toobarElem && (EnigmailOS.getOS() == "Darwin")) {
       toobarElem.setAttribute("platform", "macos");
     }
 
@@ -445,14 +445,14 @@ Enigmail.msg = {
     var adrCol = document.getElementById("addressCol2#1");  // recipients field
     if (adrCol) {
       let attr = adrCol.getAttribute("oninput");
-      adrCol.setAttribute("oninput", attr+"; Enigmail.msg.addressOnChange().bind(Enigmail.msg);");
+      adrCol.setAttribute("oninput", attr+"; Enigmail.msg.addressOnChange();");
       attr = adrCol.getAttribute("onchange");
-      adrCol.setAttribute("onchange", attr+"; Enigmail.msg.addressOnChange().bind(Enigmail.msg);");
+      adrCol.setAttribute("onchange", attr+"; Enigmail.msg.addressOnChange();");
     }
     adrCol = document.getElementById("addressCol1#1");      // to/cc/bcc/... field
     if (adrCol) {
       let attr = adrCol.getAttribute("oncommand");
-      adrCol.setAttribute("oncommand", attr+"; Enigmail.msg.addressOnChange().bind(Enigmail.msg);");
+      adrCol.setAttribute("oncommand", attr+"; Enigmail.msg.addressOnChange();");
     }
 
     var draftId = gMsgCompose.compFields.draftId;
