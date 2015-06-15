@@ -468,7 +468,7 @@ Enigmail.msg = {
           msgUri = gMsgCompose.originalMsgURI;
         }
 
-        if (msgUri !== null) {
+        if (msgUri) {
           msgFlags = this.getMsgProperties(msgUri, msgIsDraft);
           if (! msgIsDraft) {
             if (msgFlags & nsIEnigmail.DECRYPTION_OKAY) {
@@ -1748,7 +1748,7 @@ Enigmail.msg = {
       // if not clear whether to encrypt yet, check whether automatically-send-encrypted applies
       if (toAddrList.length > 0 && this.encryptByRules == Constants.ENIG_UNDEF && Prefs.getPref("autoSendEncrypted") == 1) {
         var validKeyList = Enigmail.hlp.validKeysForAllRecipients(toAddrList.join(", "));
-        if (validKeyList !== null) {
+        if (validKeyList) {
           this.encryptByRules = Constants.ENIG_AUTO_ALWAYS;
         }
       }
@@ -2257,7 +2257,7 @@ Enigmail.msg = {
     // - check whether bcc is empty here? if (bccAddrStr.length === 0)
     if (toAddrStr.length > 0 && this.encryptByRules == Constants.ENIG_UNDEF && Prefs.getPref("autoSendEncrypted") == 1) {
       var validKeyList = Enigmail.hlp.validKeysForAllRecipients(toAddrStr);
-      if (validKeyList !== null) {
+      if (validKeyList) {
         this.encryptByRules = Constants.ENIG_AUTO_ALWAYS;
         toAddrStr = validKeyList.join(", ");
       }
@@ -2379,7 +2379,7 @@ Enigmail.msg = {
     var details = {};  // will contain msgList[] afterwards
     if (Prefs.getPref("assignKeysByEmailAddr")) {
       var validKeyList = Enigmail.hlp.validKeysForAllRecipients(toAddrStr, details);
-      if (validKeyList !== null) {
+      if (validKeyList) {
         toAddrStr = validKeyList.join(", ");
       }
     }
@@ -2676,7 +2676,7 @@ Enigmail.msg = {
 
     let useEnigmail = this.preferPgpOverSmime(sendFlags);
 
-    if (useEnigmail === null) return false; // dialog aborted
+    if (!useEnigmail) return false; // dialog aborted
     if (useEnigmail === false) return true; // use S/MIME
 
     // Try to save draft
@@ -2813,7 +2813,7 @@ Enigmail.msg = {
         if (gMsgCompose.compFields.securityInfo instanceof Components.interfaces.nsIEnigMsgCompFields) {
           gMsgCompose.compFields.securityInfo.sendFlags=0;
         }
-        else if (gMsgCompose.compFields.securityInfo === null) {
+        else if (!gMsgCompose.compFields.securityInfo) {
           throw "dummy";
         }
       }
@@ -3007,7 +3007,7 @@ Enigmail.msg = {
 
        var useEnigmail = this.preferPgpOverSmime(sendFlags);
 
-       if (useEnigmail === null) return false; // dialog aborted
+       if (!useEnigmail) return false; // dialog aborted
        if (useEnigmail === false) {
           // use S/MIME
           sendFlags = 0;

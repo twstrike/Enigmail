@@ -301,7 +301,7 @@ const KeyRing = {
      */
     getPubKeyIdForSubkey: function (keyId) {
         const entry = getKeyListEntryOfKey(keyId);
-        if (entry === null) {
+        if (!entry) {
             return null;
         }
 
@@ -325,7 +325,7 @@ const KeyRing = {
         Log.DEBUG("enigmail.js: Enigmail.getFirstUserIdOfKey() keyId='"+ keyId +"'\n");
 
         const entry = getKeyListEntryOfKey(keyId);
-        if (entry === null) {
+        if (!entry) {
             return null;
         }
 
@@ -985,7 +985,7 @@ const KeyRing = {
         const exitCodeObj = {};
         const errorMsgObj = {};
 
-        if (refresh === null) refresh = false;
+        if (!refresh) refresh = false;
         const keyList = KeyRing.getUserIdList(true, refresh, exitCodeObj, {}, errorMsgObj);
 
         if (exitCodeObj.value !== 0 && keyList.length === 0) {
@@ -1017,7 +1017,7 @@ const KeyRing = {
                 if (aLine[1].search(/[muf]/) === 0) keyId = aLine[4]; // public key is valid
                 break;
             case "uid":
-                if ((keyId !== null) && (aLine[1].search(/[muf]/) === 0)) {
+                if ((keyId) && (aLine[1].search(/[muf]/) === 0)) {
                     // UID is valid
                     keys.push({ name: Data.convertGpgToUnicode(aLine[9]),
                                 id: keyId,

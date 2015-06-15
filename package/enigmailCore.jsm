@@ -21,7 +21,7 @@ let envList = null;           // currently filled from enigmail.js
 function lazy(importName, name) {
     let holder = null;
     return function(f) {
-        if(holder === null) {
+        if(!holder) {
             if(f) {
                 holder = f();
             } else {
@@ -74,7 +74,7 @@ const EnigmailCore = {
     },
 
     ensuredEnigmailService: function(f) {
-        if(enigmailHolder.svc === null) {
+        if(!enigmailHolder.svc) {
             EnigmailCore.setEnigmailService(f());
         }
         return enigmailHolder.svc;

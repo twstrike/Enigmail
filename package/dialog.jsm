@@ -72,17 +72,17 @@ const Dialog = {
      */
     confirmDlg: function (win, mesg, okLabel, cancelLabel) {
         var buttonTitles = 0;
-        if (okLabel === null && cancelLabel === null) {
+        if (!okLabel && !cancelLabel) {
             buttonTitles = (gPromptSvc.BUTTON_TITLE_YES * BUTTON_POS_0) +
                            (gPromptSvc.BUTTON_TITLE_NO  * BUTTON_POS_1);
         } else {
-            if (okLabel !== null) {
+            if (okLabel) {
                 buttonTitles += (gPromptSvc.BUTTON_TITLE_IS_STRING * gPromptSvc.BUTTON_POS_0);
             } else {
                 buttonTitles += gPromptSvc.BUTTON_TITLE_OK * BUTTON_POS_0;
             }
 
-            if (cancelLabel !== null) {
+            if (cancelLabel) {
                 buttonTitles += (gPromptSvc.BUTTON_TITLE_IS_STRING * gPromptSvc.BUTTON_POS_1);
             } else {
                 buttonTitles += gPromptSvc.BUTTON_TITLE_CANCEL * BUTTON_POS_1;
@@ -263,17 +263,17 @@ const Dialog = {
         const dontDisplay = false;
 
         var buttonTitles = 0;
-        if (okLabel === null && cancelLabel === null) {
+        if (!okLabel && !cancelLabel) {
             buttonTitles = (gPromptSvc.BUTTON_TITLE_YES * BUTTON_POS_0) +
                 (gPromptSvc.BUTTON_TITLE_NO * BUTTON_POS_1);
         } else {
-            if (okLabel !== null) {
+            if (okLabel) {
                 buttonTitles += (gPromptSvc.BUTTON_TITLE_IS_STRING * gPromptSvc.BUTTON_POS_0);
             } else {
                 buttonTitles += gPromptSvc.BUTTON_TITLE_OK * BUTTON_POS_0;
             }
 
-            if (cancelLabel !== null) {
+            if (cancelLabel) {
                 buttonTitles += (gPromptSvc.BUTTON_TITLE_IS_STRING * gPromptSvc.BUTTON_POS_1);
             } else {
                 buttonTitles += gPromptSvc.BUTTON_TITLE_CANCEL * BUTTON_POS_1;

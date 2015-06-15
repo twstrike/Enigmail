@@ -158,7 +158,7 @@ function upgradeHeadersView() {
     }
     catch (ex) {}
 
-    if (hdrMode === null) hdrMode = 1;
+    if (!hdrMode) hdrMode = 1;
     try {
         Prefs.getPrefBranch().clearUserPref("show_headers");
     }

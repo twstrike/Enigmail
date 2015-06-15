@@ -77,7 +77,7 @@ var gIsGpgAgent = -1;
 const DUMMY_AGENT_INFO = "none";
 
 function cloneOrNull(v) {
-    if(v !== null && typeof v.clone === "function") {
+    if(v && typeof v.clone === "function") {
         return v.clone();
     } else {
         return v;
@@ -514,7 +514,7 @@ const EnigmailGpgAgent = {
         }
 
         const foundPath = Files.resolvePath(fileName, EnigmailCore.getEnigmailService().environment.get("PATH"), OS.isDosLike());
-        if (foundPath !== null) { foundPath.normalize(); }
+        if (foundPath) { foundPath.normalize(); }
         return foundPath;
     },
 
@@ -696,7 +696,7 @@ const EnigmailGpgAgent = {
     },
 
     finalize: function() {
-        if (EnigmailGpgAgent.gpgAgentProcess !== null) {
+        if (EnigmailGpgAgent.gpgAgentProcess) {
             Log.DEBUG("enigmailGpgAgent.jsm: EnigmailGpgAgent.finalize: stopping gpg-agent PID="+EnigmailGpgAgent.gpgAgentProcess+"\n");
             try {
                 const libc = ctypes.open(subprocess.getPlatformValue(0));

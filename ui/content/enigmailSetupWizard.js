@@ -689,7 +689,7 @@ function loadKeys() {
   var statusFlagsObj = {};
   var errorMsgObj = {};
   var keyList = KeyRing.getSecretKeys(window, true);
-  if (keyList === null) {
+  if (!keyList) {
     return;
   }
 
@@ -791,7 +791,7 @@ function checkPassphrase() {
 
   if (Gpg.getGpgFeature("keygen-passphrase")) {
     var passphrase = enigmailCheckPassphrase();
-    if (passphrase === null) return false;
+    if (!passphrase) return false;
 
     if (passphrase.length < 8) {
       EnigAlert(EnigGetString("passphrase.min8keys"));

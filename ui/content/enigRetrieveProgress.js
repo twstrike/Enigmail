@@ -161,7 +161,7 @@ function onLoad() {
 
   var errorMsgObj={};
   gProcess = KeyServer.access(inArg.accessType, inArg.keyServer, inArg.keyList, procListener, errorMsgObj);
-  if (gProcess === null) {
+  if (!gProcess) {
     EnigAlert(Locale.getString("sendKeysFailed")+"\n"+EnigConvertGpgToUnicode(errorMsgObj.value));
   }
 

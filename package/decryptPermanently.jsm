@@ -179,7 +179,7 @@ DecryptMessageIntoFolder.prototype = {
         var self = this;
 
         try {
-            if (mime === null) {
+            if (!mime) {
                 this.resolve(true);
                 return;
             }
@@ -189,7 +189,7 @@ DecryptMessageIntoFolder.prototype = {
 
             this.subject = GlodaUtils.deMime(getHeaderValue(mime, 'subject'));
 
-            if (ct === null) {
+            if (!ct) {
                 this.resolve(true);
                 return;
             }
@@ -253,7 +253,7 @@ DecryptMessageIntoFolder.prototype = {
 
                     var msg = self.mimeToString(self.mime, true);
 
-                    if (msg === null || msg === "") {
+                    if (!msg || msg === "") {
                         // no message data found
                         self.resolve(true);
                         return;
@@ -573,11 +573,11 @@ DecryptMessageIntoFolder.prototype = {
         Log.DEBUG("decryptPermanently.jsm: isPgpMime:\n");
         try {
             var ct = mime.contentType;
-            if (!ct || ct === undefined) return false;
+            if (!ct) return false;
             if (! ('content-type' in mime.headers)) return false;
 
             var pt = getProtocol(getHeaderValue(mime, 'content-type'));
-            if (!pt || pt === undefined) return false;
+            if (!pt) return false;
 
             if (ct.toLowerCase() == "multipart/encrypted" && pt == "application/pgp-encrypted") {
                 return true;
@@ -594,11 +594,11 @@ DecryptMessageIntoFolder.prototype = {
         Log.DEBUG("decryptPermanently.jsm: isSMime:\n");
         try {
             var ct = mime.contentType;
-            if (!ct || ct === undefined) return false;
+            if (!ct) return false;
             if (! ('content-type' in mime.headers)) return false;
 
             var pt = getSMimeProtocol(getHeaderValue(mime, 'content-type'));
-            if (!pt || pt === undefined) return false;
+            if (!pt) return false;
 
             if (ct.toLowerCase() == "application/pkcs7-mime" && pt == "enveloped-data") {
                 return true;
@@ -806,7 +806,7 @@ DecryptMessageIntoFolder.prototype = {
                     if (plaintext) {
                         plaintexts.push(plaintext);
                     }
-                } while (plaintext === null || plaintext === "");
+                } while (!plaintext || plaintext === "");
             }
 
 
@@ -895,7 +895,7 @@ DecryptMessageIntoFolder.prototype = {
 
         let ct = getContentType(getHeaderValue(mime, 'content-type'));
 
-        if (ct === null) {
+        if (!ct) {
             return "";
         }
 
@@ -903,7 +903,7 @@ DecryptMessageIntoFolder.prototype = {
 
         let msg = "";
 
-        if (mime.isBrokenByExchange !== undefined) {
+        if (mime.isBrokenByExchange) {
             Log.DEBUG("decryptPermanently.jsm: mimeToString: MS-Exchange fix\n");
             for (let j in this.allTasks) {
                 if (this.allTasks[j].partName == mime.parts[0].partName) {
@@ -992,7 +992,7 @@ DecryptMessageIntoFolder.prototype = {
 
             msg +="\r\n";
 
-            if (mime.body !== undefined) {
+            if (mime.body) {
                 msg += mime.body + "\r\n";
             }
             else if ((mime instanceof MimeMessage) && ct.substr(0,5) != "text/") {
@@ -1011,7 +1011,7 @@ DecryptMessageIntoFolder.prototype = {
         }
 
         if (ct.indexOf("multipart/") === 0 && ! (mime instanceof MimeContainer)) {
-            if (mime.noBottomBoundary === undefined) {
+            if (!mime.noBottomBoundary) {
                 msg += "--" + boundary + "--\r\n";
             }
         }

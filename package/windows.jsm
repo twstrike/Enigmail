@@ -389,7 +389,7 @@ const Windows = {
     showPhoto: function (win, keyId, userId, photoNumber) {
         const enigmailSvc = EnigmailCore.getService(win);
         if (enigmailSvc) {
-            if (photoNumber === null) photoNumber=0;
+            if (!photoNumber) photoNumber=0;
 
             if (keyId.search(/^0x/) < 0) {
                 keyId = "0x" + keyId;

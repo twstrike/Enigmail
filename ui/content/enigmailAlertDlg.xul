@@ -94,7 +94,7 @@
       var checkboxLabel=window.arguments[0].checkboxLabel;
       var m=msgtext.match(/(\n)/g);
       var lines = 2;
-      if (m == null) {
+      if (!m) {
         lines = (msgtext.length / 80) + 2;
       }
       else {

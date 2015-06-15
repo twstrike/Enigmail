@@ -480,7 +480,7 @@ Enigmail.hlp = {
       // key trust (our sort criterion) too low?
       // => *** regular END of the loop
       if (keyTrustIndex < minTrustLevelIndex) {
-        if (foundKeyId === null) {
+        if (!foundKeyId) {
           if (details) {
             details.msg = "ProblemNoKey";
           }
@@ -519,7 +519,7 @@ Enigmail.hlp = {
 
           if (foundKeyId != keyObj.keyId) {
             // new matching key found (note: might find same key via subkeys)
-            if (foundKeyId !== null) {
+            if (foundKeyId) {
               // different matching keys found
               if (foundKeyTrustIndex > keyTrustIndex) {
                 return foundKeyId;   // OK, previously found key has higher trust level
@@ -568,7 +568,7 @@ Enigmail.hlp = {
 
             if (foundKeyId != keyObj.keyId) {
               // new matching key found (note: might find same key via different subkeys)
-              if (foundKeyId !== null) {
+              if (foundKeyId) {
                 // different matching keys found
                 if (foundKeyTrustIndex > subUidTrustIndex) {
                   return foundKeyId;   // OK, previously found key has higher trust level
@@ -593,7 +593,7 @@ Enigmail.hlp = {
 
     } // **** LOOP to check against each key
 
-    if (foundKeyId === null) {
+    if (!foundKeyId) {
       Log.DEBUG("enigmailMsgComposeHelper.js: getValidKeyForRecipient():  no key for '" + emailAddr + "' found\n");
     }
     return foundKeyId;

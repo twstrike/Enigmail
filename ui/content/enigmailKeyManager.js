@@ -1336,7 +1336,7 @@ function enigApplyFilter()
     }
     // does the full fingerprint (without spaces) match?
     // - no partial match check because this is special for the collapsed spaces inside the fingerprint
-    if (showNode===false && fpr !== null && gKeyList[node.id].fpr.toLowerCase() == fpr) {
+    if (showNode===false && fpr && gKeyList[node.id].fpr.toLowerCase() == fpr) {
       showNode = true;
     }
     // does the fingerprint (partially) match?

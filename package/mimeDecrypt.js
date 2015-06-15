@@ -108,7 +108,7 @@ PgpMimeDecrypt.prototype = {
     this.headerMode = 0;
     this.xferEncoding = ENCODING_DEFAULT;
     this.boundary = getBoundary(this.mimeSvc.contentType);
-    if (uri !== null) {
+    if (uri) {
       this.uri = uri.QueryInterface(Ci.nsIURI).clone();
       Log.DEBUG("mimeDecrypt.js: onStartRequest: uri='"+ this.uri.spec+"'\n");
     }

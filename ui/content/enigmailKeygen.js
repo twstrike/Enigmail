@@ -307,7 +307,7 @@ function enigmailKeygenStart() {
    // gpg >= 2.1 queries passphrase using gpg-agent only
    if (Gpg.getGpgFeature("keygen-passphrase")) {
      passphrase = enigmailCheckPassphrase();
-     if (passphrase === null) return;
+     if (!passphrase) return;
 
      var noPassphraseElement = document.getElementById("noPassphrase");
 

@@ -120,7 +120,7 @@ Enigmail.msg = {
 
     Enigmail.msg.messagePane = document.getElementById("messagepane");
 
-    if (Enigmail.msg.messagePane === null) return; // TB on Mac OS X calls this twice -- once far too early
+    if (!Enigmail.msg.messagePane) return; // TB on Mac OS X calls this twice -- once far too early
 
     Log.DEBUG("enigmailMessengerOverlay.js: Startup\n");
 
@@ -245,7 +245,7 @@ Enigmail.msg = {
     var revealBox = document.getElementById("enigmailRevealAttachments");
     if (revealBox) {
       // there are situations when evealBox is not yet present
-      revealBox.setAttribute("hidden", attachmentList === null ? "true" : "false");
+      revealBox.setAttribute("hidden", !attachmentList ? "true" : "false");
     }
   },
 
@@ -613,7 +613,7 @@ Enigmail.msg = {
       var showHeaders = 0;
       var contentType = "";
 
-      if (mimeMsg === null) {
+      if (!mimeMsg) {
         Log.DEBUG("enigmailMessengerOverlay.js: messageDecryptCb: mimeMsg is null\n");
         try {
           contentType=currentHeaderData['content-type'].headerValue;
@@ -635,7 +635,7 @@ Enigmail.msg = {
         var headerName = Enigmail.msg.headersList[index];
         var headerValue = "";
 
-        if (mimeMsg.headers[headerName] !== undefined) {
+        if (mimeMsg.headers[headerName]) {
           headerValue = mimeMsg.headers[headerName].toString();
         }
 
@@ -646,7 +646,7 @@ Enigmail.msg = {
       var embeddedSigned = null;
       var embeddedEncrypted = null;
 
-      if (mimeMsg.parts !== null && Enigmail.msg.savedHeaders["content-type"].search(/^multipart\/encrypted(;|$)/i) !== 0) {
+      if (mimeMsg.parts && Enigmail.msg.savedHeaders["content-type"].search(/^multipart\/encrypted(;|$)/i) !== 0) {
         // TB >= 8.0
         var resultObj={ encrypted: "", signed: "" };
         this.enumerateMimeParts(mimeMsg, resultObj);
@@ -852,7 +852,7 @@ Enigmail.msg = {
 
       // but this might be caused by the HACK for MS-EXCHANGE-Server Problem
       // - so return only if:
-      if (this.buggyExchangeEmailContent === null || this.buggyExchangeEmailContent == "???") {
+      if (!this.buggyExchangeEmailContent || this.buggyExchangeEmailContent == "???") {
         return;
       }
 
@@ -1237,7 +1237,7 @@ Enigmail.msg = {
       //   and set message content as inner text
       // - missing:
       //   - signal in statusFlags so that we warn in Enigmail.hdrView.updateHdrIcons()
-      if (this.buggyExchangeEmailContent !== null) {
+      if (this.buggyExchangeEmailContent) {
         if (this.displayBuggyExchangeMail()) {
           return;
         }
