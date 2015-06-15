@@ -1,3 +1,4 @@
+dump("loading: enigmailSearchKey.js\n");
 /*global Components: false, Locale: false, Data: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1

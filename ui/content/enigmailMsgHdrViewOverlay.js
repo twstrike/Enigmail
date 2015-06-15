@@ -1,3 +1,4 @@
+dump("loading: enigmailMsgHdrViewOverlay.js\n");
 /*global Components: false, Windows: false, Locale: false, Prefs: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
