@@ -285,75 +285,75 @@ Enigmail.prototype = {
     EnigmailConsole.write("Reinitializing Enigmail service ...\n");
     EnigmailGpgAgent.setAgentPath(null, this);
     this.initialized = true;
-  }
-}; // Enigmail.prototype
+  },
 
+    getService: function (holder, win, startingPreferences) {
+        if (! win) {
+            win = Windows.getBestParentWin();
+        }
 
-Enigmail.prototype.getService = function (holder, win, startingPreferences) {
-    if (! win) {
-        win = Windows.getBestParentWin();
-    }
+        Log.DEBUG("enigmail.js: svc = "+holder.svc+"\n");
 
-    Log.DEBUG("enigmail.js: svc = "+holder.svc+"\n");
-
-    if (!holder.svc.initialized) {
-        const firstInitialization = !holder.svc.initializationAttempted;
-
-        try {
-            // Initialize enigmail
-            EnigmailCore.init(App.getVersion());
-            holder.svc.initialize(win, App.getVersion());
+        if (!holder.svc.initialized) {
+            const firstInitialization = !holder.svc.initializationAttempted;
 
             try {
-                // Reset alert count to default value
-                Prefs.getPrefBranch().clearUserPref("initAlert");
-            } catch(ex) { }
-        } catch (ex) {
-            if (firstInitialization) {
-                // Display initialization error alert
-                const errMsg = (holder.svc.initializationError ? holder.svc.initializationError : Locale.getString("accessError")) +
-                          "\n\n"+Locale.getString("initErr.howToFixIt");
+                // Initialize enigmail
+                EnigmailCore.init(App.getVersion());
+                holder.svc.initialize(win, App.getVersion());
 
-                const checkedObj = {value: false};
-                if (Prefs.getPref("initAlert")) {
-                    const r = Dialog.longAlert(win, "Enigmail: "+errMsg,
-                                               Locale.getString("dlgNoPrompt"),
-                                               null, Locale.getString("initErr.setupWizard.button"),
-                                               null, checkedObj);
-                    if (r >= 0 && checkedObj.value) {
-                        Prefs.setPref("initAlert", false);
+                try {
+                    // Reset alert count to default value
+                    Prefs.getPrefBranch().clearUserPref("initAlert");
+                } catch(ex) { }
+            } catch (ex) {
+                if (firstInitialization) {
+                    // Display initialization error alert
+                    const errMsg = (holder.svc.initializationError ? holder.svc.initializationError : Locale.getString("accessError")) +
+                              "\n\n"+Locale.getString("initErr.howToFixIt");
+
+                    const checkedObj = {value: false};
+                    if (Prefs.getPref("initAlert")) {
+                        const r = Dialog.longAlert(win, "Enigmail: "+errMsg,
+                                                   Locale.getString("dlgNoPrompt"),
+                                                   null, Locale.getString("initErr.setupWizard.button"),
+                                                   null, checkedObj);
+                        if (r >= 0 && checkedObj.value) {
+                            Prefs.setPref("initAlert", false);
+                        }
+                        if (r == 1) {
+                            // start setup wizard
+                            Windows.openSetupWizard(win, false);
+                            return Enigmail.getService(holder, win);
+                        }
                     }
-                    if (r == 1) {
-                        // start setup wizard
-                        Windows.openSetupWizard(win, false);
-                        return Enigmail.getService(holder, win);
+                    if (Prefs.getPref("initAlert")) {
+                        holder.svc.initializationAttempted = false;
+                        holder.svc = null;
                     }
                 }
-                if (Prefs.getPref("initAlert")) {
-                    holder.svc.initializationAttempted = false;
-                    holder.svc = null;
-                }
+
+                return null;
             }
 
-            return null;
+            const configuredVersion = Prefs.getPref("configuredVersion");
+
+            Log.DEBUG("enigmailCommon.jsm: getService: "+configuredVersion+"\n");
+
+            if (firstInitialization && holder.svc.initialized &&
+                EnigmailGpgAgent.agentType === "pgp") {
+                Dialog.alert(win, Locale.getString("pgpNotSupported"));
+            }
+
+            if (holder.svc.initialized && (App.getVersion() != configuredVersion)) {
+                Configure.configureEnigmail(win, startingPreferences);
+            }
         }
 
-        const configuredVersion = Prefs.getPref("configuredVersion");
-
-        Log.DEBUG("enigmailCommon.jsm: getService: "+configuredVersion+"\n");
-
-        if (firstInitialization && holder.svc.initialized &&
-            EnigmailGpgAgent.agentType === "pgp") {
-            Dialog.alert(win, Locale.getString("pgpNotSupported"));
-        }
-
-        if (holder.svc.initialized && (App.getVersion() != configuredVersion)) {
-            Configure.configureEnigmail(win, startingPreferences);
-        }
+        return holder.svc.initialized ? holder.svc : null;
     }
+}; // Enigmail.prototype
 
-    return holder.svc.initialized ? holder.svc : null;
-};
 
 Armor.registerOn(Enigmail.prototype);
 Decryption.registerOn(Enigmail.prototype);
