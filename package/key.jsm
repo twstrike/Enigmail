@@ -131,6 +131,7 @@ const Key = {
      * @return |string| - formatted string
      */
     formatFpr: function (fingerprint) {
+        Log.DEBUG("key.jsm: Key.formatFpr(" + fingerprint + ")\n");
         // format key fingerprint
         let r="";
         const fpr = fingerprint.match(/(....)(....)(....)(....)(....)(....)(....)(....)(....)?(....)?/);

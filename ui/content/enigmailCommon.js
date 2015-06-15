@@ -1019,7 +1019,7 @@ function EnigGetKeyDetails(sigListStr) {
       subkeyList.push(aLine);
       break;
     case "fpr":
-      if (fingerprint === null) {
+      if (!fingerprint) {
         fingerprint = aLine[9];
       }
       break;
