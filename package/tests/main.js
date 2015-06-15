@@ -7,6 +7,7 @@
  */
 
 "use strict";
+
 do_subtest("armor-test.js");
 do_subtest("data-test.js");
 do_subtest("decryption-test.js");
