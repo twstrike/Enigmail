@@ -62,7 +62,7 @@ const EnigmailCore = {
             return null;
         }
 
-        return Enigmail.getService(enigmailHolder, win, startingPreferences);
+        return enigmailHolder.svc.wrappedJSObject.getService(enigmailHolder, win, startingPreferences);
     },
 
     getEnigmailService: function() {

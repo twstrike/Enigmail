@@ -193,7 +193,9 @@ function initializeObserver(on) {
     obsServ.addObserver(on, NS_XPCOM_SHUTDOWN_OBSERVER_ID, false);
 }
 
-function Enigmail() {}
+function Enigmail() {
+    this.wrappedJSObject = this;
+}
 
 Enigmail.prototype = {
   classDescription: "Enigmail",
@@ -288,7 +290,8 @@ Enigmail.prototype = {
   }
 }; // Enigmail.prototype
 
-Enigmail.getService = function (holder, win, startingPreferences) {
+
+Enigmail.prototype.getService = function (holder, win, startingPreferences) {
     if (! win) {
         win = Windows.getBestParentWin();
     }
