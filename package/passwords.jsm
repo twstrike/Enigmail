@@ -76,6 +76,7 @@ const Passwords = {
     },
 
     clearPassphrase: function(win) {
-        // TODO: implement this - it's referred to in one place and used to be in EnigmailCommon but has probably disappeared
+        // TODO: it's referred to in one place and used to be in EnigmailCommon but has probably disappeared
+        // It seems this functionality has been removed in almost all places.
     }
 };

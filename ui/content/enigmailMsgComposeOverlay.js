@@ -56,6 +56,7 @@ Components.utils.import("resource://enigmail/events.jsm"); /*global Events: fals
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
+Components.utils.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
 
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
