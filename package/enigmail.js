@@ -250,8 +250,6 @@ Enigmail.prototype = {
 
       if (this.initialized) return;
 
-      dump("ENIGMAIL: doing initialization\n");
-
       initializeLogDirectory();
 
       EnigmailCore.setEnigmailService(this);

@@ -3179,7 +3179,7 @@ Enigmail.msg = {
          }
        }
 
-       var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+       var ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
        // EnigSend: Handle both plain and encrypted messages below
        var isOffline = (ioService && ioService.offline);
        window.enigmailSendFlags=sendFlags;
