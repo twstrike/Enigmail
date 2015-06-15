@@ -36,13 +36,6 @@ dump("loading: enigmailKeyManager.js\n");
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
-Components.utils.import("resource://enigmail/keyEditor.jsm");
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/dialog.jsm");
-Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
-Components.utils.import("resource://enigmail/windows.jsm"); /*global Windows: false */
-
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeyManager");
 

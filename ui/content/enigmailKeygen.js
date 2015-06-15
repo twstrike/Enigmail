@@ -36,17 +36,6 @@ dump("loading: enigmailKeygen.js\n");
  * ***** END LICENSE BLOCK ***** */
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/keyEditor.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/app.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
-Components.utils.import("resource://enigmail/dialog.jsm");
-Components.utils.import("resource://enigmail/promise.jsm"); /*global Promise: false */
-Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeygen");

@@ -36,11 +36,6 @@ dump("loading: enigRetrieveProgress.js\n");
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
-Components.utils.import("resource://enigmail/keyserver.jsm"); /*global KeyServer: false */
-
 var msgCompDeliverMode = Components.interfaces.nsIMsgCompDeliverMode;
 
 // dialog is just an array we'll use to store various properties from the dialog document...

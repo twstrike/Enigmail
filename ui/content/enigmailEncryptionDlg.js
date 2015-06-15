@@ -34,10 +34,6 @@ dump("loading: enigmailEncryptionDlg.js\n");
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Components.utils.import("resource://enigmail/log.jsm"); /*global Log: false */
-Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
-
 function enigmailEncryptionDlgLoad() {
   Log.DEBUG("enigmailEncryptionDlgLoad.js: Load\n");
 

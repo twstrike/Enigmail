@@ -68,10 +68,6 @@ Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: fa
 Components.utils.import("resource://enigmail/attachment.jsm"); /*global Attachment: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
 
-const Ci = Components.interfaces;
-
-const EC = EnigmailCore;
-
 if (! Enigmail) var Enigmail = {};
 
 Enigmail.getEnigmailSvc = function ()
@@ -2036,7 +2032,7 @@ Enigmail.msg = {
     var tmpDir = Files.getTempDir();
     var outFile1, outFile2;
     outFile1 = Components.classes[LOCAL_FILE_CONTRACTID].
-      createInstance(Ci.nsIFile);
+      createInstance(Components.interfaces.nsIFile);
     outFile1.initWithPath(tmpDir);
     if (!(outFile1.isDirectory() && outFile1.isWritable())) {
       Dialog.alert(window, Locale.getString("noTempDir"));
@@ -2047,7 +2043,7 @@ Enigmail.msg = {
     this.writeUrlToFile(origAtt.url, outFile1);
 
     outFile2 = Components.classes[LOCAL_FILE_CONTRACTID].
-      createInstance(Ci.nsIFile);
+      createInstance(Components.interfaces.nsIFile);
     outFile2.initWithPath(tmpDir);
     outFile2.append(this.getAttachmentName(signatureAtt));
     outFile2.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0600);
@@ -2190,7 +2186,7 @@ Enigmail.msg = {
       // open
       var tmpDir = Files.getTempDir();
       try {
-        outFile = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
+        outFile = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Components.interfaces.nsIFile);
         outFile.initWithPath(tmpDir);
         if (!(outFile.isDirectory() && outFile.isWritable())) {
           errorMsgObj.value=Locale.getString("noTempDir");

@@ -34,13 +34,6 @@ dump("loading: enigmailEditKeyExpiryDlg.js\n");
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/keyEditor.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/timer.jsm");
-Components.utils.import("resource://enigmail/dialog.jsm");
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
-
 var gAlertPopUpIsOpen = false;
 
 

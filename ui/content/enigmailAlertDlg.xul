@@ -74,7 +74,6 @@
   <script type="application/x-javascript">
   <![CDATA[
     EnigInitCommon("enigmailAlertDlg");
-    Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 
     function onLoad() {
       var dlg=document.getElementById("enigmailAlertDlg");

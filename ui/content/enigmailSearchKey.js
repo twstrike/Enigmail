@@ -36,16 +36,6 @@ dump("loading: enigmailSearchKey.js\n");
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/prefs.jsm");
-Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
-Components.utils.import("resource://enigmail/dialog.jsm");
-Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
-Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
-Components.utils.import("resource://enigmail/keyserver.jsm"); /*global KeyServer: false */
-
 const INPUT = 0;
 const RESULT = 1;
 

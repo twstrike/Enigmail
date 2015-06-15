@@ -33,8 +33,6 @@ dump("loading: enigmailGenericDisplay.js\n");
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/log.jsm");
-
 // Initialize enigmailCommon
 EnigInitCommon("enigmailGenericDisplay");
 

@@ -36,8 +36,6 @@ dump("loading: enigmailFilterEditorOverlay.js\n");
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
-Components.utils.import("resource://enigmail/timer.jsm");
-
 var enigmail_origCheckActionsReorder = function() {
     enigmail_origCheckActionsReorder();
     Timer.setTimeout(EnigmailFilterEditor.checkMoveAction.bind(EnigmailFilterEditor), 0);

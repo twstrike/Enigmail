@@ -57,9 +57,6 @@ Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: fa
 Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
 try {
   Components.utils.import("resource:///modules/MailUtils.js");
 }
@@ -586,7 +583,7 @@ Enigmail.msg = {
           if (this.modifiedAttach[i].origTemp) {
             Log.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.msgComposeClose: deleting "+this.modifiedAttach[i].origUrl+"\n");
             var fileUri = ioServ.newURI(this.modifiedAttach[i].origUrl, null, null);
-            var fileHandle = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
+            var fileHandle = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Components.interfaces.nsIFile);
             fileHandle.initWithPath(fileUri.path);
             if (fileHandle.exists()) fileHandle.remove(false);
           }
@@ -765,7 +762,7 @@ Enigmail.msg = {
     var tmpDir=Files.getTempDir();
     var tmpFile;
     try {
-      tmpFile = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
+      tmpFile = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Components.interfaces.nsIFile);
       tmpFile.initWithPath(tmpDir);
       if (!(tmpFile.isDirectory() && tmpFile.isWritable())) {
         Dialog.alert(window, Locale.getString("noTempDir"));
@@ -3182,7 +3179,7 @@ Enigmail.msg = {
          }
        }
 
-       var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+       var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
        // EnigSend: Handle both plain and encrypted messages below
        var isOffline = (ioService && ioService.offline);
        window.enigmailSendFlags=sendFlags;
@@ -3741,7 +3738,7 @@ Enigmail.msg = {
       getService(Components.interfaces.nsPIExternalAppLauncher);
 
     try {
-      fileTemplate = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
+      fileTemplate = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Components.interfaces.nsIFile);
       fileTemplate.initWithPath(tmpDir);
       if (!(fileTemplate.isDirectory() && fileTemplate.isWritable())) {
         errorMsgObj.value=Locale.getString("noTempDir");
@@ -3775,7 +3772,7 @@ Enigmail.msg = {
       var origFile=origUri.QueryInterface(Components.interfaces.nsIFileURL);
       if (node.attachment.temporary) {
         try {
-          var origLocalFile=Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
+          var origLocalFile=Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Components.interfaces.nsIFile);
           origLocalFile.initWithPath(origFile.file.path);
           extAppLauncher.deleteTemporaryFileOnExit(origLocalFile);
         }

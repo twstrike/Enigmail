@@ -41,6 +41,7 @@ dump("loading: enigmailCommon.js\n");
 // WARNING: This module functions must not be loaded in overlays to standard
 // functionality!
 
+// Many of these components are not used in this file, but are instead used in other files that are loaded together with EnigmailCommon
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/keyEditor.jsm");
@@ -55,15 +56,20 @@ Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
+Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
+Components.utils.import("resource://enigmail/locale.jsm");
+Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
+Components.utils.import("resource://enigmail/keyserver.jsm"); /*global KeyServer: false */
+Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Components.utils.import("resource://enigmail/promise.jsm"); /*global Promise: false */
+Components.utils.import("resource://enigmail/installGnuPG.jsm");
+Components.utils.import("resource://enigmail/passwordCheck.jsm");
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-
-const EC = EnigmailCore;
 
 // The compatible Enigmime version
 var gEnigmimeVersion = "1.4";
@@ -591,7 +597,7 @@ function EnigRevokeKey(keyId, userId, callbackFunc) {
 }
 
 function EnigGetLocalFileApi() {
-  return Ci.nsIFile;
+  return Components.interfaces.nsIFile;
 }
 
 function EnigShowPhoto (keyId, userId, photoNumber) {
@@ -776,7 +782,7 @@ function EnigGetHttpUri (aEvent) {
 
   Log.DEBUG("enigmailAbout.js: interpretHtmlClick: href='"+href+"'\n");
 
-  var ioServ = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+  var ioServ = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
   var uri = ioServ.newURI(href, null, null);
 
   if (Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]

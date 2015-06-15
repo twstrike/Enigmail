@@ -123,8 +123,6 @@
   <![CDATA[
 
     EnigInitCommon("enigmailViewKeySigDlg");
-    Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
-    Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
     var gKeyListArr;
 

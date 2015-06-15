@@ -36,11 +36,6 @@ dump("loading: enigmailKeySelection.js\n");
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
-Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
-
 // Initialize enigmailCommon
 EnigInitCommon("enigmailKeySelection");
 

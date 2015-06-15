@@ -35,8 +35,6 @@ dump("loading: enigmailWrapSelection.js\n");
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
-Components.utils.import("resource://enigmail/log.jsm");
-
 // Initialize enigmailCommon
 EnigInitCommon("enigmailWrapSelection");
 

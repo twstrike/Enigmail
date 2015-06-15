@@ -162,16 +162,6 @@
 
   <script type="application/x-javascript">
   <![CDATA[
-    Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
-    Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-    Components.utils.import("resource://enigmail/keyEditor.jsm");
-    Components.utils.import("resource://enigmail/log.jsm");
-    Components.utils.import("resource://enigmail/locale.jsm");
-    Components.utils.import("resource://enigmail/dialog.jsm");
-    Components.utils.import("resource://enigmail/windows.jsm");
-
-    // Ec is predefined by enigmailCommon.js
-
     var gUserIdentityList;
     var gUserIdentityListPopup;
     var gUseForSigning;

@@ -36,12 +36,6 @@ dump("loading: pref-enigmail.js\n");
 
 // Uses: chrome://enigmail/content/enigmailCommon.js
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/prefs.jsm");
-Components.utils.import("resource://enigmail/os.jsm");
-
 // Initialize enigmailCommon
 EnigInitCommon("pref-enigmail");
 

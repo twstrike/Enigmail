@@ -34,18 +34,6 @@ dump("loading: enigmailSetupWizard.js\n");
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/keyEditor.jsm");
-Components.utils.import("resource://enigmail/installGnuPG.jsm");
-Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
-Components.utils.import("resource://enigmail/passwordCheck.jsm");
-Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/prefs.jsm");
-Components.utils.import("resource://enigmail/os.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
-Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
-
 // const Ec is already defined in enigmailKeygen.js
 
 var gLastDirection = 0;
@@ -57,8 +45,6 @@ var gCreateNewKey=false;
 var gDownoadObj = null;
 var gPassPhraseQuality = null;
 var gPageStack = [];  // required for correct stepping back
-
-const EC = EnigmailCore;
 
 function onLoad() {
   gEnigAccountMgr = Components.classes["@mozilla.org/messenger/account-manager;1"].getService(Components.interfaces.nsIMsgAccountManager);

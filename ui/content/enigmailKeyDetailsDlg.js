@@ -37,8 +37,6 @@ dump("loading: enigmailKeyDetailsDlg.js\n");
 
 EnigInitCommon("enigmailKeyDetailsDlg");
 
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
-
 var gKeyId = null;
 var gUserId = null;
 var gKeyList = null;
