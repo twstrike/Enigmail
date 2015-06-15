@@ -28,6 +28,7 @@ MODFILES = \
            app.jsm \
            armor.jsm \
            attachment.jsm \
+           card.jsm \
            commandLine.jsm \
            configure.jsm \
            constants.jsm \
