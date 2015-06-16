@@ -65,7 +65,7 @@ Components.utils.import("resource://enigmail/decryptPermanently.jsm");
 Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
-Components.utils.import("resource://enigmail/attachment.jsm"); /*global Attachment: false */
+Components.utils.import("resource://enigmail/attachment.jsm"); /*global EnigmailAttachment: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
 Components.utils.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
 
@@ -2166,7 +2166,7 @@ Enigmail.msg = {
     var rawFileName=Enigmail.msg.getAttachmentName(callbackArg.attachment).replace(/\.(asc|pgp|gpg)$/i,"");
 
     if (callbackArg.actionType != "importKey") {
-      origFilename = Attachment.getFileName(window, callbackArg.data);
+      origFilename = EnigmailAttachment.getFileName(window, callbackArg.data);
       if (origFilename && origFilename.length > rawFileName.length) rawFileName = origFilename;
     }
 

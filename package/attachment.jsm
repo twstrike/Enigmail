@@ -40,7 +40,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Attachment" ];
+const EXPORTED_SYMBOLS = [ "EnigmailAttachment" ];
 
 const Cu = Components.utils;
 
@@ -51,7 +51,7 @@ Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
 Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 
-const Attachment = {
+const EnigmailAttachment = {
     getFileName: function (parent, byteData) {
         EnigmailLog.DEBUG("attachment.jsm: getFileName\n");
 

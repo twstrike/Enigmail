@@ -58,7 +58,7 @@ Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
 Cu.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
-Cu.import("resource://enigmail/attachment.jsm"); /*global Attachment: false */
+Cu.import("resource://enigmail/attachment.jsm"); /*global EnigmailAttachment: false */
 
 /*global MimeBody: false, MimeUnknown: false, MimeMessageAttachment: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
@@ -421,7 +421,7 @@ DecryptMessageIntoFolder.prototype = {
 
                                 // try to get original file name if file does not contain suffix
                                 if (strippedName.indexOf(".") < 0) {
-                                    let s = Attachment.getFileName(null, o.data);
+                                    let s = EnigmailAttachment.getFileName(null, o.data);
                                     if (s) o.name = s;
                                 }
 
