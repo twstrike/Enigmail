@@ -41,7 +41,7 @@ MODFILES = \
            errorHandling.jsm \
            enigmailFuncs.jsm \
            enigmailGpgAgent.jsm \
-           enigmailProtocolHandler.jsm \
+           protocolHandler.jsm \
            events.jsm \
            execution.jsm \
            files.jsm \

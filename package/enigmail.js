@@ -50,7 +50,7 @@ Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false 
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/encryption.jsm"); /*global EnigmailEncryption: false */
 Cu.import("resource://enigmail/decryption.jsm"); /*global EnigmailDecryption: false */
-Cu.import("resource://enigmail/enigmailProtocolHandler.jsm"); /*global EnigmailProtocolHandler: false */
+Cu.import("resource://enigmail/protocolHandler.jsm"); /*global EnigmailProtocolHandler: false */
 Cu.import("resource://enigmail/rules.jsm"); /*global EnigmailRules: false */
 Cu.import("resource://enigmail/filters.jsm"); /*global EnigmailFilters: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
