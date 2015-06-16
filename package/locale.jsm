@@ -39,7 +39,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Locale" ];
+const EXPORTED_SYMBOLS = [ "EnigmailLocale" ];
 
 Components.utils.import("resource://enigmail/log.jsm");
 
@@ -50,7 +50,7 @@ var enigStringBundle = null;
 
 const LOCALE_SVC_CONTRACTID = "@mozilla.org/intl/nslocaleservice;1";
 
-const Locale = {
+const EnigmailLocale = {
     get: function() {
         return Cc[LOCALE_SVC_CONTRACTID].getService(Ci.nsILocaleService).getApplicationLocale();
     },

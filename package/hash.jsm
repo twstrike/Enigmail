@@ -46,7 +46,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
-Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
@@ -117,7 +117,7 @@ const Hash = {
                 // Abormal return
                 if (retStatusObj.statusFlags & nsIEnigmail.BAD_PASSPHRASE) {
                     // "Unremember" passphrase on error return
-                    retStatusObj.errorMsg = Locale.getString("badPhrase");
+                    retStatusObj.errorMsg = EnigmailLocale.getString("badPhrase");
                 }
                 Dialog.alert(win, retStatusObj.errorMsg);
                 return exitCode2;

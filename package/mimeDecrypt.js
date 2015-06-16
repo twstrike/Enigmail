@@ -15,7 +15,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/mimeVerify.jsm"); /*global EnigmailVerify: false */
 Components.utils.import("resource://enigmail/log.jsm"); /*global Log: false */
-Components.utils.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
 Components.utils.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Components.utils.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
@@ -430,7 +430,7 @@ PgpMimeDecrypt.prototype = {
             "",
             "",
             "",
-            Locale.getString("possiblyPgpMime"),
+            EnigmailLocale.getString("possiblyPgpMime"),
             "",
             this.uri,
             null);

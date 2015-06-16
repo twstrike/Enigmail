@@ -51,7 +51,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
-Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 Cu.import("resource://enigmail/trust.jsm"); /*global Trust: false */
@@ -370,7 +370,7 @@ const KeyRing = {
             }
 
             if (exitCodeObj.value !== 0) {
-                errorMsgObj.value = Locale.getString("badCommand");
+                errorMsgObj.value = EnigmailLocale.getString("badCommand");
                 if (cmdErrorMsgObj.value) {
                     errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, args);
                     errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
@@ -414,7 +414,7 @@ const KeyRing = {
         }
 
         if (exitCodeObj.value !== 0) {
-            errorMsgObj.value = Locale.getString("badCommand");
+            errorMsgObj.value = EnigmailLocale.getString("badCommand");
             if (cmdErrorMsgObj.value) {
                 errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, args);
                 errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
@@ -533,7 +533,7 @@ const KeyRing = {
         }
 
         if (exitCodeObj.value !== 0) {
-            errorMsgObj.value = Locale.getString("failKeyExtract");
+            errorMsgObj.value = EnigmailLocale.getString("failKeyExtract");
 
             if (cmdErrorMsgObj.value) {
                 errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, args);
@@ -555,7 +555,7 @@ const KeyRing = {
             }
 
             if (exitCodeObj.value !== 0) {
-                errorMsgObj.value = Locale.getString("failKeyExtract");
+                errorMsgObj.value = EnigmailLocale.getString("failKeyExtract");
 
                 if (cmdErrorMsgObj.value) {
                     errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, secretArgs);
@@ -574,7 +574,7 @@ const KeyRing = {
         if (outputFile) {
             if (! Files.writeFileContents(outputFile, keyBlock, DEFAULT_FILE_PERMS)) {
                 exitCodeObj.value = -1;
-                errorMsgObj.value = Locale.getString("fileWriteFailed", [ outputFile ]);
+                errorMsgObj.value = EnigmailLocale.getString("fileWriteFailed", [ outputFile ]);
             }
             return "";
         }
@@ -591,12 +591,12 @@ const KeyRing = {
         const endIndexObj   = {};
         const blockType = EnigmailArmor.locateArmoredBlock(msgText, 0, "", beginIndexObj, endIndexObj, {});
         if (!blockType) {
-            errorMsgObj.value = Locale.getString("noPGPblock");
+            errorMsgObj.value = EnigmailLocale.getString("noPGPblock");
             return 1;
         }
 
         if (blockType != "PUBLIC KEY BLOCK") {
-            errorMsgObj.value = Locale.getString("notFirstBlock");
+            errorMsgObj.value = EnigmailLocale.getString("notFirstBlock");
             return 1;
         }
 
@@ -604,8 +604,8 @@ const KeyRing = {
                                         endIndexObj.value - beginIndexObj.value + 1);
 
         if (uiFlags & nsIEnigmail.UI_INTERACTIVE) {
-            if (!Dialog.confirmDlg(parent, Locale.getString("importKeyConfirm"), Locale.getString("keyMan.button.import"))) {
-                errorMsgObj.value = Locale.getString("failCancel");
+            if (!Dialog.confirmDlg(parent, EnigmailLocale.getString("importKeyConfirm"), EnigmailLocale.getString("keyMan.button.import"))) {
+                errorMsgObj.value = EnigmailLocale.getString("failCancel");
                 return -1;
             }
         }
@@ -802,7 +802,7 @@ const KeyRing = {
                     break;
                 case "uat":
                     if (listRow[USERID_ID].indexOf("1 ")===0) {
-                        const userId=Locale.getString("userAtt.photo");
+                        const userId=EnigmailLocale.getString("userAtt.photo");
                         keyObj.SubUserIds.push({userId: userId,
                                                 keyTrust:listRow[KEY_TRUST_ID],
                                                 type: "uat",
@@ -840,9 +840,9 @@ const KeyRing = {
 
         var aGpgSecretsList = obtainKeyList(win, true, refresh);
         if (!aGpgSecretsList && !refresh) {
-            if (Dialog.confirmDlg(Locale.getString("noSecretKeys"),
-                                  Locale.getString("keyMan.button.generateKey"),
-                                  Locale.getString("keyMan.button.skip"))) {
+            if (Dialog.confirmDlg(EnigmailLocale.getString("noSecretKeys"),
+                                  EnigmailLocale.getString("keyMan.button.generateKey"),
+                                  EnigmailLocale.getString("keyMan.button.skip"))) {
                 Windows.openKeyGen();
                 KeyRing.loadKeyList(win, true, keyListObj);
             }

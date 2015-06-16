@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, EnigmailApp: false, Locale: false, Dialog: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -105,7 +105,7 @@ var Encryption = {
             bccMailAddr = stripEmailAdr(bccMailAddr);
 
         } catch (ex) {
-            errorMsgObj.value = Locale.getString("invalidEmail");
+            errorMsgObj.value = EnigmailLocale.getString("invalidEmail");
             return null;
         }
 
@@ -227,13 +227,13 @@ var Encryption = {
 
         if (!sendFlags) {
             Log.DEBUG("enigmailCommon.jsm: encryptMessageStart: NO ENCRYPTION!\n");
-            errorMsgObj.value = Locale.getString("notRequired");
+            errorMsgObj.value = EnigmailLocale.getString("notRequired");
             return null;
         }
 
         if (!EnigmailCore.getService(win)) {
             Log.ERROR("enigmailCommon.jsm: encryptMessageStart: not yet initialized\n");
-            errorMsgObj.value = Locale.getString("notInit");
+            errorMsgObj.value = EnigmailLocale.getString("notInit");
             return null;
         }
 
@@ -272,7 +272,7 @@ var Encryption = {
 
         if (!EnigmailCore.getService().initialized) {
             Log.ERROR("enigmailCommon.jsm: encryptMessageEnd: not yet initialized\n");
-            retStatusObj.errorMsg = Locale.getString("notInit");
+            retStatusObj.errorMsg = EnigmailLocale.getString("notInit");
             return -1;
         }
 
@@ -307,7 +307,7 @@ var Encryption = {
 
 
         if (retStatusObj.statusFlags & nsIEnigmail.BAD_PASSPHRASE) {
-            retStatusObj.errorMsg = Locale.getString("badPhrase");
+            retStatusObj.errorMsg = EnigmailLocale.getString("badPhrase");
         }
         else if (retStatusObj.statusFlags & nsIEnigmail.INVALID_RECIPIENT) {
             retStatusObj.errorMsg = retStatusObj.statusMsg;
@@ -316,7 +316,7 @@ var Encryption = {
             retStatusObj.errorMsg = retStatusObj.statusMsg;
         }
         else {
-            retStatusObj.errorMsg = Locale.getString("badCommand");
+            retStatusObj.errorMsg = EnigmailLocale.getString("badCommand");
         }
 
         return exitCode;

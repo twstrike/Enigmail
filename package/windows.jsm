@@ -48,7 +48,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 
 const APPSHELL_MEDIATOR_CONTRACTID = "@mozilla.org/appshell/window-mediator;1";
@@ -265,7 +265,7 @@ const Windows = {
      */
     openDebugLog: function(win) {
         Windows.openWin("enigmail:logFile",
-                        "chrome://enigmail/content/enigmailViewFile.xul?viewLog=1&title="+escape(Locale.getString("debugLog.title")),
+                        "chrome://enigmail/content/enigmailViewFile.xul?viewLog=1&title="+escape(EnigmailLocale.getString("debugLog.title")),
                         "resizable,centerscreen");
     },
 
@@ -403,7 +403,7 @@ const Windows = {
                 photoFile.initWithPath(photoPath);
 
                 if (! (photoFile.isFile() && photoFile.isReadable())) {
-                    Windows.alert(win, Locale.getString("error.photoPathNotReadable", photoPath));
+                    Windows.alert(win, EnigmailLocale.getString("error.photoPathNotReadable", photoPath));
                 } else {
                     const photoUri = Cc[IOSERVICE_CONTRACTID].getService(Ci.nsIIOService).
                               newFileURI(photoFile).spec;
@@ -423,7 +423,7 @@ const Windows = {
                     } catch (ex) {}
                 }
             } else {
-                Windows.alert(win, Locale.getString("noPhotoAvailable"));
+                Windows.alert(win, EnigmailLocale.getString("noPhotoAvailable"));
             }
         }
     },
@@ -475,7 +475,7 @@ const Windows = {
 
         const ioService = Cc[IOSERVICE_CONTRACTID].getService(Ci.nsIIOService);
         if (ioService && ioService.offline) {
-            Windows.alert(win, Locale.getString("needOnline"));
+            Windows.alert(win, EnigmailLocale.getString("needOnline"));
             return;
         }
 

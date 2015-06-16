@@ -45,7 +45,7 @@ Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
 Components.utils.import("resource://enigmail/log.jsm"); /*global Log: false */
 Components.utils.import("resource://enigmail/os.jsm"); /*global OS: false */
 Components.utils.import("resource://enigmail/files.jsm"); /*global Files: false */
-Components.utils.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
 Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
@@ -167,11 +167,11 @@ GpgEditorInterface.prototype = {
         Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.processLine: detected bad passphrase\n");
         r.exitCode=-2;
         r.quitNow=true;
-        this.errorMsg=Locale.getString("badPhrase");
+        this.errorMsg=EnigmailLocale.getString("badPhrase");
       }
       if (txt.indexOf("[GNUPG:] NO_CARD_AVAILABLE")>=0) {
         Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.processLine: detected missing card\n");
-        this.errorMsg=Locale.getString("sc.noCardAvailable");
+        this.errorMsg=EnigmailLocale.getString("sc.noCardAvailable");
         r.exitCode=-3;
         r.quitNow=true;
       }
@@ -183,13 +183,13 @@ GpgEditorInterface.prototype = {
       }
       if (txt.indexOf("[GNUPG:] ALREADY_SIGNED")>=0) {
         Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.processLine: detected key already signed\n");
-        this.errorMsg=Locale.getString("keyAlreadySigned");
+        this.errorMsg=EnigmailLocale.getString("keyAlreadySigned");
         r.exitCode=-1;
         r.quitNow = true;
       }
       if (txt.indexOf("[GNUPG:] MISSING_PASSPHRASE")>=0) {
         Log.DEBUG("keyManagmenent.jsm: GpgEditorInterface.processLine: detected missing passphrase\n");
-        this.errorMsg=Locale.getString("noPassphrase");
+        this.errorMsg=EnigmailLocale.getString("noPassphrase");
         r.exitCode = -2;
         this._exitCode = -2;
         r.quitNow = true;
@@ -252,7 +252,7 @@ function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, call
 
     if (!EnigmailCore.getService(parent)) {
         Log.ERROR("keyManagmenent.jsm: Enigmail.editKey: not yet initialized\n");
-        parentCallback(-1, Locale.getString("notInit"));
+        parentCallback(-1, EnigmailLocale.getString("notInit"));
         return -1;
     }
 
@@ -601,10 +601,10 @@ function signKeyCallback(inputData, keyEdit, ret) {
     ret.writeTxt = String(inputData.trustLevel);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else if (keyEdit.doCheck(GET_LINE, "keyedit.prompt")) {
     ret.exitCode = 0;
@@ -634,10 +634,10 @@ function keyTrustCallback(inputData, keyEdit, ret) {
     ret.quitNow = true;
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -696,10 +696,10 @@ function keyExpiryCallback(inputData, keyEdit, ret) {
     }
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow = true;
@@ -750,10 +750,10 @@ function addUidCallback(inputData, keyEdit, ret) {
     ret.quitNow = true;
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -788,10 +788,10 @@ function revokeCertCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y";
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else if (keyEdit.doCheck(GET_LINE, "keyedit.prompt")) {
     ret.exitCode = 0;
@@ -908,10 +908,10 @@ function deleteUidCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y";
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -966,10 +966,10 @@ function revokeUidCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y";
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -996,10 +996,10 @@ function deleteKeyCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y";
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;
@@ -1018,14 +1018,14 @@ function getPin(domWindow, promptMsg, ret) {
 
   var promptService = Cc[NS_PROMPTSERVICE_CONTRACTID].getService(Ci.nsIPromptService);
   success = promptService.promptPassword(domWindow,
-                                         Locale.getString("Enigmail"),
+                                         EnigmailLocale.getString("Enigmail"),
                                          promptMsg,
                                          passwdObj,
                                          null,
                                          dummyObj);
 
   if (!success) {
-    ret.errorMsg = Locale.getString("noPassphrase");
+    ret.errorMsg = EnigmailLocale.getString("noPassphrase");
     ret.quitNow=true;
     return false;
   }
@@ -1068,10 +1068,10 @@ function genCardKeyCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y";
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.enter")) {
     ret.exitCode = 0;
@@ -1154,10 +1154,10 @@ function cardAdminDataCallback(inputData, keyEdit, ret) {
     }
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else if (keyEdit.doCheck(GET_LINE, "keygen.smartcard.surname")) {
     ret.exitCode = 0;
@@ -1269,10 +1269,10 @@ function addPhotoCallback(inputData, keyEdit, ret) {
     ret.writeTxt = "Y"; // add large file
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.adminpin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterAdminPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterAdminPin"), ret);
   }
   else if (keyEdit.doCheck(GET_HIDDEN, "passphrase.pin.ask")) {
-    getPin(inputData.parent, Locale.getString("enterCardPin"), ret);
+    getPin(inputData.parent, EnigmailLocale.getString("enterCardPin"), ret);
   }
   else {
     ret.quitNow=true;

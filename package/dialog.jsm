@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false, Log: false, Windows: false, Prefs: false */
+/*global Components: false, EnigmailLocale: false, Log: false, Windows: false, Prefs: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -90,7 +90,7 @@ const Dialog = {
         }
 
         let buttonPressed = gPromptSvc.confirmEx(win,
-                                                 Locale.getString("enigConfirm"),
+                                                 EnigmailLocale.getString("enigConfirm"),
                                                  mesg,
                                                  buttonTitles,
                                                  okLabel, cancelLabel, null,
@@ -109,10 +109,10 @@ const Dialog = {
      */
     alert: function (win, mesg) {
         if (mesg.length > 1000) {
-            Dialog.longAlert(win, mesg, null, Locale.getString("dlg.button.close"));
+            Dialog.longAlert(win, mesg, null, EnigmailLocale.getString("dlg.button.close"));
         } else {
             try {
-                gPromptSvc.alert(win, Locale.getString("enigAlert"), mesg);
+                gPromptSvc.alert(win, EnigmailLocale.getString("enigAlert"), mesg);
             }
             catch(ex) {
                 Log.writeException("alert" , ex);
@@ -173,7 +173,7 @@ const Dialog = {
      * @return:   Boolean - true if OK was pressed / false otherwise
      */
     promptValue: function (win, mesg, valueObj) {
-        return gPromptSvc.prompt(win, Locale.getString("enigPrompt"),
+        return gPromptSvc.prompt(win, EnigmailLocale.getString("enigPrompt"),
                                  mesg, valueObj, "", {});
     },
 
@@ -195,11 +195,11 @@ const Dialog = {
         if(prefValue === display) {
             let checkBoxObj = { value: false } ;
             let buttonPressed = gPromptSvc.confirmEx(win,
-                                                     Locale.getString("enigAlert"),
+                                                     EnigmailLocale.getString("enigAlert"),
                                                      mesg,
                                                      (gPromptSvc.BUTTON_TITLE_OK * BUTTON_POS_0),
                                                      null, null, null,
-                                                     Locale.getString("dlgNoPrompt"), checkBoxObj);
+                                                     EnigmailLocale.getString("dlgNoPrompt"), checkBoxObj);
             if (checkBoxObj.value && buttonPressed === 0) {
                 Prefs.setPref(prefText, dontDisplay);
             }
@@ -227,10 +227,10 @@ const Dialog = {
         Prefs.setPref(countPrefName, alertCount);
 
         if (alertCount > 0) {
-            mesg += Locale.getString("repeatPrefix", [ alertCount ]) + " ";
-            mesg += (alertCount == 1) ? Locale.getString("repeatSuffixSingular") : Locale.getString("repeatSuffixPlural");
+            mesg += EnigmailLocale.getString("repeatPrefix", [ alertCount ]) + " ";
+            mesg += (alertCount == 1) ? EnigmailLocale.getString("repeatSuffixSingular") : EnigmailLocale.getString("repeatSuffixPlural");
         } else {
-            mesg += Locale.getString("noRepeat");
+            mesg += EnigmailLocale.getString("noRepeat");
         }
 
         Dialog.alert(win, mesg);
@@ -288,11 +288,11 @@ const Dialog = {
             case notSet:
                 let checkBoxObj = { value: false} ;
                 let buttonPressed = gPromptSvc.confirmEx(win,
-                                                         Locale.getString("enigConfirm"),
+                                                         EnigmailLocale.getString("enigConfirm"),
                                                          mesg,
                                                          buttonTitles,
                                                          okLabel, cancelLabel, null,
-                                                         Locale.getString("dlgKeepSetting"), checkBoxObj);
+                                                         EnigmailLocale.getString("dlgKeepSetting"), checkBoxObj);
                 if (checkBoxObj.value) {
                     Prefs.setPref(prefText, (buttonPressed===0 ? yes : no));
                 }
@@ -310,11 +310,11 @@ const Dialog = {
             case display:
                 let checkBoxObj = { value: false} ;
                 let buttonPressed = gPromptSvc.confirmEx(win,
-                                                         Locale.getString("enigConfirm"),
+                                                         EnigmailLocale.getString("enigConfirm"),
                                                          mesg,
                                                          buttonTitles,
                                                          okLabel, cancelLabel, null,
-                                                         Locale.getString("dlgNoPrompt"), checkBoxObj);
+                                                         EnigmailLocale.getString("dlgNoPrompt"), checkBoxObj);
                 if (checkBoxObj.value) {
                     Prefs.setPref(prefText, false);
                 }

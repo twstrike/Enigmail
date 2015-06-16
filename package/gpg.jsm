@@ -48,7 +48,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
-Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
@@ -185,7 +185,7 @@ const Gpg = {
         const listText = Execution.execCmd(Gpg.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
         if (exitCodeObj.value !== 0) {
-            errorMsgObj.value = Locale.getString("badCommand");
+            errorMsgObj.value = EnigmailLocale.getString("badCommand");
             if (cmdErrorMsgObj.value) {
                 errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, args);
                 errorMsgObj.value += "\n" + cmdErrorMsgObj.value;

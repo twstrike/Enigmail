@@ -51,7 +51,7 @@ Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
-Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
 
 const Ci = Components.interfaces;
@@ -85,7 +85,7 @@ const Verify = {
             const detailArr = retObj.sigDetails.split(/ /);
             const dateTime = Time.getDateTime(detailArr[2], true, true);
             const msg1 = retObj.errorMsg.split(/\n/)[0];
-            const msg2 = Locale.getString("keyAndSigDate", ["0x"+retObj.keyId.substr(-8, 8), dateTime ]);
+            const msg2 = EnigmailLocale.getString("keyAndSigDate", ["0x"+retObj.keyId.substr(-8, 8), dateTime ]);
             errorMsgObj.value = msg1 + "\n" + msg2;
         } else {
             errorMsgObj.value = retObj.errorMsg;

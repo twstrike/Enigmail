@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, Locale: false, Data: false, EnigmailCore: false */
+/*global Components: false, Log: false, EnigmailLocale: false, Data: false, EnigmailCore: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -113,7 +113,7 @@ function invalidSignature(c) {
   c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   c.flag = 0;
   Log.DEBUG("enigmailCommon.jsm: parseErrorOutput: detected invalid sender: "+lineSplit[2]+" / code: "+lineSplit[1]+"\n");
-  c.retStatusObj.statusMsg += Locale.getString("gnupg.invalidKey.desc", [ lineSplit[2] ]);
+  c.retStatusObj.statusMsg += EnigmailLocale.getString("gnupg.invalidKey.desc", [ lineSplit[2] ]);
 }
 
 function importOk(c) {
@@ -280,20 +280,20 @@ function buildErrorMessageForCardCtrl(c, errCode, detectedCard) {
     switch (errCode) {
     case 1:
       if (detectedCard) {
-        errorMsg = Locale.getString("sc.wrongCardAvailable", [ c.detectedCard, c.requestedCard ]);
+        errorMsg = EnigmailLocale.getString("sc.wrongCardAvailable", [ c.detectedCard, c.requestedCard ]);
       }
       else {
-        errorMsg = Locale.getString("sc.insertCard", [ c.requestedCard ]);
+        errorMsg = EnigmailLocale.getString("sc.insertCard", [ c.requestedCard ]);
       }
       break;
     case 2:
-      errorMsg = Locale.getString("sc.removeCard");
+      errorMsg = EnigmailLocale.getString("sc.removeCard");
       break;
     case 4:
-      errorMsg = Locale.getString("sc.noCardAvailable");
+      errorMsg = EnigmailLocale.getString("sc.noCardAvailable");
       break;
     case 5:
-      errorMsg = Locale.getString("sc.noReaderAvailable");
+      errorMsg = EnigmailLocale.getString("sc.noReaderAvailable");
       break;
     }
     return errorMsg;

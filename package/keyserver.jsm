@@ -47,7 +47,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
-Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
@@ -75,12 +75,12 @@ const KeyServer = {
         Log.DEBUG("keyserver.jsm: access: "+searchTerms+"\n");
 
         if (!keyserver) {
-            errorMsgObj.value = Locale.getString("failNoServer");
+            errorMsgObj.value = EnigmailLocale.getString("failNoServer");
             return null;
         }
 
         if (!searchTerms && ! (actionFlags & nsIEnigmail.REFRESH_KEY)) {
-            errorMsgObj.value = Locale.getString("failNoID");
+            errorMsgObj.value = EnigmailLocale.getString("failNoID");
             return null;
         }
 

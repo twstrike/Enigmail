@@ -1,5 +1,5 @@
 dump("loading: enigmailMsgHdrViewOverlay.js\n");
-/*global Components: false, Windows: false, Locale: false, Prefs: false, Time: false */
+/*global Components: false, Windows: false, EnigmailLocale: false, Prefs: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -250,7 +250,7 @@ Enigmail.hdrView = {
         var detailArr=sigDetails.split(/ /);
 
         let dateTime = Time.getDateTime(detailArr[2], true, true);
-        var txt = Locale.getString("keyAndSigDate", [ keyId.substr(-8, 8), dateTime ] );
+        var txt = EnigmailLocale.getString("keyAndSigDate", [ keyId.substr(-8, 8), dateTime ] );
         statusArr.push(txt);
         statusInfo += "\n" + txt;
         var fpr = "";
@@ -261,7 +261,7 @@ Enigmail.hdrView = {
           fpr = Key.formatFpr(detailArr[0]);
         }
         if (fpr) {
-          statusInfo += "\n"+Locale.getString("keyFpr", [ fpr ]);
+          statusInfo += "\n"+EnigmailLocale.getString("keyFpr", [ fpr ]);
         }
       }
       fullStatusInfo = statusInfo;
@@ -272,34 +272,34 @@ Enigmail.hdrView = {
       // - process failed decryptions first because they imply bad signature handling
       if (statusFlags & nsIEnigmail.DECRYPTION_FAILED) {
         if (statusFlags & nsIEnigmail.NO_SECKEY) {
-          statusInfo = Locale.getString("needKey");
+          statusInfo = EnigmailLocale.getString("needKey");
         } else {
-          statusInfo = Locale.getString("failedDecrypt");
+          statusInfo = EnigmailLocale.getString("failedDecrypt");
         }
-        statusLine = statusInfo + Locale.getString("clickDetailsButton");
+        statusLine = statusInfo + EnigmailLocale.getString("clickDetailsButton");
       }
       else if (statusFlags & nsIEnigmail.BAD_PASSPHRASE) {
-        statusInfo = Locale.getString("badPhrase");
-        statusLine = statusInfo + Locale.getString("clickDecryptRetry");
+        statusInfo = EnigmailLocale.getString("badPhrase");
+        statusLine = statusInfo + EnigmailLocale.getString("clickDecryptRetry");
       }
       else if (statusFlags & nsIEnigmail.UNVERIFIED_SIGNATURE) {
-        statusInfo = Locale.getString("unverifiedSig");
+        statusInfo = EnigmailLocale.getString("unverifiedSig");
         if (keyId) {
-          statusLine = statusInfo + Locale.getString("clickImportButton");
+          statusLine = statusInfo + EnigmailLocale.getString("clickImportButton");
         }
         else {
-          statusLine = statusInfo + Locale.getString("keyTypeUnsupported");
+          statusLine = statusInfo + EnigmailLocale.getString("keyTypeUnsupported");
         }
       }
       else if (statusFlags & (nsIEnigmail.BAD_SIGNATURE |
                               nsIEnigmail.EXPIRED_SIGNATURE |
                               nsIEnigmail.EXPIRED_KEY_SIGNATURE)) {
-        statusInfo = Locale.getString("failedSig");
-        statusLine = statusInfo + Locale.getString("clickDetailsButton");
+        statusInfo = EnigmailLocale.getString("failedSig");
+        statusLine = statusInfo + EnigmailLocale.getString("clickDetailsButton");
       }
       else if (statusFlags & nsIEnigmail.DECRYPTION_INCOMPLETE) {
-        statusInfo = Locale.getString("incompleteDecrypt");
-        statusLine = statusInfo + Locale.getString("clickDetailsButton");
+        statusInfo = EnigmailLocale.getString("incompleteDecrypt");
+        statusLine = statusInfo + EnigmailLocale.getString("clickDetailsButton");
       }
       else if (statusFlags & nsIEnigmail.IMPORTED_KEY) {
         statusLine = "";
@@ -307,26 +307,26 @@ Enigmail.hdrView = {
         Dialog.alert(window, errorMsg);
       }
       else {
-        statusInfo = Locale.getString("failedDecryptVerify");
-        statusLine = statusInfo + Locale.getString("viewInfo");
+        statusInfo = EnigmailLocale.getString("failedDecryptVerify");
+        statusLine = statusInfo + EnigmailLocale.getString("viewInfo");
       }
       // add key infos if available
       if (keyId) {
-        var si = Locale.getString("unverifiedSig");  // "Unverified signature"
+        var si = EnigmailLocale.getString("unverifiedSig");  // "Unverified signature"
         if (statusInfo === "") {
           statusInfo += si;
-          statusLine = si + Locale.getString("clickDetailsButton");
+          statusLine = si + EnigmailLocale.getString("clickDetailsButton");
         }
         //if (statusFlags & nsIEnigmail.INLINE_KEY) {
-        //  statusLine = statusInfo + Locale.getString("clickDecrypt");
+        //  statusLine = statusInfo + EnigmailLocale.getString("clickDecrypt");
         //} else {
-        //  statusLine = statusInfo + Locale.getString("clickPen");
+        //  statusLine = statusInfo + EnigmailLocale.getString("clickPen");
         //}
         if (statusFlags & nsIEnigmail.UNVERIFIED_SIGNATURE) {
-          statusInfo += "\n" + Locale.getString("keyNeeded", [ keyId ]);  // "public key ... needed"
+          statusInfo += "\n" + EnigmailLocale.getString("keyNeeded", [ keyId ]);  // "public key ... needed"
         }
         else {
-          statusInfo += "\n" + Locale.getString("keyUsed", [ keyId ]);  // "public key ... used"
+          statusInfo += "\n" + EnigmailLocale.getString("keyUsed", [ keyId ]);  // "public key ... used"
         }
       }
       statusInfo += "\n\n" + errorMsg;
@@ -336,10 +336,10 @@ Enigmail.hdrView = {
         (this.statusBar.getAttribute("encrypted")=="ok")) {
       var statusMsg;
       if (xtraStatus && xtraStatus == "buggyMailFormat") {
-        statusMsg = Locale.getString("decryptedMsgWithFormatError");
+        statusMsg = EnigmailLocale.getString("decryptedMsgWithFormatError");
       }
       else {
-        statusMsg = Locale.getString("decryptedMsg");
+        statusMsg = EnigmailLocale.getString("decryptedMsg");
       }
       if (!statusInfo) {
         statusInfo = statusMsg;
@@ -358,32 +358,32 @@ Enigmail.hdrView = {
     if (Prefs.getPref("displayPartiallySigned")) {
       if (statusFlags & nsIEnigmail.PARTIALLY_PGP) {
         if (msgSigned && msgEncrypted) {
-          statusLine = Locale.getString("msgPart", [ Locale.getString("msgSignedAndEnc") ]);
-          statusLine += Locale.getString("clickDetailsButton");
-          statusInfo = Locale.getString("msgPart", [ Locale.getString("msgSigned") ]) +
+          statusLine = EnigmailLocale.getString("msgPart", [ EnigmailLocale.getString("msgSignedAndEnc") ]);
+          statusLine += EnigmailLocale.getString("clickDetailsButton");
+          statusInfo = EnigmailLocale.getString("msgPart", [ EnigmailLocale.getString("msgSigned") ]) +
                 "\n" + statusInfo;
         }
         else if (msgEncrypted) {
-          statusLine = Locale.getString("msgPart", [ Locale.getString("msgEncrypted") ]);
-          statusLine += Locale.getString("clickDetailsButton");
-            statusInfo = Locale.getString("msgPart", [ Locale.getString("msgEncrypted") ]) +
+          statusLine = EnigmailLocale.getString("msgPart", [ EnigmailLocale.getString("msgEncrypted") ]);
+          statusLine += EnigmailLocale.getString("clickDetailsButton");
+            statusInfo = EnigmailLocale.getString("msgPart", [ EnigmailLocale.getString("msgEncrypted") ]) +
                 "\n" + statusInfo;
         }
         else if (msgSigned) {
           if (statusFlags & nsIEnigmail.UNVERIFIED_SIGNATURE) {
-            statusLine = Locale.getString("msgPart", [ Locale.getString("msgSignedUnkownKey") ]);
+            statusLine = EnigmailLocale.getString("msgPart", [ EnigmailLocale.getString("msgSignedUnkownKey") ]);
             if (keyId) {
-              statusLine += Locale.getString("clickImportButton");
+              statusLine += EnigmailLocale.getString("clickImportButton");
             }
             else {
-              statusLine += Locale.getString("keyTypeUnsupported");
+              statusLine += EnigmailLocale.getString("keyTypeUnsupported");
             }
           }
           else {
-            statusLine = Locale.getString("msgPart", [ Locale.getString("msgSigned") ]);
-            statusLine += Locale.getString("clickDetailsButton");
+            statusLine = EnigmailLocale.getString("msgPart", [ EnigmailLocale.getString("msgSigned") ]);
+            statusLine += EnigmailLocale.getString("clickDetailsButton");
           }
-          statusInfo = Locale.getString("msgPart", [ Locale.getString("msgSigned") ]) +
+          statusInfo = EnigmailLocale.getString("msgPart", [ EnigmailLocale.getString("msgSigned") ]) +
                 "\n" + statusInfo;
         }
       }
@@ -391,7 +391,7 @@ Enigmail.hdrView = {
 
     // if we have parsed ENC_TO entries, add them as status info
     if (encToDetails && encToDetails.length > 0) {
-      statusInfo += "\n\n" + Locale.getString("encryptKeysNote", [ encToDetails ]);
+      statusInfo += "\n\n" + EnigmailLocale.getString("encryptKeysNote", [ encToDetails ]);
     }
 
     if (! statusLine) {

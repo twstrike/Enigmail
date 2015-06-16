@@ -1,4 +1,4 @@
-/*global Components: false, Locale: false */
+/*global Components: false, EnigmailLocale: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -63,7 +63,7 @@ const Time = {
     getDateTime: function (dateNum, withDate, withTime) {
         if(dateNum && dateNum !== 0) {
             let dat = new Date(dateNum * 1000);
-            let appLocale = Locale.get();
+            let appLocale = EnigmailLocale.get();
             let dateTimeFormat = Cc[DATE_FORMAT_CONTRACTID].getService(Ci.nsIScriptableDateFormat);
 
             let dateFormat = (withDate ? dateTimeFormat.dateFormatShort : dateTimeFormat.dateFormatNone);

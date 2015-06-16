@@ -1,4 +1,4 @@
-/*global Components: false, DecryptPermanently: false, EnigmailCore: false, Log: false, Locale: false, Dialog: false */
+/*global Components: false, DecryptPermanently: false, EnigmailCore: false, Log: false, EnigmailLocale: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -63,7 +63,7 @@ const Ci = Components.interfaces;
 
 const filterActionMoveDecrypt = {
     id: "enigmail@enigmail.net#filterActionMoveDecrypt",
-    name: Locale.getString("filter.decryptMove.label"),
+    name: EnigmailLocale.getString("filter.decryptMove.label"),
     value: "movemessage",
     apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
 
@@ -85,10 +85,10 @@ const filterActionMoveDecrypt = {
     },
 
     validateActionValue: function (value, folder, type) {
-        Dialog.alert(null, Locale.getString("filter.decryptMove.warnExperimental"));
+        Dialog.alert(null, EnigmailLocale.getString("filter.decryptMove.warnExperimental"));
 
         if (value === "") {
-            return Locale.getString("filter.folderRequired");
+            return EnigmailLocale.getString("filter.folderRequired");
         }
 
         return null;
@@ -105,7 +105,7 @@ const filterActionMoveDecrypt = {
  */
 const filterActionCopyDecrypt = {
     id: "enigmail@enigmail.net#filterActionCopyDecrypt",
-    name: Locale.getString("filter.decryptCopy.label"),
+    name: EnigmailLocale.getString("filter.decryptCopy.label"),
     value: "copymessage",
     apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
         Log.DEBUG("enigmail.js: filterActionCopyDecrypt: Copy to: " + aActionValue + "\n");
@@ -126,7 +126,7 @@ const filterActionCopyDecrypt = {
 
     validateActionValue: function (value, folder, type) {
         if( value === "") {
-            return Locale.getString("filter.folderRequired");
+            return EnigmailLocale.getString("filter.folderRequired");
         }
 
         return null;

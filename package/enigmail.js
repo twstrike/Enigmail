@@ -56,7 +56,7 @@ Cu.import("resource://enigmail/filters.jsm"); /*global Filters: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
-Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/uris.jsm"); /*global URIs: false */
@@ -137,7 +137,7 @@ function initializeAgentInfo() {
 }
 
 function failureOn(ex, status) {
-    status.initializationError = Locale.getString("enigmimeNotAvail");
+    status.initializationError = EnigmailLocale.getString("enigmimeNotAvail");
     Log.ERROR("enigmail.js: Enigmail.initialize: Error - "+status.initializationError+"\n");
     Log.DEBUG("enigmail.js: Enigmail.initialize: exception="+ex.toString()+"\n");
     throw Components.results.NS_ERROR_FAILURE;
@@ -309,14 +309,14 @@ Enigmail.prototype = {
             } catch (ex) {
                 if (firstInitialization) {
                     // Display initialization error alert
-                    const errMsg = (holder.svc.initializationError ? holder.svc.initializationError : Locale.getString("accessError")) +
-                              "\n\n"+Locale.getString("initErr.howToFixIt");
+                    const errMsg = (holder.svc.initializationError ? holder.svc.initializationError : EnigmailLocale.getString("accessError")) +
+                              "\n\n"+EnigmailLocale.getString("initErr.howToFixIt");
 
                     const checkedObj = {value: false};
                     if (Prefs.getPref("initAlert")) {
                         const r = Dialog.longAlert(win, "Enigmail: "+errMsg,
-                                                   Locale.getString("dlgNoPrompt"),
-                                                   null, Locale.getString("initErr.setupWizard.button"),
+                                                   EnigmailLocale.getString("dlgNoPrompt"),
+                                                   null, EnigmailLocale.getString("initErr.setupWizard.button"),
                                                    null, checkedObj);
                         if (r >= 0 && checkedObj.value) {
                             Prefs.setPref("initAlert", false);
@@ -342,7 +342,7 @@ Enigmail.prototype = {
 
             if (firstInitialization && holder.svc.initialized &&
                 EnigmailGpgAgent.agentType === "pgp") {
-                Dialog.alert(win, Locale.getString("pgpNotSupported"));
+                Dialog.alert(win, EnigmailLocale.getString("pgpNotSupported"));
             }
 
             if (holder.svc.initialized && (EnigmailApp.getVersion() != configuredVersion)) {

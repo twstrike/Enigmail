@@ -50,7 +50,7 @@ Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
-Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
+Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
@@ -374,7 +374,7 @@ const EnigmailGpgAgent = {
                 agentPath = pathDir.QueryInterface(Ci.nsIFile);
 
             } catch (ex) {
-                esvc.initializationError = Locale.getString("gpgNotFound", [ agentPath ]);
+                esvc.initializationError = EnigmailLocale.getString("gpgNotFound", [ agentPath ]);
                 Log.ERROR("enigmail.js: Enigmail.initialize: Error - "+esvc.initializationError+"\n");
                 throw Components.results.NS_ERROR_FAILURE;
             }
@@ -409,7 +409,7 @@ const EnigmailGpgAgent = {
             }
 
             if (!agentPath) {
-                esvc.initializationError = Locale.getString("gpgNotInPath");
+                esvc.initializationError = EnigmailLocale.getString("gpgNotInPath");
                 Log.ERROR("enigmail.js: Enigmail: Error - "+esvc.initializationError+"\n");
                 throw Components.results.NS_ERROR_FAILURE;
             }
@@ -486,7 +486,7 @@ const EnigmailGpgAgent = {
             if (! domWindow) {
                 domWindow = Windows.getBestParentWin();
             }
-            Dialog.alert(domWindow, Locale.getString("oldGpgVersion14", [ gpgVersion ]));
+            Dialog.alert(domWindow, EnigmailLocale.getString("oldGpgVersion14", [ gpgVersion ]));
             throw Components.results.NS_ERROR_FAILURE;
         }
 
@@ -599,7 +599,7 @@ const EnigmailGpgAgent = {
 
                 if (command === null) {
                     Log.ERROR("enigmail.js: detectGpgAgent: gpg-agent not found\n");
-                    Dialog.alert(domWindow, Locale.getString("gpgAgentNotStarted", [ Gpg.agentVersion ]));
+                    Dialog.alert(domWindow, EnigmailLocale.getString("gpgAgentNotStarted", [ Gpg.agentVersion ]));
                     throw Components.results.NS_ERROR_FAILURE;
                 }
             }
@@ -647,7 +647,7 @@ const EnigmailGpgAgent = {
                 }
                 else {
                     Log.ERROR("enigmail.js: detectGpgAgent: gpg-agent output: "+outStr+"\n");
-                    Dialog.alert(domWindow, Locale.getString("gpgAgentNotStarted", [ Gpg.agentVersion ]));
+                    Dialog.alert(domWindow, EnigmailLocale.getString("gpgAgentNotStarted", [ Gpg.agentVersion ]));
                     throw Components.results.NS_ERROR_FAILURE;
                 }
             }

@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, Prefs: false, Timer: false, EnigmailApp: false, Locale: false, Dialog: false, Windows: false */
+/*global Components: false, Log: false, Prefs: false, Timer: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false, Windows: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -271,9 +271,9 @@ const Configure = {
                     Timer.setTimeout(
                         function _cb() {
                             var doIt = Dialog.confirmDlg(win,
-                                                         Locale.getString("enigmailCommon.versionSignificantlyChanged"),
-                                                         Locale.getString("enigmailCommon.checkPreferences"),
-                                                         Locale.getString("dlg.button.close"));
+                                                         EnigmailLocale.getString("enigmailCommon.versionSignificantlyChanged"),
+                                                         EnigmailLocale.getString("enigmailCommon.checkPreferences"),
+                                                         EnigmailLocale.getString("dlg.button.close"));
                             if (!startingPreferences && doIt) {
                                 // same as:
                                 // - Windows.openPrefWindow(window, true, 'sendingTab');
