@@ -47,7 +47,7 @@ Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 
-var EXPORTED_SYMBOLS = [ "Rules" ];
+var EXPORTED_SYMBOLS = [ "EnigmailRules" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -65,7 +65,7 @@ const rulesListHolder = {
     rulesList: null
 };
 
-const Rules = {
+const EnigmailRules = {
     getRulesFile: function() {
         EnigmailLog.DEBUG("enigmail.js: getRulesFile\n");
         var rulesFile = EnigmailApp.getProfileDirectory();
@@ -166,11 +166,11 @@ const Rules = {
     },
 
     registerOn: function(target) {
-        target.getRulesFile = Rules.getRulesFile;
-        target.loadRulesFile = Rules.loadRulesFile;
-        target.saveRulesFile = Rules.saveRulesFile;
-        target.getRulesData = Rules.getRulesData;
-        target.addRule = Rules.addRule;
-        target.clearRules = Rules.clearRules;
+        target.getRulesFile = EnigmailRules.getRulesFile;
+        target.loadRulesFile = EnigmailRules.loadRulesFile;
+        target.saveRulesFile = EnigmailRules.saveRulesFile;
+        target.getRulesData = EnigmailRules.getRulesData;
+        target.addRule = EnigmailRules.addRule;
+        target.clearRules = EnigmailRules.clearRules;
     }
 };
