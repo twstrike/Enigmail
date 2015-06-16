@@ -41,7 +41,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Card" ];
+const EXPORTED_SYMBOLS = [ "EnigmailCard" ];
 
 const Cu = Components.utils;
 
@@ -49,9 +49,9 @@ Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 
-const Card = {
+const EnigmailCard = {
     getCardStatus: function(exitCodeObj, errorMsgObj) {
-        EnigmailLog.DEBUG("enigmail.js: Enigmail.getCardStatus\n");
+        EnigmailLog.DEBUG("card.jsm: EnigmailCard.getCardStatus\n");
         const args = Gpg.getStandardArgs(false).
                   concat(["--status-fd", "2", "--fixed-list-mode", "--with-colons", "--card-status"]);
         const statusMsgObj = {};
