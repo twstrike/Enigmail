@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailLog: false, EnigmailPrefs: false, Timer: false, EnigmailApp: false, EnigmailLocale: false, EnigmailDialog: false, Windows: false */
+/*global Components: false, EnigmailLog: false, EnigmailPrefs: false, Timer: false, EnigmailApp: false, EnigmailLocale: false, EnigmailDialog: false, EnigmailWindows: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -234,7 +234,7 @@ const EnigmailConfigure = {
         try {
             let vc = Cc["@mozilla.org/xpcom/version-comparator;1"].getService(Ci.nsIVersionComparator);
             if (oldVer === "") {
-                Windows.openSetupWizard(win, false);
+                EnigmailWindows.openSetupWizard(win, false);
             }
             else {
                 if (oldVer < "0.95") {
@@ -276,7 +276,7 @@ const EnigmailConfigure = {
                                                          EnigmailLocale.getString("dlg.button.close"));
                             if (!startingPreferences && doIt) {
                                 // same as:
-                                // - Windows.openPrefWindow(window, true, 'sendingTab');
+                                // - EnigmailWindows.openPrefWindow(window, true, 'sendingTab');
                                 // but
                                 // - without starting the service again because we do that right now
                                 // - and modal (waiting for its end)

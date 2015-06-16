@@ -1,5 +1,5 @@
 dump("loading: enigmailAbout.js\n");
-/*global Components: false, EnigmailApp: false, Windows: false */
+/*global Components: false, EnigmailApp: false, EnigmailWindows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -41,7 +41,7 @@ dump("loading: enigmailAbout.js\n");
 function enigAboutLoad() {
     EnigmailLog.DEBUG("enigmailAbout.js: enigAboutLoad\n");
 
-  var contentFrame = Windows.getFrame(window, "contentFrame");
+  var contentFrame = EnigmailWindows.getFrame(window, "contentFrame");
   if (!contentFrame)
     return;
 

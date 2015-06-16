@@ -1158,7 +1158,7 @@ function enigmailDowloadContactKeysEngine() {
   };
   var resultObj = {};
 
-  Windows.downloadKeys(window, inputObj, resultObj);
+  EnigmailWindows.downloadKeys(window, inputObj, resultObj);
 
   if (resultObj.importedKeys > 0) {
     enigmailRefreshKeys();

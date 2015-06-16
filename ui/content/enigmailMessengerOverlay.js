@@ -1,5 +1,5 @@
 dump("loading: enigmailMessengerOverlay.js\n");
-/*global Components: false, EnigmailData: false, EnigmailApp: false, Dialog: false, Timer: false, Windows: false, Time: false */
+/*global Components: false, EnigmailData: false, EnigmailApp: false, Dialog: false, Timer: false, EnigmailWindows: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -193,7 +193,7 @@ Enigmail.msg = {
 
     if (EnigmailPrefs.getPref("configuredVersion") === "") {
       EnigmailPrefs.setPref("configuredVersion", EnigmailApp.getVersion());
-      Windows.openSetupWizard(window, false);
+      EnigmailWindows.openSetupWizard(window, false);
     }
   },
 
@@ -815,7 +815,7 @@ Enigmail.msg = {
   messageParse: function (interactive, importOnly, contentEncoding, msgUriSpec)
   {
     EnigmailLog.DEBUG("enigmailMessengerOverlay.js: messageParse: "+interactive+"\n");
-    var msgFrame = Windows.getFrame(window, "messagepane");
+    var msgFrame = EnigmailWindows.getFrame(window, "messagepane");
     EnigmailLog.DEBUG("enigmailMessengerOverlay.js: msgFrame="+msgFrame+"\n");
 
     var bodyElement = msgFrame.document.getElementsByTagName("body")[0];
@@ -1179,7 +1179,7 @@ Enigmail.msg = {
                              charset:charset,
                              plainText:msgRfc822Text};
 
-    var msgFrame = Windows.getFrame(window, "messagepane");
+    var msgFrame = EnigmailWindows.getFrame(window, "messagepane");
     var bodyElement = msgFrame.document.getElementsByTagName("body")[0];
 
     // don't display decrypted message if message selection has changed
@@ -2359,7 +2359,7 @@ Enigmail.msg = {
       searchList : [ pubKeyId ]
     };
     var resultObj = {};
-    Windows.downloadKeys(window, inputObj, resultObj);
+    EnigmailWindows.downloadKeys(window, inputObj, resultObj);
 
     if (resultObj.importedKeys > 0) {
       this.messageReload(false);

@@ -97,7 +97,7 @@
       EnigmailLog.DEBUG("enigmailHelp.js: enigLoadPage\n");
       EnigmailCore.getService();
 
-      var contentFrame = Windows.getFrame(window, "contentFrame");
+      var contentFrame = EnigmailWindows.getFrame(window, "contentFrame");
       if (!contentFrame)
         return;
 

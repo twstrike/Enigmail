@@ -1,5 +1,5 @@
 dump("loading: enigmailConsole.js\n");
-/*global Components: false, Windows: false */
+/*global Components: false, EnigmailWindows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -80,7 +80,7 @@ function refreshConsole() {
 function updateData() {
   //EnigmailLog.DEBUG("enigmailConsole.js: updateData():\n");
 
-    var contentFrame = Windows.getFrame(window, "contentFrame");
+    var contentFrame = EnigmailWindows.getFrame(window, "contentFrame");
     if (!contentFrame)
       return;
 
@@ -111,7 +111,7 @@ function enigmailConsoleCopy()
 function getSelectionStr()
 {
   try {
-    var contentFrame = Windows.getFrame(window, "contentFrame");
+    var contentFrame = EnigmailWindows.getFrame(window, "contentFrame");
 
     var sel = contentFrame.getSelection();
     return sel.toString();

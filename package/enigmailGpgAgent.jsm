@@ -52,7 +52,7 @@ Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
-Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
+Cu.import("resource://enigmail/windows.jsm"); /*global EnigmailWindows: false */
 Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
@@ -484,7 +484,7 @@ const EnigmailGpgAgent = {
 
         if (!EnigmailGpg.getGpgFeature("version-supported")) {
             if (! domWindow) {
-                domWindow = Windows.getBestParentWin();
+                domWindow = EnigmailWindows.getBestParentWin();
             }
             EnigmailDialog.alert(domWindow, EnigmailLocale.getString("oldGpgVersion14", [ gpgVersion ]));
             throw Components.results.NS_ERROR_FAILURE;

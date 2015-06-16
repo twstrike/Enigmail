@@ -1,5 +1,5 @@
 dump("loading: enigmailCommon.js\n");
-/*global Components: false, EnigmailFiles: false, EnigmailCore: false, EnigmailApp: false, EnigmailDialog: false, Windows: false, Time: false */
+/*global Components: false, EnigmailFiles: false, EnigmailCore: false, EnigmailApp: false, EnigmailDialog: false, EnigmailWindows: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -188,7 +188,7 @@ const ENIG_HEADERMODE_URL   = 0x10;
 
 
 function EnigGetFrame(win, frameName) {
-  return Windows.getFrame(win, frameName);
+  return EnigmailWindows.getFrame(win, frameName);
 }
 
 // Initializes enigmailCommon
@@ -298,12 +298,12 @@ function EnigError(mesg) {
 
 function EnigPrefWindow(showBasic, clientType, selectTab) {
   EnigmailLog.DEBUG("enigmailCommon.js: EnigPrefWindow\n");
-  Windows.openPrefWindow(window, showBasic, selectTab);
+  EnigmailWindows.openPrefWindow(window, showBasic, selectTab);
 }
 
 
 function EnigHelpWindow(source) {
-  Windows.openHelpWindow(source);
+  EnigmailWindows.openHelpWindow(source);
 }
 
 
@@ -438,15 +438,15 @@ function EnigGetWindowOptions() {
 }
 
 function EnigRulesEditor() {
-  Windows.openRulesEditor();
+  EnigmailWindows.openRulesEditor();
 }
 
 function EngmailCardDetails() {
-  Windows.openCardDetails();
+  EnigmailWindows.openCardDetails();
 }
 
 function EnigKeygen() {
-  Windows.openKeyGen();
+  EnigmailWindows.openKeyGen();
 
 }
 
@@ -490,12 +490,12 @@ function EnigFilePicker(title, displayDir, save, defaultExtension, defaultName, 
 
 // get keys from keyserver
 function EnigDownloadKeys(inputObj, resultObj) {
-  return Windows.downloadKeys(window, inputObj, resultObj);
+  return EnigmailWindows.downloadKeys(window, inputObj, resultObj);
 }
 
 // create new PGP Rule
 function EnigNewRule(emailAddress) {
-  return Windows.createNewRule(window, emailAddress);
+  return EnigmailWindows.createNewRule(window, emailAddress);
 }
 
 function EnigGetTrustCode(keyObj) {
@@ -510,20 +510,20 @@ function EnigLoadKeyList(refresh, keyListObj, sortColumn, sortDirection) {
 }
 
 function EnigEditKeyTrust(userIdArr, keyIdArr) {
-  return Windows.editKeyTrust(window, userIdArr, keyIdArr);
+  return EnigmailWindows.editKeyTrust(window, userIdArr, keyIdArr);
 }
 
 
 function EnigEditKeyExpiry(userIdArr, keyIdArr) {
-  return Windows.editKeyExpiry(window, userIdArr, keyIdArr);
+  return EnigmailWindows.editKeyExpiry(window, userIdArr, keyIdArr);
 }
 
 function EnigDisplayKeyDetails(keyId, refresh) {
-  return Windows.openKeyDetails(window, keyId, refresh);
+  return EnigmailWindows.openKeyDetails(window, keyId, refresh);
 }
 
 function EnigSignKey(userId, keyId) {
-  return Windows.signKey(window, userId, keyId);
+  return EnigmailWindows.signKey(window, userId, keyId);
 }
 
 
@@ -601,7 +601,7 @@ function EnigGetLocalFileApi() {
 }
 
 function EnigShowPhoto (keyId, userId, photoNumber) {
-  Windows.showPhoto(window, keyId, userId, photoNumber);
+  EnigmailWindows.showPhoto(window, keyId, userId, photoNumber);
 }
 
 function EnigGetFilePath (nsFileObj) {

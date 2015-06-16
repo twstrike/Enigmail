@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailLocale: false, EnigmailLog: false, Windows: false, EnigmailPrefs: false */
+/*global Components: false, EnigmailLocale: false, EnigmailLog: false, EnigmailWindows: false, EnigmailPrefs: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -143,7 +143,7 @@ const EnigmailDialog = {
         };
 
         if (! win) {
-            win = Windows.getBestParentWin();
+            win = EnigmailWindows.getBestParentWin();
         }
 
         win.openDialog("chrome://enigmail/content/enigmailAlertDlg.xul", "",
@@ -395,4 +395,4 @@ const EnigmailDialog = {
     }
 };
 
-Windows.alert = EnigmailDialog.alert;
+EnigmailWindows.alert = EnigmailDialog.alert;

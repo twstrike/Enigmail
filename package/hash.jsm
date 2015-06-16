@@ -45,7 +45,7 @@ const EXPORTED_SYMBOLS = [ "Hash" ];
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
-Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
+Cu.import("resource://enigmail/windows.jsm"); /*global EnigmailWindows: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
@@ -63,7 +63,7 @@ const Hash = {
         EnigmailLog.DEBUG("hash.jsm: determineAlgorithm\n");
 
         if (! win) {
-            win = Windows.getMostRecentWindow();
+            win = EnigmailWindows.getMostRecentWindow();
         }
 
         const sendFlags = nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_SIGNED;

@@ -61,7 +61,7 @@ Cu.import("resource://enigmail/commandLine.jsm"); /*global EnigmailCommandLine: 
 Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Cu.import("resource://enigmail/verify.jsm"); /*global Verify: false */
-Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
+Cu.import("resource://enigmail/windows.jsm"); /*global EnigmailWindows: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/configure.jsm"); /*global EnigmailConfigure: false */
 Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
@@ -289,7 +289,7 @@ Enigmail.prototype = {
 
     getService: function (holder, win, startingPreferences) {
         if (! win) {
-            win = Windows.getBestParentWin();
+            win = EnigmailWindows.getBestParentWin();
         }
 
         EnigmailLog.DEBUG("enigmail.js: svc = "+holder.svc+"\n");
@@ -323,7 +323,7 @@ Enigmail.prototype = {
                         }
                         if (r == 1) {
                             // start setup wizard
-                            Windows.openSetupWizard(win, false);
+                            EnigmailWindows.openSetupWizard(win, false);
                             return Enigmail.getService(holder, win);
                         }
                     }

@@ -1,5 +1,5 @@
 dump("loading: enigmailMsgHdrViewOverlay.js\n");
-/*global Components: false, Windows: false, EnigmailLocale: false, EnigmailPrefs: false, Time: false */
+/*global Components: false, EnigmailWindows: false, EnigmailLocale: false, EnigmailPrefs: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -610,7 +610,7 @@ Enigmail.hdrView = {
 
   editKeyExpiry: function ()
   {
-    Windows.editKeyExpiry(window, [Enigmail.msg.securityInfo.userId], [Enigmail.msg.securityInfo.keyId]);
+    EnigmailWindows.editKeyExpiry(window, [Enigmail.msg.securityInfo.userId], [Enigmail.msg.securityInfo.keyId]);
     gDBView.reloadMessageWithAllParts();
   },
 
@@ -619,7 +619,7 @@ Enigmail.hdrView = {
     let enigmailSvc = EnigmailCore.getService();
     let keyId = EnigmailKeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
-    Windows.editKeyTrust(window, [Enigmail.msg.securityInfo.userId], [keyId]);
+    EnigmailWindows.editKeyTrust(window, [Enigmail.msg.securityInfo.userId], [keyId]);
     gDBView.reloadMessageWithAllParts();
   },
 
@@ -628,7 +628,7 @@ Enigmail.hdrView = {
     let enigmailSvc = EnigmailCore.getService();
     let keyId = EnigmailKeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
-    Windows.signKey(window, Enigmail.msg.securityInfo.userId, keyId, null);
+    EnigmailWindows.signKey(window, Enigmail.msg.securityInfo.userId, keyId, null);
     gDBView.reloadMessageWithAllParts();
   },
 
@@ -653,7 +653,7 @@ Enigmail.hdrView = {
 
           this.enigmailBox.setAttribute("class", "expandedEnigmailBox enigmailHeaderBoxLabelSignatureOk");
 
-          var msgFrame = Windows.getFrame(window, "messagepane");
+          var msgFrame = EnigmailWindows.getFrame(window, "messagepane");
 
           if (msgFrame) {
             EnigmailLog.DEBUG("enigmailMsgHdrViewOverlay.js: msgFrame="+msgFrame+"\n");
@@ -721,7 +721,7 @@ Enigmail.hdrView = {
     let enigmailSvc = EnigmailCore.getService();
     let keyId = EnigmailKeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
-    Windows.showPhoto(window, keyId, Enigmail.msg.securityInfo.userId);
+    EnigmailWindows.showPhoto(window, keyId, Enigmail.msg.securityInfo.userId);
   },
 
 
@@ -732,7 +732,7 @@ Enigmail.hdrView = {
     let enigmailSvc = EnigmailCore.getService();
     let keyId = EnigmailKeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
-    Windows.openKeyDetails(window, keyId, false);
+    EnigmailWindows.openKeyDetails(window, keyId, false);
   },
 
   createRuleFromAddress: function (emailAddressNode)
@@ -742,7 +742,7 @@ Enigmail.hdrView = {
       if (typeof(findEmailNodeFromPopupNode)=="function") {
         emailAddressNode = findEmailNodeFromPopupNode(emailAddressNode, 'emailAddressPopup');
       }
-      Windows.createNewRule(window, emailAddressNode.getAttribute("emailAddress"));
+      EnigmailWindows.createNewRule(window, emailAddressNode.getAttribute("emailAddress"));
     }
   },
 

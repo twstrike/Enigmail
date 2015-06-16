@@ -60,7 +60,7 @@ Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
-Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
+Cu.import("resource://enigmail/windows.jsm"); /*global EnigmailWindows: false */
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
@@ -858,7 +858,7 @@ const EnigmailKeyRing = {
             if (EnigmailDialog.confirmDlg(EnigmailLocale.getString("noSecretKeys"),
                                   EnigmailLocale.getString("keyMan.button.generateKey"),
                                   EnigmailLocale.getString("keyMan.button.skip"))) {
-                Windows.openKeyGen();
+                EnigmailWindows.openKeyGen();
                 EnigmailKeyRing.loadKeyList(win, true, keyListObj);
             }
         }
