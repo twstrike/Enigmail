@@ -46,7 +46,7 @@ Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false 
 Cu.import("resource://enigmail/enigmailFuncs.jsm"); /*global EnigmailFuncs: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
-Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */
+Cu.import("resource://enigmail/streams.jsm"); /*global EnigmailStreams: false */
 
 const EC = EnigmailCore;
 
@@ -122,7 +122,7 @@ const EnigmailFixExchangeMsg = {
 
         EnigmailLog.DEBUG("fixExchangeMsg.jsm: getting data from URL " + url +"\n");
 
-        let s = Streams.newStringStreamListener(
+        let s = EnigmailStreams.newStringStreamListener(
           function analyzeData(data) {
             EnigmailLog.DEBUG("fixExchangeMsg.jsm: analyzeDecryptedData: got " + data.length +" bytes\n");
 

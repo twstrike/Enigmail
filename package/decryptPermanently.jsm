@@ -55,7 +55,7 @@ Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
-Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */
+Cu.import("resource://enigmail/streams.jsm"); /*global EnigmailStreams: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 Cu.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
 Cu.import("resource://enigmail/attachment.jsm"); /*global EnigmailAttachment: false */
@@ -376,7 +376,7 @@ DecryptMessageIntoFolder.prototype = {
                 };
 
                 try {
-                    var bufferListener = Streams.newStringStreamListener(f);
+                    var bufferListener = EnigmailStreams.newStringStreamListener(f);
                     var ioServ = Cc[IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
                     var msgUri = ioServ.newURI(attachment.url, null, null);
 
@@ -629,7 +629,7 @@ DecryptMessageIntoFolder.prototype = {
 
                 EnigmailLog.DEBUG("decryptPermanently.jsm: getting data from URL " + url +"\n");
 
-                let s = Streams.newStringStreamListener(
+                let s = EnigmailStreams.newStringStreamListener(
                     function analyzeDecryptedData(data) {
                         EnigmailLog.DEBUG("decryptPermanently.jsm: analyzeDecryptedData: got " + data.length +" bytes\n");
 

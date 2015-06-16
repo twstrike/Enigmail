@@ -47,7 +47,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
+Components.utils.import("resource://enigmail/streams.jsm"); /*global EnigmailStreams: false */
 Components.utils.import("resource://enigmail/uris.jsm"); /*global EnigmailURIs: false */
 
 const NS_SIMPLEURI_CONTRACTID   = "@mozilla.org/network/simple-uri;1";
@@ -131,14 +131,14 @@ EnigmailProtocolHandler.prototype = {
                 contentData = "Enigmail error: invalid URI "+aURI.spec;
             }
 
-            var channel = Streams.newStringChannel(aURI, contentType, "UTF-8", contentData);
+            var channel = EnigmailStreams.newStringChannel(aURI, contentType, "UTF-8", contentData);
 
             return channel;
         }
 
         if (aURI.spec == aURI.scheme+":dummy") {
             // Dummy PKCS7 content (to access mimeEncryptedClass)
-            return Streams.newStringChannel(aURI, "message/rfc822", "", gDummyPKCS7);
+            return EnigmailStreams.newStringChannel(aURI, "message/rfc822", "", gDummyPKCS7);
         }
 
         var winName, spec;

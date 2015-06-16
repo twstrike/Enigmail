@@ -40,7 +40,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Streams" ];
+const EXPORTED_SYMBOLS = [ "EnigmailStreams" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -53,7 +53,7 @@ Cu.import("resource://enigmail/timer.jsm"); /*global Timer: false */
 const NS_STRING_INPUT_STREAM_CONTRACTID = "@mozilla.org/io/string-input-stream;1";
 const NS_INPUT_STREAM_CHNL_CONTRACTID = "@mozilla.org/network/input-stream-channel;1";
 
-const Streams = {
+const EnigmailStreams = {
     /**
      * create an nsIStreamListener object to read String data from an nsIInputStream
      *

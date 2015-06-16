@@ -62,7 +62,7 @@ Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/decryptPermanently.jsm");
-Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
+Components.utils.import("resource://enigmail/streams.jsm"); /*global EnigmailStreams: false */
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/attachment.jsm"); /*global EnigmailAttachment: false */
@@ -1889,7 +1889,7 @@ Enigmail.msg = {
       Enigmail.msg.verifyEmbeddedCallback(callbackArg);
     };
 
-    var bufferListener = Streams.newStringStreamListener(requestCallback);
+    var bufferListener = EnigmailStreams.newStringStreamListener(requestCallback);
 
     var ioServ = Components.classes[IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
 
@@ -2111,7 +2111,7 @@ Enigmail.msg = {
       Enigmail.msg.decryptAttachmentCallback([argumentsObj]);
     };
 
-    var bufferListener = Streams.newStringStreamListener(f);
+    var bufferListener = EnigmailStreams.newStringStreamListener(f);
     var ioServ = Components.classes[IOSERVICE_CONTRACTID].getService(Components.interfaces.nsIIOService);
     var msgUri = ioServ.newURI(argumentsObj.attachment.url, null, null);
 

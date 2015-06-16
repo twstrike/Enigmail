@@ -16,7 +16,7 @@ testing("decryptPermanently.jsm"); /*global EnigmailDecryptPermanently: false, P
 component("enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
 component("enigmail/glodaMime.jsm");
-component("enigmail/streams.jsm"); /*global Streams: false */
+component("enigmail/streams.jsm"); /*global EnigmailStreams: false */
 
 test(withTestGpgHome(withEnigmail(function messageIsCopiedToNewDir() {
     loadSecretKey();
@@ -123,7 +123,7 @@ function stringFromUrl(url) {
         const iOService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
         const uri = iOService.newURI(url, null, null);
         const attChannel = iOService.newChannelFromURI(uri);
-        const listener = Streams.newStringStreamListener(function(data) {
+        const listener = EnigmailStreams.newStringStreamListener(function(data) {
         result = data;
         inspector.exitNestedEventLoop();
         resolve();
