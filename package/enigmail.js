@@ -57,7 +57,7 @@ Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
-Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
+Cu.import("resource://enigmail/commandLine.jsm"); /*global EnigmailCommandLine: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Cu.import("resource://enigmail/verify.jsm"); /*global Verify: false */
@@ -363,7 +363,7 @@ URIs.registerOn(Enigmail.prototype);
 Verify.registerOn(Enigmail.prototype);
 
 // This variable is exported implicitly and should not be refactored or removed
-const NSGetFactory = XPCOMUtils.generateNSGetFactory([Enigmail, EnigmailProtocolHandler, CommandLine.Handler]);
+const NSGetFactory = XPCOMUtils.generateNSGetFactory([Enigmail, EnigmailProtocolHandler, EnigmailCommandLine.Handler]);
 
 EnigmailFilters.registerAll();
 
