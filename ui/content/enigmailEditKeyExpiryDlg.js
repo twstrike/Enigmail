@@ -1,5 +1,5 @@
 dump("loading: enigmailEditKeyExpiryDlg.js\n");
-/*global Components: false, EnigmailLog: false, EnigmailLocale: false, Timer: false, Dialog: false */
+/*global Components: false, EnigmailLog: false, EnigmailLocale: false, EnigmailTimer: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -120,7 +120,7 @@ function processKey(subKeys) {
     noExpiry,
     function(exitCode, errorMsg) {
       if (exitCode !== 0) {
-        Timer.setTimeout(function () {
+        EnigmailTimer.setTimeout(function () {
           EnigmailDialog.alert(window, EnigmailLocale.getString("setKeyExpirationDateFailed")+"\n\n"+errorMsg);
         }, 10);
       }
@@ -171,7 +171,7 @@ function onAccept() {
     if (subkeys.length > 0) {
       processKey(subkeys);
     } else {
-      Timer.setTimeout(function () {
+      EnigmailTimer.setTimeout(function () {
         EnigmailDialog.alert(window, EnigmailLocale.getString("noKeySelected")+"\n");
       }, 10);
     }
@@ -194,7 +194,7 @@ function checkExpirationDate() {
       /* @TODO GPG throws an error already when using 95 years (multiplying 365 and 95) */
       if (gAlertPopUpIsOpen !== true) {
         gAlertPopUpIsOpen = true;
-        Timer.setTimeout(function () {
+        EnigmailTimer.setTimeout(function () {
           EnigmailDialog.alert(window, EnigmailLocale.getString("expiryTooLongShorter")+"\n");
           gAlertPopUpIsOpen = false;
         }, 10);
@@ -205,7 +205,7 @@ function checkExpirationDate() {
       /* alert("Your key must be valid for at least one day."); */
       if (gAlertPopUpIsOpen !== true) {
         gAlertPopUpIsOpen = true;
-        Timer.setTimeout(function () {
+        EnigmailTimer.setTimeout(function () {
           EnigmailDialog.alert(window, EnigmailLocale.getString("expiryTooShort")+"\n");
           gAlertPopUpIsOpen = false;
         }, 10);

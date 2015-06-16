@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailLog: false, EnigmailPrefs: false, Timer: false, EnigmailApp: false, EnigmailLocale: false, EnigmailDialog: false, EnigmailWindows: false */
+/*global Components: false, EnigmailLog: false, EnigmailPrefs: false, EnigmailTimer: false, EnigmailApp: false, EnigmailLocale: false, EnigmailDialog: false, EnigmailWindows: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -268,7 +268,7 @@ const EnigmailConfigure = {
                 if (vc.compare(oldVer, "1.7") < 0) {
                     // open a modal dialog. Since this might happen during the opening of another
                     // window, we have to do this asynchronously
-                    Timer.setTimeout(
+                    EnigmailTimer.setTimeout(
                         function _cb() {
                             var doIt = EnigmailDialog.confirmDlg(win,
                                                          EnigmailLocale.getString("enigmailCommon.versionSignificantlyChanged"),

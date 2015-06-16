@@ -48,7 +48,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
-Cu.import("resource://enigmail/timer.jsm"); /*global Timer: false */
+Cu.import("resource://enigmail/timer.jsm"); /*global EnigmailTimer: false */
 
 const NS_STRING_INPUT_STREAM_CONTRACTID = "@mozilla.org/io/string-input-stream;1";
 const NS_INPUT_STREAM_CHNL_CONTRACTID = "@mozilla.org/network/input-stream-channel;1";
@@ -81,7 +81,7 @@ const EnigmailStreams = {
                 var cbFunc = this._onStopCallback;
                 var cbData = this.data;
 
-                Timer.setTimeout(function _cb() {
+                EnigmailTimer.setTimeout(function _cb() {
                     cbFunc(cbData);
                 });
             },

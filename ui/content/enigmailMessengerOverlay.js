@@ -1,5 +1,5 @@
 dump("loading: enigmailMessengerOverlay.js\n");
-/*global Components: false, EnigmailData: false, EnigmailApp: false, Dialog: false, Timer: false, EnigmailWindows: false, EnigmailTime: false */
+/*global Components: false, EnigmailData: false, EnigmailApp: false, Dialog: false, EnigmailTimer: false, EnigmailWindows: false, EnigmailTime: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -1340,7 +1340,7 @@ Enigmail.msg = {
           let index = gFolderDisplay.view.dbView.findIndexFromKey(msgKey, true);
           EnigmailLog.DEBUG("  ** index = "+index+"\n");
 
-          Timer.setTimeout(function () {
+          EnigmailTimer.setTimeout(function () {
             gFolderDisplay.view.dbView.selectMsgByKey(msgKey);
             }, 750);
         }

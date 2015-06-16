@@ -1,5 +1,5 @@
 dump("loading: enigmailMsgComposeOverlay.js\n");
-/*global Components: false, EnigmailLocale: false, EnigmailApp: false, Dialog: false, Timer: false */
+/*global Components: false, EnigmailLocale: false, EnigmailApp: false, Dialog: false, EnigmailTimer: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -134,7 +134,7 @@ Enigmail.msg = {
     EnigmailLog.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.composeStartup\n");
 
     function delayedProcessFinalState() {
-      Timer.setTimeout(function _f() {
+      EnigmailTimer.setTimeout(function _f() {
           Enigmail.msg.processFinalState();
           Enigmail.msg.updateStatusBar();
       },
@@ -205,7 +205,7 @@ Enigmail.msg = {
   {
     EnigmailLog.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.setIdentityCallback: elementId="+elementId+"\n");
 
-    Timer.setTimeout(function _f() {
+    EnigmailTimer.setTimeout(function _f() {
         Enigmail.msg.setIdentityDefaults();
     },
                               50);
@@ -553,7 +553,7 @@ Enigmail.msg = {
     this.composeOpen();
     this.fireSendFlags();
 
-    Timer.setTimeout(function _f() {
+    EnigmailTimer.setTimeout(function _f() {
         EnigmailLog.DEBUG("enigmailMsgComposeOverlay: re-determine send flags\n");
         try {
           this.determineSendFlags();
@@ -835,7 +835,7 @@ Enigmail.msg = {
     EnigmailLog.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.undoEncryption:\n");
     if (this.processed) {
       if (useEditorUndo) {
-        Timer.setTimeout(function _f() {
+        EnigmailTimer.setTimeout(function _f() {
             Enigmail.msg.editor.undo(useEditorUndo);
           }, 10);
       }
@@ -4225,7 +4225,7 @@ Enigmail.msg = {
      EnigmailLog.DEBUG("enigmailMsgComposeOverlay.js: Enigmail.msg.addressOnChange\n");
      if (! this.addrOnChangeTimer) {
         var self = this;
-        this.addrOnChangeTimer = Timer.setTimeout(function _f() {
+        this.addrOnChangeTimer = EnigmailTimer.setTimeout(function _f() {
            self.fireSendFlags();
            self.addrOnChangeTimer = null;
         }, 200);
@@ -4354,7 +4354,7 @@ Enigmail.composeStateListener = {
       return;
 
     if (!Enigmail.msg.timeoutId && !Enigmail.msg.dirty) {
-      Enigmail.msg.timeoutId = Timer.setTimeout(function () {
+      Enigmail.msg.timeoutId = EnigmailTimer.setTimeout(function () {
           Enigmail.msg.decryptQuote(false);
 
         },

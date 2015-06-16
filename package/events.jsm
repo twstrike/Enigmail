@@ -47,7 +47,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
-Cu.import("resource://enigmail/timer.jsm"); /*global Timer: false */
+Cu.import("resource://enigmail/timer.jsm"); /*global EnigmailTimer: false */
 
 const Events = {
     /**
@@ -90,7 +90,7 @@ const Events = {
 
         const event = new MainEvent(callbackFunction, arrayOfArgs);
         if (sleepTimeMs > 0) {
-            return Timer.setTimeout(event, sleepTimeMs);
+            return EnigmailTimer.setTimeout(event, sleepTimeMs);
         } else {
             const tm = Cc["@mozilla.org/thread-manager;1"].getService(Ci.nsIThreadManager);
             // dispatch the event to the main thread

@@ -40,12 +40,12 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Timer" ];
+const EXPORTED_SYMBOLS = [ "EnigmailTimer" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
-const Timer = {
+const EnigmailTimer = {
     /**
      * wait a defined number of miliseconds, then call a callback function
      * asynchronously
