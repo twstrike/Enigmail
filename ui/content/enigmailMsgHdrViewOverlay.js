@@ -44,7 +44,7 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
-Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
+Components.utils.import("resource://enigmail/key.jsm"); /*global EnigmailKey: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
@@ -255,10 +255,10 @@ Enigmail.hdrView = {
         statusInfo += "\n" + txt;
         var fpr = "";
         if (detailArr.length >= 10) {
-          fpr = Key.formatFpr(detailArr[9]);
+          fpr = EnigmailKey.formatFpr(detailArr[9]);
         }
         else {
-          fpr = Key.formatFpr(detailArr[0]);
+          fpr = EnigmailKey.formatFpr(detailArr[0]);
         }
         if (fpr) {
           statusInfo += "\n"+EnigmailLocale.getString("keyFpr", [ fpr ]);

@@ -39,7 +39,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Key" ];
+const EXPORTED_SYMBOLS = [ "EnigmailKey" ];
 
 const Cu = Components.utils;
 
@@ -121,7 +121,7 @@ KeyEntry.prototype = {
     }
 };
 
-const Key = {
+const EnigmailKey = {
     Entry: KeyEntry,
 
     /**
@@ -131,7 +131,7 @@ const Key = {
      * @return |string| - formatted string
      */
     formatFpr: function (fingerprint) {
-        EnigmailLog.DEBUG("key.jsm: Key.formatFpr(" + fingerprint + ")\n");
+        EnigmailLog.DEBUG("key.jsm: EnigmailKey.formatFpr(" + fingerprint + ")\n");
         // format key fingerprint
         let r="";
         const fpr = fingerprint.match(/(....)(....)(....)(....)(....)(....)(....)(....)(....)?(....)?/);

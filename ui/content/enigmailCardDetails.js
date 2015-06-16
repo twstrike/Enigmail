@@ -37,7 +37,7 @@ dump("loading: enigmailCardDetails.js\n");
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/keyEditor.jsm"); /*global EnigmailKeyEditor: false */
-Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
+Components.utils.import("resource://enigmail/key.jsm"); /*global EnigmailKey: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
@@ -88,9 +88,9 @@ function onLoad() {
         setValue(l[0], l[1]+" / "+l[2]+" / "+l[3]);
         break;
       case "fpr":
-        setValue("key_fpr_1", Key.formatFpr(l[1]));
-        setValue("key_fpr_2", Key.formatFpr(l[2]));
-        setValue("key_fpr_3", Key.formatFpr(l[3]));
+        setValue("key_fpr_1", EnigmailKey.formatFpr(l[1]));
+        setValue("key_fpr_2", EnigmailKey.formatFpr(l[2]));
+        setValue("key_fpr_3", EnigmailKey.formatFpr(l[3]));
         break;
       case "fprtime":
         setValue("key_created_1", Time.getDateTime(l[1], true, false));

@@ -45,7 +45,7 @@ dump("loading: enigmailCommon.js\n");
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/keyEditor.jsm");
-Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
+Components.utils.import("resource://enigmail/key.jsm"); /*global EnigmailKey: false */
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
@@ -416,7 +416,7 @@ function EnigConvertGpgToUnicode(text) {
 }
 
 function EnigFormatFpr(fingerprint) {
-  return Key.formatFpr(fingerprint);
+  return EnigmailKey.formatFpr(fingerprint);
 }
 
 /////////////////////////

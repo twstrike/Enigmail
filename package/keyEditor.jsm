@@ -41,7 +41,7 @@
 "use strict";
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
+Components.utils.import("resource://enigmail/key.jsm"); /*global EnigmailKey: false */
 Components.utils.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Components.utils.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Components.utils.import("resource://enigmail/files.jsm"); /*global Files: false */
@@ -556,7 +556,7 @@ const EnigmailKeyEditor = {
 
 function keyReadCallback(outputData, ret) {
 
-  outputData.keyObj = new Key.Entry(outputData.key);
+  outputData.keyObj = new EnigmailKey.Entry(outputData.key);
   ret.exitCode = 0;
 }
 
