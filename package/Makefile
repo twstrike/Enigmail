@@ -38,7 +38,7 @@ MODFILES = \
            dialog.jsm \
            encryption.jsm \
            enigmailCore.jsm \
-           enigmailErrorHandling.jsm \
+           errorHandling.jsm \
            enigmailFuncs.jsm \
            enigmailGpgAgent.jsm \
            enigmailProtocolHandler.jsm \

@@ -52,7 +52,7 @@ Cu.import("resource://enigmail/data.jsm");
 Cu.import("resource://enigmail/files.jsm");
 Cu.import("resource://enigmail/log.jsm");
 Cu.import("resource://enigmail/subprocess.jsm");
-Cu.import("resource://enigmail/enigmailErrorHandling.jsm");
+Cu.import("resource://enigmail/errorHandling.jsm");
 Cu.import("resource://enigmail/enigmailCore.jsm");
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 

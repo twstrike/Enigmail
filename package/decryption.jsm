@@ -59,7 +59,7 @@ Cu.import("resource://enigmail/httpProxy.jsm"); /*global EnigmailHttpProxy: fals
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
-Cu.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
+Cu.import("resource://enigmail/errorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Cu.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Cu.import("resource://enigmail/key.jsm"); /*global EnigmailKey: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
