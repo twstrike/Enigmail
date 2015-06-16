@@ -40,7 +40,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "HttpProxy" ];
+const EXPORTED_SYMBOLS = [ "EnigmailHttpProxy" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -73,7 +73,7 @@ function getPasswdForHost(hostname, userObj, passwdObj) {
     return false;
 }
 
-const HttpProxy = {
+const EnigmailHttpProxy = {
   /**
    *  get Proxy for a given hostname as configured in Mozilla
    *

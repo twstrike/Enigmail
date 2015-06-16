@@ -55,7 +55,7 @@ Cu.import("resource://enigmail/locale.jsm");
 Cu.import("resource://enigmail/data.jsm");
 Cu.import("resource://enigmail/execution.jsm");
 Cu.import("resource://enigmail/dialog.jsm");
-Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
+Cu.import("resource://enigmail/httpProxy.jsm"); /*global EnigmailHttpProxy: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
@@ -114,7 +114,7 @@ const EnigmailDecryption = {
         if (keyserver && keyserver !== "") {
             args.push("--keyserver-options");
             var keySrvArgs="auto-key-retrieve";
-            var srvProxy = HttpProxy.getHttpProxy(keyserver);
+            var srvProxy = EnigmailHttpProxy.getHttpProxy(keyserver);
             if (srvProxy) {
                 keySrvArgs += ",http-proxy="+srvProxy;
             }
