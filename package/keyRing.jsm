@@ -372,11 +372,7 @@ const EnigmailKeyRing = {
             if (exitCodeObj.value !== 0) {
                 errorMsgObj.value = EnigmailLocale.getString("badCommand");
                 if (cmdErrorMsgObj.value) {
-<<<<<<< HEAD
-                    errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(Gpg.agentPath, args);
-=======
-                    errorMsgObj.value += "\n" + Files.formatCmdLine(EnigmailGpg.agentPath, args);
->>>>>>> Prefixed Gpg with Enigmail
+                    errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(EnigmailGpg.agentPath, args);
                     errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
                 }
 
@@ -420,11 +416,7 @@ const EnigmailKeyRing = {
         if (exitCodeObj.value !== 0) {
             errorMsgObj.value = EnigmailLocale.getString("badCommand");
             if (cmdErrorMsgObj.value) {
-<<<<<<< HEAD
-                errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(Gpg.agentPath, args);
-=======
-                errorMsgObj.value += "\n" + Files.formatCmdLine(EnigmailGpg.agentPath, args);
->>>>>>> Prefixed Gpg with Enigmail
+                errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(EnigmailGpg.agentPath, args);
                 errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
             }
 
@@ -543,11 +535,7 @@ const EnigmailKeyRing = {
             errorMsgObj.value = EnigmailLocale.getString("failKeyExtract");
 
             if (cmdErrorMsgObj.value) {
-<<<<<<< HEAD
-                errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(Gpg.agentPath, args);
-=======
-                errorMsgObj.value += "\n" + Files.formatCmdLine(EnigmailGpg.agentPath, args);
->>>>>>> Prefixed Gpg with Enigmail
+                errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(EnigmailGpg.agentPath, args);
                 errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
             }
 
@@ -569,11 +557,7 @@ const EnigmailKeyRing = {
                 errorMsgObj.value = EnigmailLocale.getString("failKeyExtract");
 
                 if (cmdErrorMsgObj.value) {
-<<<<<<< HEAD
-                    errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(Gpg.agentPath, secretArgs);
-=======
-                    errorMsgObj.value += "\n" + Files.formatCmdLine(EnigmailGpg.agentPath, secretArgs);
->>>>>>> Prefixed Gpg with Enigmail
+                    errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(EnigmailGpg.agentPath, secretArgs);
                     errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
                 }
 
@@ -914,11 +898,7 @@ const EnigmailKeyRing = {
         const args = EnigmailGpg.getStandardArgs(true).
                   concat(["--gen-key"]);
 
-<<<<<<< HEAD
-        EnigmailLog.CONSOLE(EnigmailFiles.formatCmdLine(Gpg.agentPath, args));
-=======
-        EnigmailLog.CONSOLE(Files.formatCmdLine(EnigmailGpg.agentPath, args));
->>>>>>> Prefixed Gpg with Enigmail
+        EnigmailLog.CONSOLE(EnigmailFiles.formatCmdLine(EnigmailGpg.agentPath, args));
 
         let inputData = "%echo Generating key\nKey-Type: ";
 
