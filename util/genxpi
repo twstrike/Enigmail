@@ -112,7 +112,7 @@ zip --must-match\
     modules/enigmailCore.jsm \
     modules/errorHandling.jsm \
     modules/funcs.jsm \
-    modules/enigmailGpgAgent.jsm \
+    modules/gpgAgent.jsm \
     modules/protocolHandler.jsm \
     modules/events.jsm \
     modules/execution.jsm \

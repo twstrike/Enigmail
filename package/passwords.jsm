@@ -47,7 +47,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/lazy.jsm");  /*global EnigmailLazy: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 
-const gpgAgent = EnigmailLazy.loader("enigmail/enigmailGpgAgent.jsm", "EnigmailGpgAgent");
+const gpgAgent = EnigmailLazy.loader("enigmail/gpgAgent.jsm", "EnigmailGpgAgent");
 
 const EnigmailPassword = {
     /*

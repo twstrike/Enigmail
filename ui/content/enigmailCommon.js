@@ -57,7 +57,7 @@ Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
-Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
+Components.utils.import("resource://enigmail/gpgAgent.jsm");
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/trust.jsm"); /*global EnigmailTrust: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */

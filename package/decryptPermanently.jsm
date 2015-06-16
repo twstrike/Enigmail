@@ -53,7 +53,7 @@ Cu.import("resource://enigmail/glodaUtils.jsm"); /*global GlodaUtils: false */
 Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/gpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Cu.import("resource://enigmail/streams.jsm"); /*global EnigmailStreams: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */

@@ -46,7 +46,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://enigmail/execution.jsm"); /*global EnigmailExecution: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
-Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/gpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Cu.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */

@@ -48,7 +48,7 @@ Components.utils.import("resource://enigmail/files.jsm"); /*global EnigmailFiles
 Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/execution.jsm"); /*global EnigmailExecution: false */
-Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Components.utils.import("resource://enigmail/gpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailKeyEditor" ];

@@ -113,7 +113,7 @@
   Components.utils.import("resource://enigmail/log.jsm");
   Components.utils.import("resource://enigmail/locale.jsm");
   Components.utils.import("resource://enigmail/dialog.jsm");
-  Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
+  Components.utils.import("resource://enigmail/gpgAgent.jsm");
   Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 
   const nsIEnigmail = Components.interfaces.nsIEnigmail;

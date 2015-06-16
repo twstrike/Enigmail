@@ -56,7 +56,7 @@ Cu.import("resource://enigmail/data.jsm");
 Cu.import("resource://enigmail/execution.jsm");
 Cu.import("resource://enigmail/dialog.jsm");
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global EnigmailHttpProxy: false */
-Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
+Cu.import("resource://enigmail/gpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Cu.import("resource://enigmail/errorHandling.jsm"); /*global EnigmailErrorHandling: false */
