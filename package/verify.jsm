@@ -41,7 +41,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Verify" ];
+const EXPORTED_SYMBOLS = [ "EnigmailVerifyAttachment" ];
 
 const Cu = Components.utils;
 
@@ -58,9 +58,9 @@ const Ci = Components.interfaces;
 
 const nsIEnigmail = Ci.nsIEnigmail;
 
-const Verify = {
+const EnigmailVerifyAttachment = {
     attachment: function (parent, verifyFile, sigFile, statusFlagsObj, errorMsgObj) {
-        EnigmailLog.DEBUG("verify.jsm: Verify.attachment:\n");
+        EnigmailLog.DEBUG("verify.jsm: EnigmailVerifyAttachment.attachment:\n");
 
         const verifyFilePath  = EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePathReadonly(verifyFile.QueryInterface(Ci.nsIFile)));
         const sigFilePath     = EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePathReadonly(sigFile.QueryInterface(Ci.nsIFile)));
@@ -95,6 +95,6 @@ const Verify = {
     },
 
     registerOn: function(target) {
-        target.verifyAttachment = Verify.attachment;
+        target.verifyAttachment = EnigmailVerifyAttachment.attachment;
     }
 };
