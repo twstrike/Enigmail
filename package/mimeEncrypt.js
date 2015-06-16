@@ -16,7 +16,7 @@ Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/encryption.jsm"); /*global EnigmailEncryption: false */
 Components.utils.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
-Components.utils.import("resource://enigmail/hash.jsm"); /*global Hash: false */
+Components.utils.import("resource://enigmail/hash.jsm"); /*global EnigmailHash: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -161,7 +161,7 @@ PgpMimeEncrypt.prototype = {
           this.cryptoMode = MIME_SIGNED;
 
           let hashAlgoObj = {};
-          if (Hash.determineAlgorithm(this.win,
+          if (EnigmailHash.determineAlgorithm(this.win,
                                       this.enigSecurityInfo.UIFlags,
                                       this.enigSecurityInfo.senderEmailAddr,
                                       hashAlgoObj) === 0) {

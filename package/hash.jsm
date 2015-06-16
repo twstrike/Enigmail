@@ -40,7 +40,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Hash" ];
+const EXPORTED_SYMBOLS = [ "EnigmailHash" ];
 
 const Cu = Components.utils;
 
@@ -58,7 +58,7 @@ const nsIEnigmail = Ci.nsIEnigmail;
 const keyAlgorithms = [];
 const mimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha512", "sha224", "md5" ];
 
-const Hash = {
+const EnigmailHash = {
     determineAlgorithm: function (win, uiFlags, fromMailAddr, hashAlgoObj) {
         EnigmailLog.DEBUG("hash.jsm: determineAlgorithm\n");
 
