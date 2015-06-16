@@ -63,7 +63,7 @@ Cu.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Cu.import("resource://enigmail/verify.jsm"); /*global Verify: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
-Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
+Cu.import("resource://enigmail/configure.jsm"); /*global EnigmailConfigure: false */
 Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
 
 /* Implementations supplied by this module */
@@ -346,7 +346,7 @@ Enigmail.prototype = {
             }
 
             if (holder.svc.initialized && (EnigmailApp.getVersion() != configuredVersion)) {
-                Configure.configureEnigmail(win, startingPreferences);
+                EnigmailConfigure.configureEnigmail(win, startingPreferences);
             }
         }
 

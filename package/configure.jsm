@@ -41,7 +41,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Configure" ];
+const EXPORTED_SYMBOLS = [ "EnigmailConfigure" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -226,9 +226,9 @@ function upgradePgpMime() {
 }
 
 
-const Configure = {
+const EnigmailConfigure = {
     configureEnigmail: function(win, startingPreferences) {
-        EnigmailLog.DEBUG("enigmailCommon.jsm: ConfigureEnigmail\n");
+        EnigmailLog.DEBUG("configure.jsm: configureEnigmail\n");
         let oldVer=Prefs.getPref("configuredVersion");
 
         try {
