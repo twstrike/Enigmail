@@ -180,7 +180,7 @@
 
     var pinObserver = new changePinObserver();
 
-    KeyEditor.cardChangePin(window,
+    EnigmailKeyEditor.cardChangePin(window,
                                  action,
                                  oldPin,
                                  newPin,

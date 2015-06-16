@@ -51,7 +51,7 @@ Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 
-const EXPORTED_SYMBOLS = [ "KeyEditor" ];
+const EXPORTED_SYMBOLS = [ "EnigmailKeyEditor" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -313,7 +313,7 @@ function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, call
  * returnCode = 0 in case of success
  * returnCode != 0 and errorMsg set in case of failure
 */
-const KeyEditor = {
+const EnigmailKeyEditor = {
   setKeyTrust: function (parent, keyId, trustLevel, callbackFunc) {
     Log.DEBUG("keyManagmenent.jsm: Enigmail.setKeyTrust: trustLevel="+trustLevel+", keyId="+keyId+"\n");
 
@@ -552,7 +552,7 @@ const KeyEditor = {
                    callbackFunc);
   }
 
-}; // KeyEditor
+}; // EnigmailKeyEditor
 
 function keyReadCallback(outputData, ret) {
 

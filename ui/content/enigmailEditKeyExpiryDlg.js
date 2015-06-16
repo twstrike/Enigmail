@@ -111,7 +111,7 @@ function processKey(subKeys) {
   var expiryTime = Number(document.getElementById("expireInput").value);
   var timeScale = document.getElementById("timeScale").value;
 
-  KeyEditor.setKeyExpiration(
+  EnigmailKeyEditor.setKeyExpiration(
     window,
     window.arguments[0].keyId[0],
     subKeys,

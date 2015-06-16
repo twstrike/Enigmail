@@ -202,7 +202,7 @@ function genAndSaveRevCert(keyId, uid) {
     keyFile.append(keyIdShort + "_rev.asc");
 
     // create a revokation cert in the TB profile directoy
-    KeyEditor.genRevokeCert(window, "0x"+keyId, keyFile, "1", "",
+    EnigmailKeyEditor.genRevokeCert(window, "0x"+keyId, keyFile, "1", "",
       function _revokeCertCb(exitCode, errorMsg) {
         if (exitCode !== 0) {
           EnigAlert(EnigGetString("revokeCertFailed")+"\n\n"+errorMsg);

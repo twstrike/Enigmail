@@ -36,7 +36,7 @@ dump("loading: enigmailCardDetails.js\n");
 
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Components.utils.import("resource://enigmail/keyEditor.jsm"); /*global KeyEditor: false */
+Components.utils.import("resource://enigmail/keyEditor.jsm"); /*global EnigmailKeyEditor: false */
 Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
 Components.utils.import("resource://enigmail/prefs.jsm");
@@ -177,7 +177,7 @@ function doSaveChanges() {
     doEditData();
   }
   else {
-    KeyEditor.cardAdminData(window,
+    EnigmailKeyEditor.cardAdminData(window,
                                   Data.convertFromUnicode(dialogname),
                                   Data.convertFromUnicode(dialogfirstname),
                                   getValue("lang"),

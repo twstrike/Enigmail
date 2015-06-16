@@ -108,7 +108,7 @@
       Log.DEBUG("enigmailEditKeyTrust: processNextKey("+index+")\n");
 
       var t=document.getElementById("trustLevelGroup");
-      KeyEditor.setKeyTrust(window,
+      EnigmailKeyEditor.setKeyTrust(window,
         window.arguments[0].keyId[index],
         Number(t.selectedItem.value),
         function(exitCode, errorMsg) {

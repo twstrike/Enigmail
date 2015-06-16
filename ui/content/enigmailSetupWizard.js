@@ -516,7 +516,7 @@ function setKeyTrustNextKey(keyList, index) {
 
   if (keyType & 16) {
     // imported key contains secret key
-    KeyEditor.setKeyTrust(window, aKey[0], 5,
+    EnigmailKeyEditor.setKeyTrust(window, aKey[0], 5,
       function(exitCode, errorMsg) {
         if (exitCode !== 0) {
           return;

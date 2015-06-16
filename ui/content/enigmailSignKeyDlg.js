@@ -168,7 +168,7 @@ function onAccept() {
     return true;
   }
 
-  KeyEditor.signKey(window,
+  EnigmailKeyEditor.signKey(window,
     "0x"+signWithKey.selectedItem.value,
     window.arguments[0].keyId,
     localSig.checked,

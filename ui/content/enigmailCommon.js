@@ -540,7 +540,7 @@ function EnigChangeKeyPwd(keyId, userId) {
   }
   else {
     // gpg-agent used: gpg-agent will handle everything
-    KeyEditor.changePassphrase(window, "0x"+keyId, "", "",
+    EnigmailKeyEditor.changePassphrase(window, "0x"+keyId, "", "",
       function _changePwdCb(exitCode, errorMsg) {
         if (exitCode !== 0) {
           EnigAlert(EnigGetString("changePassFailed")+"\n\n"+errorMsg);
@@ -572,7 +572,7 @@ function EnigRevokeKey(keyId, userId, callbackFunc) {
   catch (ex) {}
   revFile.append("revkey.asc");
 
-  KeyEditor.genRevokeCert(window, "0x"+keyId, revFile, "0", "",
+  EnigmailKeyEditor.genRevokeCert(window, "0x"+keyId, revFile, "0", "",
     function _revokeCertCb(exitCode, errorMsg) {
       if (exitCode !== 0) {
         revFile.remove(false);
@@ -621,7 +621,7 @@ function EnigCreateRevokeCert(keyId, userId, callbackFunc) {
   if (!enigmailSvc)
     return -1;
 
-  KeyEditor.genRevokeCert(window, "0x"+keyId, outFile, "1", "",
+  EnigmailKeyEditor.genRevokeCert(window, "0x"+keyId, outFile, "1", "",
     function _revokeCertCb(exitCode, errorMsg) {
       if (exitCode !== 0) {
         EnigAlert(EnigGetString("revokeCertFailed")+"\n\n"+errorMsg);
