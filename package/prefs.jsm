@@ -66,7 +66,7 @@ function initPrefService() {
         }
     }
     catch (ex) {
-        EnigmailLog.ERROR("enigmailCore.jsm: Error in instantiating PrefService\n");
+        EnigmailLog.ERROR("prefs.jsm: Error in instantiating PrefService\n");
         EnigmailLog.ERROR(ex.toString());
     }
 }

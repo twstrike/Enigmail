@@ -44,7 +44,7 @@
 const EXPORTED_SYMBOLS = [ "EnigmailProtocolHandler" ];
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
+Components.utils.import("resource://enigmail/core.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/streams.jsm"); /*global EnigmailStreams: false */

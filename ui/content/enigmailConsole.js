@@ -34,7 +34,7 @@ dump("loading: enigmailConsole.js\n");
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** */
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false*/
+Components.utils.import("resource://enigmail/core.jsm"); /*global EnigmailCore: false*/
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */

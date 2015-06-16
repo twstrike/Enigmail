@@ -109,7 +109,7 @@ zip --must-match\
     modules/decryptPermanently.jsm \
     modules/dialog.jsm \
     modules/encryption.jsm \
-    modules/enigmailCore.jsm \
+    modules/core.jsm \
     modules/errorHandling.jsm \
     modules/funcs.jsm \
     modules/gpgAgent.jsm \

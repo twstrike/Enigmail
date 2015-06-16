@@ -42,7 +42,7 @@ dump("loading: enigmailCommon.js\n");
 // functionality!
 
 // Many of these components are not used in this file, but are instead used in other files that are loaded together with EnigmailCommon
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
+Components.utils.import("resource://enigmail/core.jsm");
 Components.utils.import("resource://enigmail/funcs.jsm");
 Components.utils.import("resource://enigmail/keyEditor.jsm");
 Components.utils.import("resource://enigmail/key.jsm"); /*global EnigmailKey: false */

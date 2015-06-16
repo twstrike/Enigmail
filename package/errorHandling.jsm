@@ -47,7 +47,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/log.jsm");
 Cu.import("resource://enigmail/locale.jsm");
 Cu.import("resource://enigmail/data.jsm");
-Cu.import("resource://enigmail/enigmailCore.jsm");
+Cu.import("resource://enigmail/core.jsm");
 
 const EXPORTED_SYMBOLS = [ "EnigmailErrorHandling" ];
 

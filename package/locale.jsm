@@ -64,7 +64,7 @@ const EnigmailLocale = {
                 enigStringBundle = strBundleService.createBundle("chrome://enigmail/locale/enigmail.properties");
             }
             catch (ex) {
-                EnigmailLog.ERROR("enigmailCore.jsm: Error in instantiating stringBundleService\n");
+                EnigmailLog.ERROR("locale.jsm: Error in instantiating stringBundleService\n");
             }
         }
 
@@ -81,7 +81,7 @@ const EnigmailLocale = {
                 }
             }
             catch (ex) {
-                EnigmailLog.ERROR("enigmailCore.jsm: Error in querying stringBundleService for string '"+aStr+"'\n");
+                EnigmailLog.ERROR("locale.jsm: Error in querying stringBundleService for string '"+aStr+"'\n");
             }
         }
         return aStr;

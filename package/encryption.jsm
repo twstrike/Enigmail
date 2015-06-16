@@ -43,7 +43,7 @@
 
 const EXPORTED_SYMBOLS = [ "EnigmailEncryption" ];
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm");
+Components.utils.import("resource://enigmail/core.jsm");
 Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");

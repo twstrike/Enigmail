@@ -122,7 +122,7 @@ function withTestGpgHome(f){
     };
 }
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Components.utils.import("resource://enigmail/core.jsm"); /*global EnigmailCore: false */
 function withEnigmail(f) {
     return function() {
         try {

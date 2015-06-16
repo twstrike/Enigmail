@@ -35,7 +35,7 @@ dump("loading: enigmailCardDetails.js\n");
  * ***** END LICENSE BLOCK ***** */
 
 Components.utils.import("resource://enigmail/funcs.jsm");
-Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Components.utils.import("resource://enigmail/core.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/keyEditor.jsm"); /*global EnigmailKeyEditor: false */
 Components.utils.import("resource://enigmail/key.jsm"); /*global EnigmailKey: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */

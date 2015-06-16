@@ -37,7 +37,7 @@ MODFILES = \
            decryptPermanently.jsm \
            dialog.jsm \
            encryption.jsm \
-           enigmailCore.jsm \
+           core.jsm \
            errorHandling.jsm \
            funcs.jsm \
            gpgAgent.jsm \

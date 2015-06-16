@@ -46,7 +46,7 @@ catch (ex) {
   Components.utils.import("resource://app/modules/gloda/mimemsg.js");
 }
 
-Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
+Components.utils.import("resource://enigmail/core.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/funcs.jsm");
 Components.utils.import("resource://enigmail/mimeVerify.jsm");
 Components.utils.import("resource://enigmail/fixExchangeMsg.jsm");

@@ -156,7 +156,7 @@ const EnigmailFiles = {
             return fileStream;
 
         } catch (ex) {
-            lazyLog().ERROR("enigmailCore.jsm: createFileStream: Failed to create "+filePath+"\n");
+            lazyLog().ERROR("files.jsm: createFileStream: Failed to create "+filePath+"\n");
             return null;
         }
     },
