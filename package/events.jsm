@@ -40,7 +40,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Events" ];
+const EXPORTED_SYMBOLS = [ "EnigmailEvents" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -49,7 +49,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/timer.jsm"); /*global EnigmailTimer: false */
 
-const Events = {
+const EnigmailEvents = {
     /**
      * dispatch event aynchronously to the main thread
      *

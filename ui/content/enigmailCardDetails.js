@@ -44,7 +44,7 @@ Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
-Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+Components.utils.import("resource://enigmail/events.jsm"); /*global EnigmailEvents: false */
 Components.utils.import("resource://enigmail/card.jsm"); /*global EnigmailCard: false */
 
 var gCardData = {};
@@ -52,7 +52,7 @@ var gCardData = {};
 function onLoad() {
   var enigmailSvc = EnigmailCore.getService(window);
   if (!enigmailSvc) {
-    Events.dispatchEvent(failWithError, 0, EnigmailLocale.getString("accessError"));
+    EnigmailEvents.dispatchEvent(failWithError, 0, EnigmailLocale.getString("accessError"));
     return;
   }
   var exitCodeObj = {};
@@ -106,7 +106,7 @@ function onLoad() {
   }
   else {
     if (! dryRun) {
-      Events.dispatchEvent(failWithError, 0, errorMsgObj.value);
+      EnigmailEvents.dispatchEvent(failWithError, 0, errorMsgObj.value);
     }
   }
   return;

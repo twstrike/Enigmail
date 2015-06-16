@@ -551,4 +551,4 @@ function fillIdentityListPopup()
     }
   }
 
-}./ui/content/enigmailKeygen.js
+}

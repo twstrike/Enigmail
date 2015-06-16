@@ -84,7 +84,7 @@ function enigmailKeyManagerLoad() {
   document.getElementById("pleaseWait").showPopup(gSearchInput, -1, -1, "tooltip", "after_end", "");
   document.getElementById("statusText").value = EnigGetString("keyMan.loadingKeys");
   document.getElementById("progressBar").removeAttribute("collapsed");
-  Events.dispatchEvent(loadkeyList, 100, null);
+  EnigmailEvents.dispatchEvent(loadkeyList, 100, null);
   gSearchInput.focus();
 }
 
@@ -1185,10 +1185,10 @@ function enigmailReceiveKeyCb(exitCode, errorMsg, msgBox) {
   if (msgBox) {
     if (exitCode===0) {
       enigmailRefreshKeys();
-      Events.dispatchEvent(displayResult, 100, [ EnigGetString("receiveKeysOk"), errorMsg ]);
+      EnigmailEvents.dispatchEvent(displayResult, 100, [ EnigGetString("receiveKeysOk"), errorMsg ]);
     }
     else {
-      Events.dispatchEvent(displayResult, 100, [ EnigGetString("receiveKeysFailed"), errorMsg ]);
+      EnigmailEvents.dispatchEvent(displayResult, 100, [ EnigGetString("receiveKeysFailed"), errorMsg ]);
     }
   }
   else {

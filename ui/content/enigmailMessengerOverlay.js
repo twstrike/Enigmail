@@ -63,7 +63,7 @@ Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/decryptPermanently.jsm");
 Components.utils.import("resource://enigmail/streams.jsm"); /*global EnigmailStreams: false */
-Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+Components.utils.import("resource://enigmail/events.jsm"); /*global EnigmailEvents: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/attachment.jsm"); /*global EnigmailAttachment: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */
@@ -545,7 +545,7 @@ Enigmail.msg = {
     // MsgHdrToMimeMessage is not on the main thread which may lead to problems with
     // accessing DOM and debugging
 
-    Events.dispatchEvent(
+    EnigmailEvents.dispatchEvent(
       function(argList) {
         var enigmailSvc=Enigmail.getEnigmailSvc();
         if (!enigmailSvc) return;
@@ -1868,7 +1868,7 @@ Enigmail.msg = {
                            cb.msgUriSpec);
     };
 
-    Events.dispatchEvent(f, 0, [msgText, callbackArg ]);
+    EnigmailEvents.dispatchEvent(f, 0, [msgText, callbackArg ]);
   },
 
 

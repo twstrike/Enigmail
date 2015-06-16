@@ -64,7 +64,7 @@ Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailC
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Components.utils.import("resource://enigmail/keyserver.jsm"); /*global EnigmailKeyServer: false */
-Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
+Components.utils.import("resource://enigmail/events.jsm"); /*global EnigmailEvents: false */
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Components.utils.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Components.utils.import("resource://enigmail/installGnuPG.jsm");
