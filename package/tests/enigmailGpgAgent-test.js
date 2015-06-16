@@ -11,7 +11,7 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestHelper: false, withEnvironment: false, withEnigmail: false, component: false */
 
-testing("enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false, OS: false */
+testing("enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false, EnigmailOS: false */
 component("enigmail/gpg.jsm"); /*global Gpg: false */
 component("enigmail/prefs.jsm"); /*global Prefs: false */
 
@@ -42,14 +42,14 @@ test(function determineGpgHomeDirReturnsHomePlusGnupgForNonWindowsIfNoGNUPGHOMES
 test(function determineGpgHomeDirReturnsRegistryValueForWindowsIfExists() {
     withEnvironment({}, function(e) {
         e.set("GNUPGHOME",null);
-        resetting(OS, 'getWinRegistryString', function(a, b, c) {
+        resetting(EnigmailOS, 'getWinRegistryString', function(a, b, c) {
             if(a === "Software\\GNU\\GNUPG" && b === "HomeDir" && c === "foo bar") {
                 return "\\foo\\bar\\gnupg";
             } else {
                 return "\\somewhere\\else";
             }
         }, function() {
-            resetting(OS, 'isWin32', true, function() {
+            resetting(EnigmailOS, 'isWin32', true, function() {
                 var enigmail = {environment: e};
                 nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
                 Assert.equal("\\foo\\bar\\gnupg", EnigmailGpgAgent.determineGpgHomeDir(enigmail));
@@ -61,8 +61,8 @@ test(function determineGpgHomeDirReturnsRegistryValueForWindowsIfExists() {
 test(function determineGpgHomeDirReturnsUserprofileIfItExists() {
     withEnvironment({"USERPROFILE": "\\bahamas"}, function(e) {
         e.set("GNUPGHOME",null);
-        resetting(OS, 'getWinRegistryString', function(a, b, c) {}, function() {
-            resetting(OS, 'isWin32', true, function() {
+        resetting(EnigmailOS, 'getWinRegistryString', function(a, b, c) {}, function() {
+            resetting(EnigmailOS, 'isWin32', true, function() {
                 var enigmail = {environment: e};
                 nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
                 Assert.equal("\\bahamas\\Application Data\\GnuPG", EnigmailGpgAgent.determineGpgHomeDir(enigmail));
@@ -74,8 +74,8 @@ test(function determineGpgHomeDirReturnsUserprofileIfItExists() {
 test(function determineGpgHomeDirReturnsSystemrootIfItExists() {
     withEnvironment({"SystemRoot": "\\tahiti"}, function(e) {
         e.set("GNUPGHOME",null);
-        resetting(OS, 'getWinRegistryString', function(a, b, c) {}, function() {
-            resetting(OS, 'isWin32', true, function() {
+        resetting(EnigmailOS, 'getWinRegistryString', function(a, b, c) {}, function() {
+            resetting(EnigmailOS, 'isWin32', true, function() {
                 var enigmail = {environment: e};
                 nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
                 Assert.equal("\\tahiti\\Application Data\\GnuPG", EnigmailGpgAgent.determineGpgHomeDir(enigmail));
@@ -87,8 +87,8 @@ test(function determineGpgHomeDirReturnsSystemrootIfItExists() {
 test(function determineGpgHomeDirReturnsDefaultForWin32() {
     withEnvironment({}, function(e) {
         e.set("GNUPGHOME",null);
-        resetting(OS, 'getWinRegistryString', function(a, b, c) {}, function() {
-            resetting(OS, 'isWin32', true, function() {
+        resetting(EnigmailOS, 'getWinRegistryString', function(a, b, c) {}, function() {
+            resetting(EnigmailOS, 'isWin32', true, function() {
                 var enigmail = {environment: e};
                 nsIWindowsRegKey = {ROOT_KEY_CURRENT_USER: "foo bar"};
                 Assert.equal("C:\\gnupg", EnigmailGpgAgent.determineGpgHomeDir(enigmail));
@@ -100,18 +100,18 @@ test(function determineGpgHomeDirReturnsDefaultForWin32() {
 
 // // testing: useGpgAgent
 // // useGpgAgent depends on several values:
-// //   OS.isDosLike()
+// //   EnigmailOS.isDosLike()
 // //   Gpg.getGpgFeature("supports-gpg-agent")
 // //   Gpg.getGpgFeature("autostart-gpg-agent")
 // //   EnigmailGpgAgent.gpgAgentInfo.envStr.length>0
 // //   Prefs.getPrefBranch().getBoolPref("useGpgAgent")
 
 function asDosLike(f) {
-    resetting(OS, 'isDosLikeVal', true, f);
+    resetting(EnigmailOS, 'isDosLikeVal', true, f);
 }
 
 function notDosLike(f) {
-    resetting(OS, 'isDosLikeVal', false, f);
+    resetting(EnigmailOS, 'isDosLikeVal', false, f);
 }
 
 function withGpgFeatures(features, f) {

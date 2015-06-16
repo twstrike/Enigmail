@@ -57,7 +57,7 @@ Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 Cu.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
-Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
+Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
@@ -650,7 +650,7 @@ const KeyRing = {
             return "";
         }
 
-        if (OS.isDosLike() && Gpg.getGpgFeature("windows-photoid-bug")) {
+        if (EnigmailOS.isDosLike() && Gpg.getGpgFeature("windows-photoid-bug")) {
             // workaround for error in gpg
             photoDataObj.value = photoDataObj.value.replace(/\r\n/g, "\n");
         }

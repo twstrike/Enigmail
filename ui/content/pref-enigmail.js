@@ -561,7 +561,7 @@ function enigLocateGpg() {
                            "", false, ext,
                            fileName+ext, null);
   if (filePath) {
-//     if (OS.getOS() == "WINNT") {
+//     if (EnigmailOS.getOS() == "WINNT") {
 //       document.getElementById("enigmail_agentPath").value = EnigGetFilePath(filePath);
 //     }
     document.getElementById("enigmail_agentPath").value = filePath.path;

@@ -476,7 +476,7 @@ function EnigGetTempDir() {
 
 // get the OS platform
 function EnigGetOS () {
-  return OS.getOS();
+  return EnigmailOS.getOS();
 }
 
 function EnigGetVersion() {

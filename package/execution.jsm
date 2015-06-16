@@ -54,7 +54,7 @@ Cu.import("resource://enigmail/log.jsm");
 Cu.import("resource://enigmail/subprocess.jsm");
 Cu.import("resource://enigmail/enigmailErrorHandling.jsm");
 Cu.import("resource://enigmail/enigmailCore.jsm");
-Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
+Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 
@@ -295,7 +295,7 @@ const Execution = {
                 }
         }
 
-        if ((Execution.agentType === "gpg") && (exitCode == 256) && (OS.getOS() == "WINNT")) {
+        if ((Execution.agentType === "gpg") && (exitCode == 256) && (EnigmailOS.getOS() == "WINNT")) {
             Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Using gpg and exit code is 256. You seem to use cygwin-gpg, activating countermeasures.\n");
             if (statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) {
                 Log.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->2\n");

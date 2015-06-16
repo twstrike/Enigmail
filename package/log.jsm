@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailConsole: false, dump: false, Files: false, OS: false */
+/*global Components: false, EnigmailConsole: false, dump: false, Files: false, EnigmailOS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -67,7 +67,7 @@ const Log = {
     },
 
     setLogDirectory: function(newLogDirectory) {
-        Log.directory = newLogDirectory + (OS.isDosLike() ? "\\" : "/");
+        Log.directory = newLogDirectory + (EnigmailOS.isDosLike() ? "\\" : "/");
         Log.createLogFiles();
     },
 

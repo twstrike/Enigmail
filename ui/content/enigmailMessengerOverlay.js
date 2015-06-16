@@ -1643,7 +1643,7 @@ Enigmail.msg = {
         contentData += "\r\n"+Enigmail.msg.decryptedMessage.plainText;
       }
 
-      if (!(OS.isDosLike())) {
+      if (!(EnigmailOS.isDosLike())) {
         contentData = contentData.replace(/\r\n/g, "\n");
       }
     }

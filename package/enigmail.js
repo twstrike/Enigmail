@@ -55,7 +55,7 @@ Cu.import("resource://enigmail/rules.jsm"); /*global Rules: false */
 Cu.import("resource://enigmail/filters.jsm"); /*global Filters: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
-Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
+Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global CommandLine: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
@@ -129,7 +129,7 @@ function initializeSubprocessLogging(env) {
 }
 
 function initializeAgentInfo() {
-    if (EnigmailGpgAgent.useGpgAgent() && (! OS.isDosLike())) {
+    if (EnigmailGpgAgent.useGpgAgent() && (! EnigmailOS.isDosLike())) {
         if (!EnigmailGpgAgent.isDummy()) {
             EnigmailCore.addToEnvList("GPG_AGENT_INFO="+EnigmailGpgAgent.gpgAgentInfo.envStr);
         }

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailFuncs: false, Log: false, OS: false, Files: false, EnigmailApp: false */
+/*global Components: false, EnigmailFuncs: false, Log: false, EnigmailOS: false, Files: false, EnigmailApp: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -153,11 +153,11 @@ const Rules = {
 
         if (origFirstChild && (! appendToEnd)) {
             rulesListHolder.rulesList.firstChild.insertBefore(rule, origFirstChild);
-            rulesListHolder.rulesList.firstChild.insertBefore(rulesListHolder.rulesList.createTextNode(OS.isDosLike() ? "\r\n" : "\n"), origFirstChild);
+            rulesListHolder.rulesList.firstChild.insertBefore(rulesListHolder.rulesList.createTextNode(EnigmailOS.isDosLike() ? "\r\n" : "\n"), origFirstChild);
         }
         else {
             rulesListHolder.rulesList.firstChild.appendChild(rule);
-            rulesListHolder.rulesList.firstChild.appendChild(rulesListHolder.rulesList.createTextNode(OS.isDosLike() ? "\r\n" : "\n"));
+            rulesListHolder.rulesList.firstChild.appendChild(rulesListHolder.rulesList.createTextNode(EnigmailOS.isDosLike() ? "\r\n" : "\n"));
         }
     },
 

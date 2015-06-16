@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, OS: false */
+/*global Components: false, Log: false, EnigmailOS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1

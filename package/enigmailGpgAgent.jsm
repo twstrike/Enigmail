@@ -49,7 +49,7 @@ Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false 
 Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
-Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
+Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
@@ -112,7 +112,7 @@ const EnigmailGpgAgent = {
         let useAgent = false;
 
         try {
-            if (OS.isDosLike() && !Gpg.getGpgFeature("supports-gpg-agent")) {
+            if (EnigmailOS.isDosLike() && !Gpg.getGpgFeature("supports-gpg-agent")) {
                 useAgent = false;
             } else {
                 // gpg version >= 2.0.16 launches gpg-agent automatically
@@ -173,7 +173,7 @@ const EnigmailGpgAgent = {
         Log.DEBUG("enigmailGpgAgent.jsm: isAgentTypeGpgAgent:\n");
 
         // to my knowledge there is no other agent than gpg-agent on Windows
-        if (OS.getOS() == "WINNT") return true;
+        if (EnigmailOS.getOS() == "WINNT") return true;
 
         if (gIsGpgAgent >= 0) {
             return gIsGpgAgent == 1;
@@ -333,7 +333,7 @@ const EnigmailGpgAgent = {
 
         EnigmailGpgAgent.resetGpgAgent();
 
-        if (OS.isDosLike()) {
+        if (EnigmailOS.isDosLike()) {
             agentName = "gpg2.exe;gpg.exe;gpg1.exe";
         } else {
             agentName = "gpg2;gpg;gpg1";
@@ -344,20 +344,20 @@ const EnigmailGpgAgent = {
             // Locate GnuPG executable
 
             // Append default .exe extension for DOS-Like systems, if needed
-            if (OS.isDosLike() && (agentPath.search(/\.\w+$/) < 0)) {
+            if (EnigmailOS.isDosLike() && (agentPath.search(/\.\w+$/) < 0)) {
                 agentPath += ".exe";
             }
 
             try {
                 let pathDir = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
 
-                if (! Files.isAbsolutePath(agentPath, OS.isDosLike())) {
+                if (! Files.isAbsolutePath(agentPath, EnigmailOS.isDosLike())) {
                     // path relative to Mozilla installation dir
                     const  ds = Cc[DIR_SERV_CONTRACTID].getService();
                     const dsprops = ds.QueryInterface(Ci.nsIProperties);
                     pathDir = dsprops.get("CurProcD", Ci.nsIFile);
 
-                    const dirs=agentPath.split(new RegExp(OS.isDosLike() ? "\\\\" : "/"));
+                    const dirs=agentPath.split(new RegExp(EnigmailOS.isDosLike() ? "\\\\" : "/"));
                     for (let i=0; i< dirs.length; i++) {
                         if (dirs[i]!=".") {
                             pathDir.append(dirs[i]);
@@ -381,31 +381,31 @@ const EnigmailGpgAgent = {
         } else {
             // Resolve relative path using PATH environment variable
             const envPath = esvc.environment.get("PATH");
-            agentPath = Files.resolvePath(agentName, envPath, OS.isDosLike());
+            agentPath = Files.resolvePath(agentName, envPath, EnigmailOS.isDosLike());
 
-            if (!agentPath && OS.isDosLike()) {
+            if (!agentPath && EnigmailOS.isDosLike()) {
                 // DOS-like systems: search for GPG in c:\gnupg, c:\gnupg\bin, d:\gnupg, d:\gnupg\bin
                 let gpgPath = "c:\\gnupg;c:\\gnupg\\bin;d:\\gnupg;d:\\gnupg\\bin";
-                agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
+                agentPath = Files.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
             }
 
-            if ((! agentPath) && OS.isWin32) {
+            if ((! agentPath) && EnigmailOS.isWin32) {
                 // Look up in Windows Registry
                 try {
-                    let gpgPath = OS.getWinRegistryString("Software\\GNU\\GNUPG", "Install Directory", nsIWindowsRegKey.ROOT_KEY_LOCAL_MACHINE);
-                    agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
+                    let gpgPath = EnigmailOS.getWinRegistryString("Software\\GNU\\GNUPG", "Install Directory", nsIWindowsRegKey.ROOT_KEY_LOCAL_MACHINE);
+                    agentPath = Files.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
                 } catch (ex) {}
 
                 if (! agentPath) {
                     let gpgPath = gpgPath + "\\pub";
-                    agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
+                    agentPath = Files.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
                 }
             }
 
-            if (!agentPath && !OS.isDosLike()) {
+            if (!agentPath && !EnigmailOS.isDosLike()) {
                 // Unix-like systems: check /usr/bin and /usr/local/bin
                 let gpgPath = "/usr/bin:/usr/local/bin";
-                agentPath = Files.resolvePath(agentName, gpgPath, OS.isDosLike());
+                agentPath = Files.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
             }
 
             if (!agentPath) {
@@ -498,7 +498,7 @@ const EnigmailGpgAgent = {
 
     // resolve the path for GnuPG helper tools
     resolveToolPath: function(fileName) {
-        if (OS.isDosLike()) {
+        if (EnigmailOS.isDosLike()) {
             fileName += ".exe";
         }
 
@@ -513,7 +513,7 @@ const EnigmailGpgAgent = {
             }
         }
 
-        const foundPath = Files.resolvePath(fileName, EnigmailCore.getEnigmailService().environment.get("PATH"), OS.isDosLike());
+        const foundPath = Files.resolvePath(fileName, EnigmailCore.getEnigmailService().environment.get("PATH"), EnigmailOS.isDosLike());
         if (foundPath) { foundPath.normalize(); }
         return foundPath;
     },
@@ -604,7 +604,7 @@ const EnigmailGpgAgent = {
                 }
             }
 
-            if ((! OS.isDosLike()) && (! Gpg.getGpgFeature("autostart-gpg-agent"))) {
+            if ((! EnigmailOS.isDosLike()) && (! Gpg.getGpgFeature("autostart-gpg-agent"))) {
 
                 // create unique tmp file
                 var ds = Cc[DIR_SERV_CONTRACTID].getService();
@@ -678,8 +678,8 @@ const EnigmailGpgAgent = {
     determineGpgHomeDir: function (esvc) {
         let homeDir = esvc.environment.get("GNUPGHOME");
 
-        if (! homeDir && OS.isWin32) {
-            homeDir=OS.getWinRegistryString("Software\\GNU\\GNUPG", "HomeDir", nsIWindowsRegKey.ROOT_KEY_CURRENT_USER);
+        if (! homeDir && EnigmailOS.isWin32) {
+            homeDir=EnigmailOS.getWinRegistryString("Software\\GNU\\GNUPG", "HomeDir", nsIWindowsRegKey.ROOT_KEY_CURRENT_USER);
 
             if (! homeDir) {
                 homeDir = esvc.environment.get("USERPROFILE") || esvc.environment.get("SystemRoot");

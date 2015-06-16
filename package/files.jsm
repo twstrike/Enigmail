@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, OS: false, Data: false */
+/*global Components: false, Log: false, EnigmailOS: false, Data: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -211,7 +211,7 @@ const Files = {
     },
 
     getFilePathDesc: function (nsFileObj) {
-        if (OS.getOS() == "WINNT") {
+        if (EnigmailOS.getOS() == "WINNT") {
             return nsFileObj.persistentDescriptor;
         } else {
             return nsFileObj.path;
@@ -223,12 +223,12 @@ const Files = {
     },
 
     getEscapedFilename: function (fileNameStr) {
-        if (OS.isDosLike()) {
-            // escape the backslashes and the " character (for Windows and OS/2)
+        if (EnigmailOS.isDosLike()) {
+            // escape the backslashes and the " character (for Windows and EnigmailOS/2)
             fileNameStr = fileNameStr.replace(/([\\\"])/g, "\\$1");
         }
 
-        if (OS.getOS() == "WINNT") {
+        if (EnigmailOS.getOS() == "WINNT") {
             // replace leading "\\" with "//"
             fileNameStr = fileNameStr.replace(/^\\\\*/, "//");
         }
@@ -245,7 +245,7 @@ const Files = {
         } catch (ex) {
             // let's guess ...
             let tmpDirObj = Cc[NS_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-            if (OS.getOS() == "WINNT") {
+            if (EnigmailOS.getOS() == "WINNT") {
                 tmpDirObj.initWithPath("C:/TEMP");
             } else {
                 tmpDirObj.initWithPath("/tmp");
