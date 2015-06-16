@@ -68,7 +68,7 @@ Components.utils.import("resource://enigmail/events.jsm"); /*global EnigmailEven
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Components.utils.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Components.utils.import("resource://enigmail/installGnuPG.jsm");
-Components.utils.import("resource://enigmail/EnigmailPasswordCheck.jsm");
+Components.utils.import("resource://enigmail/passwordCheck.jsm");
 
 
 // The compatible Enigmime version
