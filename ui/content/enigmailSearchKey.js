@@ -618,7 +618,7 @@ function enigNewGpgKeysRequest(requestType, callbackFunction) {
   if (gEnigRequest.port) keyServer += ":"+ gEnigRequest.port;
 
   var errorMsgObj = {};
-  gEnigRequest.gpgkeysRequest = KeyServer.access(requestType,
+  gEnigRequest.gpgkeysRequest = EnigmailKeyServer.access(requestType,
                                  keyServer,
                                  keyValue,
                                  procListener,

@@ -40,7 +40,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "KeyServer" ];
+const EXPORTED_SYMBOLS = [ "EnigmailKeyServer" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -58,7 +58,7 @@ Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false 
 
 const nsIEnigmail = Ci.nsIEnigmail;
 
-const KeyServer = {
+const EnigmailKeyServer = {
     /**
      * search, download or upload key on, from or to a keyserver
      *

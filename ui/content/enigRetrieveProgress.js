@@ -160,7 +160,7 @@ function onLoad() {
   gEnigCallbackFunc = inArg.cbFunc;
 
   var errorMsgObj={};
-  gProcess = KeyServer.access(inArg.accessType, inArg.keyServer, inArg.keyList, procListener, errorMsgObj);
+  gProcess = EnigmailKeyServer.access(inArg.accessType, inArg.keyServer, inArg.keyList, procListener, errorMsgObj);
   if (!gProcess) {
     EnigAlert(Locale.getString("sendKeysFailed")+"\n"+EnigConvertGpgToUnicode(errorMsgObj.value));
   }
