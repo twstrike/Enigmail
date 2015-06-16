@@ -112,7 +112,7 @@
         cf.setAttribute("collapsed", "true");
 
         let cb = document.getElementById("contentBox");
-        logFileData = EnigmailLog.getLogData(EnigmailCore.version, Prefs);
+        logFileData = EnigmailLog.getLogData(EnigmailCore.version, EnigmailPrefs);
         cb.value = logFileData;
 
         let cfb = document.getElementById("logFileBox");

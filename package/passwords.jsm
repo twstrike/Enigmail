@@ -45,7 +45,7 @@ const EXPORTED_SYMBOLS = [ "EnigmailPassword" ];
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/lazy.jsm");  /*global Lazy: false */
-Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 
 const gpgAgent = Lazy.loader("enigmail/enigmailGpgAgent.jsm", "EnigmailGpgAgent");
 
@@ -60,7 +60,7 @@ const EnigmailPassword = {
       if (gpgAgent().useGpgAgent()) {
             return ["--use-agent"];
         } else {
-            if (! Prefs.getPref("noPassphrase")) {
+            if (! EnigmailPrefs.getPref("noPassphrase")) {
                 return ["--passphrase-fd", "0", "--no-use-agent"];
             }
         }
@@ -69,7 +69,7 @@ const EnigmailPassword = {
 
     getMaxIdleMinutes: function () {
         try {
-            return Prefs.getPref("maxIdleMinutes");
+            return EnigmailPrefs.getPref("maxIdleMinutes");
         } catch (ex) {}
 
         return 5;

@@ -1,5 +1,5 @@
 dump("loading: enigmailMsgHdrViewOverlay.js\n");
-/*global Components: false, Windows: false, EnigmailLocale: false, Prefs: false, Time: false */
+/*global Components: false, Windows: false, EnigmailLocale: false, EnigmailPrefs: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -208,7 +208,7 @@ Enigmail.hdrView = {
         statusFlags |= nsIEnigmail.DECRYPTION_INCOMPLETE;
     }
 
-    if (! Prefs.getPref("displayPartiallySigned")) {
+    if (! EnigmailPrefs.getPref("displayPartiallySigned")) {
       if ((statusFlags & (nsIEnigmail.PARTIALLY_PGP)) &&
           (statusFlags & (nsIEnigmail.BAD_SIGNATURE))) {
         statusFlags &= ~(nsIEnigmail.BAD_SIGNATURE | nsIEnigmail.PARTIALLY_PGP);
@@ -355,7 +355,7 @@ Enigmail.hdrView = {
       }
     }
 
-    if (Prefs.getPref("displayPartiallySigned")) {
+    if (EnigmailPrefs.getPref("displayPartiallySigned")) {
       if (statusFlags & nsIEnigmail.PARTIALLY_PGP) {
         if (msgSigned && msgEncrypted) {
           statusLine = EnigmailLocale.getString("msgPart", [ EnigmailLocale.getString("msgSignedAndEnc") ]);

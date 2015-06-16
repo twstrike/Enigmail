@@ -48,7 +48,7 @@ Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
-Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
@@ -120,7 +120,7 @@ const EnigmailGpgAgent = {
                     useAgent = true;
                     EnigmailLog.DEBUG("enigmail.js: Setting useAgent to "+useAgent+" for gpg2 >= 2.0.16\n");
                 } else {
-                    useAgent = (EnigmailGpgAgent.gpgAgentInfo.envStr.length>0 || Prefs.getPrefBranch().getBoolPref("useGpgAgent"));
+                    useAgent = (EnigmailGpgAgent.gpgAgentInfo.envStr.length>0 || EnigmailPrefs.getPrefBranch().getBoolPref("useGpgAgent"));
                 }
             }
         } catch (ex) {}
@@ -293,7 +293,7 @@ const EnigmailGpgAgent = {
     },
 
     getMaxIdlePref: function(win) {
-        let maxIdle = Prefs.getPref("maxIdleMinutes");
+        let maxIdle = EnigmailPrefs.getPref("maxIdleMinutes");
 
         try {
             if (EnigmailCore.getService(win)) {
@@ -313,7 +313,7 @@ const EnigmailGpgAgent = {
     },
 
     setMaxIdlePref: function(minutes) {
-        Prefs.setPref("maxIdleMinutes", minutes);
+        EnigmailPrefs.setPref("maxIdleMinutes", minutes);
 
         if (EnigmailGpgAgent.isAgentTypeGpgAgent()) {
             try {
@@ -325,7 +325,7 @@ const EnigmailGpgAgent = {
     setAgentPath: function (domWindow, esvc) {
         let agentPath = "";
         try {
-            agentPath = Prefs.getPrefBranch().getCharPref("agentPath");
+            agentPath = EnigmailPrefs.getPrefBranch().getCharPref("agentPath");
         } catch (ex) {}
 
         var agentType = "gpg";

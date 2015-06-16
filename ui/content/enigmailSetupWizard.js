@@ -741,7 +741,7 @@ function enigGetSvc(resetCheck) {
 
       try {
         // Reset alert count to default value
-        Prefs.getPrefBranch().clearUserPref("initAlert");
+        EnigmailPrefs.getPrefBranch().clearUserPref("initAlert");
       } catch(ex) {}
 
     } catch (ex) {
@@ -1053,7 +1053,7 @@ function applyWizardSettings() {
 
   loadLastPage();
 
-  Prefs.setPref("encryptionModel", 0);
+  EnigmailPrefs.setPref("encryptionModel", 0);
 
   if (document.getElementById("activateId").value == "1") {
     // activate all identities
@@ -1087,13 +1087,13 @@ function applyWizardSettings() {
 function applyMozSetting(preference, newVal)
 {
   if (typeof(newVal)=="boolean") {
-    Prefs.getPrefRoot().setBoolPref(preference, newVal);
+    EnigmailPrefs.getPrefRoot().setBoolPref(preference, newVal);
   }
   else if (typeof(newVal)=="number") {
-    Prefs.getPrefRoot().setIntPref(preference, newVal);
+    EnigmailPrefs.getPrefRoot().setIntPref(preference, newVal);
   }
   else if (typeof(newVal)=="string") {
-    Prefs.getPrefRoot().setCharPref(preference, newVal);
+    EnigmailPrefs.getPrefRoot().setCharPref(preference, newVal);
   }
 }
 

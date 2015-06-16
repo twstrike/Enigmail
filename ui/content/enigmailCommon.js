@@ -340,20 +340,20 @@ function EnigSetRadioPref(prefName, optionElementIds) {
 }
 
 function EnigSavePrefs() {
-  return Prefs.savePrefs();
+  return EnigmailPrefs.savePrefs();
 }
 
 function EnigGetPref(prefName) {
-  return Prefs.getPref(prefName);
+  return EnigmailPrefs.getPref(prefName);
 }
 
 function EnigGetDefaultPref(prefName) {
   EnigmailLog.DEBUG("enigmailCommon.js: EnigGetDefaultPref: prefName="+prefName+"\n");
   var prefValue=null;
   try {
-    Prefs.getPrefBranch().lockPref(prefName);
+    EnigmailPrefs.getPrefBranch().lockPref(prefName);
     prefValue = EnigGetPref(prefName);
-    Prefs.getPrefBranch().unlockPref(prefName);
+    EnigmailPrefs.getPrefBranch().unlockPref(prefName);
   }
   catch (ex) {}
 
@@ -361,7 +361,7 @@ function EnigGetDefaultPref(prefName) {
 }
 
 function EnigSetPref(prefName, value) {
-  return Prefs.setPref(prefName, value);
+  return EnigmailPrefs.setPref(prefName, value);
 }
 
 function EnigGetSignMsg(identity) {

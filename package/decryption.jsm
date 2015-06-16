@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailData: false, EnigmailLog: false, Prefs: false, EnigmailLocale: false, EnigmailArmor: false, Execution: false, Dialog: false */
+/*global Components: false, EnigmailData: false, EnigmailLog: false, EnigmailPrefs: false, EnigmailLocale: false, EnigmailArmor: false, Execution: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -110,7 +110,7 @@ const EnigmailDecryption = {
 
         var args = Gpg.getStandardArgs(true);
 
-        var keyserver = Prefs.getPref("autoKeyRetrieve");
+        var keyserver = EnigmailPrefs.getPref("autoKeyRetrieve");
         if (keyserver && keyserver !== "") {
             args.push("--keyserver-options");
             var keySrvArgs="auto-key-retrieve";
@@ -339,7 +339,7 @@ const EnigmailDecryption = {
             }
         }
 
-        if (sigUserId && sigKeyId && Prefs.getPref("displaySecondaryUid")) {
+        if (sigUserId && sigKeyId && EnigmailPrefs.getPref("displaySecondaryUid")) {
             let uids = EnigmailKeyRing.getKeyDetails(sigKeyId, true, true);
             if (uids) {
                 sigUserId = uids;
@@ -602,7 +602,7 @@ const EnigmailDecryption = {
 
             var doubleDashSeparator = false;
             try {
-                doubleDashSeparator = Prefs.getPrefBranch().getBoolPref("doubleDashSeparator");
+                doubleDashSeparator = EnigmailPrefs.getPrefBranch().getBoolPref("doubleDashSeparator");
             } catch(ex) { }
 
             if (doubleDashSeparator && (plainText.search(/(\r|\n)-- +(\r|\n)/) < 0) ) {

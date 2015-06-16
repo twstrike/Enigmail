@@ -101,7 +101,7 @@ function onLoad () {
     port: port,
     protocol: protocol,
     keyList: [],
-    requestType: (Prefs.getPref("useGpgKeysTool") ? ENIG_CONN_TYPE_GPGKEYS : ENIG_CONN_TYPE_HTTP),
+    requestType: (EnigmailPrefs.getPref("useGpgKeysTool") ? ENIG_CONN_TYPE_GPGKEYS : ENIG_CONN_TYPE_HTTP),
     gpgkeysRequest: null,
     progressMeter: document.getElementById("dialog.progress"),
     httpInProgress: false
@@ -343,7 +343,7 @@ function enigNewHttpRequest(requestType, requestCallbackFunc) {
     break;
   default:
     var msg=EnigmailLocale.getString("protocolNotSupported", gEnigRequest.protocol);
-    if (! Prefs.getPref("useGpgKeysTool"))
+    if (! EnigmailPrefs.getPref("useGpgKeysTool"))
       msg += " "+EnigmailLocale.getString("gpgkeysDisabled");
     Dialog.alert(window, msg);
     enigCloseDialog();

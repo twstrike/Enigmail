@@ -13,7 +13,7 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestH
 
 testing("enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false, EnigmailOS: false */
 component("enigmail/gpg.jsm"); /*global Gpg: false */
-component("enigmail/prefs.jsm"); /*global Prefs: false */
+component("enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 
 // testing: determineGpgHomeDir
 //   environment: GNUPGHOME
@@ -104,7 +104,7 @@ test(function determineGpgHomeDirReturnsDefaultForWin32() {
 // //   Gpg.getGpgFeature("supports-gpg-agent")
 // //   Gpg.getGpgFeature("autostart-gpg-agent")
 // //   EnigmailGpgAgent.gpgAgentInfo.envStr.length>0
-// //   Prefs.getPrefBranch().getBoolPref("useGpgAgent")
+// //   EnigmailPrefs.getPrefBranch().getBoolPref("useGpgAgent")
 
 function asDosLike(f) {
     resetting(EnigmailOS, 'isDosLikeVal', true, f);
@@ -163,7 +163,7 @@ test(function useGpgAgentIsFalseIfIsDosLikeAndSupportsAgentButNoAgentInfoAvailab
 test(function useGpgAgentIsTrueIfIsDosLikeAndSupportsAgentAndPrefIsSet() {
     asDosLike(function() {
         withGpgFeatures(["supports-gpg-agent"], function() {
-            resetting(Prefs, 'getPrefBranch', function() { return mockPrefs({useGpgAgent: true}); }, function() {
+            resetting(EnigmailPrefs, 'getPrefBranch', function() { return mockPrefs({useGpgAgent: true}); }, function() {
                 Assert.ok(EnigmailGpgAgent.useGpgAgent());
             });
         });
@@ -200,7 +200,7 @@ test(function useGpgAgentIsFalseIfNotDosLikeAndSupportsAgentButNoAgentInfoAvaila
 test(function useGpgAgentIsTrueIfNotDosLikeAndSupportsAgentAndPrefIsSet() {
     notDosLike(function() {
         withGpgFeatures(["supports-gpg-agent"], function() {
-            resetting(Prefs, 'getPrefBranch', function() { return mockPrefs({useGpgAgent: true}); }, function() {
+            resetting(EnigmailPrefs, 'getPrefBranch', function() { return mockPrefs({useGpgAgent: true}); }, function() {
                 Assert.ok(EnigmailGpgAgent.useGpgAgent());
             });
         });

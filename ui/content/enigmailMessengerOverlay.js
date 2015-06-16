@@ -191,8 +191,8 @@ Enigmail.msg = {
 
     top.controllers.appendController(treeController);
 
-    if (Prefs.getPref("configuredVersion") === "") {
-      Prefs.setPref("configuredVersion", EnigmailApp.getVersion());
+    if (EnigmailPrefs.getPref("configuredVersion") === "") {
+      EnigmailPrefs.setPref("configuredVersion", EnigmailApp.getVersion());
       Windows.openSetupWizard(window, false);
     }
   },
@@ -411,11 +411,11 @@ Enigmail.msg = {
 
     for (var j=0; j<optList.length; j++) {
       let menuElement = document.getElementById("enigmail_"+optList[j]);
-      menuElement.setAttribute("checked", Prefs.getPref(optList[j]) ? "true" : "false");
+      menuElement.setAttribute("checked", EnigmailPrefs.getPref(optList[j]) ? "true" : "false");
 
       menuElement = document.getElementById("enigmail_"+optList[j]+"2");
       if (menuElement)
-        menuElement.setAttribute("checked", Prefs.getPref(optList[j]) ? "true" : "false");
+        menuElement.setAttribute("checked", EnigmailPrefs.getPref(optList[j]) ? "true" : "false");
     }
 
     optList = ["decryptverify" ];
@@ -482,8 +482,8 @@ Enigmail.msg = {
 
     var menuElement = document.getElementById("enigmail_"+attrName);
 
-    var oldValue = Prefs.getPref(attrName);
-    Prefs.setPref(attrName, !oldValue);
+    var oldValue = EnigmailPrefs.getPref(attrName);
+    EnigmailPrefs.setPref(attrName, !oldValue);
 
     this.updateOptionsDisplay();
 
@@ -713,7 +713,7 @@ Enigmail.msg = {
         xEnigmailVersion = Enigmail.msg.savedHeaders["x-enigmail-version"];
       }
 
-      if (isAuto && (! Prefs.getPref("autoDecrypt"))) {
+      if (isAuto && (! EnigmailPrefs.getPref("autoDecrypt"))) {
         var signedMsg = ((contentType.search(/^multipart\/signed(;|$)/i) === 0) && (contentType.search(/application\/pgp-signature/i)>0));
         encrypedMsg = ((contentType.search(/^multipart\/encrypted(;|$)/i) === 0) && (contentType.search(/application\/pgp-encrypted/i)>0));
         if (embeddedSigned || embeddedEncrypted ||

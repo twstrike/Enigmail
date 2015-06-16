@@ -50,7 +50,7 @@ Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
-Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
@@ -136,7 +136,7 @@ const Gpg = {
         let r = [ "--charset", "utf-8", "--display-charset", "utf-8" ]; // mandatory parameter to add in all cases
 
         try {
-            let p = Prefs.getPref("agentAdditionalParam").replace(/\\\\/g, "\\");
+            let p = EnigmailPrefs.getPref("agentAdditionalParam").replace(/\\\\/g, "\\");
 
             let i = 0;
             let last = 0;

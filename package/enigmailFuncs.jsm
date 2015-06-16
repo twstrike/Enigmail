@@ -48,7 +48,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
-Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailFuncs" ];
 
@@ -102,7 +102,7 @@ const EnigmailFuncs = {
   {
     EnigmailLog.DEBUG("enigmailFuncs.jsm: collapseAdvanced:\n");
 
-    var advancedUser = Prefs.getPref("advancedUser");
+    var advancedUser = EnigmailPrefs.getPref("advancedUser");
 
     obj = obj.firstChild;
     while (obj) {
@@ -140,9 +140,9 @@ const EnigmailFuncs = {
     EnigmailLog.DEBUG("enigmailFuncs.jsm: getSignMsg: identity.key="+identity.key+"\n");
     var sign = null;
 
-    Prefs.getPref("configuredVersion"); // dummy call to getPref to ensure initialization
+    EnigmailPrefs.getPref("configuredVersion"); // dummy call to getPref to ensure initialization
 
-    var prefRoot = Prefs.getPrefRoot();
+    var prefRoot = EnigmailPrefs.getPrefRoot();
 
     if (prefRoot.getPrefType("mail.identity."+identity.key+".pgpSignPlain")===0) {
       if (prefRoot.getPrefType("mail.identity."+identity.key+".pgpSignMsg")===0) {
@@ -174,7 +174,7 @@ const EnigmailFuncs = {
     if (! gTxtConverter)
       gTxtConverter = Cc["@mozilla.org/txttohtmlconv;1"].createInstance(Ci.mozITXTToHTMLConv);
 
-    var prefRoot = Prefs.getPrefRoot();
+    var prefRoot = EnigmailPrefs.getPrefRoot();
     var fontStyle = "";
 
     // set the style stuff according to perferences

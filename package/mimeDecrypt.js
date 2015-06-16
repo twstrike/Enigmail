@@ -17,7 +17,7 @@ Components.utils.import("resource://enigmail/mimeVerify.jsm"); /*global Enigmail
 Components.utils.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
-Components.utils.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Components.utils.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Components.utils.import("resource://enigmail/decryption.jsm"); /*global EnigmailDecryption: false */
 Components.utils.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */
@@ -210,7 +210,7 @@ PgpMimeDecrypt.prototype = {
       try {
         var messenger = Cc["@mozilla.org/messenger;1"].getService(Ci.nsIMessenger);
 
-        if (! Prefs.getPref("autoDecrypt")) {
+        if (! EnigmailPrefs.getPref("autoDecrypt")) {
           // "decrypt manually" mode
           let manUrl= {};
 

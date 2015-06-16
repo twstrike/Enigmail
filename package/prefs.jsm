@@ -39,7 +39,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Prefs" ];
+const EXPORTED_SYMBOLS = [ "EnigmailPrefs" ];
 
 Components.utils.import("resource://enigmail/log.jsm");
 
@@ -71,7 +71,7 @@ function initPrefService() {
     }
 }
 
-const Prefs = {
+const EnigmailPrefs = {
     getPrefRoot: function() {
         if(!p.branch) {
             initPrefService();

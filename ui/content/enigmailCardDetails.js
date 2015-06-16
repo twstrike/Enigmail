@@ -60,7 +60,7 @@ function onLoad() {
 
   var dryRun=false;
   try {
-    dryRun = Prefs.getPref("dryRun");
+    dryRun = EnigmailPrefs.getPref("dryRun");
   }
   catch(ex) {}
 

@@ -47,7 +47,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
-Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 
@@ -67,7 +67,7 @@ const Hash = {
         }
 
         const sendFlags = nsIEnigmail.SEND_TEST | nsIEnigmail.SEND_SIGNED;
-        const hashAlgo = mimeHashAlgorithms[Prefs.getPref("mimeHashAlgorithm")];
+        const hashAlgo = mimeHashAlgorithms[EnigmailPrefs.getPref("mimeHashAlgorithm")];
 
         if (typeof(keyAlgorithms[fromMailAddr]) != "string") {
             // hash algorithm not yet known

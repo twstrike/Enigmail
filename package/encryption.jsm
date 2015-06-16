@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, EnigmailLog: false, Prefs: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false */
+/*global Components: false, EnigmailCore: false, EnigmailLog: false, EnigmailPrefs: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -116,12 +116,12 @@ var Encryption = {
 
         var useDefaultComment = false;
         try {
-            useDefaultComment = Prefs.getPref("useDefaultComment");
+            useDefaultComment = EnigmailPrefs.getPref("useDefaultComment");
         } catch(ex) { }
 
         var hushMailSupport = false;
         try {
-            hushMailSupport = Prefs.getPref("hushMailSupport");
+            hushMailSupport = EnigmailPrefs.getPref("hushMailSupport");
         } catch(ex) { }
 
         var detachedSig = (usePgpMime || (sendFlags & nsIEnigmail.SEND_ATTACHMENT)) && signMsg && !encryptMsg;
@@ -217,7 +217,7 @@ var Encryption = {
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
 
-        var hashAlgo = gMimeHashAlgorithms[Prefs.getPref("mimeHashAlgorithm")];
+        var hashAlgo = gMimeHashAlgorithms[EnigmailPrefs.getPref("mimeHashAlgorithm")];
 
         if (hashAlgorithm) {
             hashAlgo = hashAlgorithm;
@@ -411,7 +411,7 @@ var Encryption = {
 
         let asciiArmor = false;
         try {
-            asciiArmor = Prefs.getPrefBranch().getBoolPref("inlineAttachAsciiArmor");
+            asciiArmor = EnigmailPrefs.getPrefBranch().getBoolPref("inlineAttachAsciiArmor");
         } catch (ex) {}
 
         const asciiFlags = (asciiArmor ? ENC_TYPE_ATTACH_ASCII : ENC_TYPE_ATTACH_BINARY);

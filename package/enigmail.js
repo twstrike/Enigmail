@@ -58,7 +58,7 @@ Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global EnigmailCommandLine: false */
-Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
+Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Cu.import("resource://enigmail/verify.jsm"); /*global Verify: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
@@ -92,7 +92,7 @@ const NS_XPCOM_SHUTDOWN_OBSERVER_ID = "xpcom-shutdown";
 
 function getLogDirectoryPrefix() {
     try {
-        return Prefs.getPrefBranch().getCharPref("logDirectory") || "";
+        return EnigmailPrefs.getPrefBranch().getCharPref("logDirectory") || "";
     } catch (ex) {
         return "";
     }
@@ -304,7 +304,7 @@ Enigmail.prototype = {
 
                 try {
                     // Reset alert count to default value
-                    Prefs.getPrefBranch().clearUserPref("initAlert");
+                    EnigmailPrefs.getPrefBranch().clearUserPref("initAlert");
                 } catch(ex) { }
             } catch (ex) {
                 if (firstInitialization) {
@@ -313,13 +313,13 @@ Enigmail.prototype = {
                               "\n\n"+EnigmailLocale.getString("initErr.howToFixIt");
 
                     const checkedObj = {value: false};
-                    if (Prefs.getPref("initAlert")) {
+                    if (EnigmailPrefs.getPref("initAlert")) {
                         const r = Dialog.longAlert(win, "Enigmail: "+errMsg,
                                                    EnigmailLocale.getString("dlgNoPrompt"),
                                                    null, EnigmailLocale.getString("initErr.setupWizard.button"),
                                                    null, checkedObj);
                         if (r >= 0 && checkedObj.value) {
-                            Prefs.setPref("initAlert", false);
+                            EnigmailPrefs.setPref("initAlert", false);
                         }
                         if (r == 1) {
                             // start setup wizard
@@ -327,7 +327,7 @@ Enigmail.prototype = {
                             return Enigmail.getService(holder, win);
                         }
                     }
-                    if (Prefs.getPref("initAlert")) {
+                    if (EnigmailPrefs.getPref("initAlert")) {
                         holder.svc.initializationAttempted = false;
                         holder.svc = null;
                     }
@@ -336,7 +336,7 @@ Enigmail.prototype = {
                 return null;
             }
 
-            const configuredVersion = Prefs.getPref("configuredVersion");
+            const configuredVersion = EnigmailPrefs.getPref("configuredVersion");
 
             EnigmailLog.DEBUG("enigmailCommon.jsm: getService: "+configuredVersion+"\n");
 
