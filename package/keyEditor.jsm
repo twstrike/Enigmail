@@ -44,7 +44,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global Enigma
 Components.utils.import("resource://enigmail/key.jsm"); /*global EnigmailKey: false */
 Components.utils.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Components.utils.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
-Components.utils.import("resource://enigmail/files.jsm"); /*global Files: false */
+Components.utils.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
 Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
@@ -274,7 +274,7 @@ function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, call
     if (editCmdArr[0] == "revoke") {
         // escape backslashes and ' characters
         args=args.concat(["-a", "-o"]);
-        args.push(Files.getEscapedFilename(inputData.outFile.path));
+        args.push(EnigmailFiles.getEscapedFilename(inputData.outFile.path));
         args.push("--gen-revoke");
         args=args.concat(keyIdList);
     }
@@ -289,7 +289,7 @@ function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, call
 
 
     var command= EnigmailGpgAgent.agentPath;
-    EnigmailLog.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
+    EnigmailLog.CONSOLE("enigmail> "+EnigmailFiles.formatCmdLine(command, args)+"\n");
 
     var keyEdit = new GpgEditorInterface(requestObserver, callbackFunc, inputData);
 
@@ -487,7 +487,7 @@ const EnigmailKeyEditor = {
   addPhoto: function (parent, keyId, photoFile, callbackFunc) {
     EnigmailLog.DEBUG("keyManagmenent.jsm: Enigmail.addPhoto: keyId="+keyId+"\n");
 
-    var photoFileName = Files.getEscapedFilename(Files.getFilePath(photoFile.QueryInterface(Ci.nsIFile)));
+    var photoFileName = EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePath(photoFile.QueryInterface(Ci.nsIFile)));
 
     return editKey(parent, true, null, keyId, "addphoto",
                    { file: photoFileName,

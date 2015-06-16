@@ -46,7 +46,7 @@ const Cu = Components.utils;
 Cu.import("resource://gre/modules/ctypes.jsm"); /*global ctypes: false */
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
@@ -143,7 +143,7 @@ const EnigmailGpgAgent = {
             path = "/bin:/usr/bin:/usr/local/bin";
         }
 
-        const psCmd = Files.resolvePath("ps", path, false);
+        const psCmd = EnigmailFiles.resolvePath("ps", path, false);
 
         const proc = {
             command:     psCmd,
@@ -351,7 +351,7 @@ const EnigmailGpgAgent = {
             try {
                 let pathDir = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
 
-                if (! Files.isAbsolutePath(agentPath, EnigmailOS.isDosLike())) {
+                if (! EnigmailFiles.isAbsolutePath(agentPath, EnigmailOS.isDosLike())) {
                     // path relative to Mozilla installation dir
                     const  ds = Cc[DIR_SERV_CONTRACTID].getService();
                     const dsprops = ds.QueryInterface(Ci.nsIProperties);
@@ -366,7 +366,7 @@ const EnigmailGpgAgent = {
                     pathDir.normalize();
                 } else {
                     // absolute path
-                    Files.initPath(pathDir, agentPath);
+                    EnigmailFiles.initPath(pathDir, agentPath);
                 }
                 if (! (pathDir.isFile() /* && pathDir.isExecutable()*/)) {
                     throw Components.results.NS_ERROR_FAILURE;
@@ -381,31 +381,31 @@ const EnigmailGpgAgent = {
         } else {
             // Resolve relative path using PATH environment variable
             const envPath = esvc.environment.get("PATH");
-            agentPath = Files.resolvePath(agentName, envPath, EnigmailOS.isDosLike());
+            agentPath = EnigmailFiles.resolvePath(agentName, envPath, EnigmailOS.isDosLike());
 
             if (!agentPath && EnigmailOS.isDosLike()) {
                 // DOS-like systems: search for GPG in c:\gnupg, c:\gnupg\bin, d:\gnupg, d:\gnupg\bin
                 let gpgPath = "c:\\gnupg;c:\\gnupg\\bin;d:\\gnupg;d:\\gnupg\\bin";
-                agentPath = Files.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
+                agentPath = EnigmailFiles.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
             }
 
             if ((! agentPath) && EnigmailOS.isWin32) {
                 // Look up in Windows Registry
                 try {
                     let gpgPath = EnigmailOS.getWinRegistryString("Software\\GNU\\GNUPG", "Install Directory", nsIWindowsRegKey.ROOT_KEY_LOCAL_MACHINE);
-                    agentPath = Files.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
+                    agentPath = EnigmailFiles.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
                 } catch (ex) {}
 
                 if (! agentPath) {
                     let gpgPath = gpgPath + "\\pub";
-                    agentPath = Files.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
+                    agentPath = EnigmailFiles.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
                 }
             }
 
             if (!agentPath && !EnigmailOS.isDosLike()) {
                 // Unix-like systems: check /usr/bin and /usr/local/bin
                 let gpgPath = "/usr/bin:/usr/local/bin";
-                agentPath = Files.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
+                agentPath = EnigmailFiles.resolvePath(agentName, gpgPath, EnigmailOS.isDosLike());
             }
 
             if (!agentPath) {
@@ -416,7 +416,7 @@ const EnigmailGpgAgent = {
             agentPath = agentPath.QueryInterface(Ci.nsIFile);
         }
 
-        EnigmailLog.CONSOLE("EnigmailAgentPath="+Files.getFilePathDesc(agentPath)+"\n\n");
+        EnigmailLog.CONSOLE("EnigmailAgentPath="+EnigmailFiles.getFilePathDesc(agentPath)+"\n\n");
 
         EnigmailGpgAgent.agentType = agentType;
         EnigmailGpgAgent.agentPath = agentPath;
@@ -434,7 +434,7 @@ const EnigmailGpgAgent = {
         let errStr = "";
         EnigmailLog.DEBUG("enigmail.js: Enigmail.setAgentPath: calling subprocess with '"+command.path+"'\n");
 
-        EnigmailLog.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
+        EnigmailLog.CONSOLE("enigmail> "+EnigmailFiles.formatCmdLine(command, args)+"\n");
 
         const proc = {
             command:     command,
@@ -513,7 +513,7 @@ const EnigmailGpgAgent = {
             }
         }
 
-        const foundPath = Files.resolvePath(fileName, EnigmailCore.getEnigmailService().environment.get("PATH"), EnigmailOS.isDosLike());
+        const foundPath = EnigmailFiles.resolvePath(fileName, EnigmailCore.getEnigmailService().environment.get("PATH"), EnigmailOS.isDosLike());
         if (foundPath) { foundPath.normalize(); }
         return foundPath;
     },
@@ -631,7 +631,7 @@ const EnigmailGpgAgent = {
                         EnigmailLog.ERROR("enigmail.js: detectGpgAgent no temp file created\n");
                     }
                     else {
-                        outStr = Files.readFile(tmpFile);
+                        outStr = EnigmailFiles.readFile(tmpFile);
                         tmpFile.remove(false);
                         exitCode = 0;
                     }
@@ -654,7 +654,7 @@ const EnigmailGpgAgent = {
             else {
                 EnigmailGpgAgent.gpgAgentInfo.envStr = DUMMY_AGENT_INFO;
                 var envFile = Components.classes[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-                Files.initPath(envFile, EnigmailGpgAgent.determineGpgHomeDir(esvc));
+                EnigmailFiles.initPath(envFile, EnigmailGpgAgent.determineGpgHomeDir(esvc));
                 envFile.append("gpg-agent.conf");
 
                 var data="default-cache-ttl " + (Passwords.getMaxIdleMinutes()*60)+"\n";

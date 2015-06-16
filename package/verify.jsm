@@ -46,7 +46,7 @@ const EXPORTED_SYMBOLS = [ "Verify" ];
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
-Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
@@ -62,8 +62,8 @@ const Verify = {
     attachment: function (parent, verifyFile, sigFile, statusFlagsObj, errorMsgObj) {
         EnigmailLog.DEBUG("verify.jsm: Verify.attachment:\n");
 
-        const verifyFilePath  = Files.getEscapedFilename(Files.getFilePathReadonly(verifyFile.QueryInterface(Ci.nsIFile)));
-        const sigFilePath     = Files.getEscapedFilename(Files.getFilePathReadonly(sigFile.QueryInterface(Ci.nsIFile)));
+        const verifyFilePath  = EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePathReadonly(verifyFile.QueryInterface(Ci.nsIFile)));
+        const sigFilePath     = EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePathReadonly(sigFile.QueryInterface(Ci.nsIFile)));
 
         const args = Gpg.getStandardArgs(true).
                   concat(["--verify", sigFilePath, verifyFilePath]);

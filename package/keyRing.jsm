@@ -53,7 +53,7 @@ Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
-Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
@@ -248,7 +248,7 @@ const EnigmailKeyRing = {
         EnigmailLog.DEBUG("keyRing.jsm: EnigmailKeyRing.importKeyFromFile: fileName="+inputFile.path+"\n");
         importedKeysObj.value="";
 
-        var fileName=Files.getEscapedFilename((inputFile.QueryInterface(Ci.nsIFile)).path);
+        var fileName=EnigmailFiles.getEscapedFilename((inputFile.QueryInterface(Ci.nsIFile)).path);
 
         args.push("--import");
         args.push(fileName);
@@ -372,7 +372,7 @@ const EnigmailKeyRing = {
             if (exitCodeObj.value !== 0) {
                 errorMsgObj.value = EnigmailLocale.getString("badCommand");
                 if (cmdErrorMsgObj.value) {
-                    errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, args);
+                    errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(Gpg.agentPath, args);
                     errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
                 }
 
@@ -416,7 +416,7 @@ const EnigmailKeyRing = {
         if (exitCodeObj.value !== 0) {
             errorMsgObj.value = EnigmailLocale.getString("badCommand");
             if (cmdErrorMsgObj.value) {
-                errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, args);
+                errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(Gpg.agentPath, args);
                 errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
             }
 
@@ -535,7 +535,7 @@ const EnigmailKeyRing = {
             errorMsgObj.value = EnigmailLocale.getString("failKeyExtract");
 
             if (cmdErrorMsgObj.value) {
-                errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, args);
+                errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(Gpg.agentPath, args);
                 errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
             }
 
@@ -557,7 +557,7 @@ const EnigmailKeyRing = {
                 errorMsgObj.value = EnigmailLocale.getString("failKeyExtract");
 
                 if (cmdErrorMsgObj.value) {
-                    errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, secretArgs);
+                    errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(Gpg.agentPath, secretArgs);
                     errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
                 }
 
@@ -571,7 +571,7 @@ const EnigmailKeyRing = {
         }
 
         if (outputFile) {
-            if (! Files.writeFileContents(outputFile, keyBlock, DEFAULT_FILE_PERMS)) {
+            if (! EnigmailFiles.writeFileContents(outputFile, keyBlock, DEFAULT_FILE_PERMS)) {
                 exitCodeObj.value = -1;
                 errorMsgObj.value = EnigmailLocale.getString("fileWriteFailed", [ outputFile ]);
             }
@@ -682,7 +682,7 @@ const EnigmailKeyRing = {
 
             try {
                 const flags = NS_WRONLY | NS_CREATE_FILE | NS_TRUNCATE;
-                const picFile = Files.getTempDirObj();
+                const picFile = EnigmailFiles.getTempDirObj();
 
                 picFile.append(keyId+".jpg");
                 picFile.createUnique(picFile.NORMAL_FILE_TYPE, DEFAULT_FILE_PERMS);
@@ -898,7 +898,7 @@ const EnigmailKeyRing = {
         const args = Gpg.getStandardArgs(true).
                   concat(["--gen-key"]);
 
-        EnigmailLog.CONSOLE(Files.formatCmdLine(Gpg.agentPath, args));
+        EnigmailLog.CONSOLE(EnigmailFiles.formatCmdLine(Gpg.agentPath, args));
 
         let inputData = "%echo Generating key\nKey-Type: ";
 

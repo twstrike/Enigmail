@@ -1,4 +1,4 @@
-/*global Components: false, Data: false, Files: false, EnigmailLog: false, subprocess: false, EnigmailErrorHandling: false, EnigmailCore: false */
+/*global Components: false, Data: false, EnigmailFiles: false, EnigmailLog: false, subprocess: false, EnigmailErrorHandling: false, EnigmailCore: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -89,7 +89,7 @@ const Execution = {
      */
     execStart: function (command, args, needPassphrase, domWindow, listener, statusFlagsObj) {
         EnigmailLog.WRITE("execution.jsm: execStart: " +
-                  "command = "+Files.formatCmdLine(command, args)+
+                  "command = "+EnigmailFiles.formatCmdLine(command, args)+
                   ", needPassphrase="+needPassphrase+
                   ", domWindow="+domWindow+
                   ", listener="+listener+"\n");
@@ -102,7 +102,7 @@ const Execution = {
 
         listener.command = command;
 
-        EnigmailLog.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
+        EnigmailLog.CONSOLE("enigmail> "+EnigmailFiles.formatCmdLine(command, args)+"\n");
 
         try {
             proc = subprocess.call({
@@ -177,7 +177,7 @@ const Execution = {
         var outputData = "";
         var errOutput  = "";
 
-        EnigmailLog.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
+        EnigmailLog.CONSOLE("enigmail> "+EnigmailFiles.formatCmdLine(command, args)+"\n");
 
         try {
             subprocess.call({
@@ -219,7 +219,7 @@ const Execution = {
         var preInput = "";
         var outputData = "";
         var errOutput  = "";
-        EnigmailLog.CONSOLE("enigmail> "+Files.formatCmdLine(command, args)+"\n");
+        EnigmailLog.CONSOLE("enigmail> "+EnigmailFiles.formatCmdLine(command, args)+"\n");
         var procBuilder = new subprocess.ProcessBuilder();
         procBuilder.setCommand(command);
         procBuilder.setArguments(args);

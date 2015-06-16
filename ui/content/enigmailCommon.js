@@ -1,5 +1,5 @@
 dump("loading: enigmailCommon.js\n");
-/*global Components: false, Data: false, Files: false, EnigmailCore: false, EnigmailApp: false, Dialog: false, Windows: false, Time: false */
+/*global Components: false, Data: false, EnigmailFiles: false, EnigmailCore: false, EnigmailApp: false, Dialog: false, Windows: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -471,7 +471,7 @@ function EnigStripEmail(mailAddrs) {
 
 //get path for temporary directory (e.g. /tmp, C:\TEMP)
 function EnigGetTempDir() {
-  return Files.getTempDir();
+  return EnigmailFiles.getTempDir();
 }
 
 // get the OS platform
@@ -605,7 +605,7 @@ function EnigShowPhoto (keyId, userId, photoNumber) {
 }
 
 function EnigGetFilePath (nsFileObj) {
-  return Files.getFilePath(nsFileObj);
+  return EnigmailFiles.getFilePath(nsFileObj);
 }
 
 function EnigCreateRevokeCert(keyId, userId, callbackFunc) {

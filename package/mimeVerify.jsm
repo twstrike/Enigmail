@@ -1,4 +1,4 @@
-/*global Components: false, XPCOMUtils: false, Data: false, EnigmailLog: false, Files: false, EnigmailFuncs: false, dump: false, atob: false */
+/*global Components: false, XPCOMUtils: false, Data: false, EnigmailLog: false, EnigmailFiles: false, EnigmailFuncs: false, dump: false, atob: false */
 /*jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -292,17 +292,17 @@ MimeVerify.prototype = {
     var win = windowManager.getMostRecentWindow(null);
 
     // create temp file holding signature data
-    this.sigFile = Files.getTempDirObj();
+    this.sigFile = EnigmailFiles.getTempDirObj();
     this.sigFile.append("data.sig");
     this.sigFile.createUnique(this.sigFile.NORMAL_FILE_TYPE, 0x180);
-    Files.writeFileContents(this.sigFile, this.sigData, 0x180);
+    EnigmailFiles.writeFileContents(this.sigFile, this.sigData, 0x180);
 
     var statusFlagsObj = {};
     var errorMsgObj = {};
 
     this.proc = Decryption.decryptMessageStart(win, true, true, this,
                 statusFlagsObj, errorMsgObj,
-                Files.getEscapedFilename(Files.getFilePath(this.sigFile)));
+                EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePath(this.sigFile)));
 
     if (this.pipe) {
       EnigmailLog.DEBUG("Closing pipe\n"); // always log this one

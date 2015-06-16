@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailFuncs: false, EnigmailLog: false, EnigmailOS: false, Files: false, EnigmailApp: false */
+/*global Components: false, EnigmailFuncs: false, EnigmailLog: false, EnigmailOS: false, EnigmailFiles: false, EnigmailApp: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -78,7 +78,7 @@ const Rules = {
         var flags = NS_RDONLY;
         var rulesFile = this.getRulesFile();
         if (rulesFile.exists()) {
-            var fileContents = Files.readFile(rulesFile);
+            var fileContents = EnigmailFiles.readFile(rulesFile);
 
             if (fileContents.length===0 || fileContents.search(/^\s*$/)===0) {
                 return false;
@@ -101,7 +101,7 @@ const Rules = {
         if (rulesFile) {
             if (rulesListHolder.rulesList) {
                 // the rule list is not empty -> write into file
-                return Files.writeFileContents(rulesFile.path,
+                return EnigmailFiles.writeFileContents(rulesFile.path,
                                                domSerializer.serializeToString(rulesListHolder.rulesList.firstChild),
                                                DEFAULT_FILE_PERMS);
             } else {

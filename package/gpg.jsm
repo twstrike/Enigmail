@@ -46,7 +46,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
@@ -187,7 +187,7 @@ const Gpg = {
         if (exitCodeObj.value !== 0) {
             errorMsgObj.value = EnigmailLocale.getString("badCommand");
             if (cmdErrorMsgObj.value) {
-                errorMsgObj.value += "\n" + Files.formatCmdLine(Gpg.agentPath, args);
+                errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(Gpg.agentPath, args);
                 errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
             }
 

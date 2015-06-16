@@ -39,7 +39,7 @@
 
 "use strict";
 
-var EXPORTED_SYMBOLS = [ "Files" ];
+var EXPORTED_SYMBOLS = [ "EnigmailFiles" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -73,7 +73,7 @@ const lazyLog = (function() {
     };
 })();
 
-const Files = {
+const EnigmailFiles = {
 
     isAbsolutePath: function (filePath, isDosLike) {
         // Check if absolute path
@@ -88,7 +88,7 @@ const Files = {
     resolvePath: function (filePath, envPath, isDosLike) {
         lazyLog().DEBUG("files.jsm: resolvePath: filePath="+filePath+"\n");
 
-        if (Files.isAbsolutePath(filePath, isDosLike))
+        if (EnigmailFiles.isAbsolutePath(filePath, isDosLike))
             return filePath;
 
         if (!envPath)
@@ -105,7 +105,7 @@ const Files = {
 
                     lazyLog().DEBUG("files.jsm: resolvePath: checking for "+pathDirs[j]+"/"+fileNames[i]+"\n");
 
-                    Files.initPath(pathDir, pathDirs[j]);
+                    EnigmailFiles.initPath(pathDir, pathDirs[j]);
 
                     try {
                         if (pathDir.exists() && pathDir.isDirectory()) {
@@ -129,7 +129,7 @@ const Files = {
             var localFile;
             if (typeof filePath == "string") {
                 localFile = Cc[NS_LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
-                Files.initPath(localFile, filePath);
+                EnigmailFiles.initPath(localFile, filePath);
             }
             else {
                 localFile = filePath.QueryInterface(Ci.nsIFile);
@@ -205,7 +205,7 @@ const Files = {
             }
         }
 
-        var cmdStr = getQuoted(Files.getFilePathDesc(command)) +" ";
+        var cmdStr = getQuoted(EnigmailFiles.getFilePathDesc(command)) +" ";
         var argStr = args.map(getQuoted).join(" ").replace(/\\\\/g, '\\');
         return cmdStr + argStr;
     },
@@ -219,7 +219,7 @@ const Files = {
     },
 
     getFilePath: function (nsFileObj) {
-        return Data.convertToUnicode(Files.getFilePathDesc(nsFileObj), "utf-8");
+        return Data.convertToUnicode(EnigmailFiles.getFilePathDesc(nsFileObj), "utf-8");
     },
 
     getEscapedFilename: function (fileNameStr) {
@@ -255,7 +255,7 @@ const Files = {
     },
 
     getTempDir: function () {
-        return Files.getTempDirObj().path;
+        return EnigmailFiles.getTempDirObj().path;
     },
 
     /**
@@ -268,7 +268,7 @@ const Files = {
      */
     writeFileContents: function(filePath, data, permissions) {
         try {
-            var fileOutStream = Files.createFileStream(filePath, permissions);
+            var fileOutStream = EnigmailFiles.createFileStream(filePath, permissions);
 
             if (data.length) {
                 if (fileOutStream.write(data, data.length) != data.length) {

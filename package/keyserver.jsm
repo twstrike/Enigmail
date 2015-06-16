@@ -51,7 +51,7 @@ Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
+Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
@@ -119,7 +119,7 @@ const EnigmailKeyServer = {
 
         const isDownload = actionFlags & (nsIEnigmail.REFRESH_KEY | nsIEnigmail.DOWNLOAD_KEY);
 
-        EnigmailLog.CONSOLE("enigmail> "+Files.formatCmdLine(EnigmailGpgAgent.agentPath, args)+"\n");
+        EnigmailLog.CONSOLE("enigmail> "+EnigmailFiles.formatCmdLine(EnigmailGpgAgent.agentPath, args)+"\n");
 
         let proc = null;
         let exitCode = null;

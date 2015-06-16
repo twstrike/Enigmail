@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailConsole: false, dump: false, Files: false, EnigmailOS: false */
+/*global Components: false, EnigmailConsole: false, dump: false, EnigmailFiles: false, EnigmailOS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -73,7 +73,7 @@ const EnigmailLog = {
 
     createLogFiles: function() {
         if(EnigmailLog.directory && (! EnigmailLog.fileStream) && EnigmailLog.level >= 5) {
-            EnigmailLog.fileStream = Files.createFileStream(EnigmailLog.directory+"enigdbug.txt");
+            EnigmailLog.fileStream = EnigmailFiles.createFileStream(EnigmailLog.directory+"enigdbug.txt");
         }
     },
 

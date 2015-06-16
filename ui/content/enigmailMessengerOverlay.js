@@ -1747,11 +1747,11 @@ Enigmail.msg = {
     EnigmailLog.DEBUG("enigmailMessengerOverlay.js: messageSave: path="+saveFile.path+"\n");
 
     if (saveFile.parent)
-      Enigmail.msg.lastSaveDir = Files.getFilePath(saveFile.parent);
+      Enigmail.msg.lastSaveDir = EnigmailFiles.getFilePath(saveFile.parent);
 
     var textContent = this.getDecryptedMessage("text/plain", true);
 
-    if (!Files.writeFileContents(saveFile.path, textContent, null)) {
+    if (!EnigmailFiles.writeFileContents(saveFile.path, textContent, null)) {
       Dialog.alert(window, "Error in saving to file "+saveFile.path);
       return;
     }
@@ -2030,7 +2030,7 @@ Enigmail.msg = {
     }
 
     // open
-    var tmpDir = Files.getTempDir();
+    var tmpDir = EnigmailFiles.getTempDir();
     var outFile1, outFile2;
     outFile1 = Components.classes[LOCAL_FILE_CONTRACTID].
       createInstance(Components.interfaces.nsIFile);
@@ -2185,7 +2185,7 @@ Enigmail.msg = {
     }
     else {
       // open
-      var tmpDir = Files.getTempDir();
+      var tmpDir = EnigmailFiles.getTempDir();
       try {
         outFile = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Components.interfaces.nsIFile);
         outFile.initWithPath(tmpDir);

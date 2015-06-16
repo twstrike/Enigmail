@@ -760,7 +760,7 @@ Enigmail.msg = {
     if (!enigmailSvc)
       return null;
 
-    var tmpDir=Files.getTempDir();
+    var tmpDir=EnigmailFiles.getTempDir();
     var tmpFile;
     try {
       tmpFile = Components.classes[LOCAL_FILE_CONTRACTID].createInstance(Components.interfaces.nsIFile);
@@ -3734,7 +3734,7 @@ Enigmail.msg = {
       return -1;
     }
 
-    var tmpDir=Files.getTempDir();
+    var tmpDir=EnigmailFiles.getTempDir();
     var extAppLauncher = Components.classes["@mozilla.org/mime;1"].
       getService(Components.interfaces.nsPIExternalAppLauncher);
 

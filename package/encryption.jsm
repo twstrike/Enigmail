@@ -54,7 +54,7 @@ Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global En
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
-Components.utils.import("resource://enigmail/files.jsm"); /*global Files: false */
+Components.utils.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Components.utils.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
 
 const Cc = Components.classes;
@@ -427,8 +427,8 @@ var Encryption = {
             args = args.concat(Passwords.command());
         }
 
-        const inFilePath  = Files.getEscapedFilename(Files.getFilePathReadonly(inFile.QueryInterface(Ci.nsIFile)));
-        const outFilePath = Files.getEscapedFilename(Files.getFilePathReadonly(outFile.QueryInterface(Ci.nsIFile)));
+        const inFilePath  = EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePathReadonly(inFile.QueryInterface(Ci.nsIFile)));
+        const outFilePath = EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePathReadonly(outFile.QueryInterface(Ci.nsIFile)));
 
         args = args.concat(["--yes", "-o", outFilePath, inFilePath ]);
 
@@ -437,7 +437,7 @@ var Encryption = {
         const msg = Execution.execCmd(EnigmailGpgAgent.agentPath, args, "", exitCodeObj, statusFlagsObj, {}, cmdErrorMsgObj);
         if (exitCodeObj.value !== 0) {
             if (cmdErrorMsgObj.value) {
-                errorMsgObj.value = Files.formatCmdLine(EnigmailGpgAgent.agentPath, args);
+                errorMsgObj.value = EnigmailFiles.formatCmdLine(EnigmailGpgAgent.agentPath, args);
                 errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
             } else {
                 errorMsgObj.value = "An unknown error has occurred";

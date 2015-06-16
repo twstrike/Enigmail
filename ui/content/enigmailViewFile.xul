@@ -89,7 +89,7 @@
       let fileObj = Dialog.filePicker(window, EnigmailLocale.getString("saveLogFile.title"), null,
         true, "txt");
 
-      Files.writeFileContents(fileObj, logFileData, null);
+      EnigmailFiles.writeFileContents(fileObj, logFileData, null);
 
     }
 
