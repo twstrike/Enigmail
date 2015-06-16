@@ -105,7 +105,7 @@
     }
 
     function processNextKey(index) {
-      Log.DEBUG("enigmailEditKeyTrust: processNextKey("+index+")\n");
+      EnigmailLog.DEBUG("enigmailEditKeyTrust: processNextKey("+index+")\n");
 
       var t=document.getElementById("trustLevelGroup");
       EnigmailKeyEditor.setKeyTrust(window,

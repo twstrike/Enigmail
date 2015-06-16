@@ -269,7 +269,7 @@
 
     onDataAvailable: function (data) {
       var ret="";
-      Log.DEBUG("enigmailSetCardPin: changePinObserver.onDataAvailable: data="+data+"\n");
+      EnigmailLog.DEBUG("enigmailSetCardPin: changePinObserver.onDataAvailable: data="+data+"\n");
       if (data.indexOf("[GNUPG:] SC_OP_FAILURE")>=0) {
         this.result = this._data;
       }

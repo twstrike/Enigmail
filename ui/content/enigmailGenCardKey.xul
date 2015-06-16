@@ -214,7 +214,7 @@
 
       QueryInterface : function(iid)
       {
-        //Log.DEBUG("enigmailGenCardKey: EnigMimeReadCallback.QI: "+iid+"\n");
+        //EnigmailLog.DEBUG("enigmailGenCardKey: EnigMimeReadCallback.QI: "+iid+"\n");
         if (iid.equals(Components.interfaces.nsIEnigMimeReadCallback) ||
             iid.equals(Components.interfaces.nsISupports) )
           return this;
@@ -257,7 +257,7 @@
     }
 
     function startKeyGen() {
-      Log.DEBUG("enigmailGenCardKey: startKeyGen(): Start\n");
+      EnigmailLog.DEBUG("enigmailGenCardKey: startKeyGen(): Start\n");
 
       var enigmailSvc = EnigmailCore.getService(window);
       if (!enigmailSvc) {

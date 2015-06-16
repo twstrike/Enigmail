@@ -94,7 +94,7 @@
     }
 
     function enigLoadPage() {
-      Log.DEBUG("enigmailHelp.js: enigLoadPage\n");
+      EnigmailLog.DEBUG("enigmailHelp.js: enigLoadPage\n");
       EnigmailCore.getService();
 
       var contentFrame = Windows.getFrame(window, "contentFrame");
@@ -112,7 +112,7 @@
         cf.setAttribute("collapsed", "true");
 
         let cb = document.getElementById("contentBox");
-        logFileData = Log.getLogData(EnigmailCore.version, Prefs);
+        logFileData = EnigmailLog.getLogData(EnigmailCore.version, Prefs);
         cb.value = logFileData;
 
         let cfb = document.getElementById("logFileBox");
