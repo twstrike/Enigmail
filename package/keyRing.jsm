@@ -58,7 +58,7 @@ Cu.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
-Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
+Cu.import("resource://enigmail/time.jsm"); /*global EnigmailTime: false */
 Cu.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global EnigmailWindows: false */
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
@@ -750,9 +750,9 @@ const EnigmailKeyRing = {
                 case "pub":
                     keyObj = {};
                     uatNum = 0;
-                    keyObj.expiry=Time.getDateTime(listRow[EXPIRY_ID], true, false);
+                    keyObj.expiry=EnigmailTime.getDateTime(listRow[EXPIRY_ID], true, false);
                     keyObj.expiryTime = Number(listRow[EXPIRY_ID]);
-                    keyObj.created=Time.getDateTime(listRow[CREATED_ID], true, false);
+                    keyObj.created=EnigmailTime.getDateTime(listRow[CREATED_ID], true, false);
                     keyObj.keyId=listRow[KEY_ID];
                     keyObj.keyTrust=listRow[KEY_TRUST_ID];
                     keyObj.keyUseFor=listRow[KEY_USE_FOR_ID];
@@ -1002,7 +1002,7 @@ const EnigmailKeyRing = {
             if (userList[i].substr(0,4) == "sec:") {
                 let aLine = userList[i].split(/:/);
                 keyId = aLine[4];
-                secretKeyCreated[keyId] = Time.getDateTime(aLine[5], true, false);
+                secretKeyCreated[keyId] = EnigmailTime.getDateTime(aLine[5], true, false);
                 secretKeyList.push(keyId);
             }
         }

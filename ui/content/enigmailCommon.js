@@ -1,5 +1,5 @@
 dump("loading: enigmailCommon.js\n");
-/*global Components: false, EnigmailFiles: false, EnigmailCore: false, EnigmailApp: false, EnigmailDialog: false, EnigmailWindows: false, Time: false */
+/*global Components: false, EnigmailFiles: false, EnigmailCore: false, EnigmailApp: false, EnigmailDialog: false, EnigmailWindows: false, EnigmailTime: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -681,7 +681,7 @@ function EnigGetTrustLabel(trustCode) {
 }
 
 function EnigGetDateTime(dateNum, withDate, withTime) {
-  return Time.getDateTime(dateNum, withDate, withTime);
+  return EnigmailTime.getDateTime(dateNum, withDate, withTime);
 }
 
 function enigCreateInstance (aURL, aInterface)
@@ -991,8 +991,8 @@ function EnigGetKeyDetails(sigListStr) {
         calcTrust="d";
       }
       ownerTrust = aLine[8];
-      creationDate = Time.getDateTime(aLine[5], true, false);
-      expiryDate = Time.getDateTime(aLine[6], true, false);
+      creationDate = EnigmailTime.getDateTime(aLine[5], true, false);
+      expiryDate = EnigmailTime.getDateTime(aLine[6], true, false);
       subkeyList.push(aLine);
       if (! gUserId) {
         gUserId=EnigConvertGpgToUnicode(aLine[9]);

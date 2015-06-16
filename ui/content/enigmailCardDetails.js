@@ -1,5 +1,5 @@
 dump("loading: enigmailCardDetails.js\n");
-/*global Components: false, EnigmailLocale: false, EnigmailDialog: false, Time: false */
+/*global Components: false, EnigmailLocale: false, EnigmailDialog: false, EnigmailTime: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -93,9 +93,9 @@ function onLoad() {
         setValue("key_fpr_3", EnigmailKey.formatFpr(l[3]));
         break;
       case "fprtime":
-        setValue("key_created_1", Time.getDateTime(l[1], true, false));
-        setValue("key_created_2", Time.getDateTime(l[2], true, false));
-        setValue("key_created_3", Time.getDateTime(l[3], true, false));
+        setValue("key_created_1", EnigmailTime.getDateTime(l[1], true, false));
+        setValue("key_created_2", EnigmailTime.getDateTime(l[2], true, false));
+        setValue("key_created_3", EnigmailTime.getDateTime(l[3], true, false));
         break;
       default:
         if (l[0]) {

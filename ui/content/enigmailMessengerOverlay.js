@@ -1,5 +1,5 @@
 dump("loading: enigmailMessengerOverlay.js\n");
-/*global Components: false, EnigmailData: false, EnigmailApp: false, Dialog: false, Timer: false, EnigmailWindows: false, Time: false */
+/*global Components: false, EnigmailData: false, EnigmailApp: false, Dialog: false, Timer: false, EnigmailWindows: false, EnigmailTime: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -1559,7 +1559,7 @@ Enigmail.msg = {
                        "Subject": msg.subject,
                        "To": msg.recipients,
                        "Cc": msg.ccList,
-                       "Date": Time.getDateTime(msg.dateInSeconds, true, true) };
+                       "Date": EnigmailTime.getDateTime(msg.dateInSeconds, true, true) };
 
 
             if(gFolderDisplay.selectedMessageIsNews) {

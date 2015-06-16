@@ -50,7 +50,7 @@ Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
-Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
+Cu.import("resource://enigmail/time.jsm"); /*global EnigmailTime: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/decryption.jsm"); /*global EnigmailDecryption: false */
 
@@ -83,7 +83,7 @@ const EnigmailVerifyAttachment = {
 
         if (listener.exitCode === 0) {
             const detailArr = retObj.sigDetails.split(/ /);
-            const dateTime = Time.getDateTime(detailArr[2], true, true);
+            const dateTime = EnigmailTime.getDateTime(detailArr[2], true, true);
             const msg1 = retObj.errorMsg.split(/\n/)[0];
             const msg2 = EnigmailLocale.getString("keyAndSigDate", ["0x"+retObj.keyId.substr(-8, 8), dateTime ]);
             errorMsgObj.value = msg1 + "\n" + msg2;

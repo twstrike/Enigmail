@@ -40,7 +40,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Time" ];
+const EXPORTED_SYMBOLS = [ "EnigmailTime" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -50,7 +50,7 @@ Cu.import("resource://enigmail/locale.jsm");
 
 const DATE_FORMAT_CONTRACTID = "@mozilla.org/intl/scriptabledateformat;1";
 
-const Time = {
+const EnigmailTime = {
     /**
      * Transform a Unix-Timestamp to a human-readable date/time string
      *

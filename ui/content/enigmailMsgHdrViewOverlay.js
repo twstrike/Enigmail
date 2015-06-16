@@ -1,5 +1,5 @@
 dump("loading: enigmailMsgHdrViewOverlay.js\n");
-/*global Components: false, EnigmailWindows: false, EnigmailLocale: false, EnigmailPrefs: false, Time: false */
+/*global Components: false, EnigmailWindows: false, EnigmailLocale: false, EnigmailPrefs: false, EnigmailTime: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -249,7 +249,7 @@ Enigmail.hdrView = {
       if (sigDetails) {
         var detailArr=sigDetails.split(/ /);
 
-        let dateTime = Time.getDateTime(detailArr[2], true, true);
+        let dateTime = EnigmailTime.getDateTime(detailArr[2], true, true);
         var txt = EnigmailLocale.getString("keyAndSigDate", [ keyId.substr(-8, 8), dateTime ] );
         statusArr.push(txt);
         statusInfo += "\n" + txt;
