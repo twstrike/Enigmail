@@ -102,7 +102,7 @@ let keygenProcess = null;
  * @return - |array| of : separated key list entries as specified in GnuPG doc/DETAILS
  */
 function obtainKeyList(win, secretOnly, refresh) {
-    EnigmailLog.DEBUG("enigmailFuncs.jsm: obtainKeyList\n");
+    EnigmailLog.DEBUG("funcs.jsm: obtainKeyList\n");
 
     let userList = null;
     try {

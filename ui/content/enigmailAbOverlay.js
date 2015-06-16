@@ -34,7 +34,7 @@ dump("loading: enigmailAbOverlay.js\n");
  * ***** END LICENSE BLOCK ***** */
 
 
-Components.utils.import("resource://enigmail/enigmailFuncs.jsm"); /*global EnigmailFuncs: false */
+Components.utils.import("resource://enigmail/funcs.jsm"); /*global EnigmailFuncs: false */
 Components.utils.import("resource://enigmail/windows.jsm"); /*global EnigmailWindows: false */
 
 var Enigmail = {

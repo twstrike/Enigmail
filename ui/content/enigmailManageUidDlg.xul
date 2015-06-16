@@ -83,7 +83,7 @@
 
   <script type="application/x-javascript">
   <![CDATA[
-    Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
+    Components.utils.import("resource://enigmail/funcs.jsm");
     Components.utils.import("resource://enigmail/keyEditor.jsm");
     Components.utils.import("resource://enigmail/locale.jsm");
     Components.utils.import("resource://enigmail/data.jsm");
