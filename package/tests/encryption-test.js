@@ -10,7 +10,7 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global withEnigmail: false, withTestGpgHome: false */
 
-testing("encryption.jsm"); /*global Encryption: false, nsIEnigmail: false */
+testing("encryption.jsm"); /*global EnigmailEncryption: false, nsIEnigmail: false */
 component("enigmail/keyRing.jsm"); /*global EnigmailKeyRing: fales */
 component("enigmail/armor.jsm"); /*global EnigmailArmor: fales */
 
@@ -24,7 +24,7 @@ test(withTestGpgHome(withEnigmail(function shouldSignMessage() {
     const strikeAccount = "strike.devtest@gmail.com";
     const exitCodeObj = {};
     const statusFlagObj = {};
-    const encryptResult = Encryption.encryptMessage(parentWindow,
+    const encryptResult = EnigmailEncryption.encryptMessage(parentWindow,
         nsIEnigmail.UI_TEST,
         plainText,
         strikeAccount,
@@ -52,7 +52,7 @@ test(withTestGpgHome(withEnigmail(function shouldEncryptMessage() {
     const strikeAccount = "strike.devtest@gmail.com";
     const exitCodeObj = {};
     const statusFlagObj = {};
-    const encryptResult = Encryption.encryptMessage(parentWindow,
+    const encryptResult = EnigmailEncryption.encryptMessage(parentWindow,
         nsIEnigmail.UI_TEST,
         plainText,
         strikeAccount,

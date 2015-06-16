@@ -41,7 +41,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Encryption" ];
+const EXPORTED_SYMBOLS = [ "EnigmailEncryption" ];
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
@@ -95,7 +95,7 @@ function stripEmailAdr(mailAddrs) {
     return mailAddrs;
 }
 
-var Encryption = {
+const EnigmailEncryption = {
     getEncryptCommand: function (fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj) {
         EnigmailLog.DEBUG("encryption.jsm: getEncryptCommand: hashAlgorithm="+hashAlgorithm+"\n");
 
@@ -237,7 +237,7 @@ var Encryption = {
             return null;
         }
 
-        var encryptArgs = Encryption.getEncryptCommand(fromMailAddr, toMailAddr, bccMailAddr, hashAlgo, sendFlags, ENC_TYPE_MSG, errorMsgObj);
+        var encryptArgs = EnigmailEncryption.getEncryptCommand(fromMailAddr, toMailAddr, bccMailAddr, hashAlgo, sendFlags, ENC_TYPE_MSG, errorMsgObj);
         if (! encryptArgs)
             return null;
 
@@ -365,7 +365,7 @@ var Encryption = {
             });
 
 
-        var proc = Encryption.encryptMessageStart(parent, uiFlags,
+        var proc = EnigmailEncryption.encryptMessageStart(parent, uiFlags,
                                                   fromMailAddr, toMailAddr, bccMailAddr,
                                                   null, sendFlags,
                                                   listener, statusFlagsObj, errorMsgObj);
@@ -379,7 +379,7 @@ var Encryption = {
         inspector.enterNestedEventLoop(0);
 
         var retStatusObj = {};
-        exitCodeObj.value = Encryption.encryptMessageEnd(EnigmailData.getUnicodeData(listener.stderrData), listener.exitCode,
+        exitCodeObj.value = EnigmailEncryption.encryptMessageEnd(EnigmailData.getUnicodeData(listener.stderrData), listener.exitCode,
                                                          uiFlags, sendFlags,
                                                          listener.stdoutData.length,
                                                          retStatusObj);
@@ -404,7 +404,7 @@ var Encryption = {
 
     encryptAttachment: function (parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile,
                                  exitCodeObj, statusFlagsObj, errorMsgObj) {
-        EnigmailLog.DEBUG("encryption.jsm: Encryption.encryptAttachment infileName="+inFile.path+"\n");
+        EnigmailLog.DEBUG("encryption.jsm: EnigmailEncryption.encryptAttachment infileName="+inFile.path+"\n");
 
         statusFlagsObj.value = 0;
         sendFlags |= nsIEnigmail.SEND_ATTACHMENT;
@@ -415,7 +415,7 @@ var Encryption = {
         } catch (ex) {}
 
         const asciiFlags = (asciiArmor ? ENC_TYPE_ATTACH_ASCII : ENC_TYPE_ATTACH_BINARY);
-        let args = Encryption.getEncryptCommand(fromMailAddr, toMailAddr, bccMailAddr, "", sendFlags, asciiFlags, errorMsgObj);
+        let args = EnigmailEncryption.getEncryptCommand(fromMailAddr, toMailAddr, bccMailAddr, "", sendFlags, asciiFlags, errorMsgObj);
 
         if (! args) {
             return null;
@@ -450,7 +450,7 @@ var Encryption = {
     },
 
     registerOn: function(target) {
-        target.encryptMessage = Encryption.encryptMessage;
-        target.encryptAttachment = Encryption.encryptAttachment;
+        target.encryptMessage = EnigmailEncryption.encryptMessage;
+        target.encryptAttachment = EnigmailEncryption.encryptAttachment;
     }
 };

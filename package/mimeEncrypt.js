@@ -14,7 +14,7 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false */
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
-Components.utils.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
+Components.utils.import("resource://enigmail/encryption.jsm"); /*global EnigmailEncryption: false */
 Components.utils.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
 Components.utils.import("resource://enigmail/hash.jsm"); /*global Hash: false */
 
@@ -176,7 +176,7 @@ PgpMimeEncrypt.prototype = {
 
       var statusFlagsObj = {};
       var errorMsgObj = {};
-      this.proc = Encryption.encryptMessageStart(this.win,
+      this.proc = EnigmailEncryption.encryptMessageStart(this.win,
                                                  this.enigSecurityInfo.UIFlags,
                                                  this.enigSecurityInfo.senderEmailAddr,
                                                  this.enigSecurityInfo.recipients,
@@ -458,7 +458,7 @@ PgpMimeEncrypt.prototype = {
 
     let retStatusObj = {};
 
-    this.exitCode = Encryption.encryptMessageEnd(this.statusStr,
+    this.exitCode = EnigmailEncryption.encryptMessageEnd(this.statusStr,
                                                  exitCode,
                                                  this.enigSecurityInfo.UIFlags,
                                                  this.enigSecurityInfo.sendFlags,

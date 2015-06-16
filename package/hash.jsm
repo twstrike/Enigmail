@@ -48,7 +48,7 @@ Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global EnigmailWindows: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
-Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
+Cu.import("resource://enigmail/encryption.jsm"); /*global EnigmailEncryption: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 
 const Ci = Components.interfaces;
@@ -92,7 +92,7 @@ const Hash = {
                 }
             };
 
-            const proc = Encryption.encryptMessageStart(win, testUiFlags, fromMailAddr, "",
+            const proc = EnigmailEncryption.encryptMessageStart(win, testUiFlags, fromMailAddr, "",
                                                         "", hashAlgo, sendFlags,
                                                         listener, {}, {});
 
@@ -106,7 +106,7 @@ const Hash = {
             const exitCode = listener.exitCode;
 
             const retStatusObj = {};
-            let exitCode2 = Encryption.encryptMessageEnd(listener.stderrData, exitCode,
+            let exitCode2 = EnigmailEncryption.encryptMessageEnd(listener.stderrData, exitCode,
                                                     testUiFlags, sendFlags, 10,
                                                     retStatusObj);
 
