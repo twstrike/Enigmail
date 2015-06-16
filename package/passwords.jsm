@@ -44,10 +44,10 @@ const EXPORTED_SYMBOLS = [ "EnigmailPassword" ];
 
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/lazy.jsm");  /*global Lazy: false */
+Cu.import("resource://enigmail/lazy.jsm");  /*global EnigmailLazy: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 
-const gpgAgent = Lazy.loader("enigmail/enigmailGpgAgent.jsm", "EnigmailGpgAgent");
+const gpgAgent = EnigmailLazy.loader("enigmail/enigmailGpgAgent.jsm", "EnigmailGpgAgent");
 
 const EnigmailPassword = {
     /*
