@@ -48,7 +48,7 @@ Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
-Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
+Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */
 
 if (! Enigmail) var Enigmail = {};
 
@@ -73,29 +73,29 @@ Enigmail.hlp = {
     EnigmailLog.DEBUG("enigmailMsgComposeHelper.js:    getFlagVal(): oldVal="+oldVal+" newVal="+newVal+" type=\""+type+"\"\n");
 
     // conflict remains conflict
-    if (oldVal === Constants.ENIG_CONFLICT) {
-      return Constants.ENIG_CONFLICT;
+    if (oldVal === EnigmailConstants.ENIG_CONFLICT) {
+      return EnigmailConstants.ENIG_CONFLICT;
     }
 
     // 'never' and 'always' triggers conflict:
-    if ((oldVal === Constants.ENIG_NEVER && newVal === Constants.ENIG_ALWAYS) || (oldVal === Constants.ENIG_ALWAYS && newVal === Constants.ENIG_NEVER)) {
-      return Constants.ENIG_CONFLICT;
+    if ((oldVal === EnigmailConstants.ENIG_NEVER && newVal === EnigmailConstants.ENIG_ALWAYS) || (oldVal === EnigmailConstants.ENIG_ALWAYS && newVal === EnigmailConstants.ENIG_NEVER)) {
+      return EnigmailConstants.ENIG_CONFLICT;
     }
 
     // if there is any 'never' return 'never'
     // - thus: 'never' and 'maybe' => 'never'
-    if (oldVal === Constants.ENIG_NEVER || newVal === Constants.ENIG_NEVER) {
-      return Constants.ENIG_NEVER;
+    if (oldVal === EnigmailConstants.ENIG_NEVER || newVal === EnigmailConstants.ENIG_NEVER) {
+      return EnigmailConstants.ENIG_NEVER;
     }
 
     // if there is any 'always' return 'always'
     // - thus: 'always' and 'maybe' => 'always'
-    if (oldVal === Constants.ENIG_ALWAYS || newVal === Constants.ENIG_ALWAYS) {
-      return Constants.ENIG_ALWAYS;
+    if (oldVal === EnigmailConstants.ENIG_ALWAYS || newVal === EnigmailConstants.ENIG_ALWAYS) {
+      return EnigmailConstants.ENIG_ALWAYS;
     }
 
     // here, both values are 'maybe', which we return then
-    return Constants.ENIG_UNDEF;  // maybe
+    return EnigmailConstants.ENIG_UNDEF;  // maybe
   },
 
 
@@ -126,9 +126,9 @@ Enigmail.hlp = {
     // initialize return value and the helper variables for them:
     matchedKeysObj.value = "";
     flagsObj.value = false;
-    var sign    = Constants.ENIG_UNDEF;  // default sign flag is: maybe
-    var encrypt = Constants.ENIG_UNDEF;  // default encrypt flag is: maybe
-    var pgpMime = Constants.ENIG_UNDEF;  // default pgpMime flag is: maybe
+    var sign    = EnigmailConstants.ENIG_UNDEF;  // default sign flag is: maybe
+    var encrypt = EnigmailConstants.ENIG_UNDEF;  // default encrypt flag is: maybe
+    var pgpMime = EnigmailConstants.ENIG_UNDEF;  // default pgpMime flag is: maybe
 
     // list of addresses not processed
     // - string with { and } around each email to enable pattern matching with rules

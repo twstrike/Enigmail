@@ -47,7 +47,7 @@ Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/key.jsm"); /*global EnigmailKey: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
-Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
+Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */
 
 if (! Enigmail) var Enigmail = {};
 
@@ -174,7 +174,7 @@ Enigmail.hdrView = {
     var errorLines="";
     var fullStatusInfo="";
 
-    if (exitCode == Constants.POSSIBLE_PGPMIME) {
+    if (exitCode == EnigmailConstants.POSSIBLE_PGPMIME) {
       exitCode = 0;
     }
     else {

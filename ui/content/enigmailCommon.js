@@ -60,7 +60,7 @@ Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
-Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
+Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Components.utils.import("resource://enigmail/keyserver.jsm"); /*global EnigmailKeyServer: false */
@@ -157,7 +157,7 @@ const PGP_MIME_NEVER    = 0;
 const PGP_MIME_POSSIBLE = 1;
 const PGP_MIME_ALWAYS   = 2;
 
-const ENIG_POSSIBLE_PGPMIME = Constants.POSSIBLE_PGPMIME;
+const ENIG_POSSIBLE_PGPMIME = EnigmailConstants.POSSIBLE_PGPMIME;
 const ENIG_PGP_DESKTOP_ATT  = -2082;
 
 var gUsePGPMimeOptionList = ["usePGPMimeNever",

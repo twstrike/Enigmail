@@ -66,7 +66,7 @@ Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: fa
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/attachment.jsm"); /*global EnigmailAttachment: false */
-Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
+Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */
 Components.utils.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
 
 if (! Enigmail) var Enigmail = {};
@@ -724,7 +724,7 @@ Enigmail.msg = {
 
           if (signedMsg ||
               ((!encrypedMsg) && (embeddedSigned || embeddedEncrypted))) {
-            Enigmail.hdrView.updateHdrIcons(Constants.POSSIBLE_PGPMIME, 0, // exitCode, statusFlags
+            Enigmail.hdrView.updateHdrIcons(EnigmailConstants.POSSIBLE_PGPMIME, 0, // exitCode, statusFlags
                                             "", "",       // keyId, userId
                                             "",           // sigDetails
                                             EnigmailLocale.getString("possiblyPgpMime"),  // errorMsg

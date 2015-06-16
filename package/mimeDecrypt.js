@@ -20,7 +20,7 @@ Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
 Components.utils.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Components.utils.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
 Components.utils.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
-Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
+Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -425,7 +425,7 @@ PgpMimeDecrypt.prototype = {
       if (headerSink && this.uri && !this.backgroundJob) {
         headerSink.updateSecurityStatus(
             this.msgUriSpec,
-            Constants.POSSIBLE_PGPMIME,
+            EnigmailConstants.POSSIBLE_PGPMIME,
             0,
             "",
             "",
