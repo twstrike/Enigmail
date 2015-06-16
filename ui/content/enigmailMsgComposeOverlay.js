@@ -44,7 +44,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global Enigma
 Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
-const EnigmailOS = Components.utils.import("resource://enigmail/os.jsm").EnigmailOS;
+Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/armor.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
