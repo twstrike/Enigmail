@@ -456,7 +456,7 @@ DecryptMessageIntoFolder.prototype = {
                                     let msg = EnigmailLocale.getString("converter.decryptAtt.failed", [ attachment.name , self.subject ]);
 
                                     if (!Dialog.confirmDlg(null, msg,
-                                                           EnigmailLocale.getString("dlg.button.retry"), Locale.getString("dlg.button.skip"))) {
+                                                           EnigmailLocale.getString("dlg.button.retry"), EnigmailLocale.getString("dlg.button.skip"))) {
                                         o.status = STATUS_FAILURE;
                                         resolve(o);
                                         return;
@@ -787,7 +787,7 @@ DecryptMessageIntoFolder.prototype = {
                                 let msg = EnigmailLocale.getString("converter.decryptBody.failed", this.subject);
 
                                 if (!Dialog.confirmDlg(null, msg,
-                                                       EnigmailLocale.getString("dlg.button.retry"), Locale.getString("dlg.button.skip"))) {
+                                                       EnigmailLocale.getString("dlg.button.retry"), EnigmailLocale.getString("dlg.button.skip"))) {
                                     this.foundPGP = -1;
                                     return -1;
                                 }

@@ -459,7 +459,7 @@ function EnigGetString(aStr) {
     for (var i=1; i<arguments.length; i++) {
         argList.push(arguments[i]);
     }
-  return Locale.getString(aStr, (arguments.length > 1 ? argList : null));
+  return EnigmailLocale.getString(aStr, (arguments.length > 1 ? argList : null));
 }
 
 // Remove all quoted strings (and angle brackets) from a list of email

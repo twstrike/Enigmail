@@ -131,12 +131,12 @@ function onLoad() {
 
   var statTxt=document.getElementById("dialog.status2");
   if (inArg.accessType == nsIEnigmail.UPLOAD_KEY) {
-    statTxt.value=Locale.getString("keyserverProgress.uploading");
-    subject = Locale.getString("keyserverTitle.uploading");
+    statTxt.value=EnigmailLocale.getString("keyserverProgress.uploading");
+    subject = EnigmailLocale.getString("keyserverTitle.uploading");
   }
   else {
-    statTxt.value=Locale.getString("keyserverProgress.refreshing");
-    subject = Locale.getString("keyserverTitle.refreshing");
+    statTxt.value=EnigmailLocale.getString("keyserverProgress.refreshing");
+    subject = EnigmailLocale.getString("keyserverTitle.refreshing");
   }
 
   msgProgress = Components.classes["@mozilla.org/messenger/progress;1"].createInstance(Components.interfaces.nsIMsgProgress);
@@ -162,7 +162,7 @@ function onLoad() {
   var errorMsgObj={};
   gProcess = EnigmailKeyServer.access(inArg.accessType, inArg.keyServer, inArg.keyList, procListener, errorMsgObj);
   if (!gProcess) {
-    EnigAlert(Locale.getString("sendKeysFailed")+"\n"+EnigConvertGpgToUnicode(errorMsgObj.value));
+    EnigAlert(EnigmailLocale.getString("sendKeysFailed")+"\n"+EnigConvertGpgToUnicode(errorMsgObj.value));
   }
 
   window.title = subject;

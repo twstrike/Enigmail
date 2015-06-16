@@ -48,15 +48,15 @@ function enigAboutLoad() {
   var enigVersion=EnigmailApp.getVersion()+" ("+EnigBuildDate+")";
   var versionElement = contentFrame.document.getElementById('version');
   if (versionElement)
-    versionElement.firstChild.data = Locale.getString("usingVersion", enigVersion);
+    versionElement.firstChild.data = EnigmailLocale.getString("usingVersion", enigVersion);
 
   var enigmailSvc = EnigmailCore.getService();
 
   var agentStr;
   if (enigmailSvc) {
-    agentStr = Locale.getString("usingAgent", [EnigmailGpgAgent.agentType, EnigmailGpgAgent.agentPath.path]);
+    agentStr = EnigmailLocale.getString("usingAgent", [EnigmailGpgAgent.agentType, EnigmailGpgAgent.agentPath.path]);
   } else {
-    agentStr = Locale.getString("agentError");
+    agentStr = EnigmailLocale.getString("agentError");
 
     if (enigmailSvc && enigmailSvc.initializationError)
       agentStr += "\n" + enigmailSvc.initializationError;

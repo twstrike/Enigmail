@@ -101,23 +101,23 @@
     var newPasswd = document.getElementById("newPasswd").value;
     var repeatPasswd = document.getElementById("repeatPasswd").value;
     if (newPasswd.length == 0 && repeatPasswd.length == 0) {
-      if (! Dialog.confirmDlg(window, Locale.getString("removePassphrase"), Locale.getString("keyMan.button.removePass"))) {
+      if (! Dialog.confirmDlg(window, EnigmailLocale.getString("removePassphrase"), EnigmailLocale.getString("keyMan.button.removePass"))) {
         return false;
       }
     }
     else {
       if (newPasswd.length < 8) {
-        Dialog.alert(window, Locale.getString("passphrase.min8keys"));
+        Dialog.alert(window, EnigmailLocale.getString("passphrase.min8keys"));
         return false;
       }
       if (newPasswd != repeatPasswd) {
-        Dialog.alert(window, Locale.getString("passNoMatch"));
+        Dialog.alert(window, EnigmailLocale.getString("passNoMatch"));
         return false;
       }
 
       if (newPasswd.search(/[^\x20-\x7E]/)>=0) {
-        if (! Dialog.confirmDlg(window, Locale.getString("keygen.passCharProblem"),
-              Locale.getString("dlg.button.ignore"), Locale.getString("dlg.button.cancel"))) {
+        if (! Dialog.confirmDlg(window, EnigmailLocale.getString("keygen.passCharProblem"),
+              EnigmailLocale.getString("dlg.button.ignore"), EnigmailLocale.getString("dlg.button.cancel"))) {
           return false;
         }
       }
@@ -128,7 +128,7 @@
         Data.convertFromUnicode(newPasswd),
       function _changePwdCb(exitCode, errorMsg) {
         if (exitCode != 0) {
-          Dialog.alert(window, Locale.getString("changePassFailed")+"\n\n"+errorMsg);
+          Dialog.alert(window, EnigmailLocale.getString("changePassFailed")+"\n\n"+errorMsg);
         }
         else
           window.close();

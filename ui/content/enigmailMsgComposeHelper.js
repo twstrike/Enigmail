@@ -613,12 +613,12 @@ Enigmail.hlp = {
   {
     // process message about whether we still sign/encrypt
     var msg = "";
-    msg += "\n"+"- " + Locale.getString(encrypt ? "encryptYes" : "encryptNo");
-    msg += "\n"+"- " + Locale.getString(sign ? "signYes" : "signNo");
+    msg += "\n"+"- " + EnigmailLocale.getString(encrypt ? "encryptYes" : "encryptNo");
+    msg += "\n"+"- " + EnigmailLocale.getString(sign ? "signYes" : "signNo");
     if (Prefs.getPref("warnOnRulesConflict")==2) {
       Prefs.setPref("warnOnRulesConflict", 0);
     }
-    if (!Dialog.confirmPref(window, Locale.getString("rulesConflict", [ msg ]), "warnOnRulesConflict")) {
+    if (!Dialog.confirmPref(window, EnigmailLocale.getString("rulesConflict", [ msg ]), "warnOnRulesConflict")) {
       return false;
     }
     return true;

@@ -169,11 +169,11 @@
       newPin = document.getElementById(pinItem1).value;
 
       if (newPin.length < minLen) {
-        Dialog.alert(window, Locale.getString("cardPin.minLength", minLen));
+        Dialog.alert(window, EnigmailLocale.getString("cardPin.minLength", minLen));
         return false;
       }
       if (newPin != document.getElementById(pinItem2).value) {
-        Dialog.alert(window, Locale.getString("cardPin.dontMatch"));
+        Dialog.alert(window, EnigmailLocale.getString("cardPin.dontMatch"));
         return false;
       }
     }
@@ -188,7 +188,7 @@
                                  pinObserver,
       function _ChangePinCb(exitCode, errorMsg) {
         if (exitCode != 0) {
-          Dialog.alert(window, Locale.getString("cardPin.processFailed")+"\n"+pinObserver.result);
+          Dialog.alert(window, EnigmailLocale.getString("cardPin.processFailed")+"\n"+pinObserver.result);
         }
         else
           window.close();
@@ -274,7 +274,7 @@
         this.result = this._data;
       }
       else if (data.indexOf("[GNUPG:] BAD_PASSPHRASE")>=0) {
-        this.result = Locale.getString("badPhrase");
+        this.result = EnigmailLocale.getString("badPhrase");
         return data;
       }
       else {
