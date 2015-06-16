@@ -2966,13 +2966,8 @@ Enigmail.msg = {
          if (sendFlags & ENCRYPT) {
 
            if (!encryptIfPossible) {
-<<<<<<< HEAD
              if (!EnigmailPrefs.getPref("encryptToNews")) {
-               Dialog.alert(window, EnigmailLocale.getString("sendingNews"));
-=======
-             if (!Prefs.getPref("encryptToNews")) {
                EnigmailDialog.alert(window, EnigmailLocale.getString("sendingNews"));
->>>>>>> Refactor Dialog into EnigmailDialog
                return false;
              }
              else if (!EnigmailDialog.confirmPref(window,
@@ -3349,13 +3344,8 @@ Enigmail.msg = {
           wrapWidth = this.getMailPref("editor.htmlWrapColumn");
 
           if (wrapWidth > 0 && wrapWidth < 68 && gMsgCompose.wrapLength > 0) {
-<<<<<<< HEAD
-            if (Dialog.confirmDlg(window, EnigmailLocale.getString("minimalLineWrapping", [ wrapWidth ] ))) {
-              EnigmailPrefs.getPrefRoot().setIntPref("editor.htmlWrapColumn", 68);
-=======
             if (EnigmailDialog.confirmDlg(window, EnigmailLocale.getString("minimalLineWrapping", [ wrapWidth ] ))) {
-              Prefs.getPrefRoot().setIntPref("editor.htmlWrapColumn", 68);
->>>>>>> Refactor Dialog into EnigmailDialog
+              EnigmailPrefs.getPrefRoot().setIntPref("editor.htmlWrapColumn", 68);
             }
           }
           if (EnigmailPrefs.getPref("wrapHtmlBeforeSend")) {
