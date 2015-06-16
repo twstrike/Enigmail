@@ -41,7 +41,7 @@
 
 "use strict";
 
-var EXPORTED_SYMBOLS = [ "Filters" ];
+var EXPORTED_SYMBOLS = [ "EnigmailFilters" ];
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/decryptPermanently.jsm");
@@ -137,7 +137,7 @@ const filterActionCopyDecrypt = {
     needsBody: true
 };
 
-const Filters = {
+const EnigmailFilters = {
     registerAll: function() {
         var filterService = Cc["@mozilla.org/messenger/services/filters;1"].getService(Ci.nsIMsgFilterService);
         filterService.addCustomAction(filterActionMoveDecrypt);
