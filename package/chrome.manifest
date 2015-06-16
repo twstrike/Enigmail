@@ -67,7 +67,7 @@ contract @mozilla.org/enigmail/cline-handler;1 {847b3ab1-7ab1-11d4-8f02-00600894
 category command-line-handler cline-enigmail @mozilla.org/enigmail/cline-handler;1
 
 # EnigMsgCompFields
-component {847b3a30-7ab1-11d4-8f02-006008948af5} components/enigMsgCompFields.js
+component {847b3a30-7ab1-11d4-8f02-006008948af5} components/msgCompFields.js
 contract @mozdev.org/enigmail/composefields;1 {847b3a30-7ab1-11d4-8f02-006008948af5}
 
 # registration of service to dectypt PGP/MIME messages

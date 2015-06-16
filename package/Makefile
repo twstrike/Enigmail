@@ -20,7 +20,7 @@ COMPFILES = \
             mimeDecrypt.js \
             mimeEncrypt.js \
             enigprefs-service.js \
-            enigMsgCompFields.js
+            msgCompFields.js
 
 PREFFILES = prefs/enigmail.js
 

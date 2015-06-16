@@ -93,7 +93,7 @@ zip --must-match\
     components/${xpiModule}.xpt \
     components/${xpiModule}.js \
     components/enigprefs-service.js \
-    components/enigMsgCompFields.js \
+    components/msgCompFields.js \
     components/mimeDecrypt.js \
     components/mimeEncrypt.js \
     defaults/preferences/enigmail.js \
