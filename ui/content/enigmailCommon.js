@@ -59,7 +59,7 @@ Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
-Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
+Components.utils.import("resource://enigmail/trust.jsm"); /*global EnigmailTrust: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
@@ -499,7 +499,7 @@ function EnigNewRule(emailAddress) {
 }
 
 function EnigGetTrustCode(keyObj) {
-  return Trust.getTrustCode(keyObj);
+  return EnigmailTrust.getTrustCode(keyObj);
 }
 
 // Load the key list into memory

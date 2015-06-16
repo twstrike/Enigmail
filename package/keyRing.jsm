@@ -54,7 +54,7 @@ Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
-Cu.import("resource://enigmail/trust.jsm"); /*global Trust: false */
+Cu.import("resource://enigmail/trust.jsm"); /*global EnigmailTrust: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
@@ -162,13 +162,13 @@ const sortFunctions = {
 
     validity: function(keyListObj, sortDirection) {
         return function (a, b) {
-            return (Trust.trustLevelsSorted().indexOf(Trust.getTrustCode(keyListObj.keyList[a.keyId])) < Trust.trustLevelsSorted().indexOf(Trust.getTrustCode(keyListObj.keyList[b.keyId]))) ? -sortDirection : sortDirection;
+            return (EnigmailTrust.trustLevelsSorted().indexOf(EnigmailTrust.getTrustCode(keyListObj.keyList[a.keyId])) < EnigmailTrust.trustLevelsSorted().indexOf(EnigmailTrust.getTrustCode(keyListObj.keyList[b.keyId]))) ? -sortDirection : sortDirection;
         };
     },
 
     trust: function(keyListObj, sortDirection) {
         return function (a, b) {
-            return (Trust.trustLevelsSorted().indexOf(keyListObj.keyList[a.keyId].ownerTrust) < Trust.trustLevelsSorted().indexOf(keyListObj.keyList[b.keyId].ownerTrust)) ? -sortDirection : sortDirection;
+            return (EnigmailTrust.trustLevelsSorted().indexOf(keyListObj.keyList[a.keyId].ownerTrust) < EnigmailTrust.trustLevelsSorted().indexOf(keyListObj.keyList[b.keyId].ownerTrust)) ? -sortDirection : sortDirection;
         };
     },
 
@@ -458,7 +458,7 @@ const EnigmailKeyRing = {
 
         listText=listText.replace(/(\r\n|\r)/g, "\n");
 
-        const TRUSTLEVELS_SORTED = Trust.trustLevelsSorted();
+        const TRUSTLEVELS_SORTED = EnigmailTrust.trustLevelsSorted();
         let maxTrustLevel = -1;
 
         if (uidOnly) {
@@ -477,7 +477,7 @@ const EnigmailKeyRing = {
                 const lineTokens = lineArr[i].split(/:/);
                 switch (lineTokens[0]) {
                 case "pub":
-                    if (Trust.isInvalid(lineTokens[1])) {
+                    if (EnigmailTrust.isInvalid(lineTokens[1])) {
                         // pub key not valid (anymore)-> display all UID's
                         hideInvalidUid = false;
                     }
@@ -494,14 +494,14 @@ const EnigmailKeyRing = {
                         }
                         // else do not add uid
                     }
-                    else if (!Trust.isInvalid(lineTokens[1]) || !hideInvalidUid) {
+                    else if (!EnigmailTrust.isInvalid(lineTokens[1]) || !hideInvalidUid) {
                         // UID valid  OR  key not valid, but invalid keys allowed
                         userList += lineTokens[9] + "\n";
                     }
                     break;
                 case "uat":
                     if (withUserAttributes) {
-                        if (!Trust.isInvalid(lineTokens[1]) || !hideInvalidUid) {
+                        if (!EnigmailTrust.isInvalid(lineTokens[1]) || !hideInvalidUid) {
                             // IF  UID valid  OR  key not valid and invalid keys allowed
                             userList += "uat:jpegPhoto:" + lineTokens[4] + "\n";
                         }
@@ -741,7 +741,7 @@ const EnigmailKeyRing = {
         let keyObj = {};
         let uatNum=0; // counter for photos (counts per key)
 
-        const TRUSTLEVELS_SORTED = Trust.trustLevelsSorted();
+        const TRUSTLEVELS_SORTED = EnigmailTrust.trustLevelsSorted();
 
         for (let i=0; i<keyListString.length; i++) {
             const listRow=keyListString[i].split(/:/);
@@ -832,7 +832,7 @@ const EnigmailKeyRing = {
         if (! sortColumn) sortColumn = "userid";
         if (! sortDirection) sortDirection = 1;
 
-        const TRUSTLEVELS_SORTED = Trust.trustLevelsSorted();
+        const TRUSTLEVELS_SORTED = EnigmailTrust.trustLevelsSorted();
 
         var aGpgUserList = obtainKeyList(win, false, refresh);
         if (!aGpgUserList) return;

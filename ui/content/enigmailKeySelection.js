@@ -158,7 +158,7 @@ function enigmailBuildList(refresh)
    EnigmailLog.DEBUG("=====> enigmailBuildList()\n");
    EnigmailLog.DEBUG("enigmailKeySelection.js: enigmailBuildList\n");
 
-   const TRUSTLEVELS_SORTED = Trust.trustLevelsSorted();
+   const TRUSTLEVELS_SORTED = EnigmailTrust.trustLevelsSorted();
 
    // sorting criterion for dialog entries
    // - note: for active state we have values:
