@@ -109,9 +109,9 @@
 
       EnigmailKeyEditor.addUid(window,
         window.arguments[0].keyId,
-        Data.convertFromUnicode(name.value),
-        Data.convertFromUnicode(email.value),
-        Data.convertFromUnicode(comment.value),
+        EnigmailData.convertFromUnicode(name.value),
+        EnigmailData.convertFromUnicode(email.value),
+        EnigmailData.convertFromUnicode(comment.value),
         function _addUidCb(exitCode, errorMsg) {
            if (exitCode != 0) {
               Dialog.alert(window, EnigmailLocale.getString("addUidFailed")+"\n\n"+errorMsg);

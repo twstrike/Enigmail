@@ -1,4 +1,4 @@
-/*global Components: false, Data: false, EnigmailFiles: false, EnigmailLog: false, subprocess: false, EnigmailErrorHandling: false, EnigmailCore: false */
+/*global Components: false, EnigmailData: false, EnigmailFiles: false, EnigmailLog: false, subprocess: false, EnigmailErrorHandling: false, EnigmailCore: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -166,7 +166,7 @@ const Execution = {
             exitCode = 2;
         }
 
-        EnigmailLog.CONSOLE(Data.convertFromUnicode(errorMsgObj.value)+"\n");
+        EnigmailLog.CONSOLE(EnigmailData.convertFromUnicode(errorMsgObj.value)+"\n");
 
         return exitCode;
     },

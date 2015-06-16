@@ -59,7 +59,7 @@ Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
-Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
+Cu.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 
@@ -775,7 +775,7 @@ const EnigmailKeyRing = {
                         listRow[USERID_ID] = "-";
                     }
                     if (typeof(keyObj.userId) !== "string") {
-                        keyObj.userId=Data.convertGpgToUnicode(listRow[USERID_ID]);
+                        keyObj.userId=EnigmailData.convertGpgToUnicode(listRow[USERID_ID]);
                         keyListObj.keySortList.push({
                             userId: keyObj.userId.toLowerCase(),
                             keyId: keyObj.keyId
@@ -787,7 +787,7 @@ const EnigmailKeyRing = {
                     }
                     else {
                         keyObj.SubUserIds.push({
-                            userId: Data.convertGpgToUnicode(listRow[USERID_ID]),
+                            userId: EnigmailData.convertGpgToUnicode(listRow[USERID_ID]),
                             keyTrust: listRow[KEY_TRUST_ID],
                             type: "uid"
                         });
@@ -1018,7 +1018,7 @@ const EnigmailKeyRing = {
             case "uid":
                 if ((keyId) && (aLine[1].search(/[muf]/) === 0)) {
                     // UID is valid
-                    keys.push({ name: Data.convertGpgToUnicode(aLine[9]),
+                    keys.push({ name: EnigmailData.convertGpgToUnicode(aLine[9]),
                                 id: keyId,
                                 created: secretKeyCreated[keyId]});
                     keyId = null;

@@ -1,5 +1,5 @@
 dump("loading: enigmailCommon.js\n");
-/*global Components: false, Data: false, EnigmailFiles: false, EnigmailCore: false, EnigmailApp: false, Dialog: false, Windows: false, Time: false */
+/*global Components: false, EnigmailFiles: false, EnigmailCore: false, EnigmailApp: false, Dialog: false, Windows: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -50,7 +50,7 @@ Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/os.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
@@ -412,7 +412,7 @@ function EnigConvertToUnicode(text, charset) {
 }
 
 function EnigConvertGpgToUnicode(text) {
-  return Data.convertGpgToUnicode(text);
+  return EnigmailData.convertGpgToUnicode(text);
 }
 
 function EnigFormatFpr(fingerprint) {

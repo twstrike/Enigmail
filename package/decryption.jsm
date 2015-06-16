@@ -1,4 +1,4 @@
-/*global Components: false, Data: false, EnigmailLog: false, Prefs: false, EnigmailLocale: false, EnigmailArmor: false, Data: false, Execution: false, Dialog: false */
+/*global Components: false, EnigmailData: false, EnigmailLog: false, Prefs: false, EnigmailLocale: false, EnigmailArmor: false, Execution: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -350,7 +350,7 @@ const Decryption = {
         }
 
         if (sigUserId) {
-            sigUserId = Data.convertToUnicode(sigUserId, "UTF-8");
+            sigUserId = EnigmailData.convertToUnicode(sigUserId, "UTF-8");
         }
 
         // add list of keys used for encryption if known (and their user IDs) if known
@@ -372,7 +372,7 @@ const Decryption = {
                 if (localKeyId != "0x0000000000000000") {
                     var localUserId = EnigmailKeyRing.getFirstUserIdOfKey(localKeyId);
                     if (localUserId) {
-                        localUserId = Data.convertToUnicode(localUserId, "UTF-8");
+                        localUserId = EnigmailData.convertToUnicode(localUserId, "UTF-8");
                         encToArray[encIdx] += " (" + localUserId + ")";
                     }
                 }
@@ -573,10 +573,10 @@ const Decryption = {
         // Wait for child to close
         proc.wait();
 
-        var plainText = Data.getUnicodeData(listener.stdoutData);
+        var plainText = EnigmailData.getUnicodeData(listener.stdoutData);
 
         var retStatusObj = {};
-        var exitCode = Decryption.decryptMessageEnd(Data.getUnicodeData(listener.stderrData), listener.exitCode,
+        var exitCode = Decryption.decryptMessageEnd(EnigmailData.getUnicodeData(listener.stderrData), listener.exitCode,
                                                     plainText.length, verifyOnly, noOutput,
                                                     uiFlags, retStatusObj);
         exitCodeObj.value = exitCode;

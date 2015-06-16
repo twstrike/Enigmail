@@ -16,7 +16,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global Enigma
 Components.utils.import("resource://enigmail/mimeVerify.jsm"); /*global EnigmailVerify: false */
 Components.utils.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
-Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
+Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Components.utils.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
 Components.utils.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
@@ -159,7 +159,7 @@ PgpMimeDecrypt.prototype = {
         else {
           // PGP/MIME main part body
           if (this.xferEncoding == ENCODING_QP) {
-            this.cacheData(Data.decodeQuotedPrintable(data));
+            this.cacheData(EnigmailData.decodeQuotedPrintable(data));
           }
           else {
             this.cacheData(data);

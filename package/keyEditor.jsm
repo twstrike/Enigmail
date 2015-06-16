@@ -46,7 +46,7 @@ Components.utils.import("resource://enigmail/log.jsm"); /*global EnigmailLog: fa
 Components.utils.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Components.utils.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
-Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
+Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
@@ -389,7 +389,7 @@ const EnigmailKeyEditor = {
     return editKey(parent, true, null, keyId, "revoke",
                    { outFile: outFile,
                      reasonCode: reasonCode,
-                     reasonText: Data.convertFromUnicode(reasonText),
+                     reasonText: EnigmailData.convertFromUnicode(reasonText),
                      usePassphrase: true },
                    revokeCertCallback,
                    null,
@@ -504,9 +504,9 @@ const EnigmailKeyEditor = {
     var generateObserver = new EnigCardAdminObserver(requestObserver, EnigmailOS.isDosLike());
     return editKey(parent, false, null, "", ["--with-colons", "--card-edit"] ,
                    { step: 0,
-                     name: Data.convertFromUnicode(name),
+                     name: EnigmailData.convertFromUnicode(name),
                      email: email,
-                     comment: Data.convertFromUnicode(comment),
+                     comment: EnigmailData.convertFromUnicode(comment),
                      expiry: expiry,
                      backupPasswd: backupPasswd,
                      cardAdmin: true,

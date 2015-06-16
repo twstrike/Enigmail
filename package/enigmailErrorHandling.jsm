@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailLog: false, EnigmailLocale: false, Data: false, EnigmailCore: false */
+/*global Components: false, EnigmailLog: false, EnigmailLocale: false, EnigmailData: false, EnigmailCore: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -317,7 +317,7 @@ function parseErrorOutputWith(c) {
   c.retStatusObj.statusFlags = c.statusFlags;
   if (c.retStatusObj.statusMsg.length === 0) c.retStatusObj.statusMsg = c.statusArray.join("\n");
   if (c.errorMsg.length === 0) {
-    c.errorMsg = c.errArray.map(Data.convertGpgToUnicode, Data).join("\n");
+    c.errorMsg = c.errArray.map(EnigmailData.convertGpgToUnicode, EnigmailData).join("\n");
   }
 
   if ((c.statusFlags & Ci.nsIEnigmail.CARDCTRL) && c.errCode >0) {
@@ -325,7 +325,7 @@ function parseErrorOutputWith(c) {
       c.statusFlags |= Ci.nsIEnigmail.DISPLAY_MESSAGE;
   }
 
-  EnigmailLog.DEBUG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+Data.bytesToHex(Data.pack(c.statusFlags,4))+"\n");
+  EnigmailLog.DEBUG("enigmailCommon.jsm: parseErrorOutput: statusFlags = "+EnigmailData.bytesToHex(EnigmailData.pack(c.statusFlags,4))+"\n");
 
   EnigmailLog.DEBUG("enigmailCommon.jsm: parseErrorOutput(): return with c.errorMsg = "+c.errorMsg+"\n");
   return c.errorMsg;

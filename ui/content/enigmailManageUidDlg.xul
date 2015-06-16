@@ -126,7 +126,7 @@
         case "uat":
           ++uidNum;
           if (uidStr[0]=="uid") {
-            uidTxt=Data.convertGpgToUnicode(uidStr[9]).replace(/\\e3A/g, ":");
+            uidTxt=EnigmailData.convertGpgToUnicode(uidStr[9]).replace(/\\e3A/g, ":");
             if (!window.enigmailUid) {
               window.enigmailUid = uidTxt;
             }

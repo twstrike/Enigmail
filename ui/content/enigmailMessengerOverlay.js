@@ -1,5 +1,5 @@
 dump("loading: enigmailMessengerOverlay.js\n");
-/*global Components: false, Data: false, EnigmailApp: false, Dialog: false, Timer: false, Windows: false, Time: false */
+/*global Components: false, EnigmailData: false, EnigmailApp: false, Dialog: false, Timer: false, Windows: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -908,7 +908,7 @@ Enigmail.msg = {
     var charset = msgWindow ? msgWindow.mailCharacterSet : "";
 
     // Encode ciphertext to charset from unicode
-    msgText = Data.convertFromUnicode(msgText, charset);
+    msgText = EnigmailData.convertFromUnicode(msgText, charset);
 
     var mozPlainText = bodyElement.innerHTML.search(/class=\"moz-text-plain\"/);
 
@@ -1073,7 +1073,7 @@ Enigmail.msg = {
     if ((exitCode !== 0) && (! (statusFlags & noSecondTry))) {
       // Bad signature/armor
       if (retry == 1) {
-        msgText = Data.convertFromUnicode(msgText, "UTF-8");
+        msgText = EnigmailData.convertFromUnicode(msgText, "UTF-8");
         Enigmail.msg.messageParseCallback(msgText, contentEncoding, charset,
                                           interactive, importOnly, messageUrl,
                                           signature, retry + 1,
@@ -1090,7 +1090,7 @@ Enigmail.msg = {
         return;
       }
       else if (retry == 3) {
-        msgText = Data.convertToUnicode(msgText, "UTF-8");
+        msgText = EnigmailData.convertToUnicode(msgText, "UTF-8");
         Enigmail.msg.messageParseCallback(msgText, contentEncoding, charset, interactive,
                                           importOnly, messageUrl, null, retry + 1,
                                           head, tail, msgUriSpec);
@@ -1105,13 +1105,13 @@ Enigmail.msg = {
     }
 
     if (retry >= 2) {
-      plainText = Data.convertFromUnicode(Data.convertToUnicode(plainText, "UTF-8"), charset);
+      plainText = EnigmailData.convertFromUnicode(EnigmailData.convertToUnicode(plainText, "UTF-8"), charset);
     }
 
     if (blockSeparationObj.value.indexOf(" ")>=0) {
       var blocks = blockSeparationObj.value.split(/ /);
       var blockInfo = blocks[0].split(/:/);
-      plainText = Data.convertFromUnicode(EnigmailLocale.getString("notePartEncrypted"), charset) +
+      plainText = EnigmailData.convertFromUnicode(EnigmailLocale.getString("notePartEncrypted"), charset) +
           "\n\n" + plainText.substr(0, blockInfo[1]) + "\n\n" + EnigmailLocale.getString("noteCutMessage");
     }
 
@@ -1160,15 +1160,15 @@ Enigmail.msg = {
         // quite early in the message
         let matches=head.match(/(\n)/g);
         if (matches && matches.length >10) {
-          msgRfc822Text=Data.convertFromUnicode(EnigmailLocale.getString("notePartEncrypted"), charset)+"\n\n";
+          msgRfc822Text=EnigmailData.convertFromUnicode(EnigmailLocale.getString("notePartEncrypted"), charset)+"\n\n";
         }
         msgRfc822Text+=head+"\n\n";
       }
-      msgRfc822Text += Data.convertFromUnicode(EnigmailLocale.getString("beginPgpPart"), charset)+"\n\n";
+      msgRfc822Text += EnigmailData.convertFromUnicode(EnigmailLocale.getString("beginPgpPart"), charset)+"\n\n";
     }
     msgRfc822Text+=plainText;
     if (head || tail) {
-      msgRfc822Text+="\n\n"+ Data.convertFromUnicode(EnigmailLocale.getString("endPgpPart"), charset)+"\n\n"+tail;
+      msgRfc822Text+="\n\n"+ EnigmailData.convertFromUnicode(EnigmailLocale.getString("endPgpPart"), charset)+"\n\n"+tail;
     }
 
     Enigmail.msg.decryptedMessage = {url:messageUrl,
@@ -1207,7 +1207,7 @@ Enigmail.msg = {
               foundIndex = -1;
           }
           if (foundIndex >= 0) {
-            node.innerHTML = EnigmailFuncs.formatPlaintextMsg(Data.convertToUnicode(messageContent, charset));
+            node.innerHTML = EnigmailFuncs.formatPlaintextMsg(EnigmailData.convertToUnicode(messageContent, charset));
             return;
           }
         }
@@ -1226,7 +1226,7 @@ Enigmail.msg = {
               foundIndex = -1;
           }
           if (foundIndex >= 0) {
-            node.innerHTML = EnigmailFuncs.formatPlaintextMsg(Data.convertToUnicode(messageContent, charset));
+            node.innerHTML = EnigmailFuncs.formatPlaintextMsg(EnigmailData.convertToUnicode(messageContent, charset));
             return;
           }
         }
@@ -1248,7 +1248,7 @@ Enigmail.msg = {
         node = bodyElement.firstChild;
         while (node) {
           if (node.nodeName == "DIV") {
-            node.innerHTML = EnigmailFuncs.formatPlaintextMsg(Data.convertToUnicode(messageContent, charset));
+            node.innerHTML = EnigmailFuncs.formatPlaintextMsg(EnigmailData.convertToUnicode(messageContent, charset));
             Enigmail.hdrView.updateHdrIcons(exitCode, statusFlags, keyIdObj.value, userIdObj.value,
                                             sigDetailsObj.value,
                                             errorMsg,
@@ -1595,7 +1595,7 @@ Enigmail.msg = {
       contentData += "\r\n";
 
       if (Enigmail.msg.decryptedMessage.hasAttachments && (! Enigmail.msg.decryptedMessage.attachmentsEncrypted)) {
-        contentData += Data.convertFromUnicode(EnigmailLocale.getString("enigContentNote"), Enigmail.msg.decryptedMessage.charset);
+        contentData += EnigmailData.convertFromUnicode(EnigmailLocale.getString("enigContentNote"), Enigmail.msg.decryptedMessage.charset);
       }
 
       contentData += Enigmail.msg.decryptedMessage.plainText;
@@ -1849,7 +1849,7 @@ Enigmail.msg = {
     }
 
     var msgText = callbackArg.data;
-    msgText = Data.convertFromUnicode(msgText, "UTF-8");
+    msgText = EnigmailData.convertFromUnicode(msgText, "UTF-8");
 
     EnigmailLog.DEBUG("enigmailMessengerOverlay.js: msgDirectCallback: msgText='"+msgText+"'\n");
 

@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, EnigmailLog: false, Prefs: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false */
+/*global Components: false, EnigmailCore: false, EnigmailLog: false, Prefs: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -44,7 +44,7 @@
 const EXPORTED_SYMBOLS = [ "Encryption" ];
 
 Components.utils.import("resource://enigmail/enigmailCore.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/app.jsm");
@@ -213,7 +213,7 @@ var Encryption = {
 
     encryptMessageStart: function(win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
                                   hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj) {
-        EnigmailLog.DEBUG("enigmailCommon.jsm: encryptMessageStart: uiFlags="+uiFlags+", from "+fromMailAddr+" to "+toMailAddr+", hashAlgorithm="+hashAlgorithm+" ("+Data.bytesToHex(Data.pack(sendFlags,4))+")\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: encryptMessageStart: uiFlags="+uiFlags+", from "+fromMailAddr+" to "+toMailAddr+", hashAlgorithm="+hashAlgorithm+" ("+EnigmailData.bytesToHex(EnigmailData.pack(sendFlags,4))+")\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
 
@@ -259,7 +259,7 @@ var Encryption = {
     },
 
     encryptMessageEnd: function (stderrStr, exitCode, uiFlags, sendFlags, outputLen, retStatusObj) {
-        EnigmailLog.DEBUG("enigmailCommon.jsm: encryptMessageEnd: uiFlags="+uiFlags+", sendFlags="+Data.bytesToHex(Data.pack(sendFlags,4))+", outputLen="+outputLen+"\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: encryptMessageEnd: uiFlags="+uiFlags+", sendFlags="+EnigmailData.bytesToHex(EnigmailData.pack(sendFlags,4))+", outputLen="+outputLen+"\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
         var defaultSend = sendFlags & nsIEnigmail.SEND_DEFAULT;
@@ -379,7 +379,7 @@ var Encryption = {
         inspector.enterNestedEventLoop(0);
 
         var retStatusObj = {};
-        exitCodeObj.value = Encryption.encryptMessageEnd(Data.getUnicodeData(listener.stderrData), listener.exitCode,
+        exitCodeObj.value = Encryption.encryptMessageEnd(EnigmailData.getUnicodeData(listener.stderrData), listener.exitCode,
                                                          uiFlags, sendFlags,
                                                          listener.stdoutData.length,
                                                          retStatusObj);
@@ -394,7 +394,7 @@ var Encryption = {
         if (exitCodeObj.value === 0) {
             // Normal return
             EnigmailLog.DEBUG("  <=== encryptMessage()\n");
-            return Data.getUnicodeData(listener.stdoutData);
+            return EnigmailData.getUnicodeData(listener.stdoutData);
         }
 
         // Error processing

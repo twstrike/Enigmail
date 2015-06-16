@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, XPCOMUtils: false, Data: false, EnigmailLog: false */
+/*global Components: false, EnigmailCore: false, XPCOMUtils: false, EnigmailData: false, EnigmailLog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -97,8 +97,8 @@ EnigmailProtocolHandler.prototype = {
     newChannel: function (aURI) {
         EnigmailLog.DEBUG("enigmail.js: EnigmailProtocolHandler.newChannel: URI='"+aURI.spec+"'\n");
 
-        var messageId = Data.extractMessageId(aURI.spec);
-        var mimeMessageId = Data.extractMimeMessageId(aURI.spec);
+        var messageId = EnigmailData.extractMessageId(aURI.spec);
+        var mimeMessageId = EnigmailData.extractMimeMessageId(aURI.spec);
 
         if (messageId) {
             // Handle enigmail:message/...

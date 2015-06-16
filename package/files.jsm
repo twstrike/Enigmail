@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailLog: false, EnigmailOS: false, Data: false */
+/*global Components: false, EnigmailLog: false, EnigmailOS: false, EnigmailData: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -219,7 +219,7 @@ const EnigmailFiles = {
     },
 
     getFilePath: function (nsFileObj) {
-        return Data.convertToUnicode(EnigmailFiles.getFilePathDesc(nsFileObj), "utf-8");
+        return EnigmailData.convertToUnicode(EnigmailFiles.getFilePathDesc(nsFileObj), "utf-8");
     },
 
     getEscapedFilename: function (fileNameStr) {

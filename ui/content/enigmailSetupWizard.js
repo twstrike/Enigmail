@@ -1,5 +1,5 @@
 dump("loading: enigmailSetupWizard.js\n");
-/*global Components: false, Data: false */
+/*global Components: false, EnigmailData: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -848,13 +848,13 @@ function wizardGenKey() {
 
   try {
     gKeygenRequest = EnigmailKeyRing.generateKey(window,
-                                         Data.convertFromUnicode(userName),
+                                         EnigmailData.convertFromUnicode(userName),
                                          "",
-                                         Data.convertFromUnicode(userEmail),
+                                         EnigmailData.convertFromUnicode(userEmail),
                                          365*5 /* 5 years */,
                                          4096,
                                          ENIG_KEYTYPE_RSA,
-                                         Data.convertFromUnicode(passphrase),
+                                         EnigmailData.convertFromUnicode(passphrase),
                                          listener);
   } catch (ex) {
     EnigmailLog.DEBUG("enigmailSetupWizard.js: genKey - generateKey() failed with "+ex.toString()+"\n"+ex.stack+"\n");

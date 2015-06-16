@@ -124,8 +124,8 @@
     }
 
     EnigmailKeyEditor.changePassphrase(window, window.arguments[0].keyId,
-        Data.convertFromUnicode(currPasswd),
-        Data.convertFromUnicode(newPasswd),
+        EnigmailData.convertFromUnicode(currPasswd),
+        EnigmailData.convertFromUnicode(newPasswd),
       function _changePwdCb(exitCode, errorMsg) {
         if (exitCode != 0) {
           Dialog.alert(window, EnigmailLocale.getString("changePassFailed")+"\n\n"+errorMsg);

@@ -1,5 +1,5 @@
 dump("loading: enigmailCardDetails.js\n");
-/*global Components: false, EnigmailLocale: false, Data: false, Dialog: false, Time: false */
+/*global Components: false, EnigmailLocale: false, Dialog: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -41,7 +41,7 @@ Components.utils.import("resource://enigmail/key.jsm"); /*global EnigmailKey: fa
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
@@ -71,11 +71,11 @@ function onLoad() {
       var l=statusList[i].split(/:/);
       switch (l[0]) {
       case "name":
-        setValue("firstname", Data.convertGpgToUnicode(l[1]));
-        setValue(l[0], Data.convertGpgToUnicode(l[2]));
+        setValue("firstname", EnigmailData.convertGpgToUnicode(l[1]));
+        setValue(l[0], EnigmailData.convertGpgToUnicode(l[2]));
         break;
       case "vendor":
-        setValue(l[0], Data.convertGpgToUnicode(l[2].replace(/\\x3a/ig, ":")));
+        setValue(l[0], EnigmailData.convertGpgToUnicode(l[2].replace(/\\x3a/ig, ":")));
         break;
       case "sex":
       case "forcepin":
@@ -99,7 +99,7 @@ function onLoad() {
         break;
       default:
         if (l[0]) {
-          setValue(l[0], Data.convertGpgToUnicode(l[1].replace(/\\x3a/ig, ":")));
+          setValue(l[0], EnigmailData.convertGpgToUnicode(l[1].replace(/\\x3a/ig, ":")));
         }
       }
     }
@@ -178,11 +178,11 @@ function doSaveChanges() {
   }
   else {
     EnigmailKeyEditor.cardAdminData(window,
-                                  Data.convertFromUnicode(dialogname),
-                                  Data.convertFromUnicode(dialogfirstname),
+                                  EnigmailData.convertFromUnicode(dialogname),
+                                  EnigmailData.convertFromUnicode(dialogfirstname),
                                   getValue("lang"),
                                   getSelection("sex"),
-                                  Data.convertFromUnicode(getValue("url")),
+                                  EnigmailData.convertFromUnicode(getValue("url")),
                                   getValue("login"),
                                   forcepin,
     function _cardAdminCb(exitCode, errorMsg) {

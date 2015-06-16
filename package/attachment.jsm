@@ -49,7 +49,7 @@ Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
-Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
+Cu.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 
 const EnigmailAttachment = {
     getFileName: function (parent, byteData) {
@@ -78,7 +78,7 @@ const EnigmailAttachment = {
         const matches = listener.stdoutData.match(/:literal data packet:\r?\n.*name="(.*)",/m);
         if (matches && (matches.length > 1)) {
             var filename = escape(matches[1]).replace(/%5Cx/g, "%");
-            return Data.convertToUnicode(unescape(filename), "utf-8");
+            return EnigmailData.convertToUnicode(unescape(filename), "utf-8");
         } else {
             return null;
         }

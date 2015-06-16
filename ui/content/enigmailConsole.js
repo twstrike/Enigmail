@@ -1,5 +1,5 @@
 dump("loading: enigmailConsole.js\n");
-/*global Components: false, Data: false, Windows: false */
+/*global Components: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -37,7 +37,7 @@ dump("loading: enigmailConsole.js\n");
 Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false*/
 Components.utils.import("resource://enigmail/pipeConsole.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
-Components.utils.import("resource://enigmail/data.jsm");
+Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/windows.jsm");
 
 function consoleLoad() {
@@ -86,7 +86,7 @@ function updateData() {
 
     var consoleElement = contentFrame.document.getElementById('console');
 
-    consoleElement.firstChild.data = Data.convertToUnicode(EnigmailConsole.getData(), "utf-8");
+    consoleElement.firstChild.data = EnigmailData.convertToUnicode(EnigmailConsole.getData(), "utf-8");
 
     if (!contentFrame.mouseDownState)
        contentFrame.scrollTo(0,9999);

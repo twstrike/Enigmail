@@ -1,5 +1,5 @@
 dump("loading: enigmailKeygen.js\n");
-/*global Components: false, EnigmailLocale: false, Data: false, Dialog: false */
+/*global Components: false, EnigmailLocale: false, EnigmailData: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -399,13 +399,13 @@ function enigmailKeygenStart() {
 
    try {
       gKeygenRequest = EnigmailKeyRing.generateKey(window,
-                                           Data.convertFromUnicode(userName),
-                                           Data.convertFromUnicode(comment),
-                                           Data.convertFromUnicode(userEmail),
+                                           EnigmailData.convertFromUnicode(userName),
+                                           EnigmailData.convertFromUnicode(comment),
+                                           EnigmailData.convertFromUnicode(userEmail),
                                            expiryTime,
                                            keySize,
                                            keyType,
-                                           Data.convertFromUnicode(passphrase),
+                                           EnigmailData.convertFromUnicode(passphrase),
                                            listener);
    } catch (ex) {
       EnigmailLog.DEBUG("enigmailKeygen.js: generateKey() failed with "+ex.toString()+"\n"+ex.stack+"\n");

@@ -46,7 +46,7 @@ const EXPORTED_SYMBOLS = [ "URIs" ];
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
-Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
+Cu.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 
 const messageIdList = {};
 const encryptedUris = [];
@@ -70,7 +70,7 @@ const URIs = {
     deleteMessageURI: function (uri) {
         EnigmailLog.DEBUG("enigmail.js: Enigmail.deleteMessageURI: "+uri+"\n");
 
-        const messageId = Data.extractMessageId(uri);
+        const messageId = EnigmailData.extractMessageId(uri);
 
         if (!messageId) {
             return false;
