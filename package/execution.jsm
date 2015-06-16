@@ -42,7 +42,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Execution" ];
+const EXPORTED_SYMBOLS = [ "EnigmailExecution" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -58,7 +58,7 @@ Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 
-const Execution = {
+const EnigmailExecution = {
     agentType: "",
 
     /**
@@ -172,7 +172,7 @@ const Execution = {
     },
 
     simpleExecCmd: function (command, args, exitCodeObj, errorMsgObj) {
-        EnigmailLog.WRITE("execution.jsm: Execution.simpleExecCmd: command = "+command+" "+args.join(" ")+"\n");
+        EnigmailLog.WRITE("execution.jsm: EnigmailExecution.simpleExecCmd: command = "+command+" "+args.join(" ")+"\n");
 
         var outputData = "";
         var errOutput  = "";
@@ -194,7 +194,7 @@ const Execution = {
             }).wait();
         }
         catch (ex) {
-            EnigmailLog.ERROR("execution.jsm: Execution.simpleExecCmd: "+command.path+" failed\n");
+            EnigmailLog.ERROR("execution.jsm: EnigmailExecution.simpleExecCmd: "+command.path+" failed\n");
             EnigmailLog.DEBUG("  enigmail> DONE with FAILURE\n");
             exitCodeObj.value = -1;
         }
@@ -204,15 +204,15 @@ const Execution = {
             errorMsgObj.value  = errOutput;
         }
 
-        EnigmailLog.DEBUG("execution.jsm: Execution.simpleExecCmd: exitCode = "+exitCodeObj.value+"\n");
-        EnigmailLog.DEBUG("execution.jsm: Execution.simpleExecCmd: errOutput = "+errOutput+"\n");
+        EnigmailLog.DEBUG("execution.jsm: EnigmailExecution.simpleExecCmd: exitCode = "+exitCodeObj.value+"\n");
+        EnigmailLog.DEBUG("execution.jsm: EnigmailExecution.simpleExecCmd: errOutput = "+errOutput+"\n");
 
         return outputData;
     },
 
     execCmd: function (command, args, input, exitCodeObj, statusFlagsObj, statusMsgObj,
                        errorMsgObj, retStatusObj) {
-        EnigmailLog.WRITE("execution.jsm: Execution.execCmd: subprocess = '"+command.path+"'\n");
+        EnigmailLog.WRITE("execution.jsm: EnigmailExecution.execCmd: subprocess = '"+command.path+"'\n");
 
         if ((typeof input) != "string") input = "";
 
@@ -244,7 +244,7 @@ const Execution = {
         try {
             subprocess.call(proc).wait();
         } catch (ex) {
-            EnigmailLog.ERROR("execution.jsm: Execution.execCmd: subprocess.call failed with '"+ex.toString()+"'\n");
+            EnigmailLog.ERROR("execution.jsm: EnigmailExecution.execCmd: subprocess.call failed with '"+ex.toString()+"'\n");
             EnigmailLog.DEBUG("  enigmail> DONE with FAILURE\n");
             exitCodeObj.value = -1;
         }
@@ -253,8 +253,8 @@ const Execution = {
         if (proc.resultData) outputData = proc.resultData;
         if (proc.errorData) errOutput  = proc.errorData;
 
-        EnigmailLog.DEBUG("execution.jsm: Execution.execCmd: exitCode = "+exitCodeObj.value+"\n");
-        EnigmailLog.DEBUG("execution.jsm: Execution.execCmd: errOutput = "+errOutput+"\n");
+        EnigmailLog.DEBUG("execution.jsm: EnigmailExecution.execCmd: exitCode = "+exitCodeObj.value+"\n");
+        EnigmailLog.DEBUG("execution.jsm: EnigmailExecution.execCmd: errOutput = "+errOutput+"\n");
 
 
         if (! retStatusObj) {
@@ -266,7 +266,7 @@ const Execution = {
         statusMsgObj.value = retStatusObj.statusMsg;
         var blockSeparation = retStatusObj.blockSeparation;
 
-        exitCodeObj.value = Execution.fixExitCode(exitCodeObj.value, statusFlagsObj.value);
+        exitCodeObj.value = EnigmailExecution.fixExitCode(exitCodeObj.value, statusFlagsObj.value);
 
         if (blockSeparation.indexOf(" ") > 0) {
             exitCodeObj.value = 2;
@@ -286,7 +286,7 @@ const Execution = {
      * @return: Number - fixed exit code
      */
     fixExitCode: function (exitCode, statusFlags) {
-        EnigmailLog.DEBUG("execution.jsm: Execution.fixExitCode: agentType: " + Execution.agentType + " exitCode: " + exitCode + " statusFlags " + statusFlags + "\n");
+        EnigmailLog.DEBUG("execution.jsm: EnigmailExecution.fixExitCode: agentType: " + EnigmailExecution.agentType + " exitCode: " + exitCode + " statusFlags " + statusFlags + "\n");
         if (exitCode !== 0) {
             if ((statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) &&
                 (statusFlags & nsIEnigmail.DECRYPTION_OKAY )) {
@@ -295,7 +295,7 @@ const Execution = {
                 }
         }
 
-        if ((Execution.agentType === "gpg") && (exitCode == 256) && (EnigmailOS.getOS() == "WINNT")) {
+        if ((EnigmailExecution.agentType === "gpg") && (exitCode == 256) && (EnigmailOS.getOS() == "WINNT")) {
             EnigmailLog.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Using gpg and exit code is 256. You seem to use cygwin-gpg, activating countermeasures.\n");
             if (statusFlags & (nsIEnigmail.BAD_PASSPHRASE | nsIEnigmail.UNVERIFIED_SIGNATURE)) {
                 EnigmailLog.WARNING("enigmailCommon.jsm: Enigmail.fixExitCode: Changing exitCode 256->2\n");

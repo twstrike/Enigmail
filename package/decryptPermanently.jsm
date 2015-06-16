@@ -47,7 +47,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm"); /*global XPCOMUtils: false *
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
-Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global EnigmailExecution: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/glodaUtils.jsm"); /*global GlodaUtils: false */
 Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
@@ -416,7 +416,7 @@ DecryptMessageIntoFolder.prototype = {
                         var errorMsgObj = {};
                         statusFlagsObj.value = 0;
 
-                        var listener = Execution.newSimpleListener(
+                        var listener = EnigmailExecution.newSimpleListener(
                             function _stdin(pipe) {
 
                                 // try to get original file name if file does not contain suffix
@@ -434,14 +434,14 @@ DecryptMessageIntoFolder.prototype = {
 
                         do {
 
-                            var proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, null, listener, statusFlagsObj);
+                            var proc = EnigmailExecution.execStart(EnigmailGpgAgent.agentPath, args, false, null, listener, statusFlagsObj);
                             if (!proc) {
                                 resolve(o);
                                 return;
                             }
                             // Wait for child STDOUT to close
                             proc.wait();
-                            Execution.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
+                            EnigmailExecution.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
 
                             if ((listener.stdoutData && listener.stdoutData.length > 0) ||
                                 (statusFlagsObj.value & nsIEnigmail.DECRYPTION_OKAY)) {

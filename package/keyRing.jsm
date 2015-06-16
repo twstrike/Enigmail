@@ -50,7 +50,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
-Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global EnigmailExecution: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
@@ -257,7 +257,7 @@ const EnigmailKeyRing = {
         var statusMsgObj   = {};
         var exitCodeObj    = {};
 
-        var output = Execution.execCmd(command, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+        var output = EnigmailExecution.execCmd(command, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
         EnigmailLog.ERROR("keyRing.jsm: EnigmailKeyRing.importKeyFromFile: error="+errorMsgObj.value+"\n");
 
         var statusMsg = statusMsgObj.value;
@@ -362,7 +362,7 @@ const EnigmailKeyRing = {
             statusFlagsObj.value = 0;
 
             const cmdErrorMsgObj = {};
-            let listText = Execution.execCmd(EnigmailGpg.agentPath, args, "", exitCodeObj, statusFlagsObj, {}, cmdErrorMsgObj);
+            let listText = EnigmailExecution.execCmd(EnigmailGpg.agentPath, args, "", exitCodeObj, statusFlagsObj, {}, cmdErrorMsgObj);
 
             if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
                 // ignore exit code as recommended by GnuPG authors
@@ -406,7 +406,7 @@ const EnigmailKeyRing = {
 
         const statusFlagsObj = {};
         const cmdErrorMsgObj = {};
-        const listText = Execution.execCmd(EnigmailGpg.agentPath, args, "", exitCodeObj, statusFlagsObj, {}, cmdErrorMsgObj);
+        const listText = EnigmailExecution.execCmd(EnigmailGpg.agentPath, args, "", exitCodeObj, statusFlagsObj, {}, cmdErrorMsgObj);
 
         if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
             // ignore exit code as recommended by GnuPG authors
@@ -445,7 +445,7 @@ const EnigmailKeyRing = {
 
         const statusFlagsObj = {};
         const exitCodeObj = {};
-        let listText = Execution.execCmd(EnigmailGpg.agentPath, args, "", exitCodeObj, statusFlagsObj, {}, {});
+        let listText = EnigmailExecution.execCmd(EnigmailGpg.agentPath, args, "", exitCodeObj, statusFlagsObj, {}, {});
 
         if (! (statusFlagsObj.value & nsIEnigmail.BAD_SIGNATURE)) {
             // ignore exit code as recommended by GnuPG authors
@@ -525,7 +525,7 @@ const EnigmailKeyRing = {
                   concat(userId.split(/[ ,\t]+/));
 
         const cmdErrorMsgObj = {};
-        let keyBlock = Execution.execCmd(EnigmailGpg.agentPath, args, "", exitCodeObj, {}, {}, cmdErrorMsgObj);
+        let keyBlock = EnigmailExecution.execCmd(EnigmailGpg.agentPath, args, "", exitCodeObj, {}, {}, cmdErrorMsgObj);
 
         if ((exitCodeObj.value === 0) && !keyBlock) {
             exitCodeObj.value = -1;
@@ -547,7 +547,7 @@ const EnigmailKeyRing = {
                       concat(["-a", "--export-secret-keys"]).
                       concat(userId.split(/[ ,\t]+/));
 
-            const secKeyBlock = Execution.execCmd(EnigmailGpg.agentPath, secretArgs, "", exitCodeObj, {}, {}, cmdErrorMsgObj);
+            const secKeyBlock = EnigmailExecution.execCmd(EnigmailGpg.agentPath, secretArgs, "", exitCodeObj, {}, {}, cmdErrorMsgObj);
 
             if ((exitCodeObj.value === 0) && !secKeyBlock) {
                 exitCodeObj.value = -1;
@@ -615,7 +615,7 @@ const EnigmailKeyRing = {
         const exitCodeObj    = {};
         const statusMsgObj   = {};
 
-        Execution.execCmd(EnigmailGpg.agentPath, args, pgpBlock, exitCodeObj, {}, statusMsgObj, errorMsgObj);
+        EnigmailExecution.execCmd(EnigmailGpg.agentPath, args, pgpBlock, exitCodeObj, {}, statusMsgObj, errorMsgObj);
 
         const statusMsg = statusMsgObj.value;
 
@@ -642,7 +642,7 @@ const EnigmailKeyRing = {
                          "--fixed-list-mode", "--list-keys", keyId]);
 
         const photoDataObj = {};
-        const outputTxt = Execution.simpleExecCmd(EnigmailGpg.agentPath, args, exitCodeObj, photoDataObj);
+        const outputTxt = EnigmailExecution.simpleExecCmd(EnigmailGpg.agentPath, args, exitCodeObj, photoDataObj);
 
         if (!outputTxt) {
             exitCodeObj.value = -1;

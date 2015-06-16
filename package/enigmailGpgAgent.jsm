@@ -55,7 +55,7 @@ Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global EnigmailWindows: false */
 Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
-Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global EnigmailExecution: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 
 const Cc = Components.classes;
@@ -421,7 +421,7 @@ const EnigmailGpgAgent = {
         EnigmailGpgAgent.agentType = agentType;
         EnigmailGpgAgent.agentPath = agentPath;
         EnigmailGpg.agentPath = agentPath;
-        Execution.agentType = agentType;
+        EnigmailExecution.agentType = agentType;
 
         const command = agentPath;
         let args = [];

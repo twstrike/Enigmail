@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailData: false, EnigmailLog: false, EnigmailPrefs: false, EnigmailLocale: false, EnigmailArmor: false, Execution: false, EnigmailDialog: false */
+/*global Components: false, EnigmailData: false, EnigmailLog: false, EnigmailPrefs: false, EnigmailLocale: false, EnigmailArmor: false, EnigmailExecution: false, EnigmailDialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -140,7 +140,7 @@ const EnigmailDecryption = {
             args.push("--decrypt");
         }
 
-        var proc = Execution.execStart(EnigmailGpgAgent.agentPath,
+        var proc = EnigmailExecution.execStart(EnigmailGpgAgent.agentPath,
                                        args, !verifyOnly, win,
                                        listener, statusFlagsObj);
 
@@ -184,7 +184,7 @@ const EnigmailDecryption = {
         }
 
         var statusMsg = retStatusObj.statusMsg;
-        exitCode = Execution.fixExitCode(exitCode, retStatusObj.statusFlags);
+        exitCode = EnigmailExecution.fixExitCode(exitCode, retStatusObj.statusFlags);
         if ((exitCode === 0) && !noOutput && !outputLen &&
             ((retStatusObj.statusFlags & (STATUS_DECRYPTION_OK | STATUS_GOODSIG)) === 0)) {
             exitCode = -1;
@@ -551,7 +551,7 @@ const EnigmailDecryption = {
         var startErrorMsgObj = {};
         var noOutput = false;
 
-        var listener = Execution.newSimpleListener(
+        var listener = EnigmailExecution.newSimpleListener(
             function _stdin (pipe) {
                 pipe.write(pgpBlock);
                 pipe.close();
@@ -749,14 +749,14 @@ const EnigmailDecryption = {
 
         statusFlagsObj.value = 0;
 
-        var listener = Execution.newSimpleListener(
+        var listener = EnigmailExecution.newSimpleListener(
             function _stdin(pipe) {
                 pipe.write(byteData);
                 pipe.close();
             });
 
 
-        var proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, parent,
+        var proc = EnigmailExecution.execStart(EnigmailGpgAgent.agentPath, args, false, parent,
                                        listener, statusFlagsObj);
 
         if (!proc) {
@@ -769,7 +769,7 @@ const EnigmailDecryption = {
         var statusMsgObj = {};
         var cmdLineObj   = {};
 
-        exitCodeObj.value = Execution.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
+        exitCodeObj.value = EnigmailExecution.execEnd(listener, statusFlagsObj, statusMsgObj, cmdLineObj, errorMsgObj);
 
         return true;
     },

@@ -47,7 +47,7 @@ Components.utils.import("resource://enigmail/os.jsm"); /*global EnigmailOS: fals
 Components.utils.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
-Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Components.utils.import("resource://enigmail/execution.jsm"); /*global EnigmailExecution: false */
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 
@@ -294,7 +294,7 @@ function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, call
     var keyEdit = new GpgEditorInterface(requestObserver, callbackFunc, inputData);
 
     try {
-        Execution.execCmd2(command, args,
+        EnigmailExecution.execCmd2(command, args,
                            keyEdit.setStdin.bind(keyEdit),
                            keyEdit.gotData.bind(keyEdit),
                            function (result) {

@@ -44,7 +44,7 @@ const EXPORTED_SYMBOLS = [ "EnigmailAttachment" ];
 
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global EnigmailExecution: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
@@ -59,7 +59,7 @@ const EnigmailAttachment = {
                   concat(EnigmailPassword.command()).
                   concat(["--list-packets"]);
 
-        const listener = Execution.newSimpleListener(
+        const listener = EnigmailExecution.newSimpleListener(
             function _stdin (pipe) {
                 EnigmailLog.DEBUG("attachment.jsm: getFileName: _stdin\n");
                 pipe.write(byteData);
@@ -67,7 +67,7 @@ const EnigmailAttachment = {
                 pipe.close();
             });
 
-        const proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, parent, listener, {});
+        const proc = EnigmailExecution.execStart(EnigmailGpgAgent.agentPath, args, false, parent, listener, {});
 
         if (!proc) {
             return null;

@@ -53,7 +53,7 @@ Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Components.utils.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
-Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Components.utils.import("resource://enigmail/execution.jsm"); /*global EnigmailExecution: false */
 Components.utils.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Components.utils.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 
@@ -243,7 +243,7 @@ const EnigmailEncryption = {
 
         var signMsg     = sendFlags & nsIEnigmail.SEND_SIGNED;
 
-        var proc = Execution.execStart(EnigmailGpgAgent.agentPath, encryptArgs, signMsg, win, listener, statusFlagsObj);
+        var proc = EnigmailExecution.execStart(EnigmailGpgAgent.agentPath, encryptArgs, signMsg, win, listener, statusFlagsObj);
 
         if (statusFlagsObj.value & nsIEnigmail.MISSING_PASSPHRASE) {
             EnigmailLog.ERROR("enigmailCommon.jsm: encryptMessageStart: Error - no passphrase supplied\n");
@@ -278,7 +278,7 @@ const EnigmailEncryption = {
 
         EnigmailErrorHandling.parseErrorOutput(stderrStr, retStatusObj);
 
-        exitCode = Execution.fixExitCode(exitCode, retStatusObj.statusFlags);
+        exitCode = EnigmailExecution.fixExitCode(exitCode, retStatusObj.statusFlags);
         if ((exitCode === 0) && !outputLen) {
             exitCode = -1;
         }
@@ -352,7 +352,7 @@ const EnigmailEncryption = {
 
         var inspector = Cc["@mozilla.org/jsinspector;1"].createInstance(Ci.nsIJSInspector);
 
-        var listener = Execution.newSimpleListener(
+        var listener = EnigmailExecution.newSimpleListener(
             function _stdin (pipe) {
                 pipe.write(plainText);
                 pipe.close();
@@ -434,7 +434,7 @@ const EnigmailEncryption = {
 
         let cmdErrorMsgObj = {};
 
-        const msg = Execution.execCmd(EnigmailGpgAgent.agentPath, args, "", exitCodeObj, statusFlagsObj, {}, cmdErrorMsgObj);
+        const msg = EnigmailExecution.execCmd(EnigmailGpgAgent.agentPath, args, "", exitCodeObj, statusFlagsObj, {}, cmdErrorMsgObj);
         if (exitCodeObj.value !== 0) {
             if (cmdErrorMsgObj.value) {
                 errorMsgObj.value = EnigmailFiles.formatCmdLine(EnigmailGpgAgent.agentPath, args);

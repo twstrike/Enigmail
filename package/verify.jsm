@@ -49,7 +49,7 @@ Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
-Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
+Cu.import("resource://enigmail/execution.jsm"); /*global EnigmailExecution: false */
 Cu.import("resource://enigmail/time.jsm"); /*global EnigmailTime: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/decryption.jsm"); /*global EnigmailDecryption: false */
@@ -68,9 +68,9 @@ const EnigmailVerifyAttachment = {
         const args = EnigmailGpg.getStandardArgs(true).
                   concat(["--verify", sigFilePath, verifyFilePath]);
 
-        const listener = Execution.newSimpleListener();
+        const listener = EnigmailExecution.newSimpleListener();
 
-        const proc = Execution.execStart(EnigmailGpgAgent.agentPath, args, false, parent, listener, statusFlagsObj);
+        const proc = EnigmailExecution.execStart(EnigmailGpgAgent.agentPath, args, false, parent, listener, statusFlagsObj);
 
         if (!proc) {
             return -1;
