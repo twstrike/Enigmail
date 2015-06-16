@@ -62,7 +62,7 @@ Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Cu.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Cu.import("resource://enigmail/key.jsm"); /*global EnigmailKey: false */
-Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
+Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 
 const nsIEnigmail = Ci.nsIEnigmail;
 const EC = EnigmailCore;
@@ -743,7 +743,7 @@ const EnigmailDecryption = {
 
         var args = Gpg.getStandardArgs(true);
         args = args.concat(["-o", outFileName, "--yes"]);
-        args = args.concat(Passwords.command());
+        args = args.concat(EnigmailPassword.command());
         args.push("-d");
 
 

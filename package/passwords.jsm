@@ -40,7 +40,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Passwords" ];
+const EXPORTED_SYMBOLS = [ "EnigmailPassword" ];
 
 const Cu = Components.utils;
 
@@ -49,7 +49,7 @@ Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 
 const gpgAgent = Lazy.loader("enigmail/enigmailGpgAgent.jsm", "EnigmailGpgAgent");
 
-const Passwords = {
+const EnigmailPassword = {
     /*
      * Get GnuPG command line options for receiving the password depending
      * on the various user and system settings (gpg-agent/no passphrase)

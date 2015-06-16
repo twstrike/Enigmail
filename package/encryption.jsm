@@ -55,7 +55,7 @@ Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Components.utils.import("resource://enigmail/enigmailErrorHandling.jsm"); /*global EnigmailErrorHandling: false */
 Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Components.utils.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
-Components.utils.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
+Components.utils.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -424,7 +424,7 @@ var Encryption = {
         const signMessage = (sendFlags & nsIEnigmail.SEND_SIGNED);
 
         if (signMessage ) {
-            args = args.concat(Passwords.command());
+            args = args.concat(EnigmailPassword.command());
         }
 
         const inFilePath  = EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePathReadonly(inFile.QueryInterface(Ci.nsIFile)));

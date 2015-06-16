@@ -67,7 +67,7 @@ Components.utils.import("resource://enigmail/events.jsm"); /*global Events: fals
 Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/attachment.jsm"); /*global EnigmailAttachment: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */
-Components.utils.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
+Components.utils.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 
 if (! Enigmail) var Enigmail = {};
 

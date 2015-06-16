@@ -48,7 +48,7 @@ Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
-Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
+Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 Cu.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 
 const EnigmailAttachment = {
@@ -56,7 +56,7 @@ const EnigmailAttachment = {
         EnigmailLog.DEBUG("attachment.jsm: getFileName\n");
 
         const args = Gpg.getStandardArgs(true).
-                  concat(Passwords.command()).
+                  concat(EnigmailPassword.command()).
                   concat(["--list-packets"]);
 
         const listener = Execution.newSimpleListener(

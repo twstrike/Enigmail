@@ -156,7 +156,7 @@
               label="&enigmail.clearPassphrase.label;"
               accesskey="&enigmail.clearPassphrase.accesskey;"
               advanced="true"
-              oncommand="Passwords.clearPassphrase(window);" />
+              oncommand="EnigmailPassword.clearPassphrase(window);" />
 
           <menuitem id="enigmail_keymgmt"
              label="&enigmail.keyManWindow.label;"

@@ -56,7 +56,7 @@ Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
-Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
+Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -616,7 +616,7 @@ const EnigmailGpgAgent = {
                              tmpFile.path,
                              "--sh", "--no-use-standard-socket",
                              "--daemon",
-                             "--default-cache-ttl", (Passwords.getMaxIdleMinutes()*60).toString(),
+                             "--default-cache-ttl", (EnigmailPassword.getMaxIdleMinutes()*60).toString(),
                              "--max-cache-ttl", "999999" ];  // ca. 11 days
 
                 try {
@@ -657,7 +657,7 @@ const EnigmailGpgAgent = {
                 EnigmailFiles.initPath(envFile, EnigmailGpgAgent.determineGpgHomeDir(esvc));
                 envFile.append("gpg-agent.conf");
 
-                var data="default-cache-ttl " + (Passwords.getMaxIdleMinutes()*60)+"\n";
+                var data="default-cache-ttl " + (EnigmailPassword.getMaxIdleMinutes()*60)+"\n";
                 data += "max-cache-ttl 999999";
                 if (! envFile.exists()) {
                     try {
