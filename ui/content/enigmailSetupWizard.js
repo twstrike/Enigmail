@@ -587,7 +587,7 @@ function displayKeyCreate() {
 
 
 function checkPassphraseQuality(txtBox) {
-  var qualityRes = passwordCheck.checkQuality(txtBox.value);
+  var qualityRes = EnigmailPasswordCheck.checkQuality(txtBox.value);
 
   if (qualityRes.valid) {
     gPassPhraseQuality.value = qualityRes.complexity;
