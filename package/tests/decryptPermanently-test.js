@@ -13,7 +13,7 @@ do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestH
 TestHelper.loadDirectly("tests/mailHelper.js"); /*global MailHelper: false */
 
 testing("decryptPermanently.jsm"); /*global DecryptPermanently: false, Promise: false */
-component("enigmail/keyRing.jsm"); /*global KeyRing: false */
+component("enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
 component("enigmail/glodaMime.jsm");
 component("enigmail/streams.jsm"); /*global Streams: false */
@@ -108,12 +108,12 @@ test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecryp
 
 var loadSecretKey = function() {
     const secretKey = do_get_file("resources/dev-strike.sec", false);
-    KeyRing.importKeyFromFile(null, secretKey, [], {});
+    EnigmailKeyRing.importKeyFromFile(null, secretKey, [], {});
 };
 
 var loadPublicKey = function() {
      const publicKey = do_get_file("resources/dev-strike.asc", false);
-     KeyRing.importKeyFromFile(null, publicKey, [], {});
+     EnigmailKeyRing.importKeyFromFile(null, publicKey, [], {});
 };
 
 function stringFromUrl(url) {

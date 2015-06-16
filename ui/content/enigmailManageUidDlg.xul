@@ -88,7 +88,7 @@
     Components.utils.import("resource://enigmail/locale.jsm");
     Components.utils.import("resource://enigmail/data.jsm");
     Components.utils.import("resource://enigmail/dialog.jsm");
-    Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+    Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
     Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 
     function onLoad() {
@@ -114,7 +114,7 @@
       if (!enigmailSvc)
         return;
 
-      var keyData = KeyRing.getKeyDetails("0x"+window.arguments[0].keyId, false);
+      var keyData = EnigmailKeyRing.getKeyDetails("0x"+window.arguments[0].keyId, false);
       var uidTxt = "";
 
       var keyList=keyData.split(/[\n\r]+/);

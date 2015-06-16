@@ -53,7 +53,7 @@ Components.utils.import("resource://enigmail/app.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
 Components.utils.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
@@ -780,7 +780,7 @@ Enigmail.msg = {
     var exitCodeObj= {};
     var errorMsgObj = {};
 
-    KeyRing.extractKey(window, 0, uid.join(" "), tmpFile /*.path */, exitCodeObj, errorMsgObj);
+    EnigmailKeyRing.extractKey(window, 0, uid.join(" "), tmpFile /*.path */, exitCodeObj, errorMsgObj);
     if (exitCodeObj.value !== 0) {
       Dialog.alert(window, errorMsgObj.value);
       return  null;
@@ -3635,7 +3635,7 @@ Enigmail.msg = {
 
         if (openPgpHeaderMode & HEADERMODE_KEYID) {
 
-          var fpr = KeyRing.getFingerprintForKey(this.identity.getCharAttribute("pgpkeyId"));
+          var fpr = EnigmailKeyRing.getFingerprintForKey(this.identity.getCharAttribute("pgpkeyId"));
           if (fpr && fpr.length > 0) {
             pgpHeader += "id=" + fpr;
           }

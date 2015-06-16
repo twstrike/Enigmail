@@ -49,7 +49,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
-Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Cu.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 
 const APPSHELL_MEDIATOR_CONTRACTID = "@mozilla.org/appshell/window-mediator;1";
 const APPSHSVC_CONTRACTID = "@mozilla.org/appshell/appShellService;1";
@@ -396,7 +396,7 @@ const Windows = {
             }
 
             const exitCodeObj = {};
-            const photoPath = KeyRing.showKeyPhoto(keyId, photoNumber, exitCodeObj, {});
+            const photoPath = EnigmailKeyRing.showKeyPhoto(keyId, photoNumber, exitCodeObj, {});
 
             if (photoPath && exitCodeObj.value===0) {
                 const photoFile = Cc[LOCAL_FILE_CONTRACTID].createInstance(Ci.nsIFile);
@@ -442,7 +442,7 @@ const Windows = {
 
         keyId = keyId.replace(/^0x/, "");
 
-        KeyRing.loadKeyList(win, refresh, keyListObj);
+        EnigmailKeyRing.loadKeyList(win, refresh, keyListObj);
 
         const inputObj = {
             keyId:  keyId,

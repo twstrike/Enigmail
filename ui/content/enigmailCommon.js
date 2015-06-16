@@ -58,7 +58,7 @@ Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/timer.jsm");
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm");
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
 Components.utils.import("resource://enigmail/locale.jsm");
@@ -506,7 +506,7 @@ function EnigGetTrustCode(keyObj) {
 // sortDirection: 1 = ascending / -1 = descending
 
 function EnigLoadKeyList(refresh, keyListObj, sortColumn, sortDirection) {
-  return KeyRing.loadKeyList(window, refresh, keyListObj, sortColumn, sortDirection);
+  return EnigmailKeyRing.loadKeyList(window, refresh, keyListObj, sortColumn, sortDirection);
 }
 
 function EnigEditKeyTrust(userIdArr, keyIdArr) {
@@ -581,7 +581,7 @@ function EnigRevokeKey(keyId, userId, callbackFunc) {
       }
       var errorMsgObj = {};
       var keyList = {};
-      var r = KeyRing.importKeyFromFile(window, revFile, errorMsgObj, keyList);
+      var r = EnigmailKeyRing.importKeyFromFile(window, revFile, errorMsgObj, keyList);
       revFile.remove(false);
       if (r !== 0) {
         EnigAlert(EnigGetString("revokeKeyFailed")+"\n\n"+EnigConvertGpgToUnicode(errorMsgObj.value));

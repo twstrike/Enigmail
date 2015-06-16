@@ -159,7 +159,7 @@
       var exitCodeObj = {};
       var errorMsgObj = {};
 
-      var sigList = KeyRing.getKeySig("0x"+keyId, exitCodeObj, errorMsgObj);
+      var sigList = EnigmailKeyRing.getKeySig("0x"+keyId, exitCodeObj, errorMsgObj);
 
       if (exitCodeObj.value != 0) {
         EnigAlert(errorMsgObj.value);

@@ -241,7 +241,7 @@ function saveRevCert(inputKeyFile, keyId, uid, resolve, reject) {
 }
 
 function closeAndReset() {
-  KeyRing.invalidateUserIdList();
+  EnigmailKeyRing.invalidateUserIdList();
   window.close();
 }
 
@@ -398,7 +398,7 @@ function enigmailKeygenStart() {
    };
 
    try {
-      gKeygenRequest = KeyRing.generateKey(window,
+      gKeygenRequest = EnigmailKeyRing.generateKey(window,
                                            Data.convertFromUnicode(userName),
                                            Data.convertFromUnicode(comment),
                                            Data.convertFromUnicode(userEmail),

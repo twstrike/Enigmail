@@ -52,7 +52,7 @@ Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
-Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Cu.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 
@@ -143,7 +143,7 @@ const EnigmailKeyServer = {
                 done: function(result) {
                     try {
                         if (result.exitCode === 0 && isDownload) {
-                            KeyRing.invalidateUserIdList();
+                            EnigmailKeyRing.invalidateUserIdList();
                         }
                         if (exitCode === null) {
                             exitCode = result.exitCode;

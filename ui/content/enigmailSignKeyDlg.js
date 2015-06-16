@@ -40,7 +40,7 @@ Components.utils.import("resource://enigmail/keyEditor.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 
 var gExportableSignatureList = null;
 var gLocalSignatureList = null;
@@ -58,7 +58,7 @@ function onLoad() {
     window.close();
     return;
   }
-  var keys = KeyRing.getSecretKeys(window);
+  var keys = EnigmailKeyRing.getSecretKeys(window);
   if (keys.length === 0) {
     Dialog.alert(null, EnigmailLocale.getString("noTrustedOwnKeys"));
     window.close();
@@ -84,7 +84,7 @@ function onLoad() {
     gUidCount = [];
     var keyId = null;
     fingerprint = "";
-    var sigListStr = KeyRing.getKeySig("0x"+window.arguments[0].keyId, exitCodeObj, errorMsgObj);
+    var sigListStr = EnigmailKeyRing.getKeySig("0x"+window.arguments[0].keyId, exitCodeObj, errorMsgObj);
 
     if (exitCodeObj.value === 0) {
       var sigList = sigListStr.split(/[\n\r]+/);

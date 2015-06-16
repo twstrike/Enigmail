@@ -38,7 +38,7 @@ Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/keyEditor.jsm"); /*global EnigmailKeyEditor: false */
 Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/prefs.jsm");
 Components.utils.import("resource://enigmail/locale.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
@@ -199,7 +199,7 @@ function engmailGenerateCardKey() {
   window.openDialog("chrome://enigmail/content/enigmailGenCardKey.xul",
         "", "dialog,modal,centerscreen");
 
-  KeyRing.invalidateUserIdList();
+  EnigmailKeyRing.invalidateUserIdList();
   onLoad();
 }
 

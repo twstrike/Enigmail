@@ -45,7 +45,7 @@ Components.utils.import("resource://enigmail/windows.jsm");
 Components.utils.import("resource://enigmail/dialog.jsm");
 Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/key.jsm"); /*global Key: false */
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
 
@@ -617,7 +617,7 @@ Enigmail.hdrView = {
   editKeyTrust: function ()
   {
     let enigmailSvc = EnigmailCore.getService();
-    let keyId = KeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
+    let keyId = EnigmailKeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
     Windows.editKeyTrust(window, [Enigmail.msg.securityInfo.userId], [keyId]);
     gDBView.reloadMessageWithAllParts();
@@ -626,7 +626,7 @@ Enigmail.hdrView = {
   signKey: function ()
   {
     let enigmailSvc = EnigmailCore.getService();
-    let keyId = KeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
+    let keyId = EnigmailKeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
     Windows.signKey(window, Enigmail.msg.securityInfo.userId, keyId, null);
     gDBView.reloadMessageWithAllParts();
@@ -719,7 +719,7 @@ Enigmail.hdrView = {
     if (! Enigmail.msg.securityInfo) return;
 
     let enigmailSvc = EnigmailCore.getService();
-    let keyId = KeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
+    let keyId = EnigmailKeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
     Windows.showPhoto(window, keyId, Enigmail.msg.securityInfo.userId);
   },
@@ -730,7 +730,7 @@ Enigmail.hdrView = {
     if (! Enigmail.msg.securityInfo) return;
 
     let enigmailSvc = EnigmailCore.getService();
-    let keyId = KeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
+    let keyId = EnigmailKeyRing.getPubKeyIdForSubkey(Enigmail.msg.securityInfo.keyId);
 
     Windows.openKeyDetails(window, keyId, false);
   },

@@ -64,7 +64,7 @@ function reloadData() {
   // clean lists
   EnigCleanGuiList(treeChildren);
 
-  var keyListStr = KeyRing.getKeySig("0x"+gKeyId, exitCodeObj, errorMsgObj);
+  var keyListStr = EnigmailKeyRing.getKeySig("0x"+gKeyId, exitCodeObj, errorMsgObj);
   if (exitCodeObj.value === 0) {
     var keyDetails = EnigGetKeyDetails(keyListStr);
 

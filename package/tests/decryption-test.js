@@ -11,13 +11,13 @@
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global withEnigmail: false, withTestGpgHome: false */
 
 testing("decryption.jsm"); /*global Decryption: false, nsIEnigmail: false */
-component("enigmail/keyRing.jsm"); /*global KeyRing: fales */
+component("enigmail/keyRing.jsm"); /*global EnigmailKeyRing: fales */
 component("enigmail/armor.jsm"); /*global EnigmailArmor: fales */
 
 test(withTestGpgHome(withEnigmail(function shouldDecryptMessage() {
     const secretKey = do_get_file("resources/dev-strike.sec", false);
     const importedKeysObj = {};
-    KeyRing.importKeyFromFile(JSUnit.createStubWindow(), secretKey, {}, importedKeysObj);
+    EnigmailKeyRing.importKeyFromFile(JSUnit.createStubWindow(), secretKey, {}, importedKeysObj);
     var encryptResult = "-----BEGIN PGP MESSAGE-----\n"+
         "Version: GnuPG v2.0.22 (GNU/Linux)\n"+
         "\n"+

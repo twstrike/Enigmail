@@ -296,7 +296,7 @@ function checkGnupgInstallation() {
  * Check if secret keys are available
  */
 function checkSecretKeys() {
-  var keyList = KeyRing.getSecretKeys(null, true);
+  var keyList = EnigmailKeyRing.getSecretKeys(null, true);
   if (keyList && keyList.length > 0) {
     return true;
   }
@@ -465,7 +465,7 @@ function importKeyFiles() {
 
   var errorMsgObj = {};
   var keyListObj = {};
-  exitCode = KeyRing.importKeyFromFile(window, gPubkeyFile.value, errorMsgObj, keyListObj);
+  exitCode = EnigmailKeyRing.importKeyFromFile(window, gPubkeyFile.value, errorMsgObj, keyListObj);
   if (exitCode !== 0) {
     EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
     return false;
@@ -475,7 +475,7 @@ function importKeyFiles() {
   if (document.getElementById("privateKeysFile").value.trim().length > 0) {
     EnigmailLog.DEBUG("enigmailSetupWizard.js: importKeyFiles - private Keys\n");
 
-    exitCode = KeyRing.importKeyFromFile(window, gSeckeyFile.value, errorMsgObj, keyListObj);
+    exitCode = EnigmailKeyRing.importKeyFromFile(window, gSeckeyFile.value, errorMsgObj, keyListObj);
     if (exitCode !== 0) {
       EnigAlert(EnigGetString("importKeysFailed")+"\n\n"+errorMsgObj.value);
       return false;
@@ -688,7 +688,7 @@ function loadKeys() {
   var exitCodeObj = {};
   var statusFlagsObj = {};
   var errorMsgObj = {};
-  var keyList = KeyRing.getSecretKeys(window, true);
+  var keyList = EnigmailKeyRing.getSecretKeys(window, true);
   if (!keyList) {
     return;
   }
@@ -847,7 +847,7 @@ function wizardGenKey() {
   };
 
   try {
-    gKeygenRequest = KeyRing.generateKey(window,
+    gKeygenRequest = EnigmailKeyRing.generateKey(window,
                                          Data.convertFromUnicode(userName),
                                          "",
                                          Data.convertFromUnicode(userEmail),
@@ -886,7 +886,7 @@ function wizardKeygenTerminate(exitCode)
 
 
   enigmailKeygenCloseRequest();
-  KeyRing.invalidateUserIdList();
+  EnigmailKeyRing.invalidateUserIdList();
 
   document.getElementById("revCertBox").removeAttribute("hidden");
 }

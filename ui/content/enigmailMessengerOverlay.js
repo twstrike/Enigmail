@@ -64,7 +64,7 @@ Components.utils.import("resource://enigmail/time.jsm");
 Components.utils.import("resource://enigmail/decryptPermanently.jsm");
 Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 Components.utils.import("resource://enigmail/events.jsm"); /*global Events: false */
-Components.utils.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
+Components.utils.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 Components.utils.import("resource://enigmail/attachment.jsm"); /*global Attachment: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
 Components.utils.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
@@ -978,7 +978,7 @@ Enigmail.msg = {
     if (importOnly) {
       // Import public key
       var importFlags = nsIEnigmail.UI_INTERACTIVE;
-      exitCode = KeyRing.importKey(window, importFlags, msgText, "",
+      exitCode = EnigmailKeyRing.importKey(window, importFlags, msgText, "",
                                    errorMsgObj);
 
     }
@@ -2204,7 +2204,7 @@ Enigmail.msg = {
 
     if (callbackArg.actionType == "importKey") {
       try {
-        exitStatus = KeyRing.importKey(parent, 0, callbackArg.data, "", errorMsgObj);
+        exitStatus = EnigmailKeyRing.importKey(parent, 0, callbackArg.data, "", errorMsgObj);
       }
       catch (ex) {}
       if (exitStatus === 0) {

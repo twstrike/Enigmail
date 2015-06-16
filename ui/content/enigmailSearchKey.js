@@ -240,7 +240,7 @@ function enigStatusError () {
 
 function enigCloseDialog() {
   if (window.arguments[RESULT].importedKeys > 0) {
-    KeyRing.invalidateUserIdList();
+    EnigmailKeyRing.invalidateUserIdList();
   }
 
   document.getElementById("enigmailSearchKeyDlg").cancelDialog();
@@ -315,7 +315,7 @@ function enigImportHtmlKeys(txt) {
     return false;
 
   var uiFlags = nsIEnigmail.UI_ALLOW_KEY_IMPORT;
-  var r = KeyRing.importKey(window, uiFlags, txt,
+  var r = EnigmailKeyRing.importKey(window, uiFlags, txt,
                             gEnigRequest.dlKeyList[gEnigRequest.keyNum-1],
                             errorMsgObj);
   if (errorMsgObj.value)

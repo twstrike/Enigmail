@@ -263,7 +263,7 @@ function enigSetKeys(keyList) {
     var exitCodeObj= {};
     var statusFlagsObj = {};
     var errorMsgObj = {};
-    var userListTxt = KeyRing.getUserIdList(false,
+    var userListTxt = EnigmailKeyRing.getUserIdList(false,
                                             false,
                                             exitCodeObj,
                                             statusFlagsObj,

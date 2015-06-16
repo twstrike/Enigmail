@@ -109,7 +109,7 @@ function enigGetUserList(secretOnly, refresh)
     var statusFlagsObj = {};
     var errorMsgObj = {};
 
-    userList = KeyRing.getUserIdList(secretOnly,
+    userList = EnigmailKeyRing.getUserIdList(secretOnly,
                                      refresh,
                                      exitCodeObj,
                                      statusFlagsObj,
@@ -149,7 +149,7 @@ function getPubkeysFromSecretKeys(keyString)
     }
   }
 
-  return KeyRing.getKeyDetails(aSecretKeys.join(" "), false);
+  return EnigmailKeyRing.getKeyDetails(aSecretKeys.join(" "), false);
 }
 
 

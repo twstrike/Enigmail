@@ -42,7 +42,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "KeyRing" ];
+const EXPORTED_SYMBOLS = [ "EnigmailKeyRing" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -109,7 +109,7 @@ function obtainKeyList(win, secretOnly, refresh) {
         const exitCodeObj = {};
         const errorMsgObj = {};
 
-        userList = KeyRing.getUserIdList(secretOnly,
+        userList = EnigmailKeyRing.getUserIdList(secretOnly,
                                          refresh,
                                          exitCodeObj,
                                          {},
@@ -196,7 +196,7 @@ function getKeyListEntryOfKey(keyId) {
     let statusFlags = {};
     let errorMsg = {};
     let exitCodeObj = {};
-    let listText = KeyRing.getUserIdList(false, false, exitCodeObj, statusFlags, errorMsg);
+    let listText = EnigmailKeyRing.getUserIdList(false, false, exitCodeObj, statusFlags, errorMsg);
 
     // listText contains lines such as:
     // tru::0:1407688184:1424970931:3:1:5
@@ -241,11 +241,11 @@ function getKeyListEntryOfKey(keyId) {
     return res;
 }
 
-const KeyRing = {
+const EnigmailKeyRing = {
     importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj){
         var command= Gpg.agentPath;
         var args = Gpg.getStandardArgs(false);
-        EnigmailLog.DEBUG("keyRing.jsm: KeyRing.importKeyFromFile: fileName="+inputFile.path+"\n");
+        EnigmailLog.DEBUG("keyRing.jsm: EnigmailKeyRing.importKeyFromFile: fileName="+inputFile.path+"\n");
         importedKeysObj.value="";
 
         var fileName=Files.getEscapedFilename((inputFile.QueryInterface(Ci.nsIFile)).path);
@@ -258,7 +258,7 @@ const KeyRing = {
         var exitCodeObj    = {};
 
         var output = Execution.execCmd(command, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
-        EnigmailLog.ERROR("keyRing.jsm: KeyRing.importKeyFromFile: error="+errorMsgObj.value+"\n");
+        EnigmailLog.ERROR("keyRing.jsm: EnigmailKeyRing.importKeyFromFile: error="+errorMsgObj.value+"\n");
 
         var statusMsg = statusMsgObj.value;
 
@@ -266,7 +266,7 @@ const KeyRing = {
 
         if (exitCodeObj.value === 0) {
             // Normal return
-            KeyRing.invalidateUserIdList();
+            EnigmailKeyRing.invalidateUserIdList();
 
             var statusLines = statusMsg.split(/\r?\n/);
 
@@ -281,7 +281,7 @@ const KeyRing = {
                     else
                         keyList[matches[2]] = Number(matches[1]);
 
-                    EnigmailLog.DEBUG("keyRing.jsm: KeyRing.importKeyFromFile: imported "+matches[2]+":"+matches[1]+"\n");
+                    EnigmailLog.DEBUG("keyRing.jsm: EnigmailKeyRing.importKeyFromFile: imported "+matches[2]+":"+matches[1]+"\n");
                 }
             }
 
@@ -341,7 +341,7 @@ const KeyRing = {
 
     invalidateUserIdList: function () {
         // clean the userIdList to force reloading the list at next usage
-        EnigmailLog.DEBUG("keyRing.jsm: KeyRing.invalidateUserIdList\n");
+        EnigmailLog.DEBUG("keyRing.jsm: EnigmailKeyRing.invalidateUserIdList\n");
         userIdList = null;
         secretKeyList = null;
     },
@@ -519,8 +519,7 @@ const KeyRing = {
     },
 
     extractKey: function (parent, exportFlags, userId, outputFile, exitCodeObj, errorMsgObj) {
-        EnigmailLog.DEBUG("keyRing.jsm: KeyRing.extractKey: "+userId+"\n");
-
+        EnigmailLog.DEBUG("keyRing.jsm: EnigmailKeyRing.extractKey: "+userId+"\n");
         const args = Gpg.getStandardArgs(true).
                   concat(["-a", "--export"]).
                   concat(userId.split(/[ ,\t]+/));
@@ -585,7 +584,7 @@ const KeyRing = {
     // ExitCode > 0   => error
     // ExitCode == -1 => Cancelled by user
     importKey: function (parent, uiFlags, msgText, keyId, errorMsgObj) {
-        EnigmailLog.DEBUG("keyRing.jsm: KeyRing.importKey: id="+keyId+", "+uiFlags+"\n");
+        EnigmailLog.DEBUG("keyRing.jsm: EnigmailKeyRing.importKey: id="+keyId+", "+uiFlags+"\n");
 
         const beginIndexObj = {};
         const endIndexObj   = {};
@@ -622,7 +621,7 @@ const KeyRing = {
 
         if (exitCodeObj.value === 0) {
             // Normal return
-            KeyRing.invalidateUserIdList();
+            EnigmailKeyRing.invalidateUserIdList();
             if (statusMsg && (statusMsg.search("IMPORTED ") > -1)) {
                 const matches = statusMsg.match(/(^|\n)IMPORTED (\w{8})(\w{8})/);
                 if (matches && (matches.length > 3)) {
@@ -635,7 +634,7 @@ const KeyRing = {
     },
 
     showKeyPhoto: function(keyId, photoNumber, exitCodeObj, errorMsgObj) {
-        EnigmailLog.DEBUG("keyRing.js: KeyRing.showKeyPhoto, keyId="+keyId+" photoNumber="+photoNumber+"\n");
+        EnigmailLog.DEBUG("keyRing.js: EnigmailKeyRing.showKeyPhoto, keyId="+keyId+" photoNumber="+photoNumber+"\n");
 
         const args = Gpg.getStandardArgs().
                   concat(["--no-secmem-warning", "--no-verbose", "--no-auto-check-trustdb",
@@ -716,7 +715,7 @@ const KeyRing = {
     getFingerprintForKey: function(keyId) {
         const keyList = getKeyListEntryOfKey(keyId);
         const keyListObj = {};
-        KeyRing.createKeyObjects(keyList.replace(/(\r\n|\r)/g, "\n").split(/\n/), keyListObj);
+        EnigmailKeyRing.createKeyObjects(keyList.replace(/(\r\n|\r)/g, "\n").split(/\n/), keyListObj);
 
         if (keyListObj.keySortList.length > 0) {
             return keyListObj.keyList[keyListObj.keySortList[0].keyId].fpr;
@@ -844,11 +843,11 @@ const KeyRing = {
                                   EnigmailLocale.getString("keyMan.button.generateKey"),
                                   EnigmailLocale.getString("keyMan.button.skip"))) {
                 Windows.openKeyGen();
-                KeyRing.loadKeyList(win, true, keyListObj);
+                EnigmailKeyRing.loadKeyList(win, true, keyListObj);
             }
         }
 
-        KeyRing.createKeyObjects(aGpgUserList, keyListObj);
+        EnigmailKeyRing.createKeyObjects(aGpgUserList, keyListObj);
 
         // search and mark keys that have secret keys
         for (let i=0; i<aGpgSecretsList.length; i++) {
@@ -891,7 +890,7 @@ const KeyRing = {
                            passphrase, listener) {
         EnigmailLog.WRITE("keyRing.jsm: generateKey:\n");
 
-        if (KeyRing.isGeneratingKey()) {
+        if (EnigmailKeyRing.isGeneratingKey()) {
             // key generation already ongoing
             throw Components.results.NS_ERROR_FAILURE;
         }
@@ -952,7 +951,7 @@ const KeyRing = {
                     keygenProcess = null;
                     try {
                         if (result.exitCode === 0) {
-                            KeyRing.invalidateUserIdList();
+                            EnigmailKeyRing.invalidateUserIdList();
                         }
                         listener.onStopRequest(result.exitCode);
                     }
@@ -986,7 +985,7 @@ const KeyRing = {
         const errorMsgObj = {};
 
         if (!refresh) refresh = false;
-        const keyList = KeyRing.getUserIdList(true, refresh, exitCodeObj, {}, errorMsgObj);
+        const keyList = EnigmailKeyRing.getUserIdList(true, refresh, exitCodeObj, {}, errorMsgObj);
 
         if (exitCodeObj.value !== 0 && keyList.length === 0) {
             Dialog.alert(win, errorMsgObj.value);
@@ -1008,7 +1007,7 @@ const KeyRing = {
             }
         }
 
-        const userList2 = KeyRing.getKeyDetails(secretKeyList.join(" "), false, false).split(/\n/);
+        const userList2 = EnigmailKeyRing.getKeyDetails(secretKeyList.join(" "), false, false).split(/\n/);
 
         for (let i=0; i < userList2.length; i++) {
             let aLine = userList2[i].split(/:/);
