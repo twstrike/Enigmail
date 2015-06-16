@@ -48,7 +48,7 @@ Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
-Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/glodaUtils.jsm"); /*global GlodaUtils: false */
 Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
@@ -455,7 +455,7 @@ DecryptMessageIntoFolder.prototype = {
                                     // we should ask
                                     let msg = EnigmailLocale.getString("converter.decryptAtt.failed", [ attachment.name , self.subject ]);
 
-                                    if (!Dialog.confirmDlg(null, msg,
+                                    if (!EnigmailDialog.confirmDlg(null, msg,
                                                            EnigmailLocale.getString("dlg.button.retry"), EnigmailLocale.getString("dlg.button.skip"))) {
                                         o.status = STATUS_FAILURE;
                                         resolve(o);
@@ -774,7 +774,7 @@ DecryptMessageIntoFolder.prototype = {
                                                            keyIdObj, userIdObj, sigDetailsObj, errorMsgObj, blockSeparationObj, encToDetailsObj);
                     if (!plaintext || plaintext.length === 0) {
                         if (statusFlagsObj.value & nsIEnigmail.DISPLAY_MESSAGE) {
-                            Dialog.alert(null, errorMsgObj.value);
+                            EnigmailDialog.alert(null, errorMsgObj.value);
                             this.foundPGP = -1;
                             return -1;
                         }
@@ -786,7 +786,7 @@ DecryptMessageIntoFolder.prototype = {
                                 // we should ask
                                 let msg = EnigmailLocale.getString("converter.decryptBody.failed", this.subject);
 
-                                if (!Dialog.confirmDlg(null, msg,
+                                if (!EnigmailDialog.confirmDlg(null, msg,
                                                        EnigmailLocale.getString("dlg.button.retry"), EnigmailLocale.getString("dlg.button.skip"))) {
                                     this.foundPGP = -1;
                                     return -1;

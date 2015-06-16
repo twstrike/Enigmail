@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailLog: false, Dialog: false, dump: false, EnigmailFuncs: false */
+/*global Components: false, EnigmailLog: false, EnigmailDialog: false, dump: false, EnigmailFuncs: false */
 /*jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -466,7 +466,7 @@ PgpMimeEncrypt.prototype = {
                                                  retStatusObj);
 
     if (this.exitCode !== 0)
-      Dialog.alert(this.win, retStatusObj.errorMsg);
+      EnigmailDialog.alert(this.win, retStatusObj.errorMsg);
 
     if (this.inspector && this.inspector.eventLoopNestLevel > 0) {
       // unblock the waiting lock in finishCryptoEncapsulation

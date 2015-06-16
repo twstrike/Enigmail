@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, EnigmailLog: false, EnigmailPrefs: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false */
+/*global Components: false, EnigmailCore: false, EnigmailLog: false, EnigmailPrefs: false, EnigmailApp: false, EnigmailLocale: false, EnigmailDialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -252,7 +252,7 @@ var Encryption = {
         }
 
         if (pgpMime && errorMsgObj.value) {
-            Dialog.alert(win, errorMsgObj.value);
+            EnigmailDialog.alert(win, errorMsgObj.value);
         }
 
         return proc;

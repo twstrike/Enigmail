@@ -1,5 +1,5 @@
 dump("loading: enigmailSearchKey.js\n");
-/*global Components: false, EnigmailLocale: false, EnigmailData: false, Dialog: false */
+/*global Components: false, EnigmailLocale: false, EnigmailData: false, EnigmailDialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -234,7 +234,7 @@ function onCancel() {
 function enigStatusError () {
   EnigmailLog.DEBUG("enigmailSearchKey.js: enigStatusError\n");
   gEnigRequest.httpInProgress=false;
-  Dialog.alert(window, EnigmailLocale.getString("noKeyserverConn", this.channel.originalURI.prePath));
+  EnigmailDialog.alert(window, EnigmailLocale.getString("noKeyserverConn", this.channel.originalURI.prePath));
   enigCloseDialog();
 }
 
@@ -260,7 +260,7 @@ function enigStatusLoaded (event) {
     this.requestCallbackFunc(ENIG_CONN_TYPE_HTTP, "no keys found", "[GNUPG:] NODATA 1\n");
   }
   else if (this.statusText!="OK") {
-    Dialog.alert(window, EnigmailLocale.getString("keyDownloadFailed", this.statusText));
+    EnigmailDialog.alert(window, EnigmailLocale.getString("keyDownloadFailed", this.statusText));
     enigCloseDialog();
     return;
   }
@@ -299,7 +299,7 @@ function enigImportKeys (connType, txt, errorTxt) {
     return;
   }
   else if (gEnigRequest.errorTxt) {
-    Dialog.longAlert(window, EnigmailData.convertGpgToUnicode(gEnigRequest.errorTxt));
+    EnigmailDialog.longAlert(window, EnigmailData.convertGpgToUnicode(gEnigRequest.errorTxt));
   }
 
   gEnigRequest.httpInProgress=false;
@@ -319,7 +319,7 @@ function enigImportHtmlKeys(txt) {
                             gEnigRequest.dlKeyList[gEnigRequest.keyNum-1],
                             errorMsgObj);
   if (errorMsgObj.value)
-    Dialog.alert(window, errorMsgObj.value);
+    EnigmailDialog.alert(window, errorMsgObj.value);
   if (r === 0) {
     window.arguments[RESULT].importedKeys++;
     return true;
@@ -345,7 +345,7 @@ function enigNewHttpRequest(requestType, requestCallbackFunc) {
     var msg=EnigmailLocale.getString("protocolNotSupported", gEnigRequest.protocol);
     if (! EnigmailPrefs.getPref("useGpgKeysTool"))
       msg += " "+EnigmailLocale.getString("gpgkeysDisabled");
-    Dialog.alert(window, msg);
+    EnigmailDialog.alert(window, msg);
     enigCloseDialog();
     return;
   }
@@ -362,7 +362,7 @@ function enigNewHttpRequest(requestType, requestCallbackFunc) {
     reqCommand = gEnigRequest.protocol+"://"+gEnigRequest.keyserver+":"+gEnigRequest.port+"/pks/lookup?search="+keyId+"&op=get";
     break;
   default:
-    Dialog.alert(window, "Unknown request type "+requestType);
+    EnigmailDialog.alert(window, "Unknown request type "+requestType);
     return;
   }
 
@@ -391,7 +391,7 @@ function enigScanKeys(connType, htmlTxt) {
       var htmlNode = domParser.parseFromString("<p>" + htmlTxt + "</p>", "text/xml");
 
       if (htmlNode.firstChild.nodeName=="parsererror") {
-        Dialog.alert(window, "internalError");
+        EnigmailDialog.alert(window, "internalError");
         return false;
       }
       enigScanHtmlKeys(htmlNode.firstChild.firstChild.data);
@@ -419,7 +419,7 @@ function enigScanKeys(connType, htmlTxt) {
   document.getElementById("progress.box").setAttribute("hidden", "true");
   document.getElementById("selall-button").removeAttribute("hidden");
   if (gEnigRequest.keyList.length === 0) {
-    Dialog.alert(window, EnigmailLocale.getString("noKeyFound"));
+    EnigmailDialog.alert(window, EnigmailLocale.getString("noKeyFound"));
     enigCloseDialog();
   }
 
@@ -582,7 +582,7 @@ function enigNewGpgKeysRequest(requestType, callbackFunction) {
 
   var enigmailSvc = GetEnigmailSvc();
   if (!enigmailSvc) {
-    Dialog.alert(window, EnigmailLocale.getString("accessError"));
+    EnigmailDialog.alert(window, EnigmailLocale.getString("accessError"));
     return;
   }
 
@@ -634,7 +634,7 @@ function enigNewGpgKeysRequest(requestType, callbackFunction) {
       enigNewHttpRequest(requestType, enigScanKeys);
       return;
     default:
-      Dialog.alert(window, EnigmailLocale.getString("gpgKeysFailed", gEnigRequest.protocol));
+      EnigmailDialog.alert(window, EnigmailLocale.getString("gpgKeysFailed", gEnigRequest.protocol));
       enigCloseDialog();
       return;
     }

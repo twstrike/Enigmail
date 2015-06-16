@@ -40,7 +40,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Dialog" ];
+const EXPORTED_SYMBOLS = [ "EnigmailDialog" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -59,7 +59,7 @@ const gPromptSvc = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.n
 
 const LOCAL_FILE_CONTRACTID = "@mozilla.org/file/local;1";
 
-const Dialog = {
+const EnigmailDialog = {
     /***
      * Confirmation dialog with OK / Cancel buttons (both customizable)
      *
@@ -109,7 +109,7 @@ const Dialog = {
      */
     alert: function (win, mesg) {
         if (mesg.length > 1000) {
-            Dialog.longAlert(win, mesg, null, EnigmailLocale.getString("dlg.button.close"));
+            EnigmailDialog.longAlert(win, mesg, null, EnigmailLocale.getString("dlg.button.close"));
         } else {
             try {
                 gPromptSvc.alert(win, EnigmailLocale.getString("enigAlert"), mesg);
@@ -233,7 +233,7 @@ const Dialog = {
             mesg += EnigmailLocale.getString("noRepeat");
         }
 
-        Dialog.alert(win, mesg);
+        EnigmailDialog.alert(win, mesg);
     },
 
     /**
@@ -395,4 +395,4 @@ const Dialog = {
     }
 };
 
-Windows.alert = Dialog.alert;
+Windows.alert = EnigmailDialog.alert;

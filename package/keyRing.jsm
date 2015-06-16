@@ -56,7 +56,7 @@ Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/trust.jsm"); /*global Trust: false */
 Cu.import("resource://enigmail/armor.jsm"); /*global EnigmailArmor: false */
-Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
@@ -115,7 +115,7 @@ function obtainKeyList(win, secretOnly, refresh) {
                                          {},
                                          errorMsgObj);
         if (exitCodeObj.value !== 0) {
-            Dialog.alert(win, errorMsgObj.value);
+            EnigmailDialog.alert(win, errorMsgObj.value);
             return null;
         }
     } catch (ex) {
@@ -603,7 +603,7 @@ const EnigmailKeyRing = {
                                         endIndexObj.value - beginIndexObj.value + 1);
 
         if (uiFlags & nsIEnigmail.UI_INTERACTIVE) {
-            if (!Dialog.confirmDlg(parent, EnigmailLocale.getString("importKeyConfirm"), EnigmailLocale.getString("keyMan.button.import"))) {
+            if (!EnigmailDialog.confirmDlg(parent, EnigmailLocale.getString("importKeyConfirm"), EnigmailLocale.getString("keyMan.button.import"))) {
                 errorMsgObj.value = EnigmailLocale.getString("failCancel");
                 return -1;
             }
@@ -839,7 +839,7 @@ const EnigmailKeyRing = {
 
         var aGpgSecretsList = obtainKeyList(win, true, refresh);
         if (!aGpgSecretsList && !refresh) {
-            if (Dialog.confirmDlg(EnigmailLocale.getString("noSecretKeys"),
+            if (EnigmailDialog.confirmDlg(EnigmailLocale.getString("noSecretKeys"),
                                   EnigmailLocale.getString("keyMan.button.generateKey"),
                                   EnigmailLocale.getString("keyMan.button.skip"))) {
                 Windows.openKeyGen();
@@ -988,7 +988,7 @@ const EnigmailKeyRing = {
         const keyList = EnigmailKeyRing.getUserIdList(true, refresh, exitCodeObj, {}, errorMsgObj);
 
         if (exitCodeObj.value !== 0 && keyList.length === 0) {
-            Dialog.alert(win, errorMsgObj.value);
+            EnigmailDialog.alert(win, errorMsgObj.value);
             return null;
         }
 

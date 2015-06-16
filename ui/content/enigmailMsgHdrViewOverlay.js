@@ -304,7 +304,7 @@ Enigmail.hdrView = {
       else if (statusFlags & nsIEnigmail.IMPORTED_KEY) {
         statusLine = "";
         statusInfo = "";
-        Dialog.alert(window, errorMsg);
+        EnigmailDialog.alert(window, errorMsg);
       }
       else {
         statusInfo = EnigmailLocale.getString("failedDecryptVerify");

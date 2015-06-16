@@ -1,5 +1,5 @@
 dump("loading: enigmailCardDetails.js\n");
-/*global Components: false, EnigmailLocale: false, Dialog: false, Time: false */
+/*global Components: false, EnigmailLocale: false, EnigmailDialog: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -113,7 +113,7 @@ function onLoad() {
 }
 
 function failWithError(errorMsg) {
-  Dialog.alert(window, errorMsg);
+  EnigmailDialog.alert(window, errorMsg);
   window.close();
 }
 
@@ -163,7 +163,7 @@ function doSaveChanges() {
 
   var enigmailSvc = EnigmailCore.getService(window);
   if (!enigmailSvc) {
-    Dialog.alert(window, EnigmailLocale.getString("accessError"));
+    EnigmailDialog.alert(window, EnigmailLocale.getString("accessError"));
     window.close();
     return;
   }
@@ -172,7 +172,7 @@ function doSaveChanges() {
   var dialogname = getValue("name");
   var dialogfirstname = getValue("firstname");
   if ((dialogname.search(/^[A-Za-z0-9\.\-,\?_ ]*$/) !== 0) || (dialogfirstname.search(/^[A-Za-z0-9\.\-,\?_ ]*$/) !== 0)) {
-    Dialog.alert(window, EnigmailLocale.getString("Carddetails.NoASCII"));
+    EnigmailDialog.alert(window, EnigmailLocale.getString("Carddetails.NoASCII"));
     onLoad();
     doEditData();
   }
@@ -187,7 +187,7 @@ function doSaveChanges() {
                                   forcepin,
     function _cardAdminCb(exitCode, errorMsg) {
       if (exitCode !== 0) {
-        Dialog.alert(window, errorMsg);
+        EnigmailDialog.alert(window, errorMsg);
       }
 
       onLoad();

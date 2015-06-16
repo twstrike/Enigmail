@@ -1,5 +1,5 @@
 dump("loading: enigmailKeyManager.js\n");
-/*global Components: false, EnigInitCommon: false, Dialog: false */
+/*global Components: false, EnigInitCommon: false, EnigmailDialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -1100,7 +1100,7 @@ function enigmailDowloadContactKeysEngine() {
 
     if (addressBook instanceof Ci.nsIAbDirectory) { // or nsIAbItem or nsIAbCollection
       // ask for confirmation for each address book:
-      var doIt = Dialog.confirmDlg(window,
+      var doIt = EnigmailDialog.confirmDlg(window,
                    EnigGetString("downloadContactsKeys.importFrom", addressBook.dirName),
                    EnigGetString("dlgYes"),
                    EnigGetString("dlg.button.skip"));
@@ -1167,7 +1167,7 @@ function enigmailDowloadContactKeysEngine() {
 
 function enigmailDownloadContactKeys() {
 
-  var doIt = Dialog.confirmPref(window,
+  var doIt = EnigmailDialog.confirmPref(window,
     EnigGetString("downloadContactsKeys.warn"),
     "warnDownloadContactKeys",
     EnigGetString("dlg.button.continue"),

@@ -1,5 +1,5 @@
 dump("loading: enigmailCommon.js\n");
-/*global Components: false, EnigmailFiles: false, EnigmailCore: false, EnigmailApp: false, Dialog: false, Windows: false, Time: false */
+/*global Components: false, EnigmailFiles: false, EnigmailCore: false, EnigmailApp: false, EnigmailDialog: false, Windows: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -261,7 +261,7 @@ function EnigWriteException(referenceInfo, ex) {
 ///////////////////////////////////////////////////////////////////////////////
 
 function EnigAlert(mesg) {
-  return Dialog.alert(window, mesg);
+  return EnigmailDialog.alert(window, mesg);
 }
 
 /**
@@ -275,21 +275,21 @@ function EnigAlert(mesg) {
  *
  */
 function EnigLongAlert(mesg, checkBoxLabel, okLabel, labelButton2, labelButton3, checkedObj) {
-  return Dialog.longAlert(window, mesg, checkBoxLabel, okLabel, labelButton2, labelButton3, checkedObj);
+  return EnigmailDialog.longAlert(window, mesg, checkBoxLabel, okLabel, labelButton2, labelButton3, checkedObj);
 }
 
 function EnigAlertPref(mesg, prefText) {
-  return Dialog.alertPref(window, mesg, prefText);
+  return EnigmailDialog.alertPref(window, mesg, prefText);
 }
 
 // Confirmation dialog with OK / Cancel buttons (both customizable)
 function EnigConfirm(mesg, okLabel, cancelLabel) {
-  return Dialog.confirmDlg(window, mesg, okLabel, cancelLabel);
+  return EnigmailDialog.confirmDlg(window, mesg, okLabel, cancelLabel);
 }
 
 
 function EnigConfirmPref(mesg, prefText, okLabel, cancelLabel) {
-  return Dialog.confirmPref(window, mesg, prefText, okLabel, cancelLabel);
+  return EnigmailDialog.confirmPref(window, mesg, prefText, okLabel, cancelLabel);
 }
 
 function EnigError(mesg) {
@@ -484,7 +484,7 @@ function EnigGetVersion() {
 }
 
 function EnigFilePicker(title, displayDir, save, defaultExtension, defaultName, filterPairs) {
-  return Dialog.filePicker(window, title, displayDir, save, defaultExtension,
+  return EnigmailDialog.filePicker(window, title, displayDir, save, defaultExtension,
                            defaultName, filterPairs);
 }
 

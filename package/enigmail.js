@@ -62,7 +62,7 @@ Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/uris.jsm"); /*global URIs: false */
 Cu.import("resource://enigmail/verify.jsm"); /*global Verify: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
-Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/configure.jsm"); /*global EnigmailConfigure: false */
 Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
 
@@ -314,7 +314,7 @@ Enigmail.prototype = {
 
                     const checkedObj = {value: false};
                     if (EnigmailPrefs.getPref("initAlert")) {
-                        const r = Dialog.longAlert(win, "Enigmail: "+errMsg,
+                        const r = EnigmailDialog.longAlert(win, "Enigmail: "+errMsg,
                                                    EnigmailLocale.getString("dlgNoPrompt"),
                                                    null, EnigmailLocale.getString("initErr.setupWizard.button"),
                                                    null, checkedObj);
@@ -342,7 +342,7 @@ Enigmail.prototype = {
 
             if (firstInitialization && holder.svc.initialized &&
                 EnigmailGpgAgent.agentType === "pgp") {
-                Dialog.alert(win, EnigmailLocale.getString("pgpNotSupported"));
+                EnigmailDialog.alert(win, EnigmailLocale.getString("pgpNotSupported"));
             }
 
             if (holder.svc.initialized && (EnigmailApp.getVersion() != configuredVersion)) {

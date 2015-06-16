@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailData: false, EnigmailLog: false, EnigmailPrefs: false, EnigmailLocale: false, EnigmailArmor: false, Execution: false, Dialog: false */
+/*global Components: false, EnigmailData: false, EnigmailLog: false, EnigmailPrefs: false, EnigmailLocale: false, EnigmailArmor: false, Execution: false, EnigmailDialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -667,7 +667,7 @@ const EnigmailDecryption = {
                     importedKey = (exitStatus === 0);
 
                     if (exitStatus > 0) {
-                        Dialog.alert(parent, EnigmailLocale.getString("cantImport")+importErrorMsgObj.value);
+                        EnigmailDialog.alert(parent, EnigmailLocale.getString("cantImport")+importErrorMsgObj.value);
                     }
                 }
 
@@ -727,7 +727,7 @@ const EnigmailDecryption = {
         if (attachmentHead.match(/\-\-\-\-\-BEGIN PGP \w+ KEY BLOCK\-\-\-\-\-/)) {
             // attachment appears to be a PGP key file
 
-            if (Dialog.confirmDlg(parent, EnigmailLocale.getString("attachmentPgpKey", [ displayName ]),
+            if (EnigmailDialog.confirmDlg(parent, EnigmailLocale.getString("attachmentPgpKey", [ displayName ]),
                                   EnigmailLocale.getString("keyMan.button.import"), EnigmailLocale.getString("dlg.button.view"))) {
                 exitCodeObj.value = EnigmailKeyRing.importKey(parent, 0, byteData, "", errorMsgObj);
                 statusFlagsObj.value = nsIEnigmail.IMPORTED_KEY;

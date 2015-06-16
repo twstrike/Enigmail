@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailDecryptPermanently: false, EnigmailCore: false, EnigmailLog: false, EnigmailLocale: false, Dialog: false */
+/*global Components: false, EnigmailDecryptPermanently: false, EnigmailCore: false, EnigmailLog: false, EnigmailLocale: false, EnigmailDialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -85,7 +85,7 @@ const filterActionMoveDecrypt = {
     },
 
     validateActionValue: function (value, folder, type) {
-        Dialog.alert(null, EnigmailLocale.getString("filter.decryptMove.warnExperimental"));
+        EnigmailDialog.alert(null, EnigmailLocale.getString("filter.decryptMove.warnExperimental"));
 
         if (value === "") {
             return EnigmailLocale.getString("filter.folderRequired");

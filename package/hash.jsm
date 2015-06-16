@@ -49,7 +49,7 @@ Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
-Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 
 const Ci = Components.interfaces;
 
@@ -119,7 +119,7 @@ const Hash = {
                     // "Unremember" passphrase on error return
                     retStatusObj.errorMsg = EnigmailLocale.getString("badPhrase");
                 }
-                Dialog.alert(win, retStatusObj.errorMsg);
+                EnigmailDialog.alert(win, retStatusObj.errorMsg);
                 return exitCode2;
             }
 

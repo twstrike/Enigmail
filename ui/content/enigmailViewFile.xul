@@ -86,7 +86,7 @@
                      // same data as displayed
 
     function saveLogFile() {
-      let fileObj = Dialog.filePicker(window, EnigmailLocale.getString("saveLogFile.title"), null,
+      let fileObj = EnigmailDialog.filePicker(window, EnigmailLocale.getString("saveLogFile.title"), null,
         true, "txt");
 
       EnigmailFiles.writeFileContents(fileObj, logFileData, null);

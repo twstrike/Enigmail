@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailLog: false, EnigmailPrefs: false, Timer: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false, Windows: false */
+/*global Components: false, EnigmailLog: false, EnigmailPrefs: false, Timer: false, EnigmailApp: false, EnigmailLocale: false, EnigmailDialog: false, Windows: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -270,7 +270,7 @@ const EnigmailConfigure = {
                     // window, we have to do this asynchronously
                     Timer.setTimeout(
                         function _cb() {
-                            var doIt = Dialog.confirmDlg(win,
+                            var doIt = EnigmailDialog.confirmDlg(win,
                                                          EnigmailLocale.getString("enigmailCommon.versionSignificantlyChanged"),
                                                          EnigmailLocale.getString("enigmailCommon.checkPreferences"),
                                                          EnigmailLocale.getString("dlg.button.close"));

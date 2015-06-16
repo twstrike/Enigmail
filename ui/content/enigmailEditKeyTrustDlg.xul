@@ -113,7 +113,7 @@
         Number(t.selectedItem.value),
         function(exitCode, errorMsg) {
           if (exitCode != 0) {
-            Dialog.alert(window, EnigmailLocale.getString("setKeyTrustFailed")+"\n\n"+errorMsg);
+            EnigmailDialog.alert(window, EnigmailLocale.getString("setKeyTrustFailed")+"\n\n"+errorMsg);
             window.close();
             return;
           }

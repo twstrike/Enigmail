@@ -121,7 +121,7 @@ function processKey(subKeys) {
     function(exitCode, errorMsg) {
       if (exitCode !== 0) {
         Timer.setTimeout(function () {
-          Dialog.alert(window, EnigmailLocale.getString("setKeyExpirationDateFailed")+"\n\n"+errorMsg);
+          EnigmailDialog.alert(window, EnigmailLocale.getString("setKeyExpirationDateFailed")+"\n\n"+errorMsg);
         }, 10);
       }
       else {
@@ -172,7 +172,7 @@ function onAccept() {
       processKey(subkeys);
     } else {
       Timer.setTimeout(function () {
-        Dialog.alert(window, EnigmailLocale.getString("noKeySelected")+"\n");
+        EnigmailDialog.alert(window, EnigmailLocale.getString("noKeySelected")+"\n");
       }, 10);
     }
   }
@@ -195,7 +195,7 @@ function checkExpirationDate() {
       if (gAlertPopUpIsOpen !== true) {
         gAlertPopUpIsOpen = true;
         Timer.setTimeout(function () {
-          Dialog.alert(window, EnigmailLocale.getString("expiryTooLongShorter")+"\n");
+          EnigmailDialog.alert(window, EnigmailLocale.getString("expiryTooLongShorter")+"\n");
           gAlertPopUpIsOpen = false;
         }, 10);
       }
@@ -206,7 +206,7 @@ function checkExpirationDate() {
       if (gAlertPopUpIsOpen !== true) {
         gAlertPopUpIsOpen = true;
         Timer.setTimeout(function () {
-          Dialog.alert(window, EnigmailLocale.getString("expiryTooShort")+"\n");
+          EnigmailDialog.alert(window, EnigmailLocale.getString("expiryTooShort")+"\n");
           gAlertPopUpIsOpen = false;
         }, 10);
       }

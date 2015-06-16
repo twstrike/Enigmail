@@ -169,11 +169,11 @@
       newPin = document.getElementById(pinItem1).value;
 
       if (newPin.length < minLen) {
-        Dialog.alert(window, EnigmailLocale.getString("cardPin.minLength", minLen));
+        EnigmailDialog.alert(window, EnigmailLocale.getString("cardPin.minLength", minLen));
         return false;
       }
       if (newPin != document.getElementById(pinItem2).value) {
-        Dialog.alert(window, EnigmailLocale.getString("cardPin.dontMatch"));
+        EnigmailDialog.alert(window, EnigmailLocale.getString("cardPin.dontMatch"));
         return false;
       }
     }
@@ -188,7 +188,7 @@
                                  pinObserver,
       function _ChangePinCb(exitCode, errorMsg) {
         if (exitCode != 0) {
-          Dialog.alert(window, EnigmailLocale.getString("cardPin.processFailed")+"\n"+pinObserver.result);
+          EnigmailDialog.alert(window, EnigmailLocale.getString("cardPin.processFailed")+"\n"+pinObserver.result);
         }
         else
           window.close();

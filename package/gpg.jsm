@@ -49,7 +49,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
-Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
@@ -214,7 +214,7 @@ const Gpg = {
         let cfgStr = Gpg.getGnupgConfig(exitCodeObj, errorMsgObj);
 
         if (exitCodeObj.value !== 0) {
-            Dialog.alert(errorMsgObj.value);
+            EnigmailDialog.alert(errorMsgObj.value);
             return null;
         }
 

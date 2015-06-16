@@ -1,5 +1,5 @@
 dump("loading: enigmailKeygen.js\n");
-/*global Components: false, EnigmailLocale: false, EnigmailData: false, Dialog: false */
+/*global Components: false, EnigmailLocale: false, EnigmailData: false, EnigmailDialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -268,7 +268,7 @@ function enigmailCheckPassphrase() {
   }
 
   if (passphrase.search(/[^\x20-\x7E]/)>=0) {
-    if (! Dialog.confirmDlg(window, EnigmailLocale.getString("keygen.passCharProblem"),
+    if (! EnigmailDialog.confirmDlg(window, EnigmailLocale.getString("keygen.passCharProblem"),
         EnigmailLocale.getString("dlg.button.ignore"), EnigmailLocale.getString("dlg.button.cancel"))) {
       return null;
     }

@@ -51,7 +51,7 @@ Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
 Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
-Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
+Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
@@ -486,7 +486,7 @@ const EnigmailGpgAgent = {
             if (! domWindow) {
                 domWindow = Windows.getBestParentWin();
             }
-            Dialog.alert(domWindow, EnigmailLocale.getString("oldGpgVersion14", [ gpgVersion ]));
+            EnigmailDialog.alert(domWindow, EnigmailLocale.getString("oldGpgVersion14", [ gpgVersion ]));
             throw Components.results.NS_ERROR_FAILURE;
         }
 
@@ -599,7 +599,7 @@ const EnigmailGpgAgent = {
 
                 if (command === null) {
                     EnigmailLog.ERROR("enigmail.js: detectGpgAgent: gpg-agent not found\n");
-                    Dialog.alert(domWindow, EnigmailLocale.getString("gpgAgentNotStarted", [ Gpg.agentVersion ]));
+                    EnigmailDialog.alert(domWindow, EnigmailLocale.getString("gpgAgentNotStarted", [ Gpg.agentVersion ]));
                     throw Components.results.NS_ERROR_FAILURE;
                 }
             }
@@ -647,7 +647,7 @@ const EnigmailGpgAgent = {
                 }
                 else {
                     EnigmailLog.ERROR("enigmail.js: detectGpgAgent: gpg-agent output: "+outStr+"\n");
-                    Dialog.alert(domWindow, EnigmailLocale.getString("gpgAgentNotStarted", [ Gpg.agentVersion ]));
+                    EnigmailDialog.alert(domWindow, EnigmailLocale.getString("gpgAgentNotStarted", [ Gpg.agentVersion ]));
                     throw Components.results.NS_ERROR_FAILURE;
                 }
             }

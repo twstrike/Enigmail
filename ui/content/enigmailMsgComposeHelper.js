@@ -1,5 +1,5 @@
 dump("loading: enigmailMsgComposeHelper.js\n");
-/*global Components: false, Dialog: false */
+/*global Components: false, EnigmailDialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -145,7 +145,7 @@ Enigmail.hlp = {
       var rulesList=rulesListObj.value;
 
       if (rulesList.firstChild.nodeName=="parsererror") {
-        Dialog.alert(window, "Invalid pgprules.xml file:\n"+ rulesList.firstChild.textContent);
+        EnigmailDialog.alert(window, "Invalid pgprules.xml file:\n"+ rulesList.firstChild.textContent);
         return false;
       }
       EnigmailLog.DEBUG("enigmailMsgComposeHelper.js: getRecipientsKeys(): rules successfully loaded; now process them\n");
@@ -618,7 +618,7 @@ Enigmail.hlp = {
     if (EnigmailPrefs.getPref("warnOnRulesConflict")==2) {
       EnigmailPrefs.setPref("warnOnRulesConflict", 0);
     }
-    if (!Dialog.confirmPref(window, EnigmailLocale.getString("rulesConflict", [ msg ]), "warnOnRulesConflict")) {
+    if (!EnigmailDialog.confirmPref(window, EnigmailLocale.getString("rulesConflict", [ msg ]), "warnOnRulesConflict")) {
       return false;
     }
     return true;
