@@ -57,7 +57,7 @@ Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
-Cu.import("resource://enigmail/mime.jsm"); /*global Mime: false */
+Cu.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
 Cu.import("resource://enigmail/attachment.jsm"); /*global Attachment: false */
 
 /*global MimeBody: false, MimeUnknown: false, MimeMessageAttachment: false */
@@ -674,7 +674,7 @@ DecryptMessageIntoFolder.prototype = {
                         let ct = m.extractHeader("content-type", false) || "";
 
                         let boundary = getBoundary(getHeaderValue(mime, 'content-type'));
-                        if (! boundary) boundary = Mime.createBoundary();
+                        if (! boundary) boundary = EnigmailMime.createBoundary();
 
                         // append relevant headers
                         mime.headers['content-type'] = "multipart/mixed; boundary=\""+boundary+"\"";
@@ -908,7 +908,7 @@ DecryptMessageIntoFolder.prototype = {
             for (let j in this.allTasks) {
                 if (this.allTasks[j].partName == mime.parts[0].partName) {
 
-                    boundary = Mime.createBoundary();
+                    boundary = EnigmailMime.createBoundary();
 
                     msg += getRfc822Headers(mime.headers, ct, "content-type");
                     msg += 'Content-Type: multipart/mixed; boundary="'+boundary+'"\r\n\r\n';

@@ -19,7 +19,7 @@ Components.utils.import("resource://enigmail/locale.jsm"); /*global Locale: fals
 Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
 Components.utils.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
 Components.utils.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
-Components.utils.import("resource://enigmail/mime.jsm"); /*global Mime: false */
+Components.utils.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global Constants: false */
 
 const Cc = Components.classes;
@@ -385,7 +385,7 @@ PgpMimeDecrypt.prototype = {
         if (hdr[j].search(/^\s*content-type:\s+text\/(plain|html)/i) >= 0) {
           LOCAL_DEBUG("mimeDecrypt.js: done: adding multipart/mixed around "+ hdr[j]+"\n");
 
-          let wrapper = Mime.createBoundary();
+          let wrapper = EnigmailMime.createBoundary();
           this.decryptedData = 'Content-Type: multipart/mixed; boundary="' + wrapper + '"\r\n\r\n'+
             '--'+ wrapper + '\r\n' +
             this.decryptedData +
