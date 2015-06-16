@@ -92,7 +92,7 @@ zip --must-match\
     ../${xpiFile} \
     components/${xpiModule}.xpt \
     components/${xpiModule}.js \
-    components/enigprefs-service.js \
+    components/prefs-service.js \
     components/msgCompFields.js \
     components/mimeDecrypt.js \
     components/mimeEncrypt.js \
