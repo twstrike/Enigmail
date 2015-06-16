@@ -12,7 +12,7 @@
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestHelper: false, component: false, withTestGpgHome: false, withEnigmail: false */
 TestHelper.loadDirectly("tests/mailHelper.js"); /*global MailHelper: false */
 
-testing("decryptPermanently.jsm"); /*global DecryptPermanently: false, Promise: false */
+testing("decryptPermanently.jsm"); /*global EnigmailDecryptPermanently: false, Promise: false */
 component("enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
 /*global msgHdrToMimeMessage: false, MimeMessage: false, MimeContainer: false */
 component("enigmail/glodaMime.jsm");
@@ -28,7 +28,7 @@ test(withTestGpgHome(withEnigmail(function messageIsCopiedToNewDir() {
     const targetFolder = MailHelper.createMailFolder("target-box");
     const move = false;
     const reqSync = true;
-    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 1);
@@ -44,7 +44,7 @@ test(withTestGpgHome(withEnigmail(function messageIsMovedToNewDir() {
     const targetFolder = MailHelper.createMailFolder("target-box");
     const move = true;
     const reqSync = true;
-    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     Assert.equal(targetFolder.getTotalMessages(false), 1);
     Assert.equal(sourceFolder.getTotalMessages(false), 0);
@@ -60,7 +60,7 @@ test(withTestGpgHome(withEnigmail(function messageIsMovedAndDecrypted() {
     const targetFolder = MailHelper.createMailFolder("target-box");
     const move = true;
     const reqSync = true;
-    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     const dispatchedHeader = MailHelper.fetchFirstMessageHeaderIn(targetFolder);
     do_test_pending();
@@ -87,7 +87,7 @@ test(withTestGpgHome(withEnigmail(function messageWithAttachemntIsMovedAndDecryp
     const targetFolder = MailHelper.createMailFolder("target-box");
     const move = true;
     const reqSync = true;
-    DecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
+    EnigmailDecryptPermanently.dispatchMessages([header], targetFolder.URI, move, reqSync);
 
     const dispatchedHeader = MailHelper.fetchFirstMessageHeaderIn(targetFolder);
     do_test_pending();

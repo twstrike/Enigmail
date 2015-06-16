@@ -66,7 +66,7 @@ Cu.import("resource://enigmail/glodaMime.jsm");
 
 var EC = EnigmailCore;
 
-const EXPORTED_SYMBOLS = ["DecryptPermanently"];
+const EXPORTED_SYMBOLS = ["EnigmailDecryptPermanently"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -87,7 +87,7 @@ const IOSERVICE_CONTRACTID = "@mozilla.org/network/io-service;1";
  *
  * @return a Promise that we do that
  */
-const DecryptPermanently = {
+const EnigmailDecryptPermanently = {
 
   /***
    *  dispatchMessages
@@ -112,13 +112,13 @@ const DecryptPermanently = {
   dispatchMessages: function(aMsgHdrs, targetFolder, move, requireSync) {
     var inspector = Cc["@mozilla.org/jsinspector;1"].getService(Ci.nsIJSInspector);
 
-    var promise = DecryptPermanently.decryptMessage(aMsgHdrs[0], targetFolder, move);
+    var promise = EnigmailDecryptPermanently.decryptMessage(aMsgHdrs[0], targetFolder, move);
     var done = false;
 
     var processNext = function (data) {
       aMsgHdrs.splice(0,1);
       if (aMsgHdrs.length > 0) {
-        DecryptPermanently.dispatchMessages(aMsgHdrs, targetFolder, move, false);
+        EnigmailDecryptPermanently.dispatchMessages(aMsgHdrs, targetFolder, move, false);
       } else {
         // last message was finished processing
         done = true;

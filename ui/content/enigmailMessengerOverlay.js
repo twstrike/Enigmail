@@ -2348,7 +2348,7 @@ Enigmail.msg = {
     let msgHdrs = gFolderDisplay ? gFolderDisplay.selectedMessages : null;
     if (! msgHdrs || msgHdrs.length === 0) return;
 
-    DecryptPermanently.dispatchMessages(msgHdrs, destFolder.URI, false, false);
+    EnigmailDecryptPermanently.dispatchMessages(msgHdrs, destFolder.URI, false, false);
   },
 
   // download keys
