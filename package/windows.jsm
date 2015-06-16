@@ -46,7 +46,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/keyRing.jsm"); /*global KeyRing: false */
@@ -156,7 +156,7 @@ const Windows = {
      * @return:    the frame object or null if not found
      */
     getFrame: function(win, frameName) {
-        Log.DEBUG("enigmailCommon.jsm: getFrame: name="+frameName+"\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: getFrame: name="+frameName+"\n");
         for (var j=0; j<win.frames.length; j++) {
             if (win.frames[j].name == frameName) {
                 return win.frames[j];
@@ -280,7 +280,7 @@ const Windows = {
      * no return value
      */
     openPrefWindow: function (win, showBasic, selectTab) {
-        Log.DEBUG("windows.js: openPrefWindow\n");
+        EnigmailLog.DEBUG("windows.js: openPrefWindow\n");
 
         EnigmailCore.getService(win, true);  // true: starting preferences dialog
 
@@ -469,7 +469,7 @@ const Windows = {
      * no return value
      */
     downloadKeys: function (win, inputObj, resultObj) {
-        Log.DEBUG("windows.jsm: downloadKeys: searchList="+inputObj.searchList+"\n");
+        EnigmailLog.DEBUG("windows.jsm: downloadKeys: searchList="+inputObj.searchList+"\n");
 
         resultObj.importedKeys=0;
 

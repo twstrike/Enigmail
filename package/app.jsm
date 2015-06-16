@@ -15,7 +15,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/AddonManager.jsm"); /*global AddonManager: false */
-Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 
 const DIR_SERV_CONTRACTID  = "@mozilla.org/file/directory_service;1";
 const ENIG_EXTENSION_GUID = "{847b3a00-7ab1-11d4-8f02-006008948af5}";
@@ -44,8 +44,8 @@ const EnigmailApp = {
     },
 
     getVersion: function() {
-        Log.DEBUG("app.jsm: getVersion\n");
-        Log.DEBUG("app.jsm: installed version: "+EnigmailApp.version+"\n");
+        EnigmailLog.DEBUG("app.jsm: getVersion\n");
+        EnigmailLog.DEBUG("app.jsm: installed version: "+EnigmailApp.version+"\n");
         return EnigmailApp.version;
     },
 

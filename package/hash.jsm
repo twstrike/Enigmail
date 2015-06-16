@@ -44,7 +44,7 @@ const EXPORTED_SYMBOLS = [ "Hash" ];
 
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
@@ -60,7 +60,7 @@ const mimeHashAlgorithms = [null, "sha1", "ripemd160", "sha256", "sha384", "sha5
 
 const Hash = {
     determineAlgorithm: function (win, uiFlags, fromMailAddr, hashAlgoObj) {
-        Log.DEBUG("hash.jsm: determineAlgorithm\n");
+        EnigmailLog.DEBUG("hash.jsm: determineAlgorithm\n");
 
         if (! win) {
             win = Windows.getMostRecentWindow();
@@ -129,22 +129,22 @@ const Hash = {
             if (m && (m.length > 2) && (m[1] == "Hash: ")) {
                 hashAlgorithm = m[2].toLowerCase();
             } else {
-                Log.DEBUG("hash.jsm: determineAlgorithm: no hashAlgorithm specified - using MD5\n");
+                EnigmailLog.DEBUG("hash.jsm: determineAlgorithm: no hashAlgorithm specified - using MD5\n");
             }
 
             for (let i=1; i < mimeHashAlgorithms.length; i++) {
                 if (mimeHashAlgorithms[i] === hashAlgorithm) {
-                    Log.DEBUG("hash.jsm: determineAlgorithm: found hashAlgorithm "+hashAlgorithm+"\n");
+                    EnigmailLog.DEBUG("hash.jsm: determineAlgorithm: found hashAlgorithm "+hashAlgorithm+"\n");
                     keyAlgorithms[fromMailAddr] = hashAlgorithm;
                     hashAlgoObj.value = hashAlgorithm;
                     return 0;
                 }
             }
 
-            Log.ERROR("hash.jsm: determineAlgorithm: no hashAlgorithm found\n");
+            EnigmailLog.ERROR("hash.jsm: determineAlgorithm: no hashAlgorithm found\n");
             return 2;
         } else {
-            Log.DEBUG("hash.jsm: determineAlgorithm: hashAlgorithm "+keyAlgorithms[fromMailAddr]+" is cached\n");
+            EnigmailLog.DEBUG("hash.jsm: determineAlgorithm: hashAlgorithm "+keyAlgorithms[fromMailAddr]+" is cached\n");
             hashAlgoObj.value = keyAlgorithms[fromMailAddr];
         }
 

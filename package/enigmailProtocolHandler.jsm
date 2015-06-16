@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, XPCOMUtils: false, Data: false, Log: false */
+/*global Components: false, EnigmailCore: false, XPCOMUtils: false, Data: false, EnigmailLog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -83,7 +83,7 @@ EnigmailProtocolHandler.prototype = {
     QueryInterface: XPCOMUtils.generateQI([nsIProtocolHandler]),
 
     newURI: function (aSpec, originCharset, aBaseURI) {
-        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.newURI: aSpec='"+aSpec+"'\n");
+        EnigmailLog.DEBUG("enigmail.js: EnigmailProtocolHandler.newURI: aSpec='"+aSpec+"'\n");
 
         // cut of any parameters potentially added to the URI; these cannot be handled
         if (aSpec.substr(0,14) == "enigmail:dummy") aSpec = "enigmail:dummy";
@@ -95,7 +95,7 @@ EnigmailProtocolHandler.prototype = {
     },
 
     newChannel: function (aURI) {
-        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.newChannel: URI='"+aURI.spec+"'\n");
+        EnigmailLog.DEBUG("enigmail.js: EnigmailProtocolHandler.newChannel: URI='"+aURI.spec+"'\n");
 
         var messageId = Data.extractMessageId(aURI.spec);
         var mimeMessageId = Data.extractMimeMessageId(aURI.spec);
@@ -116,7 +116,7 @@ EnigmailProtocolHandler.prototype = {
                 contentCharset = messageUriObj.contentCharset;
                 contentData    = messageUriObj.contentData;
 
-                Log.DEBUG("enigmail.js: EnigmailProtocolHandler.newChannel: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
+                EnigmailLog.DEBUG("enigmail.js: EnigmailProtocolHandler.newChannel: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
 
                 // do NOT delete the messageUriObj now from the list, this will be done once the message is unloaded (fix for bug 9730).
 
@@ -188,8 +188,8 @@ EnigmailProtocolHandler.prototype = {
     },
 
     handleMimeMessage: function (messageId) {
-        //        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
-        Log.DEBUG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL=, content length=, , \n");
+        //        EnigmailLog.DEBUG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL="+messageUriObj.originalUrl+", content length="+contentData.length+", "+contentType+", "+contentCharset+"\n");
+        EnigmailLog.DEBUG("enigmail.js: EnigmailProtocolHandler.handleMimeMessage: messageURL=, content length=, , \n");
     },
 
     allowPort: function (port, scheme) {

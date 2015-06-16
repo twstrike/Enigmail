@@ -14,7 +14,7 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Components.utils.import("resource://enigmail/mimeVerify.jsm"); /*global EnigmailVerify: false */
-Components.utils.import("resource://enigmail/log.jsm"); /*global Log: false */
+Components.utils.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Components.utils.import("resource://enigmail/data.jsm"); /*global Data: false */
 Components.utils.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
@@ -46,7 +46,7 @@ var gNumProc = 0;
 
 function PgpMimeDecrypt() {
 
-  Log.DEBUG("mimeDecrypt.js: PgpMimeDecrypt()\n");   // always log this one
+  EnigmailLog.DEBUG("mimeDecrypt.js: PgpMimeDecrypt()\n");   // always log this one
   this.mimeSvc = null;
   this.initOk = false;
   this.boundary = "";
@@ -80,11 +80,11 @@ PgpMimeDecrypt.prototype = {
   onStartRequest: function(request, uri) {
     if (!EnigmailCore.getService()) // Ensure Enigmail is initialized
       return;
-    Log.DEBUG("mimeDecrypt.js: onStartRequest\n");   // always log this one
+    EnigmailLog.DEBUG("mimeDecrypt.js: onStartRequest\n");   // always log this one
 
     ++gNumProc;
     if (gNumProc > 2) {
-      Log.DEBUG("mimeDecrypt.js: number of parallel requests above threshold - ignoring requst\n");
+      EnigmailLog.DEBUG("mimeDecrypt.js: number of parallel requests above threshold - ignoring requst\n");
       return;
     }
 
@@ -110,7 +110,7 @@ PgpMimeDecrypt.prototype = {
     this.boundary = getBoundary(this.mimeSvc.contentType);
     if (uri) {
       this.uri = uri.QueryInterface(Ci.nsIURI).clone();
-      Log.DEBUG("mimeDecrypt.js: onStartRequest: uri='"+ this.uri.spec+"'\n");
+      EnigmailLog.DEBUG("mimeDecrypt.js: onStartRequest: uri='"+ this.uri.spec+"'\n");
     }
     this.verifier = EnigmailVerify.newVerifier(true, this.uri, false);
     this.verifier.setMsgWindow(this.msgWindow, this.msgUriSpec);
@@ -254,8 +254,8 @@ PgpMimeDecrypt.prototype = {
         }
       }
       catch(ex) {
-        Log.writeException("mimeDecrypt.js", ex);
-        Log.DEBUG("mimeDecrypt.js: error while processing "+this.msgUriSpec+"\n");
+        EnigmailLog.writeException("mimeDecrypt.js", ex);
+        EnigmailLog.DEBUG("mimeDecrypt.js: error while processing "+this.msgUriSpec+"\n");
       }
     }
 
@@ -304,12 +304,12 @@ PgpMimeDecrypt.prototype = {
       this.verifier.onStopRequest();
     }
 
-    Log.DEBUG("mimeDecrypt.js: onStopRequest: process terminated\n");  // always log this one
+    EnigmailLog.DEBUG("mimeDecrypt.js: onStopRequest: process terminated\n");  // always log this one
     this.proc = null;
   },
 
   displayStatus: function() {
-    Log.DEBUG("mimeDecrypt.js: displayStatus\n");
+    EnigmailLog.DEBUG("mimeDecrypt.js: displayStatus\n");
 
     if (this.exitCode === null || this.msgWindow === null || this.statusDisplayed)
       return;
@@ -317,7 +317,7 @@ PgpMimeDecrypt.prototype = {
     let uriSpec = (this.uri ? this.uri.spec : null);
 
     try {
-      Log.DEBUG("mimeDecrypt.js: displayStatus for uri " + uriSpec + "\n");
+      EnigmailLog.DEBUG("mimeDecrypt.js: displayStatus for uri " + uriSpec + "\n");
       let headerSink = this.msgWindow.msgHeaderSink.securityInfo.QueryInterface(Ci.nsIEnigMimeHeaderSink);
 
       if (headerSink && this.uri && !this.backgroundJob) {
@@ -336,7 +336,7 @@ PgpMimeDecrypt.prototype = {
       this.statusDisplayed = true;
     }
     catch(ex) {
-      Log.writeException("mimeDecrypt.js", ex);
+      EnigmailLog.writeException("mimeDecrypt.js", ex);
     }
     LOCAL_DEBUG("mimeDecrypt.js: displayStatus done\n");
   },
@@ -413,7 +413,7 @@ PgpMimeDecrypt.prototype = {
       this.mimeSvc.onDataAvailable(null, null, gConv, 0, data.length);
     }
     catch(ex) {
-      Log.ERROR("mimeDecrypt.js: returnData(): mimeSvc.onDataAvailable failed:\n"+ex.toString());
+      EnigmailLog.ERROR("mimeDecrypt.js: returnData(): mimeSvc.onDataAvailable failed:\n"+ex.toString());
     }
   },
 
@@ -465,7 +465,7 @@ function getBoundary(contentType) {
 
 
 function LOCAL_DEBUG(str) {
-  if (gDebugLogLevel) Log.DEBUG(str);
+  if (gDebugLogLevel) EnigmailLog.DEBUG(str);
 }
 
 function initModule() {

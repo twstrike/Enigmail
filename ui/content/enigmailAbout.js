@@ -39,7 +39,7 @@ dump("loading: enigmailAbout.js\n");
 //       chrome://enigmail/content/enigmailBuildDate.js
 
 function enigAboutLoad() {
-    Log.DEBUG("enigmailAbout.js: enigAboutLoad\n");
+    EnigmailLog.DEBUG("enigmailAbout.js: enigAboutLoad\n");
 
   var contentFrame = Windows.getFrame(window, "contentFrame");
   if (!contentFrame)

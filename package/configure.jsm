@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, Prefs: false, Timer: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false, Windows: false */
+/*global Components: false, EnigmailLog: false, Prefs: false, Timer: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false, Windows: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -107,12 +107,12 @@ function upgradeRecipientsSelection () {
 }
 
 function upgradePrefsSending () {
-    Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending()\n");
+    EnigmailLog.DEBUG("enigmailCommon.jsm: upgradePrefsSending()\n");
 
     var  cbs = Prefs.getPref("confirmBeforeSend");
     var  ats = Prefs.getPref("alwaysTrustSend");
     var  ksfr = Prefs.getPref("keepSettingsForReply");
-    Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending cbs="+cbs+" ats="+ats+" ksfr="+ksfr+"\n");
+    EnigmailLog.DEBUG("enigmailCommon.jsm: upgradePrefsSending cbs="+cbs+" ats="+ats+" ksfr="+ksfr+"\n");
 
     // Upgrade confirmBeforeSend (bool) to confirmBeforeSending (int)
     switch (cbs) {
@@ -137,11 +137,11 @@ function upgradePrefsSending () {
     // if all settings are default settings, use convenient encryption
     if (cbs===false && ats===true && ksfr===true) {
         Prefs.setPref("encryptionModel", 0); // convenient
-        Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=0 (convenient)\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=0 (convenient)\n");
     }
     else {
         Prefs.setPref("encryptionModel", 1); // manually
-        Log.DEBUG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=1 (manually)\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: upgradePrefsSending() encryptionModel=1 (manually)\n");
     }
 
     // clear old prefs
@@ -228,7 +228,7 @@ function upgradePgpMime() {
 
 const Configure = {
     configureEnigmail: function(win, startingPreferences) {
-        Log.DEBUG("enigmailCommon.jsm: ConfigureEnigmail\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: ConfigureEnigmail\n");
         let oldVer=Prefs.getPref("configuredVersion");
 
         try {

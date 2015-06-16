@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, Dialog: false, dump: false, EnigmailFuncs: false */
+/*global Components: false, EnigmailLog: false, Dialog: false, dump: false, EnigmailFuncs: false */
 /*jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -116,7 +116,7 @@ PgpMimeEncrypt.prototype = {
       }
     }
     catch(ex) {
-      Log.writeException("mimeEncrypt.js", ex);
+      EnigmailLog.writeException("mimeEncrypt.js", ex);
       throw(ex);
     }
   },
@@ -193,7 +193,7 @@ PgpMimeEncrypt.prototype = {
 
     }
     catch(ex) {
-      Log.writeException("mimeEncrypt.js", ex);
+      EnigmailLog.writeException("mimeEncrypt.js", ex);
       throw(ex);
     }
   },
@@ -287,7 +287,7 @@ PgpMimeEncrypt.prototype = {
       this.flushOutput();
     }
     catch(ex) {
-      Log.writeException("mimeEncrypt.js", ex);
+      EnigmailLog.writeException("mimeEncrypt.js", ex);
       throw(ex);
     }
 
@@ -345,7 +345,7 @@ PgpMimeEncrypt.prototype = {
       }
     }
     catch(ex) {
-      Log.writeException("mimeEncrypt.js", ex);
+      EnigmailLog.writeException("mimeEncrypt.js", ex);
       throw(ex);
     }
   },
@@ -483,7 +483,7 @@ PgpMimeEncrypt.prototype = {
 
 
 function LOCAL_DEBUG(str) {
-  if (gDebugLogLevel) Log.DEBUG(str);
+  if (gDebugLogLevel) EnigmailLog.DEBUG(str);
 }
 
 function initModule() {

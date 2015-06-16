@@ -1,5 +1,5 @@
 dump("loading: enigmailSignKeyDlg.js\n");
-/*global Components: false, Log: false, EnigmailLocale: false, Dialog: false */
+/*global Components: false, EnigmailLog: false, EnigmailLocale: false, Dialog: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -135,7 +135,7 @@ function onLoad() {
 
         case "fpr":
           if (fingerprint==="") {
-            Log.DEBUG("enigmailSignKeyDlg.js: fpr:"+currKey+" -> "+aLine[9]+"\n");
+            EnigmailLog.DEBUG("enigmailSignKeyDlg.js: fpr:"+currKey+" -> "+aLine[9]+"\n");
             fingerprint = aLine[9];
           }
           break;

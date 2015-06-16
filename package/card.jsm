@@ -45,13 +45,13 @@ const EXPORTED_SYMBOLS = [ "Card" ];
 
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 
 const Card = {
     getCardStatus: function(exitCodeObj, errorMsgObj) {
-        Log.DEBUG("enigmail.js: Enigmail.getCardStatus\n");
+        EnigmailLog.DEBUG("enigmail.js: Enigmail.getCardStatus\n");
         const args = Gpg.getStandardArgs(false).
                   concat(["--status-fd", "2", "--fixed-list-mode", "--with-colons", "--card-status"]);
         const statusMsgObj = {};

@@ -49,7 +49,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
-Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
@@ -102,7 +102,7 @@ let keygenProcess = null;
  * @return - |array| of : separated key list entries as specified in GnuPG doc/DETAILS
  */
 function obtainKeyList(win, secretOnly, refresh) {
-    Log.DEBUG("enigmailFuncs.jsm: obtainKeyList\n");
+    EnigmailLog.DEBUG("enigmailFuncs.jsm: obtainKeyList\n");
 
     let userList = null;
     try {
@@ -119,7 +119,7 @@ function obtainKeyList(win, secretOnly, refresh) {
             return null;
         }
     } catch (ex) {
-        Log.ERROR("ERROR in enigmailFuncs: obtainKeyList"+ex.toString()+"\n");
+        EnigmailLog.ERROR("ERROR in enigmailFuncs: obtainKeyList"+ex.toString()+"\n");
     }
 
     if (typeof(userList) == "string") {
@@ -245,7 +245,7 @@ const KeyRing = {
     importKeyFromFile: function (parent, inputFile, errorMsgObj, importedKeysObj){
         var command= Gpg.agentPath;
         var args = Gpg.getStandardArgs(false);
-        Log.DEBUG("keyRing.jsm: KeyRing.importKeyFromFile: fileName="+inputFile.path+"\n");
+        EnigmailLog.DEBUG("keyRing.jsm: KeyRing.importKeyFromFile: fileName="+inputFile.path+"\n");
         importedKeysObj.value="";
 
         var fileName=Files.getEscapedFilename((inputFile.QueryInterface(Ci.nsIFile)).path);
@@ -258,7 +258,7 @@ const KeyRing = {
         var exitCodeObj    = {};
 
         var output = Execution.execCmd(command, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
-        Log.ERROR("keyRing.jsm: KeyRing.importKeyFromFile: error="+errorMsgObj.value+"\n");
+        EnigmailLog.ERROR("keyRing.jsm: KeyRing.importKeyFromFile: error="+errorMsgObj.value+"\n");
 
         var statusMsg = statusMsgObj.value;
 
@@ -281,7 +281,7 @@ const KeyRing = {
                     else
                         keyList[matches[2]] = Number(matches[1]);
 
-                    Log.DEBUG("keyRing.jsm: KeyRing.importKeyFromFile: imported "+matches[2]+":"+matches[1]+"\n");
+                    EnigmailLog.DEBUG("keyRing.jsm: KeyRing.importKeyFromFile: imported "+matches[2]+":"+matches[1]+"\n");
                 }
             }
 
@@ -322,7 +322,7 @@ const KeyRing = {
      * @return String  First found of user IDs or null if none
      */
     getFirstUserIdOfKey: function (keyId) {
-        Log.DEBUG("enigmail.js: Enigmail.getFirstUserIdOfKey() keyId='"+ keyId +"'\n");
+        EnigmailLog.DEBUG("enigmail.js: Enigmail.getFirstUserIdOfKey() keyId='"+ keyId +"'\n");
 
         const entry = getKeyListEntryOfKey(keyId);
         if (!entry) {
@@ -341,7 +341,7 @@ const KeyRing = {
 
     invalidateUserIdList: function () {
         // clean the userIdList to force reloading the list at next usage
-        Log.DEBUG("keyRing.jsm: KeyRing.invalidateUserIdList\n");
+        EnigmailLog.DEBUG("keyRing.jsm: KeyRing.invalidateUserIdList\n");
         userIdList = null;
         secretKeyList = null;
     },
@@ -519,7 +519,7 @@ const KeyRing = {
     },
 
     extractKey: function (parent, exportFlags, userId, outputFile, exitCodeObj, errorMsgObj) {
-        Log.DEBUG("keyRing.jsm: KeyRing.extractKey: "+userId+"\n");
+        EnigmailLog.DEBUG("keyRing.jsm: KeyRing.extractKey: "+userId+"\n");
 
         const args = Gpg.getStandardArgs(true).
                   concat(["-a", "--export"]).
@@ -585,7 +585,7 @@ const KeyRing = {
     // ExitCode > 0   => error
     // ExitCode == -1 => Cancelled by user
     importKey: function (parent, uiFlags, msgText, keyId, errorMsgObj) {
-        Log.DEBUG("keyRing.jsm: KeyRing.importKey: id="+keyId+", "+uiFlags+"\n");
+        EnigmailLog.DEBUG("keyRing.jsm: KeyRing.importKey: id="+keyId+", "+uiFlags+"\n");
 
         const beginIndexObj = {};
         const endIndexObj   = {};
@@ -626,7 +626,7 @@ const KeyRing = {
             if (statusMsg && (statusMsg.search("IMPORTED ") > -1)) {
                 const matches = statusMsg.match(/(^|\n)IMPORTED (\w{8})(\w{8})/);
                 if (matches && (matches.length > 3)) {
-                    Log.DEBUG("enigmail.js: Enigmail.importKey: IMPORTED 0x" + matches[3]+"\n");
+                    EnigmailLog.DEBUG("enigmail.js: Enigmail.importKey: IMPORTED 0x" + matches[3]+"\n");
                 }
             }
         }
@@ -635,7 +635,7 @@ const KeyRing = {
     },
 
     showKeyPhoto: function(keyId, photoNumber, exitCodeObj, errorMsgObj) {
-        Log.DEBUG("keyRing.js: KeyRing.showKeyPhoto, keyId="+keyId+" photoNumber="+photoNumber+"\n");
+        EnigmailLog.DEBUG("keyRing.js: KeyRing.showKeyPhoto, keyId="+keyId+" photoNumber="+photoNumber+"\n");
 
         const args = Gpg.getStandardArgs().
                   concat(["--no-secmem-warning", "--no-verbose", "--no-auto-check-trustdb",
@@ -828,7 +828,7 @@ const KeyRing = {
      * no return value
      */
     loadKeyList: function (win, refresh, keyListObj, sortColumn, sortDirection) {
-        Log.DEBUG("keyRing.jsm: loadKeyList\n");
+        EnigmailLog.DEBUG("keyRing.jsm: loadKeyList\n");
 
         if (! sortColumn) sortColumn = "userid";
         if (! sortDirection) sortDirection = 1;
@@ -889,7 +889,7 @@ const KeyRing = {
      */
     generateKey: function (parent, name, comment, email, expiryDate, keyLength, keyType,
                            passphrase, listener) {
-        Log.WRITE("keyRing.jsm: generateKey:\n");
+        EnigmailLog.WRITE("keyRing.jsm: generateKey:\n");
 
         if (KeyRing.isGeneratingKey()) {
             // key generation already ongoing
@@ -899,7 +899,7 @@ const KeyRing = {
         const args = Gpg.getStandardArgs(true).
                   concat(["--gen-key"]);
 
-        Log.CONSOLE(Files.formatCmdLine(Gpg.agentPath, args));
+        EnigmailLog.CONSOLE(Files.formatCmdLine(Gpg.agentPath, args));
 
         let inputData = "%echo Generating key\nKey-Type: ";
 
@@ -925,7 +925,7 @@ const KeyRing = {
         inputData += "Name-Email: "+email+"\n";
         inputData += "Expire-Date: "+String(expiryDate)+"\n";
 
-        Log.CONSOLE(inputData+" \n");
+        EnigmailLog.CONSOLE(inputData+" \n");
 
         if (passphrase.length) {
             inputData += "Passphrase: "+passphrase+"\n";
@@ -961,13 +961,13 @@ const KeyRing = {
                 mergeStderr: false
             });
         } catch (ex) {
-            Log.ERROR("keyRing.jsm: generateKey: subprocess.call failed with '"+ex.toString()+"'\n");
+            EnigmailLog.ERROR("keyRing.jsm: generateKey: subprocess.call failed with '"+ex.toString()+"'\n");
             throw ex;
         }
 
         keygenProcess = proc;
 
-        Log.DEBUG("keyRing.jsm: generateKey: subprocess = "+proc+"\n");
+        EnigmailLog.DEBUG("keyRing.jsm: generateKey: subprocess = "+proc+"\n");
 
         return proc;
     },

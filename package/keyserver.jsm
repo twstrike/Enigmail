@@ -46,7 +46,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
@@ -72,7 +72,7 @@ const EnigmailKeyServer = {
      * @return:      Subprocess object, or null in case process could not be started
      */
     access: function (actionFlags, keyserver, searchTerms, listener, errorMsgObj) {
-        Log.DEBUG("keyserver.jsm: access: "+searchTerms+"\n");
+        EnigmailLog.DEBUG("keyserver.jsm: access: "+searchTerms+"\n");
 
         if (!keyserver) {
             errorMsgObj.value = EnigmailLocale.getString("failNoServer");
@@ -119,7 +119,7 @@ const EnigmailKeyServer = {
 
         const isDownload = actionFlags & (nsIEnigmail.REFRESH_KEY | nsIEnigmail.DOWNLOAD_KEY);
 
-        Log.CONSOLE("enigmail> "+Files.formatCmdLine(EnigmailGpgAgent.agentPath, args)+"\n");
+        EnigmailLog.CONSOLE("enigmail> "+Files.formatCmdLine(EnigmailGpgAgent.agentPath, args)+"\n");
 
         let proc = null;
         let exitCode = null;
@@ -154,12 +154,12 @@ const EnigmailKeyServer = {
                 mergeStderr: false
             });
         } catch (ex) {
-            Log.ERROR("keyserver.jsm: access: subprocess.call failed with '"+ex.toString()+"'\n");
+            EnigmailLog.ERROR("keyserver.jsm: access: subprocess.call failed with '"+ex.toString()+"'\n");
             throw ex;
         }
 
         if (!proc) {
-            Log.ERROR("keyserver.jsm: access: subprocess failed due to unknown reasons\n");
+            EnigmailLog.ERROR("keyserver.jsm: access: subprocess failed due to unknown reasons\n");
             return null;
         }
 

@@ -47,7 +47,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/files.jsm"); /*global Files: false */
-Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
@@ -240,7 +240,7 @@ const Gpg = {
      * no return value
      */
     recalcTrustDb: function() {
-        Log.DEBUG("enigmailCommon.jsm: recalcTrustDb:\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: recalcTrustDb:\n");
 
         const command = Gpg.agentPath;
         const args = Gpg.getStandardArgs(false).
@@ -256,7 +256,7 @@ const Gpg = {
             });
             proc.wait();
         } catch (ex) {
-            Log.ERROR("enigmailCommon.jsm: recalcTrustDb: subprocess.call failed with '"+ex.toString()+"'\n");
+            EnigmailLog.ERROR("enigmailCommon.jsm: recalcTrustDb: subprocess.call failed with '"+ex.toString()+"'\n");
             throw ex;
         }
     }

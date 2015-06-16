@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false */
+/*global Components: false, EnigmailCore: false, Data: false, EnigmailLog: false, Prefs: false, EnigmailApp: false, EnigmailLocale: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -78,7 +78,7 @@ function stripEmailAdr(mailAddrs) {
     while ((qStart = mailAddrs.indexOf('"')) != -1) {
         qEnd = mailAddrs.indexOf('"', qStart+1);
         if (qEnd == -1) {
-            Log.ERROR("enigmailCommon.jsm:: stripEmailAdr: Unmatched quote in mail address: "+mailAddrs+"\n");
+            EnigmailLog.ERROR("enigmailCommon.jsm:: stripEmailAdr: Unmatched quote in mail address: "+mailAddrs+"\n");
             mailAddrs=mailAddrs.replace(/\"/g, "");
             break;
         }
@@ -97,7 +97,7 @@ function stripEmailAdr(mailAddrs) {
 
 var Encryption = {
     getEncryptCommand: function (fromMailAddr, toMailAddr, bccMailAddr, hashAlgorithm, sendFlags, isAscii, errorMsgObj) {
-        Log.DEBUG("encryption.jsm: getEncryptCommand: hashAlgorithm="+hashAlgorithm+"\n");
+        EnigmailLog.DEBUG("encryption.jsm: getEncryptCommand: hashAlgorithm="+hashAlgorithm+"\n");
 
         try {
             fromMailAddr = stripEmailAdr(fromMailAddr);
@@ -213,7 +213,7 @@ var Encryption = {
 
     encryptMessageStart: function(win, uiFlags, fromMailAddr, toMailAddr, bccMailAddr,
                                   hashAlgorithm, sendFlags, listener, statusFlagsObj, errorMsgObj) {
-        Log.DEBUG("enigmailCommon.jsm: encryptMessageStart: uiFlags="+uiFlags+", from "+fromMailAddr+" to "+toMailAddr+", hashAlgorithm="+hashAlgorithm+" ("+Data.bytesToHex(Data.pack(sendFlags,4))+")\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: encryptMessageStart: uiFlags="+uiFlags+", from "+fromMailAddr+" to "+toMailAddr+", hashAlgorithm="+hashAlgorithm+" ("+Data.bytesToHex(Data.pack(sendFlags,4))+")\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
 
@@ -226,13 +226,13 @@ var Encryption = {
         errorMsgObj.value = "";
 
         if (!sendFlags) {
-            Log.DEBUG("enigmailCommon.jsm: encryptMessageStart: NO ENCRYPTION!\n");
+            EnigmailLog.DEBUG("enigmailCommon.jsm: encryptMessageStart: NO ENCRYPTION!\n");
             errorMsgObj.value = EnigmailLocale.getString("notRequired");
             return null;
         }
 
         if (!EnigmailCore.getService(win)) {
-            Log.ERROR("enigmailCommon.jsm: encryptMessageStart: not yet initialized\n");
+            EnigmailLog.ERROR("enigmailCommon.jsm: encryptMessageStart: not yet initialized\n");
             errorMsgObj.value = EnigmailLocale.getString("notInit");
             return null;
         }
@@ -246,7 +246,7 @@ var Encryption = {
         var proc = Execution.execStart(EnigmailGpgAgent.agentPath, encryptArgs, signMsg, win, listener, statusFlagsObj);
 
         if (statusFlagsObj.value & nsIEnigmail.MISSING_PASSPHRASE) {
-            Log.ERROR("enigmailCommon.jsm: encryptMessageStart: Error - no passphrase supplied\n");
+            EnigmailLog.ERROR("enigmailCommon.jsm: encryptMessageStart: Error - no passphrase supplied\n");
 
             errorMsgObj.value = "";
         }
@@ -259,7 +259,7 @@ var Encryption = {
     },
 
     encryptMessageEnd: function (stderrStr, exitCode, uiFlags, sendFlags, outputLen, retStatusObj) {
-        Log.DEBUG("enigmailCommon.jsm: encryptMessageEnd: uiFlags="+uiFlags+", sendFlags="+Data.bytesToHex(Data.pack(sendFlags,4))+", outputLen="+outputLen+"\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: encryptMessageEnd: uiFlags="+uiFlags+", sendFlags="+Data.bytesToHex(Data.pack(sendFlags,4))+", outputLen="+outputLen+"\n");
 
         var pgpMime = uiFlags & nsIEnigmail.UI_PGP_MIME;
         var defaultSend = sendFlags & nsIEnigmail.SEND_DEFAULT;
@@ -271,7 +271,7 @@ var Encryption = {
         retStatusObj.blockSeparation  = "";
 
         if (!EnigmailCore.getService().initialized) {
-            Log.ERROR("enigmailCommon.jsm: encryptMessageEnd: not yet initialized\n");
+            EnigmailLog.ERROR("enigmailCommon.jsm: encryptMessageEnd: not yet initialized\n");
             retStatusObj.errorMsg = EnigmailLocale.getString("notInit");
             return -1;
         }
@@ -303,7 +303,7 @@ var Encryption = {
         }
 
         // Error processing
-        Log.DEBUG("enigmailCommon.jsm: encryptMessageEnd: command execution exit code: "+exitCode+"\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: encryptMessageEnd: command execution exit code: "+exitCode+"\n");
 
 
         if (retStatusObj.statusFlags & nsIEnigmail.BAD_PASSPHRASE) {
@@ -324,16 +324,16 @@ var Encryption = {
 
     encryptMessage: function (parent, uiFlags, plainText, fromMailAddr, toMailAddr, bccMailAddr, sendFlags,
                               exitCodeObj, statusFlagsObj, errorMsgObj) {
-        Log.DEBUG("enigmail.js: Enigmail.encryptMessage: "+plainText.length+" bytes from "+fromMailAddr+" to "+toMailAddr+" ("+sendFlags+")\n");
+        EnigmailLog.DEBUG("enigmail.js: Enigmail.encryptMessage: "+plainText.length+" bytes from "+fromMailAddr+" to "+toMailAddr+" ("+sendFlags+")\n");
 
         exitCodeObj.value    = -1;
         statusFlagsObj.value = 0;
         errorMsgObj.value    = "";
 
         if (!plainText) {
-            Log.DEBUG("enigmail.js: Enigmail.encryptMessage: NO ENCRYPTION!\n");
+            EnigmailLog.DEBUG("enigmail.js: Enigmail.encryptMessage: NO ENCRYPTION!\n");
             exitCodeObj.value = 0;
-            Log.DEBUG("  <=== encryptMessage()\n");
+            EnigmailLog.DEBUG("  <=== encryptMessage()\n");
             return plainText;
         }
 
@@ -371,7 +371,7 @@ var Encryption = {
                                                   listener, statusFlagsObj, errorMsgObj);
         if (! proc) {
             exitCodeObj.value = -1;
-            Log.DEBUG("  <=== encryptMessage()\n");
+            EnigmailLog.DEBUG("  <=== encryptMessage()\n");
             return "";
         }
 
@@ -393,18 +393,18 @@ var Encryption = {
 
         if (exitCodeObj.value === 0) {
             // Normal return
-            Log.DEBUG("  <=== encryptMessage()\n");
+            EnigmailLog.DEBUG("  <=== encryptMessage()\n");
             return Data.getUnicodeData(listener.stdoutData);
         }
 
         // Error processing
-        Log.DEBUG("enigmail.js: Enigmail.encryptMessage: command execution exit code: "+exitCodeObj.value+"\n");
+        EnigmailLog.DEBUG("enigmail.js: Enigmail.encryptMessage: command execution exit code: "+exitCodeObj.value+"\n");
         return "";
     },
 
     encryptAttachment: function (parent, fromMailAddr, toMailAddr, bccMailAddr, sendFlags, inFile, outFile,
                                  exitCodeObj, statusFlagsObj, errorMsgObj) {
-        Log.DEBUG("encryption.jsm: Encryption.encryptAttachment infileName="+inFile.path+"\n");
+        EnigmailLog.DEBUG("encryption.jsm: Encryption.encryptAttachment infileName="+inFile.path+"\n");
 
         statusFlagsObj.value = 0;
         sendFlags |= nsIEnigmail.SEND_ATTACHMENT;

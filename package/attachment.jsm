@@ -45,7 +45,7 @@ const EXPORTED_SYMBOLS = [ "Attachment" ];
 const Cu = Components.utils;
 
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
-Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
@@ -53,7 +53,7 @@ Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 
 const Attachment = {
     getFileName: function (parent, byteData) {
-        Log.DEBUG("attachment.jsm: getFileName\n");
+        EnigmailLog.DEBUG("attachment.jsm: getFileName\n");
 
         const args = Gpg.getStandardArgs(true).
                   concat(Passwords.command()).
@@ -61,7 +61,7 @@ const Attachment = {
 
         const listener = Execution.newSimpleListener(
             function _stdin (pipe) {
-                Log.DEBUG("attachment.jsm: getFileName: _stdin\n");
+                EnigmailLog.DEBUG("attachment.jsm: getFileName: _stdin\n");
                 pipe.write(byteData);
                 pipe.write("\n");
                 pipe.close();

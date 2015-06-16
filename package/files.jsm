@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, EnigmailOS: false, Data: false */
+/*global Components: false, EnigmailLog: false, EnigmailOS: false, Data: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -67,7 +67,7 @@ const lazyLog = (function() {
     return function() {
         if (!log) {
             Components.utils.import("resource://enigmail/log.jsm");
-            log = Log;
+            log = EnigmailLog;
         }
         return log;
     };
@@ -279,7 +279,7 @@ const Files = {
             }
             fileOutStream.close();
         } catch (ex) {
-            Log.ERROR("files.jsm: writeFileContents: Failed to write to "+filePath+"\n");
+            EnigmailLog.ERROR("files.jsm: writeFileContents: Failed to write to "+filePath+"\n");
             return false;
         }
 

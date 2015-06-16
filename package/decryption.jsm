@@ -1,4 +1,4 @@
-/*global Components: false, Data: false, Log: false, Prefs: false, EnigmailLocale: false, EnigmailArmor: false, Data: false, Execution: false, Dialog: false */
+/*global Components: false, Data: false, EnigmailLog: false, Prefs: false, EnigmailLocale: false, EnigmailArmor: false, Data: false, Execution: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -95,10 +95,10 @@ const Decryption = {
     decryptMessageStart: function (win, verifyOnly, noOutput, listener,
                                    statusFlagsObj, errorMsgObj, mimeSignatureFile,
                                    maxOutputLength) {
-        Log.DEBUG("enigmailCommon.jsm: decryptMessageStart: verifyOnly="+verifyOnly+"\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageStart: verifyOnly="+verifyOnly+"\n");
 
         if (!EnigmailCore.getService(win)) {
-            Log.ERROR("enigmailCommon.jsm: decryptMessageStart: not yet initialized\n");
+            EnigmailLog.ERROR("enigmailCommon.jsm: decryptMessageStart: not yet initialized\n");
             errorMsgObj.value = EnigmailLocale.getString("notInit");
             return null;
         }
@@ -145,7 +145,7 @@ const Decryption = {
                                        listener, statusFlagsObj);
 
         if (statusFlagsObj.value & nsIEnigmail.MISSING_PASSPHRASE) {
-            Log.ERROR("enigmailCommon.jsm: decryptMessageStart: Error - no passphrase supplied\n");
+            EnigmailLog.ERROR("enigmailCommon.jsm: decryptMessageStart: Error - no passphrase supplied\n");
 
             errorMsgObj.value = EnigmailLocale.getString("noPassphrase");
             return null;
@@ -156,10 +156,10 @@ const Decryption = {
 
 
     decryptMessageEnd: function (stderrStr, exitCode, outputLen, verifyOnly, noOutput, uiFlags, retStatusObj) {
-        Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: uiFlags="+uiFlags+", verifyOnly="+verifyOnly+", noOutput="+noOutput+"\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageEnd: uiFlags="+uiFlags+", verifyOnly="+verifyOnly+", noOutput="+noOutput+"\n");
 
         stderrStr = stderrStr.replace(/\r\n/g,"\n");
-        Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: stderrStr=\n"+stderrStr+"\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageEnd: stderrStr=\n"+stderrStr+"\n");
         var interactive = uiFlags & nsIEnigmail.UI_INTERACTIVE;
         var pgpMime     = uiFlags & nsIEnigmail.UI_PGP_MIME;
         var allowImport = uiFlags & nsIEnigmail.UI_ALLOW_KEY_IMPORT;
@@ -225,7 +225,7 @@ const Decryption = {
         var encToArray = [];  // collect ENC_TO lines here
 
         for (j=0; j<errLines.length; j++) {
-            Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: process: "+errLines[j]+"\n");
+            EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageEnd: process: "+errLines[j]+"\n");
 
             // ENC_TO entry
             // - collect them for later processing to print details
@@ -248,7 +248,7 @@ const Decryption = {
             matches = errLines[j].match(goodsigPat);
             if (matches && (matches.length > 2)) {
                 if (signed) {
-                    Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                    EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                 }
                 signed = true;
                 goodOrExpOrRevSignature = true;
@@ -260,7 +260,7 @@ const Decryption = {
                 matches = errLines[j].match(badsigPat);
                 if (matches && (matches.length > 2)) {
                     if (signed) {
-                        Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                        EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                     }
                     signed = true;
                     goodOrExpOrRevSignature = false;
@@ -272,7 +272,7 @@ const Decryption = {
                     matches = errLines[j].match(expsigPat);
                     if (matches && (matches.length > 2)) {
                         if (signed) {
-                            Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                            EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                         }
                         signed = true;
                         goodOrExpOrRevSignature = true;
@@ -284,7 +284,7 @@ const Decryption = {
                         matches = errLines[j].match(expkeysigPat);
                         if (matches && (matches.length > 2)) {
                             if (signed) {
-                                Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                                EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                             }
                             signed = true;
                             goodOrExpOrRevSignature = true;
@@ -296,7 +296,7 @@ const Decryption = {
                             matches = errLines[j].match(revkeysigPat);
                             if (matches && (matches.length > 2)) {
                                 if (signed) {
-                                    Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                                    EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                                 }
                                 signed = true;
                                 goodOrExpOrRevSignature = true;
@@ -308,7 +308,7 @@ const Decryption = {
                                 matches = errLines[j].match(errsigPat);
                                 if (matches && (matches.length > 2)) {
                                     if (signed) {
-                                        Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
+                                        EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageEnd: OOPS: multiple SIGN entries\n");
                                     }
                                     signed = true;
                                     goodOrExpOrRevSignature = false;
@@ -427,7 +427,7 @@ const Decryption = {
 
         if (exitCode !== 0) {
             // Error processing
-            Log.DEBUG("enigmailCommon.jsm: decryptMessageEnd: command execution exit code: "+exitCode+"\n");
+            EnigmailLog.DEBUG("enigmailCommon.jsm: decryptMessageEnd: command execution exit code: "+exitCode+"\n");
         }
 
         return exitCode;
@@ -458,7 +458,7 @@ const Decryption = {
                               blockSeparationObj, encToDetailsObj) {
         const esvc = EnigmailCore.getEnigmailService();
 
-        Log.DEBUG("enigmail.js: Enigmail.decryptMessage: "+cipherText.length+" bytes, "+uiFlags+"\n");
+        EnigmailLog.DEBUG("enigmail.js: Enigmail.decryptMessage: "+cipherText.length+" bytes, "+uiFlags+"\n");
 
         if (! cipherText)
             return "";
@@ -468,7 +468,7 @@ const Decryption = {
         var unverifiedEncryptedOK = uiFlags & nsIEnigmail.UI_UNVERIFIED_ENC_OK;
         var oldSignature = signatureObj.value;
 
-        Log.DEBUG("enigmail.js: Enigmail.decryptMessage: oldSignature="+oldSignature+"\n");
+        EnigmailLog.DEBUG("enigmail.js: Enigmail.decryptMessage: oldSignature="+oldSignature+"\n");
 
         signatureObj.value   = "";
         exitCodeObj.value    = -1;
@@ -508,7 +508,7 @@ const Decryption = {
 
         // HACK to better support messages from Outlook: if there are empty lines, drop them
         if (pgpBlock.search(/MESSAGE-----\r?\n\r?\nVersion/) >=0) {
-            Log.DEBUG("enigmail.js: Enigmail.decryptMessage: apply Outlook empty line workaround\n");
+            EnigmailLog.DEBUG("enigmail.js: Enigmail.decryptMessage: apply Outlook empty line workaround\n");
             pgpBlock = pgpBlock.replace( /\r?\n\r?\n/g, "\n" );
         }
 
@@ -540,7 +540,7 @@ const Decryption = {
         if (verifyOnly) {
             newSignature = EnigmailArmor.extractSignaturePart(pgpBlock, nsIEnigmail.SIGNATURE_ARMOR);
             if (oldSignature && (newSignature != oldSignature)) {
-                Log.ERROR("enigmail.js: Enigmail.decryptMessage: Error - signature mismatch "+newSignature+"\n");
+                EnigmailLog.ERROR("enigmail.js: Enigmail.decryptMessage: Error - signature mismatch "+newSignature+"\n");
                 errorMsgObj.value = EnigmailLocale.getString("sigMismatch");
                 statusFlagsObj.value |= nsIEnigmail.DISPLAY_MESSAGE;
 
@@ -650,7 +650,7 @@ const Decryption = {
                     innerKeyBlock = innerKeyBlock.replace(/- -----/g, "-----");
 
                     statusFlagsObj.value |= nsIEnigmail.INLINE_KEY;
-                    Log.DEBUG("enigmail.js: Enigmail.decryptMessage: innerKeyBlock found\n");
+                    EnigmailLog.DEBUG("enigmail.js: Enigmail.decryptMessage: innerKeyBlock found\n");
                 }
             }
 
@@ -695,7 +695,7 @@ const Decryption = {
     },
 
     inlineInnerVerification: function (parent, uiFlags, text, statusObject) {
-        Log.DEBUG("enigmail.js: Enigmail.inlineInnerVerification\n");
+        EnigmailLog.DEBUG("enigmail.js: Enigmail.inlineInnerVerification\n");
 
         if (text && text.indexOf("-----BEGIN PGP SIGNED MESSAGE-----") === 0) {
             var status = newStatusObject();
@@ -721,7 +721,7 @@ const Decryption = {
                                  exitCodeObj, statusFlagsObj, errorMsgObj) {
         const esvc = EnigmailCore.getEnigmailService();
 
-        Log.DEBUG("enigmail.js: Enigmail.decryptAttachment: parent="+parent+", outFileName="+outFile.path+"\n");
+        EnigmailLog.DEBUG("enigmail.js: Enigmail.decryptAttachment: parent="+parent+", outFileName="+outFile.path+"\n");
 
         var attachmentHead = byteData.substr(0,200);
         if (attachmentHead.match(/\-\-\-\-\-BEGIN PGP \w+ KEY BLOCK\-\-\-\-\-/)) {

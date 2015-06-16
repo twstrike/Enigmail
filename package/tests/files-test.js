@@ -1,5 +1,5 @@
 /*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, JSUnit: false, do_test_pending: false, do_test_finished: false, component: false */
-/*global EnigmailCore: false, Cc: false, Ci: false, Files: false, Log: false, Prefs: false */
+/*global EnigmailCore: false, Cc: false, Ci: false, Files: false, EnigmailLog: false, Prefs: false */
 /*jshint -W097 */
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public

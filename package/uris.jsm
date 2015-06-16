@@ -45,7 +45,7 @@ const EXPORTED_SYMBOLS = [ "URIs" ];
 
 const Cu = Components.utils;
 
-Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
+Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/data.jsm"); /*global Data: false */
 
 const messageIdList = {};
@@ -53,7 +53,7 @@ const encryptedUris = [];
 
 const URIs = {
     createMessageURI: function (originalUrl, contentType, contentCharset, contentData, persist) {
-        Log.DEBUG("enigmail.js: Enigmail.createMessageURI: "+originalUrl+
+        EnigmailLog.DEBUG("enigmail.js: Enigmail.createMessageURI: "+originalUrl+
                   ", "+contentType+", "+contentCharset+"\n");
 
         const messageId = "msg" + Math.floor(Math.random()*1.0e9);
@@ -68,7 +68,7 @@ const URIs = {
     },
 
     deleteMessageURI: function (uri) {
-        Log.DEBUG("enigmail.js: Enigmail.deleteMessageURI: "+uri+"\n");
+        EnigmailLog.DEBUG("enigmail.js: Enigmail.deleteMessageURI: "+uri+"\n");
 
         const messageId = Data.extractMessageId(uri);
 
@@ -91,7 +91,7 @@ const URIs = {
      * @return null
      */
     rememberEncryptedUri: function (uri) {
-        Log.DEBUG("uris.jsm: rememberEncryptedUri: uri="+uri+"\n");
+        EnigmailLog.DEBUG("uris.jsm: rememberEncryptedUri: uri="+uri+"\n");
         if (encryptedUris.indexOf(uri) < 0) {
             encryptedUris.push(uri);
         }
@@ -105,7 +105,7 @@ const URIs = {
      * @return null
      */
     forgetEncryptedUri: function (uri) {
-        Log.DEBUG("uris.jsm: forgetEncryptedUri: uri="+uri+"\n");
+        EnigmailLog.DEBUG("uris.jsm: forgetEncryptedUri: uri="+uri+"\n");
         const pos = encryptedUris.indexOf(uri);
         if (pos >= 0) {
             encryptedUris.splice(pos, 1);
@@ -120,7 +120,7 @@ const URIs = {
      * @return: Boolean true if yes, false otherwise
      */
     isEncryptedUri: function (uri) {
-        Log.DEBUG("uris.jsm: isEncryptedUri: uri="+uri+"\n");
+        EnigmailLog.DEBUG("uris.jsm: isEncryptedUri: uri="+uri+"\n");
         return encryptedUris.indexOf(uri) >= 0;
     },
 

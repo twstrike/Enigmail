@@ -213,7 +213,7 @@ function enigmailDlgOnAccept() {
 }
 
 function enigmailDlgKeySelection() {
-  Log.DEBUG("enigmailMsgComposeHelper.js: enigmailDlgKeySelection: \n");
+  EnigmailLog.DEBUG("enigmailMsgComposeHelper.js: enigmailDlgKeySelection: \n");
 
   var enigmailSvc = GetEnigmailSvc();
   if (!enigmailSvc)

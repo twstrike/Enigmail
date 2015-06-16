@@ -1,4 +1,4 @@
-/*global Components: false, DecryptPermanently: false, EnigmailCore: false, Log: false, EnigmailLocale: false, Dialog: false */
+/*global Components: false, DecryptPermanently: false, EnigmailCore: false, EnigmailLog: false, EnigmailLocale: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -67,7 +67,7 @@ const filterActionMoveDecrypt = {
     value: "movemessage",
     apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
 
-        Log.DEBUG("enigmail.js: filterActionMoveDecrypt: Move to: " + aActionValue + "\n");
+        EnigmailLog.DEBUG("enigmail.js: filterActionMoveDecrypt: Move to: " + aActionValue + "\n");
 
         var msgHdrs = [];
 
@@ -108,7 +108,7 @@ const filterActionCopyDecrypt = {
     name: EnigmailLocale.getString("filter.decryptCopy.label"),
     value: "copymessage",
     apply: function (aMsgHdrs, aActionValue, aListener, aType, aMsgWindow) {
-        Log.DEBUG("enigmail.js: filterActionCopyDecrypt: Copy to: " + aActionValue + "\n");
+        EnigmailLog.DEBUG("enigmail.js: filterActionCopyDecrypt: Copy to: " + aActionValue + "\n");
 
         var msgHdrs = [];
 

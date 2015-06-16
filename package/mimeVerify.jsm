@@ -1,4 +1,4 @@
-/*global Components: false, XPCOMUtils: false, Data: false, Log: false, Files: false, EnigmailFuncs: false, dump: false, atob: false */
+/*global Components: false, XPCOMUtils: false, Data: false, EnigmailLog: false, Files: false, EnigmailFuncs: false, dump: false, atob: false */
 /*jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -89,7 +89,7 @@ MimeVerify.prototype = {
   },
 
   onStartRequest: function() {
-    Log.DEBUG("mimeVerify.jsm: onStartRequest\n"); // always log this one
+    EnigmailLog.DEBUG("mimeVerify.jsm: onStartRequest\n"); // always log this one
     this.dataCount = 0;
     this.foundMsg = false;
     this.startMsgStr = "";
@@ -305,7 +305,7 @@ MimeVerify.prototype = {
                 Files.getEscapedFilename(Files.getFilePath(this.sigFile)));
 
     if (this.pipe) {
-      Log.DEBUG("Closing pipe\n"); // always log this one
+      EnigmailLog.DEBUG("Closing pipe\n"); // always log this one
       this.pipe.close();
     }
     else
@@ -366,7 +366,7 @@ MimeVerify.prototype = {
   },
 
   setMsgWindow: function(msgWindow, msgUriSpec) {
-    Log.DEBUG("mimeVerify.jsm: setMsgWindow: "+msgUriSpec+"\n");
+    EnigmailLog.DEBUG("mimeVerify.jsm: setMsgWindow: "+msgUriSpec+"\n");
 
     if (! this.msgWindow) {
       this.msgWindow = msgWindow;
@@ -375,7 +375,7 @@ MimeVerify.prototype = {
   },
 
   displayStatus: function() {
-    Log.DEBUG("mimeVerify.jsm: displayStatus\n");
+    EnigmailLog.DEBUG("mimeVerify.jsm: displayStatus\n");
     if (this.exitCode === null || this.msgWindow === null || this.statusDisplayed)
       return;
 
@@ -398,7 +398,7 @@ MimeVerify.prototype = {
       this.statusDisplayed = true;
     }
     catch(ex) {
-      Log.writeException("mimeVerify.jsm", ex);
+      EnigmailLog.writeException("mimeVerify.jsm", ex);
     }
   }
 };
@@ -435,7 +435,7 @@ const EnigmailVerify = {
 // General-purpose functions, not exported
 
 function LOCAL_DEBUG(str) {
-  if (gDebugLog) Log.DEBUG(str);
+  if (gDebugLog) EnigmailLog.DEBUG(str);
 }
 
 function initModule() {

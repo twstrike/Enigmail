@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, EnigmailOS: false */
+/*global Components: false, EnigmailLog: false, EnigmailOS: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -64,7 +64,7 @@ const EnigmailLocale = {
                 enigStringBundle = strBundleService.createBundle("chrome://enigmail/locale/enigmail.properties");
             }
             catch (ex) {
-                Log.ERROR("enigmailCore.jsm: Error in instantiating stringBundleService\n");
+                EnigmailLog.ERROR("enigmailCore.jsm: Error in instantiating stringBundleService\n");
             }
         }
 
@@ -81,7 +81,7 @@ const EnigmailLocale = {
                 }
             }
             catch (ex) {
-                Log.ERROR("enigmailCore.jsm: Error in querying stringBundleService for string '"+aStr+"'\n");
+                EnigmailLog.ERROR("enigmailCore.jsm: Error in querying stringBundleService for string '"+aStr+"'\n");
             }
         }
         return aStr;

@@ -35,7 +35,7 @@ dump("loading: enigmailEncryptionDlg.js\n");
  * ***** END LICENSE BLOCK ***** */
 
 function enigmailEncryptionDlgLoad() {
-  Log.DEBUG("enigmailEncryptionDlgLoad.js: Load\n");
+  EnigmailLog.DEBUG("enigmailEncryptionDlgLoad.js: Load\n");
 
   // Get Enigmail service, such that e.g. the wizard can be executed
   // if needed.

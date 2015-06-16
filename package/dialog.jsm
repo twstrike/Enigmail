@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailLocale: false, Log: false, Windows: false, Prefs: false */
+/*global Components: false, EnigmailLocale: false, EnigmailLog: false, Windows: false, Prefs: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -115,7 +115,7 @@ const Dialog = {
                 gPromptSvc.alert(win, EnigmailLocale.getString("enigAlert"), mesg);
             }
             catch(ex) {
-                Log.writeException("alert" , ex);
+                EnigmailLog.writeException("alert" , ex);
             }
         }
     },
@@ -342,7 +342,7 @@ const Dialog = {
      *  return value:     nsIFile object representing the file to load or save
      */
     filePicker: function (win, title, displayDir, save, defaultExtension, defaultName, filterPairs) {
-        Log.DEBUG("enigmailCommon.jsm: filePicker: "+save+"\n");
+        EnigmailLog.DEBUG("enigmailCommon.jsm: filePicker: "+save+"\n");
 
         let filePicker = Cc["@mozilla.org/filepicker;1"].createInstance();
         filePicker = filePicker.QueryInterface(Ci.nsIFilePicker);

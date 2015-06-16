@@ -111,7 +111,7 @@ var progressListener = {
 
 function onLoad() {
   // Set global variables.
-  Log.DEBUG("enigRetrieveProgress: onLoad\n");
+  EnigmailLog.DEBUG("enigRetrieveProgress: onLoad\n");
   var inArg = window.arguments[0];
   var subject;
   window.arguments[1].result=false;
@@ -143,14 +143,14 @@ function onLoad() {
 
   var procListener = {
     done: function (exitCode) {
-      Log.DEBUG("enigRetrieveProgress: subprocess terminated with "+exitCode+"\n");
+      EnigmailLog.DEBUG("enigRetrieveProgress: subprocess terminated with "+exitCode+"\n");
       processEnd(msgProgress, exitCode);
     },
     stdout: function(data) {
-      Log.DEBUG("enigRetrieveProgress: got data on stdout: '"+data+"'\n");
+      EnigmailLog.DEBUG("enigRetrieveProgress: got data on stdout: '"+data+"'\n");
     },
     stderr: function(data) {
-      Log.DEBUG("enigRetrieveProgress: got data on stderr: '"+data+"'\n");
+      EnigmailLog.DEBUG("enigRetrieveProgress: got data on stderr: '"+data+"'\n");
       gErrorData += data;
     }
   };
@@ -197,11 +197,11 @@ function onCancel ()
 }
 
 function processEnd (progressBar, exitCode) {
-  Log.DEBUG("enigmailRetrieveProgress.js: processEnd\n");
+  EnigmailLog.DEBUG("enigmailRetrieveProgress.js: processEnd\n");
   var errorMsg;
   if (gProcess) {
     gProcess = null;
-    Log.DEBUG("enigmailRetrieveProgress.js: processEnd: exitCode = "+exitCode+"\n");
+    EnigmailLog.DEBUG("enigmailRetrieveProgress.js: processEnd: exitCode = "+exitCode+"\n");
 
     var statusText=gEnigCallbackFunc(exitCode, "", false);
 
@@ -214,7 +214,7 @@ function processEnd (progressBar, exitCode) {
       }
     } catch (ex) {}
 
-    Log.DEBUG("enigmailRetrieveProgress.js: processEnd: errorMsg="+errorMsg);
+    EnigmailLog.DEBUG("enigmailRetrieveProgress.js: processEnd: errorMsg="+errorMsg);
     if (errorMsg.search(/ec=\d+/i)>=0) {
       exitCode=-1;
     }

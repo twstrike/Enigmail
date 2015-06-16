@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailFuncs: false, Log: false, EnigmailOS: false, Files: false, EnigmailApp: false */
+/*global Components: false, EnigmailFuncs: false, EnigmailLog: false, EnigmailOS: false, Files: false, EnigmailApp: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -67,14 +67,14 @@ const rulesListHolder = {
 
 const Rules = {
     getRulesFile: function() {
-        Log.DEBUG("enigmail.js: getRulesFile\n");
+        EnigmailLog.DEBUG("enigmail.js: getRulesFile\n");
         var rulesFile = EnigmailApp.getProfileDirectory();
         rulesFile.append("pgprules.xml");
         return rulesFile;
     },
 
     loadRulesFile: function() {
-        Log.DEBUG("enigmail.js: loadRulesFile\n");
+        EnigmailLog.DEBUG("enigmail.js: loadRulesFile\n");
         var flags = NS_RDONLY;
         var rulesFile = this.getRulesFile();
         if (rulesFile.exists()) {
@@ -93,7 +93,7 @@ const Rules = {
     },
 
     saveRulesFile: function() {
-        Log.DEBUG("enigmail.js: saveRulesFile\n");
+        EnigmailLog.DEBUG("enigmail.js: saveRulesFile\n");
 
         var flags = NS_WRONLY | NS_CREATE_FILE | NS_TRUNCATE;
         var domSerializer=Cc[NS_DOMSERIALIZER_CONTRACTID].createInstance(Ci.nsIDOMSerializer);
@@ -118,7 +118,7 @@ const Rules = {
     },
 
     getRulesData: function(rulesListObj) {
-        Log.DEBUG("enigmail.js: getRulesData\n");
+        EnigmailLog.DEBUG("enigmail.js: getRulesData\n");
 
         var ret=true;
 
@@ -136,7 +136,7 @@ const Rules = {
     },
 
     addRule: function(appendToEnd, toAddress, keyList, sign, encrypt, pgpMime, flags) {
-        Log.DEBUG("enigmail.js: addRule\n");
+        EnigmailLog.DEBUG("enigmail.js: addRule\n");
         if (! rulesListHolder.rulesList) {
             var domParser=Cc[NS_DOMPARSER_CONTRACTID].createInstance(Ci.nsIDOMParser);
             rulesListHolder.rulesList = domParser.parseFromString("<pgpRuleList/>", "text/xml");
