@@ -49,7 +49,7 @@ Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLoca
 Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Components.utils.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-Components.utils.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Components.utils.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailKeyEditor" ];
 
@@ -257,7 +257,7 @@ function editKey(parent, needPassphrase, userId, keyId, editCmd, inputData, call
     }
 
     var keyIdList = keyId.split(" ");
-    var args = Gpg.getStandardArgs(false);
+    var args = EnigmailGpg.getStandardArgs(false);
 
     var statusFlags = {};
 

@@ -12,8 +12,8 @@
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global TestHelper: false, withEnvironment: false, withEnigmail: false, component: false */
 
 testing("enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false, EnigmailOS: false */
-component("enigmail/gpg.jsm"); /*global Gpg: false */
 component("enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
+component("enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 
 // testing: determineGpgHomeDir
 //   environment: GNUPGHOME
@@ -115,7 +115,7 @@ function notDosLike(f) {
 }
 
 function withGpgFeatures(features, f) {
-    resetting(Gpg, 'getGpgFeature', function(feature) {
+    resetting(EnigmailGpg, 'getGpgFeature', function(feature) {
         return features.indexOf(feature) != -1;
     }, f);
 }

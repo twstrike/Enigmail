@@ -120,7 +120,7 @@ function enigGetUserList(secretOnly, refresh)
     }
 
     if (! secretOnly) {
-      let groups = Gpg.getGpgGroups();
+      let groups = EnigmailGpg.getGpgGroups();
 
       for (var i=0; i < groups.length; i++) {
         userList += "grp:"+groups[i].alias+":"+groups[i].keylist+"\n";

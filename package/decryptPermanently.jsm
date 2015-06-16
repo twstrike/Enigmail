@@ -54,7 +54,7 @@ Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 Cu.import("resource:///modules/MailUtils.js"); /*global MailUtils: false */
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Cu.import("resource://enigmail/streams.jsm"); /*global Streams: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 Cu.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
@@ -405,7 +405,7 @@ DecryptMessageIntoFolder.prototype = {
                             return;
                         }
                         var enigmailSvc = EnigmailCore.getService();
-                        var args = Gpg.getStandardArgs(true);
+                        var args = EnigmailGpg.getStandardArgs(true);
                         args = args.concat(EnigmailPassword.command());
                         args.push("-d");
 

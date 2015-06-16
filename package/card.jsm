@@ -47,17 +47,17 @@ const Cu = Components.utils;
 
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
-Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 
 const EnigmailCard = {
     getCardStatus: function(exitCodeObj, errorMsgObj) {
         EnigmailLog.DEBUG("card.jsm: EnigmailCard.getCardStatus\n");
-        const args = Gpg.getStandardArgs(false).
+        const args = EnigmailGpg.getStandardArgs(false).
                   concat(["--status-fd", "2", "--fixed-list-mode", "--with-colons", "--card-status"]);
         const statusMsgObj = {};
         const statusFlagsObj = {};
 
-        const outputTxt = Execution.execCmd(Gpg.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
+        const outputTxt = Execution.execCmd(EnigmailGpg.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, errorMsgObj);
 
         if ((exitCodeObj.value === 0) && !outputTxt) {
             exitCodeObj.value = -1;

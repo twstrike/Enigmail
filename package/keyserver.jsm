@@ -49,7 +49,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/httpProxy.jsm"); /*global HttpProxy: false */
-Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/keyRing.jsm"); /*global EnigmailKeyRing: false */
@@ -85,10 +85,10 @@ const EnigmailKeyServer = {
         }
 
         const proxyHost = HttpProxy.getHttpProxy(keyserver);
-        let args = Gpg.getStandardArgs(true);
+        let args = EnigmailGpg.getStandardArgs(true);
 
         if (actionFlags & nsIEnigmail.SEARCH_KEY) {
-            args = Gpg.getStandardArgs(false).
+            args = EnigmailGpg.getStandardArgs(false).
                 concat(["--command-fd", "0", "--fixed-list", "--with-colons"]);
         }
         if (proxyHost) {

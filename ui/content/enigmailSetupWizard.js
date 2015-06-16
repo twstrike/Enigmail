@@ -499,7 +499,7 @@ function setKeyTrustNextKey(keyList, index) {
 
   if (index == keyList.length) {
     // end of list reached
-    Gpg.recalcTrustDb();
+    EnigmailGpg.recalcTrustDb();
     loadKeys();
     return;
   }
@@ -544,7 +544,7 @@ function displayKeyCreate() {
   gPassPhraseQuality = document.getElementById("passphraseQuality");
 
   // gpg 2.1.0 and 2.1.1 queries passphrase only gpg-agent only
-  if (! Gpg.getGpgFeature("keygen-passphrase")) {
+  if (! EnigmailGpg.getGpgFeature("keygen-passphrase")) {
     document.getElementById("keyCreateDescSec1").setAttribute("collapsed", "true");
     document.getElementById("passphraseBox").setAttribute("collapsed", "true");
     document.getElementById("keyCreateDescSec2").removeAttribute("collapsed");
@@ -789,7 +789,7 @@ function checkPassphrase() {
 
   // gpg >= 2.1 queries passphrase using gpg-agent only
 
-  if (Gpg.getGpgFeature("keygen-passphrase")) {
+  if (EnigmailGpg.getGpgFeature("keygen-passphrase")) {
     var passphrase = enigmailCheckPassphrase();
     if (!passphrase) return false;
 
@@ -812,7 +812,7 @@ function wizardGenKey() {
   var passphrase = document.getElementById("passphrase").value;
 
   // gpg >= 2.1 queries passphrase using gpg-agent only
-  if (! Gpg.getGpgFeature("keygen-passphrase")) {
+  if (! EnigmailGpg.getGpgFeature("keygen-passphrase")) {
     passphrase = "";
   }
 

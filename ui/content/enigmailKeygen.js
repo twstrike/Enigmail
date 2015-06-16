@@ -64,7 +64,7 @@ function enigmailKeygenLoad() {
 
   var noPassphrase = document.getElementById("noPassphrase");
 
-  if (! Gpg.getGpgFeature("keygen-passphrase")) {
+  if (! EnigmailGpg.getGpgFeature("keygen-passphrase")) {
     document.getElementById("passphraseRow").setAttribute("collapsed", "true");
     noPassphrase.setAttribute("collapsed", "true");
   }
@@ -305,7 +305,7 @@ function enigmailKeygenStart() {
 
   var passphrase;
    // gpg >= 2.1 queries passphrase using gpg-agent only
-   if (Gpg.getGpgFeature("keygen-passphrase")) {
+   if (EnigmailGpg.getGpgFeature("keygen-passphrase")) {
      passphrase = enigmailCheckPassphrase();
      if (!passphrase) return;
 
@@ -551,4 +551,4 @@ function fillIdentityListPopup()
     }
   }
 
-}
+}./ui/content/enigmailKeygen.js

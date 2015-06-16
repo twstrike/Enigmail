@@ -40,7 +40,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Gpg" ];
+const EXPORTED_SYMBOLS = [ "EnigmailGpg" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -74,7 +74,7 @@ function pushTrimmedStr(arr, str, splitStr) {
     return (str.length > 0);
 }
 
-const Gpg = {
+const EnigmailGpg = {
     agentVersion: "",
     agentPath: null,
 
@@ -93,7 +93,7 @@ const Gpg = {
      If the feature cannot be found, undefined is returned
      */
     getGpgFeature: function(featureName) {
-        let gpgVersion = Gpg.agentVersion;
+        let gpgVersion = EnigmailGpg.agentVersion;
 
         if (! gpgVersion || typeof(gpgVersion) != "string" || gpgVersion.length === 0) {
             return undefined;
@@ -175,19 +175,19 @@ const Gpg = {
 
     // returns the output of --with-colons --list-config
     getGnupgConfig: function  (exitCodeObj, errorMsgObj) {
-        const args = Gpg.getStandardArgs(true).
+        const args = EnigmailGpg.getStandardArgs(true).
                 concat(["--fixed-list-mode", "--with-colons", "--list-config"]);
 
         const statusMsgObj   = {};
         const cmdErrorMsgObj = {};
         const statusFlagsObj = {};
 
-        const listText = Execution.execCmd(Gpg.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
+        const listText = Execution.execCmd(EnigmailGpg.agentPath, args, "", exitCodeObj, statusFlagsObj, statusMsgObj, cmdErrorMsgObj);
 
         if (exitCodeObj.value !== 0) {
             errorMsgObj.value = EnigmailLocale.getString("badCommand");
             if (cmdErrorMsgObj.value) {
-                errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(Gpg.agentPath, args);
+                errorMsgObj.value += "\n" + EnigmailFiles.formatCmdLine(EnigmailGpg.agentPath, args);
                 errorMsgObj.value += "\n" + cmdErrorMsgObj.value;
             }
 
@@ -211,7 +211,7 @@ const Gpg = {
         let exitCodeObj = {};
         let errorMsgObj = {};
 
-        let cfgStr = Gpg.getGnupgConfig(exitCodeObj, errorMsgObj);
+        let cfgStr = EnigmailGpg.getGnupgConfig(exitCodeObj, errorMsgObj);
 
         if (exitCodeObj.value !== 0) {
             EnigmailDialog.alert(errorMsgObj.value);
@@ -242,13 +242,13 @@ const Gpg = {
     recalcTrustDb: function() {
         EnigmailLog.DEBUG("enigmailCommon.jsm: recalcTrustDb:\n");
 
-        const command = Gpg.agentPath;
-        const args = Gpg.getStandardArgs(false).
+        const command = EnigmailGpg.agentPath;
+        const args = EnigmailGpg.getStandardArgs(false).
                   concat(["--check-trustdb"]);
 
         try {
             const proc = subprocess.call({
-                command:     Gpg.agentPath,
+                command:     EnigmailGpg.agentPath,
                 arguments:   args,
                 environment: EnigmailCore.getEnvList(),
                 charset: null,

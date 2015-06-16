@@ -48,7 +48,7 @@ const Cu = Components.utils;
 Cu.import("resource://enigmail/log.jsm"); /*global EnigmailLog: false */
 Cu.import("resource://enigmail/files.jsm"); /*global EnigmailFiles: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
-Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
+Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
@@ -65,7 +65,7 @@ const Verify = {
         const verifyFilePath  = EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePathReadonly(verifyFile.QueryInterface(Ci.nsIFile)));
         const sigFilePath     = EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePathReadonly(sigFile.QueryInterface(Ci.nsIFile)));
 
-        const args = Gpg.getStandardArgs(true).
+        const args = EnigmailGpg.getStandardArgs(true).
                   concat(["--verify", sigFilePath, verifyFilePath]);
 
         const listener = Execution.newSimpleListener();
