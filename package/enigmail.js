@@ -59,7 +59,7 @@ Cu.import("resource://enigmail/os.jsm"); /*global EnigmailOS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Cu.import("resource://enigmail/commandLine.jsm"); /*global EnigmailCommandLine: false */
 Cu.import("resource://enigmail/prefs.jsm"); /*global EnigmailPrefs: false */
-Cu.import("resource://enigmail/uris.jsm"); /*global URIs: false */
+Cu.import("resource://enigmail/uris.jsm"); /*global EnigmailURIs: false */
 Cu.import("resource://enigmail/verify.jsm"); /*global Verify: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global EnigmailWindows: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global EnigmailDialog: false */
@@ -359,7 +359,7 @@ EnigmailArmor.registerOn(Enigmail.prototype);
 EnigmailDecryption.registerOn(Enigmail.prototype);
 Encryption.registerOn(Enigmail.prototype);
 EnigmailRules.registerOn(Enigmail.prototype);
-URIs.registerOn(Enigmail.prototype);
+EnigmailURIs.registerOn(Enigmail.prototype);
 Verify.registerOn(Enigmail.prototype);
 
 // This variable is exported implicitly and should not be refactored or removed

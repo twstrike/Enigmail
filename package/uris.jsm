@@ -41,7 +41,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "URIs" ];
+const EXPORTED_SYMBOLS = [ "EnigmailURIs" ];
 
 const Cu = Components.utils;
 
@@ -51,7 +51,7 @@ Cu.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 const messageIdList = {};
 const encryptedUris = [];
 
-const URIs = {
+const EnigmailURIs = {
     createMessageURI: function (originalUrl, contentType, contentCharset, contentData, persist) {
         EnigmailLog.DEBUG("enigmail.js: Enigmail.createMessageURI: "+originalUrl+
                   ", "+contentType+", "+contentCharset+"\n");
@@ -125,7 +125,7 @@ const URIs = {
     },
 
     registerOn: function(target) {
-        target.createMessageURI = URIs.createMessageURI;
-        target.deleteMessageURI = URIs.deleteMessageURI;
+        target.createMessageURI = EnigmailURIs.createMessageURI;
+        target.deleteMessageURI = EnigmailURIs.deleteMessageURI;
     }
 };

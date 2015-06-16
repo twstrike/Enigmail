@@ -48,7 +48,7 @@ Components.utils.import("resource://enigmail/enigmailCore.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/streams.jsm"); /*global Streams: false */
-Components.utils.import("resource://enigmail/uris.jsm"); /*global URIs: false */
+Components.utils.import("resource://enigmail/uris.jsm"); /*global EnigmailURIs: false */
 
 const NS_SIMPLEURI_CONTRACTID   = "@mozilla.org/network/simple-uri;1";
 const NS_ENIGMAILPROTOCOLHANDLER_CONTRACTID = "@mozilla.org/network/protocol;1?name=enigmail";
@@ -109,8 +109,8 @@ EnigmailProtocolHandler.prototype = {
 
             var contentType, contentCharset, contentData;
 
-            if (URIs.getMessageURI(messageId)) {
-                var messageUriObj = URIs.getMessageURI(messageId);
+            if (EnigmailURIs.getMessageURI(messageId)) {
+                var messageUriObj = EnigmailURIs.getMessageURI(messageId);
 
                 contentType    = messageUriObj.contentType;
                 contentCharset = messageUriObj.contentCharset;
