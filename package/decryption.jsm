@@ -41,7 +41,7 @@
 
 "use strict";
 
-const EXPORTED_SYMBOLS = [ "Decryption" ];
+const EXPORTED_SYMBOLS = [ "EnigmailDecryption" ];
 
 const Ci = Components.interfaces;
 const Cu = Components.utils;
@@ -91,7 +91,7 @@ function newStatusObject() {
     return statusObjectFrom({value: ""}, {}, {}, {}, {}, {}, {}, {}, {});
 }
 
-const Decryption = {
+const EnigmailDecryption = {
     decryptMessageStart: function (win, verifyOnly, noOutput, listener,
                                    statusFlagsObj, errorMsgObj, mimeSignatureFile,
                                    maxOutputLength) {
@@ -559,7 +559,7 @@ const Decryption = {
 
         var maxOutput = pgpBlock.length * 100;  // limit output to 100 times message size
         // to avoid DoS attack
-        var proc = Decryption.decryptMessageStart(parent, verifyOnly, noOutput, listener,
+        var proc = EnigmailDecryption.decryptMessageStart(parent, verifyOnly, noOutput, listener,
                                                   statusFlagsObj, startErrorMsgObj,
                                                   null, maxOutput);
 
@@ -576,7 +576,7 @@ const Decryption = {
         var plainText = EnigmailData.getUnicodeData(listener.stdoutData);
 
         var retStatusObj = {};
-        var exitCode = Decryption.decryptMessageEnd(EnigmailData.getUnicodeData(listener.stderrData), listener.exitCode,
+        var exitCode = EnigmailDecryption.decryptMessageEnd(EnigmailData.getUnicodeData(listener.stderrData), listener.exitCode,
                                                     plainText.length, verifyOnly, noOutput,
                                                     uiFlags, retStatusObj);
         exitCodeObj.value = exitCode;
@@ -618,7 +618,7 @@ const Decryption = {
                 RegExp.multiline = false;
             }
 
-            return Decryption.inlineInnerVerification(parent, uiFlags, plainText,
+            return EnigmailDecryption.inlineInnerVerification(parent, uiFlags, plainText,
                                                       statusObjectFrom(signatureObj, exitCodeObj, statusFlagsObj, keyIdObj, userIdObj,
                                                                        sigDetailsObj, errorMsgObj, blockSeparationObj, encToDetailsObj));
         }
@@ -676,7 +676,7 @@ const Decryption = {
                     // to break the recursion
                     var uiFlagsDeep = interactive ? nsIEnigmail.UI_INTERACTIVE : 0;
                     signatureObj.value = "";
-                    return Decryption.decryptMessage(parent, uiFlagsDeep, pgpBlock,
+                    return EnigmailDecryption.decryptMessage(parent, uiFlagsDeep, pgpBlock,
                                                      signatureObj, exitCodeObj, statusFlagsObj,
                                                      keyIdObj, userIdObj, sigDetailsObj, errorMsgObj);
                 }
@@ -699,7 +699,7 @@ const Decryption = {
 
         if (text && text.indexOf("-----BEGIN PGP SIGNED MESSAGE-----") === 0) {
             var status = newStatusObject();
-            var newText = Decryption.decryptMessage(parent, uiFlags, text,
+            var newText = EnigmailDecryption.decryptMessage(parent, uiFlags, text,
                                                     status.signature, status.exitCode, status.statusFlags, status.keyId, status.userId,
                                                     status.sigDetails, status.message, status.blockSeparation, status.encToDetails);
             if (status.exitCode.value === 0) {
@@ -775,7 +775,7 @@ const Decryption = {
     },
 
     registerOn: function(target) {
-        target.decryptMessage = Decryption.decryptMessage;
-        target.decryptAttachment = Decryption.decryptAttachment;
+        target.decryptMessage = EnigmailDecryption.decryptMessage;
+        target.decryptAttachment = EnigmailDecryption.decryptAttachment;
     }
 };

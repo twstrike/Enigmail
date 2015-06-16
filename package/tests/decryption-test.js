@@ -10,7 +10,7 @@
 
 do_load_module("file://" + do_get_cwd().path + "/testHelper.js"); /*global withEnigmail: false, withTestGpgHome: false */
 
-testing("decryption.jsm"); /*global Decryption: false, nsIEnigmail: false */
+testing("decryption.jsm"); /*global EnigmailDecryption: false, nsIEnigmail: false */
 component("enigmail/keyRing.jsm"); /*global EnigmailKeyRing: fales */
 component("enigmail/armor.jsm"); /*global EnigmailArmor: fales */
 
@@ -41,7 +41,7 @@ test(withTestGpgHome(withEnigmail(function shouldDecryptMessage() {
     const exitCodeObj = {};
     const statusFlagObj = {};
     const errorMsgObj = {};
-    const decryptResult = Decryption.decryptMessage(parentWindow,
+    const decryptResult = EnigmailDecryption.decryptMessage(parentWindow,
                                                   nsIEnigmail.UI_TEST,
                                                   encryptResult,
                                                   {},

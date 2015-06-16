@@ -49,7 +49,7 @@ Cu.import("resource://enigmail/pipeConsole.jsm"); /*global EnigmailConsole: fals
 Cu.import("resource://enigmail/enigmailCore.jsm"); /*global EnigmailCore: false */
 Cu.import("resource://enigmail/enigmailGpgAgent.jsm"); /*global EnigmailGpgAgent: false */
 Cu.import("resource://enigmail/encryption.jsm"); /*global Encryption: false */
-Cu.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
+Cu.import("resource://enigmail/decryption.jsm"); /*global EnigmailDecryption: false */
 Cu.import("resource://enigmail/enigmailProtocolHandler.jsm"); /*global EnigmailProtocolHandler: false */
 Cu.import("resource://enigmail/rules.jsm"); /*global Rules: false */
 Cu.import("resource://enigmail/filters.jsm"); /*global EnigmailFilters: false */
@@ -356,7 +356,7 @@ Enigmail.prototype = {
 
 
 EnigmailArmor.registerOn(Enigmail.prototype);
-Decryption.registerOn(Enigmail.prototype);
+EnigmailDecryption.registerOn(Enigmail.prototype);
 Encryption.registerOn(Enigmail.prototype);
 Rules.registerOn(Enigmail.prototype);
 URIs.registerOn(Enigmail.prototype);

@@ -18,7 +18,7 @@ Components.utils.import("resource://enigmail/log.jsm"); /*global EnigmailLog: fa
 Components.utils.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
 Components.utils.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Components.utils.import("resource://enigmail/prefs.jsm"); /*global Prefs: false */
-Components.utils.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
+Components.utils.import("resource://enigmail/decryption.jsm"); /*global EnigmailDecryption: false */
 Components.utils.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
 Components.utils.import("resource://enigmail/constants.jsm"); /*global EnigmailConstants: false */
 
@@ -275,7 +275,7 @@ PgpMimeDecrypt.prototype = {
 
     var maxOutput = this.outQueue.length * 100; // limit output to 100 times message size
                                                 // to avoid DoS attack
-    this.proc = Decryption.decryptMessageStart(win, false, false, this,
+    this.proc = EnigmailDecryption.decryptMessageStart(win, false, false, this,
                                                statusFlagsObj, errorMsgObj, null, maxOutput);
 
     if (! this.proc) return;
@@ -290,7 +290,7 @@ PgpMimeDecrypt.prototype = {
     this.proc.wait();
 
     this.returnStatus = {};
-    Decryption.decryptMessageEnd(this.statusStr,
+    EnigmailDecryption.decryptMessageEnd(this.statusStr,
                                  this.exitCode,
                                  this.dataLength,
                                  false,

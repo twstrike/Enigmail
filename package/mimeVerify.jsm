@@ -20,7 +20,7 @@ Components.utils.import("resource://enigmail/enigmailFuncs.jsm");
 Components.utils.import("resource://enigmail/log.jsm");
 Components.utils.import("resource://enigmail/files.jsm");
 Components.utils.import("resource://enigmail/data.jsm");
-Components.utils.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
+Components.utils.import("resource://enigmail/decryption.jsm"); /*global EnigmailDecryption: false */
 
 const EXPORTED_SYMBOLS = [ "EnigmailVerify" ];
 
@@ -300,7 +300,7 @@ MimeVerify.prototype = {
     var statusFlagsObj = {};
     var errorMsgObj = {};
 
-    this.proc = Decryption.decryptMessageStart(win, true, true, this,
+    this.proc = EnigmailDecryption.decryptMessageStart(win, true, true, this,
                 statusFlagsObj, errorMsgObj,
                 EnigmailFiles.getEscapedFilename(EnigmailFiles.getFilePath(this.sigFile)));
 
@@ -349,7 +349,7 @@ MimeVerify.prototype = {
     //LOCAL_DEBUG("mimeVerify.jsm: "+this.statusStr+"\n");
 
     this.returnStatus = {};
-    Decryption.decryptMessageEnd(this.statusStr,
+    EnigmailDecryption.decryptMessageEnd(this.statusStr,
                                  this.exitCode,
                                  this.dataLength,
                                  true, // verifyOnly

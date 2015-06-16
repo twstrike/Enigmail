@@ -52,7 +52,7 @@ Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/time.jsm"); /*global Time: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global EnigmailLocale: false */
-Cu.import("resource://enigmail/decryption.jsm"); /*global Decryption: false */
+Cu.import("resource://enigmail/decryption.jsm"); /*global EnigmailDecryption: false */
 
 const Ci = Components.interfaces;
 
@@ -79,7 +79,7 @@ const Verify = {
         proc.wait();
 
         const retObj = {};
-        Decryption.decryptMessageEnd(listener.stderrData, listener.exitCode, 1, true, true, nsIEnigmail.UI_INTERACTIVE, retObj);
+        EnigmailDecryption.decryptMessageEnd(listener.stderrData, listener.exitCode, 1, true, true, nsIEnigmail.UI_INTERACTIVE, retObj);
 
         if (listener.exitCode === 0) {
             const detailArr = retObj.sigDetails.split(/ /);
