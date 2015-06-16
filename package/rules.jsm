@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailFuncs: false, Log: false, OS: false, Files: false, App: false */
+/*global Components: false, EnigmailFuncs: false, Log: false, OS: false, Files: false, EnigmailApp: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -68,7 +68,7 @@ const rulesListHolder = {
 const Rules = {
     getRulesFile: function() {
         Log.DEBUG("enigmail.js: getRulesFile\n");
-        var rulesFile = App.getProfileDirectory();
+        var rulesFile = EnigmailApp.getProfileDirectory();
         rulesFile.append("pgprules.xml");
         return rulesFile;
     },

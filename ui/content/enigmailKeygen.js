@@ -198,7 +198,7 @@ function genAndSaveRevCert(keyId, uid) {
     function(resolve, reject) {
 
     let keyIdShort = "0x"+keyId.substr(-16, 16);
-    let keyFile = App.getProfileDirectory();
+    let keyFile = EnigmailApp.getProfileDirectory();
     keyFile.append(keyIdShort + "_rev.asc");
 
     // create a revokation cert in the TB profile directoy

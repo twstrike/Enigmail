@@ -53,7 +53,7 @@ Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
 Cu.import("resource://enigmail/locale.jsm"); /*global Locale: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
-Cu.import("resource://enigmail/app.jsm"); /*global App: false */
+Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
 Cu.import("resource://enigmail/gpg.jsm"); /*global Gpg: false */
 Cu.import("resource://enigmail/execution.jsm"); /*global Execution: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global Passwords: false */
@@ -621,7 +621,7 @@ const EnigmailGpgAgent = {
 
                 try {
                     var process = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
-                    var exec = App.getInstallLocation().clone();
+                    var exec = EnigmailApp.getInstallLocation().clone();
                     exec.append("wrappers");
                     exec.append("gpg-agent-wrapper.sh");
                     process.init(exec);

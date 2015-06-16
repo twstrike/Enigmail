@@ -1,5 +1,5 @@
 dump("loading: enigmailCommon.js\n");
-/*global Components: false, Data: false, Files: false, EnigmailCore: false, App: false, Dialog: false, Windows: false, Time: false */
+/*global Components: false, Data: false, Files: false, EnigmailCore: false, EnigmailApp: false, Dialog: false, Windows: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -480,7 +480,7 @@ function EnigGetOS () {
 }
 
 function EnigGetVersion() {
-  return App.getVersion();
+  return EnigmailApp.getVersion();
 }
 
 function EnigFilePicker(title, displayDir, save, defaultExtension, defaultName, filterPairs) {

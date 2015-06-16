@@ -64,7 +64,7 @@ Cu.import("resource://enigmail/verify.jsm"); /*global Verify: false */
 Cu.import("resource://enigmail/windows.jsm"); /*global Windows: false */
 Cu.import("resource://enigmail/dialog.jsm"); /*global Dialog: false */
 Cu.import("resource://enigmail/configure.jsm"); /*global Configure: false */
-Cu.import("resource://enigmail/app.jsm"); /*global App: false */
+Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
 
 /* Implementations supplied by this module */
 const NS_ENIGMAIL_CONTRACTID   = "@mozdev.org/enigmail/enigmail;1";
@@ -299,8 +299,8 @@ Enigmail.prototype = {
 
             try {
                 // Initialize enigmail
-                EnigmailCore.init(App.getVersion());
-                holder.svc.initialize(win, App.getVersion());
+                EnigmailCore.init(EnigmailApp.getVersion());
+                holder.svc.initialize(win, EnigmailApp.getVersion());
 
                 try {
                     // Reset alert count to default value
@@ -345,7 +345,7 @@ Enigmail.prototype = {
                 Dialog.alert(win, Locale.getString("pgpNotSupported"));
             }
 
-            if (holder.svc.initialized && (App.getVersion() != configuredVersion)) {
+            if (holder.svc.initialized && (EnigmailApp.getVersion() != configuredVersion)) {
                 Configure.configureEnigmail(win, startingPreferences);
             }
         }

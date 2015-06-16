@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, App: false, Locale: false, Dialog: false */
+/*global Components: false, EnigmailCore: false, Data: false, Log: false, Prefs: false, EnigmailApp: false, Locale: false, Dialog: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -133,7 +133,7 @@ var Encryption = {
         var encryptArgs = Gpg.getStandardArgs(true);
 
         if (!useDefaultComment)
-            encryptArgs = encryptArgs.concat(["--comment", GPG_COMMENT_OPT.replace(/\%s/, App.getName())]);
+            encryptArgs = encryptArgs.concat(["--comment", GPG_COMMENT_OPT.replace(/\%s/, EnigmailApp.getName())]);
 
         var angledFromMailAddr = ((fromMailAddr.search(/^0x/) === 0) || hushMailSupport) ?
                 fromMailAddr : "<" + fromMailAddr + ">";

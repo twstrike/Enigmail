@@ -1,4 +1,4 @@
-/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, App: false */
+/*global do_load_module: false, do_get_file: false, do_get_cwd: false, testing: false, test: false, Assert: false, resetting: false, EnigmailApp: false */
 /*global Rules: false, rulesListHolder: false, EC: false */
 /*jshint -W097 */
 /*
@@ -16,7 +16,7 @@ testing("rules.jsm");
 // getRulesFile
 test(function getRulesFileReturnsTheFile() {
     Rules.clearRules();
-    Assert.equal(App.getProfileDirectory().path + "/pgprules.xml", Rules.getRulesFile().path);
+    Assert.equal(EnigmailApp.getProfileDirectory().path + "/pgprules.xml", Rules.getRulesFile().path);
 });
 
 // loadRulesFile

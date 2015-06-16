@@ -1,4 +1,4 @@
-/*global Components: false, Log: false, Prefs: false, Timer: false, App: false, Locale: false, Dialog: false, Windows: false */
+/*global Components: false, Log: false, Prefs: false, Timer: false, EnigmailApp: false, Locale: false, Dialog: false, Windows: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -293,7 +293,7 @@ const Configure = {
         }
         catch(ex) {}
 
-        Prefs.setPref("configuredVersion", App.getVersion());
+        Prefs.setPref("configuredVersion", EnigmailApp.getVersion());
         Prefs.savePrefs();
     }
 };

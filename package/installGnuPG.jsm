@@ -60,7 +60,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://enigmail/subprocess.jsm"); /*global subprocess: false */
 Cu.import("resource://enigmail/log.jsm"); /*global Log: false */
 Cu.import("resource://enigmail/os.jsm"); /*global OS: false */
-Cu.import("resource://enigmail/app.jsm"); /*global App: false */
+Cu.import("resource://enigmail/app.jsm"); /*global EnigmailApp: false */
 Cu.import("resource://enigmail/promise.jsm"); /*global Promise: false */
 
 const Cc = Components.classes;
@@ -430,7 +430,7 @@ Installer.prototype = {
                        },
                        false);
 
-      oReq.open("get", queryUrl + "?vEnigmail="+escape(App.getVersion())+ "&os=" + escape(os) + "&platform=" +
+      oReq.open("get", queryUrl + "?vEnigmail="+escape(EnigmailApp.getVersion())+ "&os=" + escape(os) + "&platform=" +
                 escape(platform), true);
       oReq.send();
     }

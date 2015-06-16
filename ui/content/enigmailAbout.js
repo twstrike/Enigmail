@@ -1,5 +1,5 @@
 dump("loading: enigmailAbout.js\n");
-/*global Components: false, App: false, Windows: false */
+/*global Components: false, EnigmailApp: false, Windows: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -45,7 +45,7 @@ function enigAboutLoad() {
   if (!contentFrame)
     return;
 
-  var enigVersion=App.getVersion()+" ("+EnigBuildDate+")";
+  var enigVersion=EnigmailApp.getVersion()+" ("+EnigBuildDate+")";
   var versionElement = contentFrame.document.getElementById('version');
   if (versionElement)
     versionElement.firstChild.data = Locale.getString("usingVersion", enigVersion);

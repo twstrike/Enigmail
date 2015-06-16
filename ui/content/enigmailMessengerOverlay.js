@@ -1,5 +1,5 @@
 dump("loading: enigmailMessengerOverlay.js\n");
-/*global Components: false, Data: false, App: false, Dialog: false, Timer: false, Windows: false, Time: false */
+/*global Components: false, Data: false, EnigmailApp: false, Dialog: false, Timer: false, Windows: false, Time: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -192,7 +192,7 @@ Enigmail.msg = {
     top.controllers.appendController(treeController);
 
     if (Prefs.getPref("configuredVersion") === "") {
-      Prefs.setPref("configuredVersion", App.getVersion());
+      Prefs.setPref("configuredVersion", EnigmailApp.getVersion());
       Windows.openSetupWizard(window, false);
     }
   },
@@ -2278,7 +2278,7 @@ Enigmail.msg = {
   },
 
   loadExternalURL: function (url) {
-    if (App.isSuite()) {
+    if (EnigmailApp.isSuite()) {
       Enigmail.msg.loadURLInNavigatorWindow(url, true);
     }
     else {
