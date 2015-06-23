@@ -1,4 +1,3 @@
-dump("loading: enigmailCommon.js\n");
 /*global Components: false, EnigmailFiles: false, EnigmailCore: false, EnigmailApp: false, EnigmailDialog: false, EnigmailWindows: false, EnigmailTime: false */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -528,25 +527,13 @@ function EnigSignKey(userId, keyId) {
 
 
 function EnigChangeKeyPwd(keyId, userId) {
-  if (! EnigmailGpgAgent.useGpgAgent()) {
-    // no gpg-agent: open dialog to enter new passphrase
-    var inputObj = {
-      keyId: keyId,
-      userId: userId
-    };
-
-    window.openDialog("chrome://enigmail/content/enigmailChangePasswd.xul",
-        "", "dialog,modal,centerscreen", inputObj);
-  }
-  else {
-    // gpg-agent used: gpg-agent will handle everything
-    EnigmailKeyEditor.changePassphrase(window, "0x"+keyId, "", "",
-      function _changePwdCb(exitCode, errorMsg) {
-        if (exitCode !== 0) {
-          EnigAlert(EnigGetString("changePassFailed")+"\n\n"+errorMsg);
-        }
-      });
-  }
+  // gpg-agent used: gpg-agent will handle everything
+  EnigmailKeyEditor.changePassphrase(window, "0x"+keyId, "", "",
+    function _changePwdCb(exitCode, errorMsg) {
+      if (exitCode !== 0) {
+        EnigAlert(EnigGetString("changePassFailed")+"\n\n"+errorMsg);
+      }
+    });
 }
 
 

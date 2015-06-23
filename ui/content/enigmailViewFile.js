@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-
-<!--
+/*
  * ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -34,46 +32,49 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** *
--->
+*/
 
-<!--
-  This is the overlay that adds the OpenPGP account
-  settings to the identity editor of the account manager
--->
 
-<?xml-stylesheet href="chrome://enigmail/skin/enigmail.css"
-                 type="text/css"?>
+EnigInitCommon("enigmailViewFile");
 
-<!DOCTYPE window [
-<!ENTITY % enigMailDTD SYSTEM "chrome://enigmail/locale/enigmail.dtd" >
-%enigMailDTD;
-]>
+var logFileData; // global definition of log file data to be able to save
+                 // same data as displayed
 
-<overlay id="enigmailAmIdEditOverlay"
-    xmlns:html="http://www.w3.org/1999/xhtml"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+function saveLogFile() {
+  let fileObj = EnigmailDialog.filePicker(window, EnigmailLocale.getString("saveLogFile.title"), null,
+    true, "txt");
 
-  <script type="application/x-javascript" src="chrome://enigmail/content/enigmailEditIdentity.js"/>
-  <script type="application/x-javascript" src="chrome://enigmail/content/enigmailAmIdEditOverlay.js"/>
+  EnigmailFiles.writeFileContents(fileObj, logFileData, null);
 
-  <tabs id="identitySettings">
-    <tab label="&enigmail.openPgpSecurity.label;" id="enigmailSecurity"/>
-  </tabs>
+}
 
-  <tabpanels id="identityTabsPanels">
-    <vbox>
-      <broadcasterset>
-        <broadcaster id="enigmail_bcEnablePgp" disabled="false"/>
-        <broadcaster id="enigmail_bcUseKeyId" disabled="false"/>
-        <broadcaster id="enigmail_bcUseUrl" disabled="true"/>
-      </broadcasterset>
+function enigLoadPage() {
+  EnigmailLog.DEBUG("enigmailHelp.js: enigLoadPage\n");
+  EnigmailCore.getService();
 
-      <label id="enigmail_identityName" value="(unknown ID)"/>
+  var contentFrame = EnigmailWindows.getFrame(window, "contentFrame");
+  if (!contentFrame)
+    return;
 
-      <separator/>
+  var winOptions=EnigGetWindowOptions();
 
-      <vbox id="enigmail_IdentityEdit"/>
+  if ("fileUrl" in winOptions) {
+    contentFrame.document.location.href = winOptions.fileUrl;
+  }
 
-    </vbox>
-  </tabpanels>
-</overlay>
+  if ("viewLog" in winOptions) {
+    let cf = document.getElementById("contentFrame");
+    cf.setAttribute("collapsed", "true");
+
+    let cb = document.getElementById("contentBox");
+    logFileData = EnigmailLog.getLogData(EnigmailCore.version, EnigmailPrefs);
+    cb.value = logFileData;
+
+    let cfb = document.getElementById("logFileBox");
+    cfb.removeAttribute("collapsed");
+  }
+
+  if ("title" in winOptions) {
+    document.getElementById("EnigmailViewFile").setAttribute("title", winOptions.title);
+  }
+}

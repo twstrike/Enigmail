@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
-
-<!--
+/*
  * ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -34,46 +32,16 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  * ***** END LICENSE BLOCK ***** *
--->
+*/
 
-<!--
-  This is the overlay that adds the OpenPGP account
-  settings to the identity editor of the account manager
--->
 
-<?xml-stylesheet href="chrome://enigmail/skin/enigmail.css"
-                 type="text/css"?>
+function onLoad() {
+  document.getElementById("photoImage").setAttribute("src", window.arguments[0].photoUri);
+  document.getElementById("keyDesc").setAttribute("value", "0x"+window.arguments[0].keyId.substr(-8,8) +
+      " - " + window.arguments[0].userId);
+}
 
-<!DOCTYPE window [
-<!ENTITY % enigMailDTD SYSTEM "chrome://enigmail/locale/enigmail.dtd" >
-%enigMailDTD;
-]>
-
-<overlay id="enigmailAmIdEditOverlay"
-    xmlns:html="http://www.w3.org/1999/xhtml"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
-  <script type="application/x-javascript" src="chrome://enigmail/content/enigmailEditIdentity.js"/>
-  <script type="application/x-javascript" src="chrome://enigmail/content/enigmailAmIdEditOverlay.js"/>
-
-  <tabs id="identitySettings">
-    <tab label="&enigmail.openPgpSecurity.label;" id="enigmailSecurity"/>
-  </tabs>
-
-  <tabpanels id="identityTabsPanels">
-    <vbox>
-      <broadcasterset>
-        <broadcaster id="enigmail_bcEnablePgp" disabled="false"/>
-        <broadcaster id="enigmail_bcUseKeyId" disabled="false"/>
-        <broadcaster id="enigmail_bcUseUrl" disabled="true"/>
-      </broadcasterset>
-
-      <label id="enigmail_identityName" value="(unknown ID)"/>
-
-      <separator/>
-
-      <vbox id="enigmail_IdentityEdit"/>
-
-    </vbox>
-  </tabpanels>
-</overlay>
+function acceptDlg() {
+  window.arguments[0].okPressed = true;
+  return true;
+}

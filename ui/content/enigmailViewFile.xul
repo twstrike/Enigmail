@@ -57,6 +57,7 @@
 
   <script type="application/x-javascript" src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
+  <script type="application/x-javascript" src="chrome://enigmail/content/enigmailViewFile.js"/>
 
 
   <iframe id="contentFrame" type="content" name="contentFrame"
@@ -75,56 +76,5 @@
       <button label="&enigmail.savelogfile.label;" oncommand="saveLogFile()"/>
     </hbox>
   </vbox>
-
-
-  <script type="application/x-javascript">
-  <![CDATA[
-
-    EnigInitCommon("enigmailViewFile");
-
-    var logFileData; // global definition of log file data to be able to save
-                     // same data as displayed
-
-    function saveLogFile() {
-      let fileObj = EnigmailDialog.filePicker(window, EnigmailLocale.getString("saveLogFile.title"), null,
-        true, "txt");
-
-      EnigmailFiles.writeFileContents(fileObj, logFileData, null);
-
-    }
-
-    function enigLoadPage() {
-      EnigmailLog.DEBUG("enigmailHelp.js: enigLoadPage\n");
-      EnigmailCore.getService();
-
-      var contentFrame = EnigmailWindows.getFrame(window, "contentFrame");
-      if (!contentFrame)
-        return;
-
-      var winOptions=EnigGetWindowOptions();
-
-      if ("fileUrl" in winOptions) {
-        contentFrame.document.location.href=winOptions["fileUrl"];
-      }
-
-      if ("viewLog" in winOptions) {
-        let cf = document.getElementById("contentFrame");
-        cf.setAttribute("collapsed", "true");
-
-        let cb = document.getElementById("contentBox");
-        logFileData = EnigmailLog.getLogData(EnigmailCore.version, EnigmailPrefs);
-        cb.value = logFileData;
-
-        let cfb = document.getElementById("logFileBox");
-        cfb.removeAttribute("collapsed");
-      }
-
-      if ("title" in winOptions) {
-        document.getElementById("EnigmailViewFile").setAttribute("title", winOptions["title"]);
-      }
-    }
-
-  ]]>
-  </script>
 
 </window>

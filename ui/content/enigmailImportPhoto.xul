@@ -54,25 +54,7 @@
         height="450px"
         buttons="accept, cancel">
   <script type="application/x-javascript" src="chrome://enigmail/content/enigmailCommon.js"/>
-
-  <script type="application/x-javascript">
-  <![CDATA[
-
-    var repaintCount=0;
-    function onLoad() {
-      document.getElementById("photoImage").setAttribute("src", window.arguments[0].photoUri);
-      document.getElementById("keyDesc").setAttribute("value", "0x"+window.arguments[0].keyId.substr(-8,8)
-          + " - " + window.arguments[0].userId);
-    }
-
-    function acceptDlg() {
-      window.arguments[0].okPressed = true;
-      return true;
-    }
-
-
-  ]]>
-  </script>
+  <script type="application/x-javascript" src="chrome://enigmail/content/enigmailImportPhoto.js"/>
 
   <hbox align="center">
     <vbox align="center">
