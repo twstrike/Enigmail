@@ -1049,6 +1049,13 @@ if (messageHeaderSink) {
         EnigmailLog.DEBUG("enigmailMsgHdrViewOverlay.js: EnigMimeHeaderSink.modifyMessageHeaders:\n");
         EnigmailLog.DEBUG("enigmailMsgHdrViewOverlay.js: headerData= "+ headerData + "\n");
 
+        function updateHdrBox(header, value) {
+          let e = document.getElementById("expanded" + header + "Box");
+          if (e) {
+            e.headerValue = value;
+          }
+        }
+
         let hdr;
         try {
           hdr = JSON.parse(headerData);
@@ -1063,18 +1070,35 @@ if (messageHeaderSink) {
 
         if ("subject" in hdr) {
           gFolderDisplay.selectedMessage.subject = hdr.subject;
-          let e = document.getElementById("expandedsubjectBox");
-          if (e) {
-            // do something
-          }
+          updateHdrBox("subject", hdr.subject);
+        }
+
+        if ("date" in hdr) {
+          gFolderDisplay.selectedMessage.date = Date.parse(hdr.date) * 1000;
+        }
+
+        if ("newsgroups" in hdr) {
+          updateHdrBox("newsgroups", hdr.newsgroups);
+        }
+
+        if ("followup-to" in hdr) {
+          updateHdrBox("followup-to", hdr["followup-to"]);
         }
 
         if ("from" in hdr) {
-          gFolderDisplay.selectedMessage.author = hdr.from;
+          gExpandedHeaderView.from.outputFunction(gExpandedHeaderView.from, hdr.from);
         }
 
         if ("to" in hdr) {
-          gFolderDisplay.selectedMessage.recipients = hdr.to;
+          gExpandedHeaderView.to.outputFunction(gExpandedHeaderView.to, hdr.to);
+        }
+
+        if ("cc" in hdr) {
+          gExpandedHeaderView.cc.outputFunction(gExpandedHeaderView.cc, hdr.cc);
+        }
+
+        if ("reply-to" in hdr) {
+          gExpandedHeaderView["reply-to"].outputFunction(gExpandedHeaderView["reply-to"], hdr["reply-to"]);
         }
 
       },

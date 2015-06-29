@@ -1,4 +1,4 @@
-/*global Components: false, btoa: false, escape: false */
+/*global Components: false, btoa: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -58,6 +58,7 @@ Cu.import("resource://enigmail/gpg.jsm"); /*global EnigmailGpg: false */
 Cu.import("resource://enigmail/streams.jsm"); /*global EnigmailStreams: false */
 Cu.import("resource://enigmail/passwords.jsm"); /*global EnigmailPassword: false */
 Cu.import("resource://enigmail/mime.jsm"); /*global EnigmailMime: false */
+Cu.import("resource://enigmail/data.jsm"); /*global EnigmailData: false */
 Cu.import("resource://enigmail/attachment.jsm"); /*global EnigmailAttachment: false */
 
 /*global MimeBody: false, MimeUnknown: false, MimeMessageAttachment: false */
@@ -822,7 +823,7 @@ DecryptMessageIntoFolder.prototype = {
             let j = decryptedMessage.search(/[^\x01-\x7F]/);
             if (j >= 0) {
                 mime.headers['content-transfer-encoding'] = [ 'base64' ];
-                mime.body = base64WithWidthCompliance(decryptedMessage);
+                mime.body = EnigmailData.encodeBase64(decryptedMessage);
             }
             else {
                 mime.body = decryptedMessage;
@@ -943,7 +944,7 @@ DecryptMessageIntoFolder.prototype = {
                         }
 
                         msg += "Content-Transfer-Encoding: base64\r\n\r\n";
-                        msg += base64WithWidthCompliance(a.data)+"\r\n";
+                        msg += EnigmailData.encodeBase64(a.data)+"\r\n";
 
                     }
                 }
@@ -983,9 +984,9 @@ DecryptMessageIntoFolder.prototype = {
                     mimeName = getHeaderValue(mime, 'subject')+".eml";
                 }
 
-                msg += 'Content-Type: message/rfc822; name="'+ encodeHeaderValue(mimeName) + '\r\n';
+                msg += 'Content-Type: message/rfc822; name="'+ EnigmailMime.encodeHeaderValue(mimeName) + '\r\n';
                 msg += 'Content-Transfer-Encoding: 7bit\r\n';
-                msg += 'Content-Disposition: attachment; filename="' + encodeHeaderValue(mimeName) + '"\r\n\r\n';
+                msg += 'Content-Disposition: attachment; filename="' + EnigmailMime.encodeHeaderValue(mimeName) + '"\r\n\r\n';
             }
 
             msg += getRfc822Headers(mime.headers, ct);
@@ -1054,29 +1055,11 @@ function formatHeaderData(hdrValue) {
     return lines.join("").trim();
 }
 
-/**
- * Correctly encode and format a set of email addresses
- */
-function formatEmailAddress(addressData) {
-    const adrArr = addressData.split(/, */);
-
-    for (let i in adrArr) {
-        try {
-            const m = adrArr[i].match(/(.*[\w\s]+?)<([\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4})>/);
-            if (m && m.length == 3) {
-                adrArr[i] = encodeHeaderValue(m[1])+" <" + m[2] + ">";
-            }
-        } catch(ex) {}
-    }
-
-    return adrArr.join(", ");
-}
-
 function formatMimeHeader(headerLabel, headerValue) {
     if (headerLabel.search(/^(sender|from|reply-to|to|cc|bcc)$/i) === 0) {
-        return formatHeader(headerLabel) +": "+ formatHeaderData(formatEmailAddress(headerValue));
+        return formatHeader(headerLabel) +": "+ formatHeaderData(EnigmailMime.formatEmailAddress(headerValue));
     } else {
-        return formatHeader(headerLabel) +": "+ formatHeaderData(encodeHeaderValue(headerValue));
+        return formatHeader(headerLabel) +": "+ formatHeaderData(EnigmailMime.encodeHeaderValue(headerValue));
     }
 }
 
@@ -1144,10 +1127,6 @@ function getRfc822Headers(headerArr, contentType, ignoreHeadersArr) {
     return hdrs;
 }
 
-function base64WithWidthCompliance(data) {
-    return btoa(data).replace(/(.{72})/g, "$1\r\n");
-}
-
 function getContentType(shdr) {
     try {
         shdr += "";
@@ -1199,28 +1178,4 @@ function getSMimeProtocol(shdr) {
     }
 }
 
-/**
- * Get UTF-8 encoded header value following RFC 2047
- */
-function encodeHeaderValue (aStr) {
-    let ret = "";
 
-    if (aStr.search(/[^\x01-\x7F]/) >= 0) {
-        let converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"].
-                createInstance(Ci.nsIScriptableUnicodeConverter);
-
-        let trash = {};
-        converter.charset = "UTF-8";
-        let data = converter.convertToByteArray(aStr, trash);
-
-        for (let j in data) {
-            ret += String.fromCharCode(data[j]);
-        }
-
-        ret = "=?UTF-8?Q?"+escape(ret).replace(/%/g, "=")+"?=";
-    } else {
-        ret = aStr;
-    }
-
-    return ret;
-}

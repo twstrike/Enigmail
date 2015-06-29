@@ -55,13 +55,6 @@ interface nsIEnigmail : nsISupports
   void reinitialize();
   void finalize();
 
-  string locateArmoredBlock(in string text,
-                            in long offset,
-                            in string indentStr,
-                            out long beginIndex,
-                            out long endIndex,
-                            out string foundIndentStr);
-
   /* Cleartext signature parts */
   const long SIGNATURE_TEXT    = 1;
   const long SIGNATURE_HEADERS = 2;
@@ -79,29 +72,19 @@ interface nsIEnigmail : nsISupports
   const long UI_RESTORE_STRICTLY_MIME = 0x20;
 
   /* Send message flags */
-  const long SEND_SIGNED           = 0x001;  //    1
-  const long SEND_ENCRYPTED        = 0x002;  //    2
-  const long SEND_DEFAULT          = 0x004;  //    4
-  const long SEND_LATER            = 0x008;  //    8
-  const long SEND_WITH_CHECK       = 0x010;  //   16
-  const long SEND_ALWAYS_TRUST     = 0x020;  //   32
-  const long SEND_ENCRYPT_TO_SELF  = 0x040;  //   64
-  const long SEND_PGP_MIME         = 0x080;  //  128
-  const long SEND_TEST             = 0x100;  //  256
-  const long SAVE_MESSAGE          = 0x200;  //  512
-  const long SEND_STRIP_WHITESPACE = 0x400;  // 1024
-  const long SEND_ATTACHMENT       = 0x800;  // 2048
-
-  wstring encryptMessage(in nsIDOMWindow parent,
-                        in unsigned long uiFlags,
-                        in string  plainText,
-                        in string  fromMailAddr,
-                        in string  toMailAddr,
-                        in string  bccMailAddr,
-                        in unsigned long sendFlags,
-                        out long exitCode,
-                        out unsigned long statusFlags,
-                        out wstring errorMsg);
+  const long SEND_SIGNED           = 0x0001;  //    1
+  const long SEND_ENCRYPTED        = 0x0002;  //    2
+  const long SEND_DEFAULT          = 0x0004;  //    4
+  const long SEND_LATER            = 0x0008;  //    8
+  const long SEND_WITH_CHECK       = 0x0010;  //   16
+  const long SEND_ALWAYS_TRUST     = 0x0020;  //   32
+  const long SEND_ENCRYPT_TO_SELF  = 0x0040;  //   64
+  const long SEND_PGP_MIME         = 0x0080;  //  128
+  const long SEND_TEST             = 0x0100;  //  256
+  const long SAVE_MESSAGE          = 0x0200;  //  512
+  const long SEND_STRIP_WHITESPACE = 0x0400;  // 1024
+  const long SEND_ATTACHMENT       = 0x0800;  // 2048
+  const long ENCRYPT_HEADERS       = 0x1000;  // 4096
 
   /* Status flags */
   const unsigned long GOOD_SIGNATURE        = 0x00000001;
@@ -137,23 +120,6 @@ interface nsIEnigmail : nsISupports
   const unsigned long SIG_CREATED           = 0x40000000;
   const unsigned long END_ENCRYPTION        = 0x80000000;
 
-  wstring decryptMessage(in nsIDOMWindow parent,
-                        in unsigned long uiFlags,
-                        in string  cipherText,
-                        inout string signature,
-                        out long exitCode,
-                        out unsigned long statusFlags,
-                        out wstring keyId,
-                        out wstring userId,
-                        out wstring sigDetails,
-                        out wstring errorMsg,
-                        out wstring blockSeparation,
-                        out wstring encToDetails);
-
-  boolean deleteMessageURI(in string uri);
-
-  string getGnupgConfig (out long exitCodeObj, out wstring errorMsgObj);
-
 /*** key handling functions ***/
 
   const long EXTRACT_SECRET_KEY = 0x01;
@@ -164,56 +130,14 @@ interface nsIEnigmail : nsISupports
   const long UPLOAD_KEY       = 0x04;
   const long REFRESH_KEY      = 0x08;
 
-  string createMessageURI(in string originalUrl,
-                          in string contentType,
-                          in string contentCharset,
-                          in string contentData,
-                          in boolean persist);
-
   /* attachment handling */
 
-  string encryptAttachment (in nsIDOMWindow parent,
-                            in string fromMailAddr,
-                            in string toMailAddr,
-                            in string bccMailAddr,
-                            in unsigned long sendFlags,
-                            in nsIFile inFile,
-                            in nsIFile outFile,
-                            out long exitCode,
-                            out unsigned long statusFlags,
-                            out wstring errorMsg);
-
-  boolean decryptAttachment (in nsIDOMWindow parent,
-                             in nsIFile outFile,
-                             in string displayName,
-                             in wstring byteData,
-                             out long exitCode,
-                             out unsigned long statusFlags,
-                             out wstring errorMsg);
-
-  long verifyAttachment (in nsIDOMWindow parent,
-                         in nsIFile verifyFile,
-                         in nsIFile sigFile,
-                         out unsigned long statusFlags,
-                         out wstring errorMsg);
-
   /* per-recipient rules */
-
-  boolean getRulesData(out nsIDOMDocument rulesList);
-
-  void addRule(in boolean appendToEnd,
-               in string toAddress,
-               in string keyList,
-               in long sign,
-               in long encrypt,
-               in long pgpMime,
-               in long flags);
-
-  boolean saveRulesFile();
-  void clearRules();
 
   const long CARD_PIN_CHANGE       = 1;
   const long CARD_PIN_UNBLOCK      = 2;
   const long CARD_ADMIN_PIN_CHANGE = 3;
 
 };
+
+

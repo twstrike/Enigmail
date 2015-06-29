@@ -1,4 +1,4 @@
-/*global Components: false, atob: false, dump: false */
+/*global Components: false, dump: false */
 /*jshint -W097 */
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -109,7 +109,7 @@ PgpMimeDecrypt.prototype = {
     this.headerMode = 0;
     this.decryptedHeaders = {};
     this.xferEncoding = ENCODING_DEFAULT;
-    this.boundary = getBoundary(this.mimeSvc.contentType);
+    this.boundary = EnigmailMime.getBoundary(this.mimeSvc.contentType);
     if (uri) {
       this.uri = uri.QueryInterface(Ci.nsIURI).clone();
       EnigmailLog.DEBUG("mimeDecrypt.js: onStartRequest: uri='"+ this.uri.spec+"'\n");
@@ -263,7 +263,7 @@ PgpMimeDecrypt.prototype = {
 
 
     if (this.xferEncoding == ENCODING_BASE64) {
-      this.outQueue = atob(this.outQueue.replace(/[\s\r\n]*/g, ""))+ "\n";
+      this.outQueue = EnigmailData.decodeBase64(this.outQueue) + "\n";
     }
 
     var statusFlagsObj = {};
@@ -473,7 +473,9 @@ PgpMimeDecrypt.prototype = {
     outerHdr.initialize(this.decryptedData.substr(0, m));
 
     let ct = outerHdr.extractHeader("content-type", false) || "";
-    let bound = getBoundary(ct);
+    let bound = EnigmailMime.getBoundary(ct);
+
+    // TODO: content-transfer-decoding and charset interpretation
 
     let r = new RegExp("^--" + bound, "ym");
 
@@ -495,6 +497,10 @@ PgpMimeDecrypt.prototype = {
     LOCAL_DEBUG("mimeDecrypt.js: extractEncryptedHeaders: found possible MIME part\n");
 
     let contentBody = this.decryptedData.substring(startPos + bound.length + 3, endPos);
+    let i = contentBody.search(/^[A-Za-z]/m); // skip empty lines
+    if (i > 0) {
+      contentBody = contentBody.substr(i);
+    }
     let headers = Cc["@mozilla.org/messenger/mimeheaders;1"].createInstance(Ci.nsIMimeHeaders);
     headers.initialize(contentBody);
 
@@ -504,42 +510,50 @@ PgpMimeDecrypt.prototype = {
       return;
     }
 
-    let bodyStartPos = contentBody.search(/^\s*$/m) + 1;
+    let charset = EnigmailMime.getCharset(innerCt);
+    let ctt = headers.extractHeader("content-transfer-encoding", false) || "";
+
+    let transferEncoding = ENCODING_DEFAULT;
+
+
+    let bodyStartPos = contentBody.search(/\r?\n\s*\r?\n/) + 1;
 
     if (bodyStartPos < 10) return;
 
-    let bodyHdr = Cc["@mozilla.org/messenger/mimeheaders;1"].createInstance(Ci.nsIMimeHeaders);
-    bodyHdr.initialize(contentBody.substr(bodyStartPos));
+    bodyStartPos += contentBody.substr(bodyStartPos).search(/^[A-Za-z]/m);
 
-    let h = [ "subject", "date", "from", "to", "cc", "in-reply-to", "references" ];
+    let ctBodyData = contentBody.substr(bodyStartPos);
+
+    if (ctt.search(/^base64/i) === 0) {
+      ctBodyData = EnigmailData.decodeBase64(ctBodyData) + "\n";
+    }
+    else if (ctt.search(/^quoted-printable/i) === 0) {
+      ctBodyData = EnigmailData.decodeQuotedPrintable(ctBodyData) + "\n";
+    }
+
+
+    if (charset) {
+      ctBodyData = EnigmailData.convertToUnicode(ctBodyData, charset);
+    }
+
+    let bodyHdr = Cc["@mozilla.org/messenger/mimeheaders;1"].createInstance(Ci.nsIMimeHeaders);
+    bodyHdr.initialize(ctBodyData);
+
+    let h = [ "subject", "date", "from", "to", "cc", "reply-to", "references",
+        "newsgroups", "followup-to", "message-id" ];
 
     for (let i in h) {
       this.decryptedHeaders[h[i]] = bodyHdr.extractHeader(h[i], true) || undefined;
     }
+
+    this.decryptedData = this.decryptedData.substr(0, startPos) + this.decryptedData.substr(endPos);
+
   }
 };
 
 
 ////////////////////////////////////////////////////////////////////
 // General-purpose functions, not exported
-
-function getBoundary(contentType) {
-  LOCAL_DEBUG("mimeDecrypt.js: getBoundary: "+contentType+"\n");
-
-  contentType = contentType.replace(/[\r\n]/g, "");
-  let boundary = "";
-  let ct = contentType.split(/;/);
-  for (let i=0; i < ct.length; i++) {
-    if (ct[i].search(/[ \t]*boundary[ \t]*=/i) >= 0) {
-      boundary = ct[i];
-      break;
-    }
-  }
-  boundary = boundary.replace(/\s*boundary\s*=/i, "").replace(/[\'\"]/g, "");
-  LOCAL_DEBUG("mimeDecrypt.js: getBoundary: found '"+ boundary+"'\n");
-  return boundary;
-}
-
 
 function LOCAL_DEBUG(str) {
   if (gDebugLogLevel) EnigmailLog.DEBUG(str);

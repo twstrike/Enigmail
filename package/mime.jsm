@@ -1,4 +1,4 @@
-/*global Components: false */
+/*global Components: false, escape: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -42,6 +42,9 @@
 
 const EXPORTED_SYMBOLS = [ "EnigmailMime" ];
 
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
 const EnigmailMime = {
     /***
      * create a string of random characters suitable to use for a boundary in a
@@ -57,5 +60,97 @@ const EnigmailMime = {
             b += String.fromCharCode((r < 10 ? 48 : (r < 34 ? 55 :  63)) + r);
         }
         return b;
+    },
+
+    /***
+     * determine the "boundary" part of a mail content type.
+     *
+     * @contentTypeStr: the string containing all parts of a content-type.
+     *               (e.g. multipart/mixed; boundary="xyz") --> returns "xyz"
+     *
+     * @return: String containing the boundary parameter; or null
+     */
+
+    getBoundary: function(contentTypeStr) {
+      contentTypeStr = contentTypeStr.replace(/[\r\n]/g, "");
+      let boundary = "";
+      let ct = contentTypeStr.split(/;/);
+      for (let i=0; i < ct.length; i++) {
+        if (ct[i].search(/[ \t]*boundary[ \t]*=/i) >= 0) {
+          boundary = ct[i];
+          break;
+        }
+      }
+      boundary = boundary.replace(/\s*boundary\s*=/i, "").replace(/[\'\"]/g, "");
+      return boundary;
+    },
+
+    /***
+     * determine the "charset" part of a mail content type.
+     *
+     * @contentTypeStr: the string containing all parts of a content-type.
+     *               (e.g. multipart/mixed; charset="utf-8") --> returns "utf-8"
+     *
+     * @return: String containing the charset parameter; or null
+     */
+
+    getCharset: function(contentTypeStr) {
+      contentTypeStr = contentTypeStr.replace(/[\r\n]/g, "");
+      let boundary = "";
+      let ct = contentTypeStr.split(/;/);
+      for (let i=0; i < ct.length; i++) {
+        if (ct[i].search(/[ \t]*charset[ \t]*=/i) >= 0) {
+          boundary = ct[i];
+          break;
+        }
+      }
+      boundary = boundary.replace(/\s*charset\s*=/i, "").replace(/[\'\"]/g, "");
+      return boundary;
+    },
+
+    /**
+     * Convert a MIME header value into a UTF-8 encoded representation following RFC 2047
+     */
+    encodeHeaderValue: function (aStr) {
+        let ret = "";
+
+        if (aStr.search(/[^\x01-\x7F]/) >= 0) {
+            let converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"].
+                    createInstance(Ci.nsIScriptableUnicodeConverter);
+
+            let trash = {};
+            converter.charset = "UTF-8";
+            let data = converter.convertToByteArray(aStr, trash);
+
+            for (let j in data) {
+                ret += String.fromCharCode(data[j]);
+            }
+
+            ret = "=?UTF-8?Q?"+escape(ret).replace(/%/g, "=")+"?=";
+        } else {
+            ret = aStr;
+        }
+
+        return ret;
+    },
+
+    /**
+     * Correctly encode and format a set of email addresses for RFC 2047
+     */
+    formatEmailAddress: function (addressData) {
+        const adrArr = addressData.split(/, */);
+
+        for (let i in adrArr) {
+            try {
+                const m = adrArr[i].match(/(.*[\w\s]+?)<([\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4})>/);
+                if (m && m.length == 3) {
+                    adrArr[i] = this.encodeHeaderValue(m[1])+" <" + m[2] + ">";
+                }
+            } catch(ex) {}
+        }
+
+        return adrArr.join(", ");
     }
+
+
 };

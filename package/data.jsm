@@ -1,4 +1,4 @@
-/*global Components: false, EnigmailLog: false, unescape: false */
+/*global Components: false, EnigmailLog: false, unescape: false, atob: false, btoa: false */
 /*jshint -W097 */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -91,6 +91,17 @@ const EnigmailData = {
 
     decodeQuotedPrintable: function(str) {
         return unescape(str.replace(/%/g, "=25").replace(/=/g,'%'));
+    },
+
+    decodeBase64: function(str) {
+      return atob(str.replace(/[\s\r\n]*/g, ""));
+    },
+
+    /***
+     * Encode a string in base64, with a max. line length of 72 characters
+     */
+    encodeBase64: function(str) {
+      return btoa(str).replace(/(.{72})/g, "$1\r\n");
     },
 
     convertToUnicode: function (text, charset) {
